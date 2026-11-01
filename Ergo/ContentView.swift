@@ -88,7 +88,7 @@ struct ContentView: View {
 		.environment(catalog)
 		.onAppear {
 			thing.selectedTab = .library
-			thing.libraryPath = [.category(.symbols)]
+			thing.libraryPath = [.detail(category: .symbols, id: "because-marker")]
 			Task {
 				try? await catalog.load()
 			}
