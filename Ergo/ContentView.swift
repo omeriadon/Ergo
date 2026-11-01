@@ -36,11 +36,17 @@ struct ContentView: View {
 				Label("Debate", systemImage: "bubble.left.and.text.bubble.right")
 			}
 
-			Tab(value: .library, role: .prominent) {
+			Tab(value: .library) {
 				NavigationStack(path: $router.libraryPath) {
 					LibraryTabView()
-						.navigationDestination(for: ItemRoute.self) { route in
-							ItemDetailView(route: route, origin: .library)
+						.navigationDestination(for: LibraryRoute.self) { route in
+							switch route {
+								case let .category(category):
+									LibraryCategoryView(category: category)
+
+								case let .detail(category, id):
+									LibraryDetailView(category: category, id: id)
+							}
 						}
 						.toolbarTitleItem()
 				}

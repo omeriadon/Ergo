@@ -49,51 +49,45 @@ struct LibraryTabView: View {
 			} else {
 				Grid(horizontalSpacing: 12, verticalSpacing: 12) {
 					GridRow {
-						Button {} label: {
+						NavigationLink(value: LibraryRoute.category(.biases)) {
 							CardView(title: "Biases", color: .red)
 						}
-						.buttonStyle(.plain)
 
-						Button {} label: {
+						NavigationLink(value: LibraryRoute.category(.concepts)) {
 							CardView(title: "Concepts", color: .green)
 						}
-						.buttonStyle(.plain)
 					}
 
 					GridRow {
-						Button {} label: {
+						NavigationLink(value: LibraryRoute.category(.fallacies)) {
 							CardView(title: "Fallacies", color: .blue)
 						}
-						.buttonStyle(.plain)
 
-						Button {} label: {
+						NavigationLink(value: LibraryRoute.category(.concepts)) {
 							CardView(title: "Symbols", color: .brown)
 						}
-						.buttonStyle(.plain)
 					}
 
 					GridRow {
-						Button {} label: {
+						NavigationLink(value: LibraryRoute.category(.concepts)) {
 							CardView(title: "Paradoxes", color: .mint)
 						}
-						.buttonStyle(.plain)
 
-						Button {} label: {
-							CardView(title: "Philosophers", color: .indigo)
+						NavigationLink(value: LibraryRoute.category(.concepts)) {
+							CardView(title: "Philosophers", color: .purple)
 						}
-						.buttonStyle(.plain)
 					}
 
 					GridRow {
-						Button {} label: {
+						NavigationLink(value: LibraryRoute.category(.concepts)) {
 							CardView(title: "Razors", color: .yellow)
 						}
-						.buttonStyle(.plain)
 					}
 				}
 				.padding()
 			}
 		}
+		.buttonStyle(.plain)
 		.searchable(
 			text: $searchTerm,
 			isPresented: $searchPresented,

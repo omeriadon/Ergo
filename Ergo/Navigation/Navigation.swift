@@ -15,25 +15,29 @@ enum AppTab: Hashable {
 	case library
 }
 
-/// Only tabs that can display shared item details
-enum ItemTab {
-	case library
-}
-
-/// Shared between Library and Search
-enum ItemRoute: Hashable {
-	case claim(id: String)
-	case source(id: String)
-	case analysis(id: String)
-	case evidence(id: String)
-}
-
 /// Exclusive to Debate
 enum DebateRoute: Hashable {
 	case conversation(id: String)
 	case argument(id: String)
 	case participant(id: String)
 	case summary(id: String)
+}
+
+/// all the content middle views library can go to
+enum LibraryContent: Hashable {
+	case biases
+	case concepts
+	case fallacies
+	case symbols
+	case paradoxes
+	case philosophers
+	case razors
+}
+
+/// the actual library route, middle plus detail
+enum LibraryRoute: Hashable {
+	case category(LibraryContent)
+	case detail(category: LibraryContent, id: String)
 }
 
 enum AppSheet: Hashable, Identifiable {
