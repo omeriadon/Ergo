@@ -46,8 +46,8 @@ enum AppSheet: Hashable, Identifiable {
 	case result(id: String)
 
 	case createDebate
-	case invite(id: String)
-	case export(id: String)
+	case settings(id: String)
+	case about(id: String)
 
 	var id: Self { self }
 }

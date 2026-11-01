@@ -8,11 +8,28 @@
 import SwiftUI
 
 struct ErgoIcon: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+	var size: CGFloat = 92
 
-#Preview {
-    ErgoIcon()
+	private let diameter: CGFloat = 19.7656
+
+	var body: some View {
+		ZStack {
+			glassCircle
+				.position(x: 46, y: 26.5039)
+
+			glassCircle
+				.position(x: 26.2344, y: 63.7891)
+
+			glassCircle
+				.position(x: 65.8555, y: 63.7891)
+		}
+		.frame(width: 92, height: 92)
+		.scaleEffect(size / 92)
+		.frame(width: size, height: size)
+	}
+	private var glassCircle: some View {
+		Text(" ")
+			.frame(width: diameter, height: diameter)
+			.glassEffect(.clear.tint(.accent).interactive(), in: Circle())
+	}
 }
