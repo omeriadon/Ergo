@@ -8,12 +8,10 @@
 import SwiftUI
 
 struct ContentView: View {
-
 	@Environment(NavigationManager.self)
 	private var navigation
 
-
-    var body: some View {
+	var body: some View {
 		@Bindable var router = navigation
 
 		TabView(selection: $router.selectedTab) {
@@ -38,7 +36,7 @@ struct ContentView: View {
 				Label("Debate", systemImage: "bubble.left.and.text.bubble.right")
 			}
 
-			Tab(value: .library) {
+			Tab(value: .library, role: .prominent) {
 				NavigationStack(path: $router.libraryPath) {
 					LibraryTabView()
 						.navigationDestination(for: ItemRoute.self) { route in
@@ -49,19 +47,6 @@ struct ContentView: View {
 			} label: {
 				Label("Library", systemImage: "books.vertical")
 			}
-
-			Tab(value: .search, role: .prominent) {
-				NavigationStack(path: $router.searchPath) {
-					SearchTabView()
-						.navigationDestination(for: ItemRoute.self) { route in
-							ItemDetailView(route: route, origin: .search)
-						}
-						.toolbarTitleItem()
-				}
-			} label: {
-				Label("Search", systemImage: "magnifyingglass")
-			}
-
 		}
 		.sheet(item: $router.presentedSheet) { sheet in
 			switch sheet {
@@ -71,23 +56,31 @@ struct ContentView: View {
 				case .paste:
 					Text("sheet here!")
 
-				case .result(_):
+				case .result:
 					Text("sheet here!")
 
 				case .createDebate:
 					Text("sheet here!")
 
-				case .settings(_):
+				case .settings:
 					Text("settings here!")
 
-				case .about(_):
+				case .about:
 					AboutView()
 			}
 		}
-    }
+		.fontDesign(.rounded)
+	}
 }
 
 #Preview {
-    ContentView()
-		.environment(NavigationManager())
+	@Previewable @State var thing = NavigationManager()
+	@Previewable @State var catalog = CatalogStore()
+
+	ContentView()
+		.environment(thing)
+		.environment(catalog)
+		.onAppear {
+			thing.selectedTab = .library
+		}
 }

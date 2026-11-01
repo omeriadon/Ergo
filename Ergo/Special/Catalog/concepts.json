@@ -74,7 +74,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "logic-and-reasoning"
+        "reasoning-methods"
       ]
     },
     {
@@ -249,7 +249,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -878,7 +878,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "logic-and-reasoning"
+        "reasoning-methods"
       ]
     },
     {
@@ -1883,7 +1883,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "logic-and-reasoning"
       ]
     },
     {
@@ -2508,7 +2508,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "epistemology-and-philosophy-of-science"
+        "reasoning-methods"
       ]
     },
     {
@@ -2958,7 +2958,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -3112,7 +3112,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -3439,7 +3439,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "epistemology-and-philosophy-of-science"
+        "reasoning-methods"
       ]
     },
     {
@@ -3689,7 +3689,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -4768,6 +4768,35 @@
       ]
     },
     {
+      "id": "conceptual-analysis",
+      "name": "Conceptual analysis",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Conceptual analysis tests what a concept requires and what follows from applying it.",
+      "body": "Conceptual analysis tests what a concept requires and what follows from applying it. Proposed definitions are compared with ordinary and difficult cases, then revised when they include too much or exclude too much. The aim may be clarification rather than a final set of necessary and sufficient conditions.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Define knowledge as justified true belief, then test a Gettier case in which the belief is true through luck.",
+          "note": "The case challenges the sufficiency of the proposed conditions."
+        }
+      ],
+      "commonMisreadings": [
+        "A familiar dictionary definition does not settle every philosophical use."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "gettier-cases",
+        "conceptual-engineering",
+        "counterexample"
+      ],
+      "tags": [
+        "reasoning-methods"
+      ]
+    },
+    {
       "id": "conceptual-engineering",
       "name": "Conceptual engineering",
       "aliases": [],
@@ -4789,7 +4818,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "language-meaning-and-interpretation"
+        "reasoning-methods"
       ]
     },
     {
@@ -5814,7 +5843,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "logic-and-reasoning"
+        "reasoning-methods"
       ]
     },
     {
@@ -5889,7 +5918,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "logic-and-reasoning"
+        "reasoning-methods"
       ]
     },
     {
@@ -6291,7 +6320,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "logic-and-reasoning"
+        "reasoning-methods"
       ]
     },
     {
@@ -6816,7 +6845,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "language-meaning-and-interpretation"
+        "reasoning-methods"
       ]
     },
     {
@@ -7117,6 +7146,35 @@
       "related": [],
       "tags": [
         "metaphysics-and-ontology"
+      ]
+    },
+    {
+      "id": "distinction-making",
+      "name": "Distinction making",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Distinction making separates senses or cases whose differences matter to an argument.",
+      "body": "Distinction making separates senses or cases whose differences matter to an argument. A useful distinction identifies a relevant difference and explains why it changes the conclusion. Merely assigning different labels does not show that two cases deserve different treatment.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Separate explaining why a person acted from justifying the action as morally acceptable.",
+          "note": "Causal explanation and moral justification answer different questions."
+        }
+      ],
+      "commonMisreadings": [
+        "Making a distinction does not by itself prove that the distinction matters."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "equivocation",
+        "explanation",
+        "evidence"
+      ],
+      "tags": [
+        "reasoning-methods"
       ]
     },
     {
@@ -7441,7 +7499,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -9016,7 +9074,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -9266,7 +9324,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -9868,7 +9926,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "epistemology-and-philosophy-of-science"
       ]
     },
     {
@@ -10097,7 +10155,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "decision-theory-systems-and-methods"
+        "reasoning-methods"
       ]
     },
     {
@@ -10374,7 +10432,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -10678,6 +10736,35 @@
       ]
     },
     {
+      "id": "genealogical-critique",
+      "name": "Genealogical critique",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Genealogical critique investigates how a value, category, or practice emerged and acquired authority.",
+      "body": "Genealogical critique investigates how a value, category, or practice emerged and acquired authority. It asks which historical contingencies, interests, and power relations shaped what now appears natural or necessary. A history can challenge a claim to inevitability, but an origin alone does not refute a belief.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Trace how a punishment practice became described as rehabilitation and ask which institutions benefited from the change.",
+          "note": "The inquiry examines how a justification became authoritative."
+        }
+      ],
+      "commonMisreadings": [
+        "Inferring falsity solely from an origin would be a genetic fallacy."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "michel-foucault",
+        "friedrich-nietzsche",
+        "genetic-fallacy"
+      ],
+      "tags": [
+        "reasoning-methods"
+      ]
+    },
+    {
       "id": "generation-effect",
       "name": "Generation effect",
       "aliases": [],
@@ -10774,7 +10861,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -10952,31 +11039,6 @@
       "related": [],
       "tags": [
         "political-philosophy-and-institutions"
-      ]
-    },
-    {
-      "id": "grandfather-paradox",
-      "name": "Grandfather paradox",
-      "aliases": [],
-      "symbolName": null,
-      "summary": "The grandfather paradox is a time-travel puzzle in which changing the past could prevent the traveler’s own existence.",
-      "body": "The grandfather paradox is a time-travel puzzle in which changing the past could prevent the traveler’s own existence. It exposes tension between backward time travel, causal consistency, and a single determinate history.",
-      "origin": null,
-      "keyFigures": [],
-      "examples": [
-        {
-          "text": "A traveler who kills their grandparent before their parent is conceived would remove the condition for the traveler’s journey.",
-          "note": "The action creates a causal contradiction between the traveler’s existence and the altered past."
-        }
-      ],
-      "commonMisreadings": [
-        "It is not merely any time-travel story involving family history; the contradiction concerns self-undermining causation."
-      ],
-      "criticisms": [],
-      "lookalikes": [],
-      "related": [],
-      "tags": [
-        "thought-experiments-and-paradoxes"
       ]
     },
     {
@@ -11180,34 +11242,6 @@
       ]
     },
     {
-      "id": "heap-paradox",
-      "name": "Heap paradox",
-      "aliases": [
-        "Sorites paradox",
-        "Paradox of the heap"
-      ],
-      "symbolName": null,
-      "summary": "The heap paradox is a sorites paradox arising when repeated removal of one grain appears unable to turn a heap into a non-heap.",
-      "body": "The heap paradox is a sorites paradox arising when repeated removal of one grain appears unable to turn a heap into a non-heap. It exposes the difficulty of applying vague predicates with borderline cases and apparently harmless small changes.",
-      "origin": null,
-      "keyFigures": [],
-      "examples": [
-        {
-          "text": "If one million grains form a heap, removing one grain seems to leave a heap, yet repeating that reasoning reaches zero grains.",
-          "note": "The chain of individually plausible steps conflicts with the clear endpoint."
-        }
-      ],
-      "commonMisreadings": [
-        "The paradox is about vagueness and reasoning, not about the physical mechanics of grain piles."
-      ],
-      "criticisms": [],
-      "lookalikes": [],
-      "related": [],
-      "tags": [
-        "thought-experiments-and-paradoxes"
-      ]
-    },
-    {
       "id": "hedonic-utilitarianism",
       "name": "Hedonic utilitarianism",
       "aliases": [],
@@ -11379,7 +11413,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "language-meaning-and-interpretation"
+        "reasoning-methods"
       ]
     },
     {
@@ -11504,7 +11538,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -11907,6 +11941,34 @@
       "related": [],
       "tags": [
         "metaphysics-and-ontology"
+      ]
+    },
+    {
+      "id": "idealization",
+      "name": "Idealization",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Idealization deliberately simplifies a model or imagined case to isolate a relevant relationship.",
+      "body": "Idealization deliberately simplifies a model or imagined case to isolate a relevant relationship. The simplifications must be stated and their effects considered when applying the result. An idealized argument can clarify a structure while leaving open whether its assumptions hold in practice.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Compare principles of fair distribution while temporarily assuming that everyone complies with the chosen rules.",
+          "note": "The assumption isolates the principles from enforcement problems."
+        }
+      ],
+      "commonMisreadings": [
+        "A conclusion inside an idealized model need not hold when its assumptions are removed."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "original-position",
+        "scientific-explanation"
+      ],
+      "tags": [
+        "reasoning-methods"
       ]
     },
     {
@@ -12406,7 +12468,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "logic-and-reasoning"
+        "reasoning-methods"
       ]
     },
     {
@@ -12506,7 +12568,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "logic-and-reasoning"
       ]
     },
     {
@@ -13985,31 +14047,6 @@
       ]
     },
     {
-      "id": "liar-paradox",
-      "name": "Liar paradox",
-      "aliases": [],
-      "symbolName": null,
-      "summary": "The liar paradox arises when a sentence appears to assert its own falsity, producing a conflict if it is treated as either true or false.",
-      "body": "The liar paradox arises when a sentence appears to assert its own falsity, producing a conflict if it is treated as either true or false. The sentence “This sentence is false” is true only if it is false and false only if it is true under ordinary assumptions.",
-      "origin": null,
-      "keyFigures": [],
-      "examples": [
-        {
-          "text": "If the sentence is true, what it says makes it false; if it is false, what it says makes it true.",
-          "note": "Each assigned truth value reverses itself through the sentence's self-reference."
-        }
-      ],
-      "commonMisreadings": [
-        "The liar paradox is not simply an ordinary lie because its semantic self-reference creates the contradiction."
-      ],
-      "criticisms": [],
-      "lookalikes": [],
-      "related": [],
-      "tags": [
-        "thought-experiments-and-paradoxes"
-      ]
-    },
-    {
       "id": "liberal-conservatism",
       "name": "Liberal conservatism",
       "aliases": [],
@@ -14983,7 +15020,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -17560,7 +17597,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -18014,31 +18051,6 @@
       ]
     },
     {
-      "id": "omnipotence-paradox",
-      "name": "Omnipotence paradox",
-      "aliases": [],
-      "symbolName": null,
-      "summary": "The omnipotence paradox asks whether an all-powerful being can create a stone it cannot lift.",
-      "body": "The omnipotence paradox asks whether an all-powerful being can create a stone it cannot lift. Many replies restrict omnipotence to logically possible actions.",
-      "origin": null,
-      "keyFigures": [],
-      "examples": [
-        {
-          "text": "Calling the task contradictory resolves it for a classical theologian.",
-          "note": "The problem is treated as incoherent description."
-        }
-      ],
-      "commonMisreadings": [
-        "It does not refute every definition of omnipotence."
-      ],
-      "criticisms": [],
-      "lookalikes": [],
-      "related": [],
-      "tags": [
-        "thought-experiments-and-paradoxes"
-      ]
-    },
-    {
       "id": "ontic-structural-realism",
       "name": "Ontic structural realism",
       "aliases": [],
@@ -18260,7 +18272,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -18564,81 +18576,6 @@
       ]
     },
     {
-      "id": "paradox-of-fiction",
-      "name": "Paradox of fiction",
-      "aliases": [],
-      "symbolName": null,
-      "summary": "The paradox of fiction asks how fictional characters can cause genuine emotions despite nonexistence.",
-      "body": "The paradox of fiction asks how fictional characters can cause genuine emotions despite nonexistence. Responses invoke imagination, quasi-emotion, or non-belief-based affect.",
-      "origin": null,
-      "keyFigures": [],
-      "examples": [
-        {
-          "text": "A reader fears for Anna Karenina while knowing she is fictional.",
-          "note": "Knowledge and emotion coexist in the case."
-        }
-      ],
-      "commonMisreadings": [
-        "The reader need not believe the character is real."
-      ],
-      "criticisms": [],
-      "lookalikes": [],
-      "related": [],
-      "tags": [
-        "thought-experiments-and-paradoxes"
-      ]
-    },
-    {
-      "id": "paradox-of-hedonism",
-      "name": "Paradox of hedonism",
-      "aliases": [],
-      "symbolName": null,
-      "summary": "The paradox of hedonism says directly pursuing pleasure can prevent obtaining it.",
-      "body": "The paradox of hedonism says directly pursuing pleasure can prevent obtaining it. Sidgwick linked the problem to making happiness one's sole conscious goal.",
-      "origin": null,
-      "keyFigures": [],
-      "examples": [
-        {
-          "text": "Monitoring every moment's pleasure can reduce enjoyment.",
-          "note": "Attention to the goal interferes with the desired state."
-        }
-      ],
-      "commonMisreadings": [
-        "It does not show pleasure lacks value."
-      ],
-      "criticisms": [],
-      "lookalikes": [],
-      "related": [],
-      "tags": [
-        "thought-experiments-and-paradoxes"
-      ]
-    },
-    {
-      "id": "paradox-of-tolerance",
-      "name": "Paradox of tolerance",
-      "aliases": [],
-      "symbolName": null,
-      "summary": "The paradox of tolerance says unlimited tolerance may permit intolerant forces to destroy tolerance.",
-      "body": "The paradox of tolerance says unlimited tolerance may permit intolerant forces to destroy tolerance. Popper argued that tolerant societies may restrict movements seeking coercive domination.",
-      "origin": null,
-      "keyFigures": [],
-      "examples": [
-        {
-          "text": "Banning a group planning to abolish elections presents the dilemma.",
-          "note": "Restriction protects institutions from anti-tolerant capture."
-        }
-      ],
-      "commonMisreadings": [
-        "It does not justify suppressing every unpopular view."
-      ],
-      "criticisms": [],
-      "lookalikes": [],
-      "related": [],
-      "tags": [
-        "thought-experiments-and-paradoxes"
-      ]
-    },
-    {
       "id": "pareto-efficiency",
       "name": "Pareto efficiency",
       "aliases": [],
@@ -18685,7 +18622,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -19211,6 +19148,35 @@
       "related": [],
       "tags": [
         "philosophical-schools-and-isms"
+      ]
+    },
+    {
+      "id": "phenomenological-description",
+      "name": "Phenomenological description",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Phenomenological description attends to how something appears in experience before explaining its causes.",
+      "body": "Phenomenological description attends to how something appears in experience before explaining its causes. It examines features such as perspective, attention, embodiment, and the directedness of consciousness. Bracketing an assumption suspends its use in the description rather than proving it false.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Describe how a cube presents visible faces while its unseen sides are experienced as belonging to the same object.",
+          "note": "The description distinguishes what is directly presented from what is anticipated."
+        }
+      ],
+      "commonMisreadings": [
+        "Description of experience alone does not establish the external causes of experience."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "phenomenology",
+        "intentionality",
+        "edmund-husserl"
+      ],
+      "tags": [
+        "reasoning-methods"
       ]
     },
     {
@@ -20412,7 +20378,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "epistemology-and-philosophy-of-science"
+        "reasoning-methods"
       ]
     },
     {
@@ -20487,7 +20453,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -21692,7 +21658,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "decision-theory-systems-and-methods"
+        "reasoning-methods"
       ]
     },
     {
@@ -21717,7 +21683,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "logic-and-reasoning"
+        "reasoning-methods"
       ]
     },
     {
@@ -21817,7 +21783,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "epistemology-and-philosophy-of-science"
+        "reasoning-methods"
       ]
     },
     {
@@ -21843,6 +21809,35 @@
       "related": [],
       "tags": [
         "political-ideologies-and-isms"
+      ]
+    },
+    {
+      "id": "regress-testing",
+      "name": "Regress testing",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Regress testing asks whether repeating a demand for explanation or justification prevents the original task from being completed.",
+      "body": "Regress testing asks whether repeating a demand for explanation or justification prevents the original task from being completed. Identify what each step requires and whether later steps can supply it. An infinite sequence is problematic only when its structure frustrates the explanatory or justificatory purpose.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "If every belief must be justified by another justified belief, ask whether the chain can justify any belief without a foundation or coherence relation.",
+          "note": "The issue is the transmission of justification, not simply the number of steps."
+        }
+      ],
+      "commonMisreadings": [
+        "Not every infinite regress is vicious."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "infinite-regress",
+        "foundationalism",
+        "coherentism"
+      ],
+      "tags": [
+        "reasoning-methods"
       ]
     },
     {
@@ -22417,7 +22412,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -22596,31 +22591,6 @@
       ]
     },
     {
-      "id": "russell-s-paradox",
-      "name": "Russell's paradox",
-      "aliases": [],
-      "symbolName": null,
-      "summary": "Russell's paradox is the contradiction arising from the set of all sets that are not members of themselves.",
-      "body": "Russell's paradox is the contradiction arising from the set of all sets that are not members of themselves. Membership in that set requires both membership and nonmembership.",
-      "origin": null,
-      "keyFigures": [],
-      "examples": [
-        {
-          "text": "R = {x | x is not a member of x} yields R ∈ R iff R ∉ R.",
-          "note": "Each possible status produces its opposite."
-        }
-      ],
-      "commonMisreadings": [
-        "It differs from the liar paradox, which concerns sentence truth."
-      ],
-      "criticisms": [],
-      "lookalikes": [],
-      "related": [],
-      "tags": [
-        "thought-experiments-and-paradoxes"
-      ]
-    },
-    {
       "id": "russell-s-teapot",
       "name": "Russell's teapot",
       "aliases": [],
@@ -22794,7 +22764,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -23569,7 +23539,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -23644,7 +23614,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -23769,7 +23739,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -23995,6 +23965,35 @@
       "related": [],
       "tags": [
         "political-ideologies-and-isms"
+      ]
+    },
+    {
+      "id": "socratic-questioning",
+      "name": "Socratic questioning",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Socratic questioning examines a claim through successive requests for reasons, definitions, and consistency.",
+      "body": "Socratic questioning examines a claim through successive requests for reasons, definitions, and consistency. A dialogue starts from a view the speaker accepts and tests its implications against other commitments. Discovering a conflict can reveal the need for revision without supplying a replacement theory.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Someone defines courage as never retreating; ask whether a strategic retreat to protect others can be courageous.",
+          "note": "The proposed definition conflicts with a case the speaker may also accept."
+        }
+      ],
+      "commonMisreadings": [
+        "The method is not a license for leading questions that merely force a preferred answer."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "dialectic",
+        "socrates",
+        "virtue-ethics"
+      ],
+      "tags": [
+        "reasoning-methods"
       ]
     },
     {
@@ -24494,7 +24493,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "decision-theory-systems-and-methods"
+        "reasoning-methods"
       ]
     },
     {
@@ -25069,7 +25068,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -25294,7 +25293,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -25673,6 +25672,35 @@
       ]
     },
     {
+      "id": "thought-experiment-method",
+      "name": "Thought-experiment method",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "A thought experiment uses an imagined situation to examine the commitments of a view.",
+      "body": "A thought experiment uses an imagined situation to examine the commitments of a view. State the assumptions, vary one relevant feature, and compare what the theory predicts with the judgments the case supports. Disagreement can concern the scenario, the judgment, or the weight that judgment should carry.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Compare a trolley case in which one death is a side effect with a case in which it is the means of saving five.",
+          "note": "The variation tests whether intention and means change the moral assessment."
+        }
+      ],
+      "commonMisreadings": [
+        "An imagined possibility does not establish that a scenario is physically possible."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "trolley-problem",
+        "doctrine-of-double-effect",
+        "counterfactual"
+      ],
+      "tags": [
+        "reasoning-methods"
+      ]
+    },
+    {
       "id": "time",
       "name": "Time",
       "aliases": [],
@@ -25994,7 +26022,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -26219,7 +26247,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -26769,7 +26797,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "thought-experiments-and-paradoxes"
+        "thought-experiments"
       ]
     },
     {
@@ -27197,31 +27225,6 @@
       "related": [],
       "tags": [
         "religion-asian-african-and-indigenous-philosophy"
-      ]
-    },
-    {
-      "id": "zeno-s-paradoxes",
-      "name": "Zeno's paradoxes",
-      "aliases": [],
-      "symbolName": null,
-      "summary": "Zeno's paradoxes are arguments that use apparently plausible assumptions about motion, plurality, or space to generate contradictions or infinite regress.",
-      "body": "Zeno's paradoxes are arguments that use apparently plausible assumptions about motion, plurality, or space to generate contradictions or infinite regress. The Achilles paradox suggests that a faster runner cannot overtake a slower runner if infinitely many intermediate points must first be reached.",
-      "origin": null,
-      "keyFigures": [],
-      "examples": [
-        {
-          "text": "Achilles must reach the tortoise's previous position, then its next position, and so on through infinitely many stages.",
-          "note": "The sequence appears to require completing infinitely many subjourneys before overtaking can occur."
-        }
-      ],
-      "commonMisreadings": [
-        "The paradoxes are not empirical proof that motion is impossible, because mathematical theories of convergent infinite series offer ways to analyze the apparent problem."
-      ],
-      "criticisms": [],
-      "lookalikes": [],
-      "related": [],
-      "tags": [
-        "thought-experiments-and-paradoxes"
       ]
     },
     {

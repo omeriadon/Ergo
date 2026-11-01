@@ -5,26 +5,22 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
-import SwiftUI
 import Observation
+import SwiftUI
 
-
-
-// Your four root tabs
+/// Your four root tabs
 enum AppTab: Hashable {
 	case check
 	case debate
 	case library
-	case search
 }
 
-// Only tabs that can display shared item details
+/// Only tabs that can display shared item details
 enum ItemTab {
 	case library
-	case search
 }
 
-// Shared between Library and Search
+/// Shared between Library and Search
 enum ItemRoute: Hashable {
 	case claim(id: String)
 	case source(id: String)
@@ -32,7 +28,7 @@ enum ItemRoute: Hashable {
 	case evidence(id: String)
 }
 
-// Exclusive to Debate
+/// Exclusive to Debate
 enum DebateRoute: Hashable {
 	case conversation(id: String)
 	case argument(id: String)
@@ -49,5 +45,7 @@ enum AppSheet: Hashable, Identifiable {
 	case settings(id: String)
 	case about(id: String)
 
-	var id: Self { self }
+	var id: Self {
+		self
+	}
 }

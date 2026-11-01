@@ -1,0 +1,432 @@
+{
+  "paradoxes": [
+    {
+      "id": "grandfather-paradox",
+      "name": "Grandfather paradox",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "The grandfather paradox is a time-travel puzzle in which changing the past could prevent the traveler’s own existence.",
+      "body": "The grandfather paradox is a time-travel puzzle in which changing the past could prevent the traveler’s own existence. It exposes tension between backward time travel, causal consistency, and a single determinate history.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "A traveler who kills their grandparent before their parent is conceived would remove the condition for the traveler’s journey.",
+          "note": "The action creates a causal contradiction between the traveler’s existence and the altered past."
+        }
+      ],
+      "commonMisreadings": [
+        "It is not merely any time-travel story involving family history; the contradiction concerns self-undermining causation."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "metaphysics"
+      ]
+    },
+    {
+      "id": "heap-paradox",
+      "name": "Heap paradox",
+      "aliases": [
+        "Sorites paradox",
+        "Paradox of the heap"
+      ],
+      "symbolName": null,
+      "summary": "The heap paradox is a sorites paradox arising when repeated removal of one grain appears unable to turn a heap into a non-heap.",
+      "body": "The heap paradox is a sorites paradox arising when repeated removal of one grain appears unable to turn a heap into a non-heap. It exposes the difficulty of applying vague predicates with borderline cases and apparently harmless small changes.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "If one million grains form a heap, removing one grain seems to leave a heap, yet repeating that reasoning reaches zero grains.",
+          "note": "The chain of individually plausible steps conflicts with the clear endpoint."
+        }
+      ],
+      "commonMisreadings": [
+        "The paradox is about vagueness and reasoning, not about the physical mechanics of grain piles."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "logic-and-language"
+      ]
+    },
+    {
+      "id": "liar-paradox",
+      "name": "Liar paradox",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "The liar paradox arises when a sentence appears to assert its own falsity, producing a conflict if it is treated as either true or false.",
+      "body": "The liar paradox arises when a sentence appears to assert its own falsity, producing a conflict if it is treated as either true or false. The sentence “This sentence is false” is true only if it is false and false only if it is true under ordinary assumptions.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "If the sentence is true, what it says makes it false; if it is false, what it says makes it true.",
+          "note": "Each assigned truth value reverses itself through the sentence's self-reference."
+        }
+      ],
+      "commonMisreadings": [
+        "The liar paradox is not simply an ordinary lie because its semantic self-reference creates the contradiction."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "logic-and-language"
+      ]
+    },
+    {
+      "id": "epistemic-lottery-paradox",
+      "name": "Lottery paradox",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "A high probability of losing seems to justify rejecting each lottery ticket as the winner, even though one ticket must win.",
+      "body": "A high probability of losing seems to justify rejecting each lottery ticket as the winner, even though one ticket must win. If rational belief is closed under conjunction, accepting every individual losing claim yields the belief that no ticket wins. Responses question probability thresholds, conjunction, or the distinction between acceptance and belief.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "A fair lottery has one million tickets and exactly one winner. Each ticket is almost certainly a loser; accepting that all lose contradicts the rules.",
+          "note": "Individually strong probabilities do not automatically support their conjunction."
+        }
+      ],
+      "commonMisreadings": [
+        "The paradox is not a failure of probability theory."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "credence",
+        "belief",
+        "epistemic-closure"
+      ],
+      "tags": [
+        "knowledge-and-meaning"
+      ]
+    },
+    {
+      "id": "meno-s-paradox",
+      "name": "Meno's paradox",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Inquiry seems impossible if we cannot search for what we do not know or need not search for what we already know.",
+      "body": "Inquiry seems impossible if we cannot search for what we do not know or need not search for what we already know. The dilemma assumes that knowledge and ignorance are exhaustive states for inquiry. Partial understanding, recognition criteria, and learning from evidence offer ways to investigate without already possessing the full answer.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "You do not yet know what justice is. How could you recognize a satisfactory account if complete ignorance prevented you from recognizing any answer?",
+          "note": "A learner can possess enough partial understanding to assess proposed answers."
+        }
+      ],
+      "commonMisreadings": [
+        "Lacking a complete answer does not mean lacking every relevant clue."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "socratic-questioning",
+        "epistemology",
+        "plato"
+      ],
+      "tags": [
+        "knowledge-and-meaning"
+      ]
+    },
+    {
+      "id": "moore-s-paradox",
+      "name": "Moore's paradox",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "It can be logically possible yet apparently irrational to assert a fact while denying that one believes it.",
+      "body": "It can be logically possible yet apparently irrational to assert a fact while denying that one believes it. The sentence can describe a real mismatch between a fact and a speaker's beliefs. Sincerely asserting it in the first person nevertheless seems to undermine the commitment normally expressed by assertion.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Someone says, \"It is raining, but I do not believe that it is raining.\"",
+          "note": "The tension concerns assertion and belief rather than a direct contradiction between the two clauses."
+        }
+      ],
+      "commonMisreadings": [
+        "Another person can coherently report that it rains while the speaker does not believe it."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "assertion",
+        "belief",
+        "g-e-moore"
+      ],
+      "tags": [
+        "knowledge-and-meaning"
+      ]
+    },
+    {
+      "id": "omnipotence-paradox",
+      "name": "Omnipotence paradox",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "The omnipotence paradox asks whether an all-powerful being can create a stone it cannot lift.",
+      "body": "The omnipotence paradox asks whether an all-powerful being can create a stone it cannot lift. Many replies restrict omnipotence to logically possible actions.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Calling the task contradictory resolves it for a classical theologian.",
+          "note": "The problem is treated as incoherent description."
+        }
+      ],
+      "commonMisreadings": [
+        "It does not refute every definition of omnipotence."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "metaphysics"
+      ]
+    },
+    {
+      "id": "paradox-of-analysis",
+      "name": "Paradox of analysis",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "A correct conceptual analysis seems to say the same thing as its target, yet a useful analysis must tell us something new.",
+      "body": "A correct conceptual analysis seems to say the same thing as its target, yet a useful analysis must tell us something new. If the meanings differ, the analysis looks incorrect; if they are identical, it seems trivial. Responses distinguish kinds of equivalence and the ways a person can understand the same content.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "An analysis of knowledge aims to clarify knowledge without changing its subject. How can an equivalent statement improve understanding?",
+          "note": "Equivalence need not make the cognitive route to a claim uninformative."
+        }
+      ],
+      "commonMisreadings": [
+        "The puzzle does not show that all definitions are useless."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "conceptual-analysis",
+        "sense-and-reference"
+      ],
+      "tags": [
+        "knowledge-and-meaning"
+      ]
+    },
+    {
+      "id": "paradox-of-fiction",
+      "name": "Paradox of fiction",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "The paradox of fiction asks how fictional characters can cause genuine emotions despite nonexistence.",
+      "body": "The paradox of fiction asks how fictional characters can cause genuine emotions despite nonexistence. Responses invoke imagination, quasi-emotion, or non-belief-based affect.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "A reader fears for Anna Karenina while knowing she is fictional.",
+          "note": "Knowledge and emotion coexist in the case."
+        }
+      ],
+      "commonMisreadings": [
+        "The reader need not believe the character is real."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "ethics-and-value"
+      ]
+    },
+    {
+      "id": "paradox-of-hedonism",
+      "name": "Paradox of hedonism",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "The paradox of hedonism says directly pursuing pleasure can prevent obtaining it.",
+      "body": "The paradox of hedonism says directly pursuing pleasure can prevent obtaining it. Sidgwick linked the problem to making happiness one's sole conscious goal.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Monitoring every moment's pleasure can reduce enjoyment.",
+          "note": "Attention to the goal interferes with the desired state."
+        }
+      ],
+      "commonMisreadings": [
+        "It does not show pleasure lacks value."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "ethics-and-value"
+      ]
+    },
+    {
+      "id": "paradox-of-tolerance",
+      "name": "Paradox of tolerance",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "The paradox of tolerance says unlimited tolerance may permit intolerant forces to destroy tolerance.",
+      "body": "The paradox of tolerance says unlimited tolerance may permit intolerant forces to destroy tolerance. Popper argued that tolerant societies may restrict movements seeking coercive domination.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Banning a group planning to abolish elections presents the dilemma.",
+          "note": "Restriction protects institutions from anti-tolerant capture."
+        }
+      ],
+      "commonMisreadings": [
+        "It does not justify suppressing every unpopular view."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "ethics-and-value"
+      ]
+    },
+    {
+      "id": "preface-paradox",
+      "name": "Preface paradox",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "An author may reasonably believe each claim in a book while also believing the book contains an error.",
+      "body": "An author may reasonably believe each claim in a book while also believing the book contains an error. The author has evidence for each statement and evidence from human fallibility that at least one statement is false. The puzzle concerns whether rational belief must remain consistent when many well-supported claims are combined.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "A historian endorses each carefully checked claim but writes that a long book probably contains an unnoticed mistake.",
+          "note": "The general admission conflicts with the conjunction of the individual claims."
+        }
+      ],
+      "commonMisreadings": [
+        "It does not follow that any particular claim is known to be false."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "fallibilism",
+        "belief",
+        "epistemic-lottery-paradox"
+      ],
+      "tags": [
+        "knowledge-and-meaning"
+      ]
+    },
+    {
+      "id": "raven-paradox",
+      "name": "Raven paradox",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "A principle of confirmation appears to make a green apple evidence that all ravens are black.",
+      "body": "A principle of confirmation appears to make a green apple evidence that all ravens are black. All ravens are black is logically equivalent to all nonblack things being nonravens. A green apple confirms the latter under a simple positive-instance rule, raising the question whether it confirms the former too.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Observe a green apple: it is nonblack and not a raven. A simple rule counts it as confirming that every nonblack thing is a nonraven.",
+          "note": "The puzzle combines equivalence with a seemingly natural rule for evidence."
+        }
+      ],
+      "commonMisreadings": [
+        "Any confirmation need not be substantial; background information changes evidential relevance."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "confirmation",
+        "induction-problem"
+      ],
+      "tags": [
+        "knowledge-and-meaning"
+      ]
+    },
+    {
+      "id": "russell-s-paradox",
+      "name": "Russell's paradox",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Russell's paradox is the contradiction arising from the set of all sets that are not members of themselves.",
+      "body": "Russell's paradox is the contradiction arising from the set of all sets that are not members of themselves. Membership in that set requires both membership and nonmembership.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "R = {x | x is not a member of x} yields R ∈ R iff R ∉ R.",
+          "note": "Each possible status produces its opposite."
+        }
+      ],
+      "commonMisreadings": [
+        "It differs from the liar paradox, which concerns sentence truth."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "logic-and-language"
+      ]
+    },
+    {
+      "id": "surprise-examination-paradox",
+      "name": "Surprise examination paradox",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "A student seems able to rule out every day of an announced surprise exam, yet an exam can still take the student by surprise.",
+      "body": "A student seems able to rule out every day of an announced surprise exam, yet an exam can still take the student by surprise. The student eliminates the last day because its arrival without an earlier exam would reveal the date, then repeats the reasoning backward. The puzzle concerns what can be known and whether the reasoning preserves the announcement it relies on.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "An exam must occur next week and its day must be unknown beforehand. The student rules out Friday, then Thursday, and eventually every day; a Wednesday exam still surprises them.",
+          "note": "The backward argument threatens its own premise that the announcement can be trusted."
+        }
+      ],
+      "commonMisreadings": [
+        "The teacher need not simply be lying; that would dissolve rather than explain the puzzle."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "epistemology",
+        "epistemic-closure"
+      ],
+      "tags": [
+        "knowledge-and-meaning"
+      ]
+    },
+    {
+      "id": "zeno-s-paradoxes",
+      "name": "Zeno's paradoxes",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Zeno's paradoxes are arguments that use apparently plausible assumptions about motion, plurality, or space to generate contradictions or infinite regress.",
+      "body": "Zeno's paradoxes are arguments that use apparently plausible assumptions about motion, plurality, or space to generate contradictions or infinite regress. The Achilles paradox suggests that a faster runner cannot overtake a slower runner if infinitely many intermediate points must first be reached.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "Achilles must reach the tortoise's previous position, then its next position, and so on through infinitely many stages.",
+          "note": "The sequence appears to require completing infinitely many subjourneys before overtaking can occur."
+        }
+      ],
+      "commonMisreadings": [
+        "The paradoxes are not empirical proof that motion is impossible, because mathematical theories of convergent infinite series offer ways to analyze the apparent problem."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "metaphysics"
+      ]
+    }
+  ]
+}

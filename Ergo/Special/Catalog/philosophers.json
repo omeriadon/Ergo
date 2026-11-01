@@ -1,0 +1,694 @@
+{
+  "philosophers": [
+    {
+      "id": "al-ghazali",
+      "name": "Al-Ghazali",
+      "image": "al-ghazali.jxl",
+      "birthYear": 1058,
+      "deathYear": 1111,
+      "summary": "Al-Ghazali examined the grounds of religious knowledge and criticized particular metaphysical doctrines of the philosophers. His work combines theology, philosophical argument, and Sufi practice, with influential discussions of causation, certainty, and the limits of demonstration.",
+      "related": [
+        "causation",
+        "occasionalism",
+        "sufism"
+      ]
+    },
+    {
+      "id": "albert-camus",
+      "name": "Albert Camus",
+      "image": "albert-camus.jxl",
+      "birthYear": 1913,
+      "deathYear": 1960,
+      "summary": "Albert Camus explored the absurd tension between the human demand for meaning and a world that offers no guaranteed answer. His essays and fiction examine revolt, solidarity, and limits on violence, seeking ways to resist injustice without turning rebellion into justification for unlimited killing.",
+      "related": [
+        "absurdism",
+        "solidarity",
+        "violence"
+      ]
+    },
+    {
+      "id": "aristotle",
+      "name": "Aristotle",
+      "image": "aristotle.jxl",
+      "birthYear": -384,
+      "deathYear": -322,
+      "summary": "Aristotle developed systematic investigations of logic, nature, ethics, politics, and art after studying in Plato's Academy. His ethics connects flourishing with cultivated virtues and practical judgment, while his explanations of change distinguish matter, form, and different kinds of cause.",
+      "related": [
+        "aristotelianism",
+        "virtue-ethics",
+        "final-cause",
+        "syllogism"
+      ]
+    },
+    {
+      "id": "arthur-schopenhauer",
+      "name": "Arthur Schopenhauer",
+      "image": "arthur-schopenhauer.jxl",
+      "birthYear": 1788,
+      "deathYear": 1860,
+      "summary": "Arthur Schopenhauer described the experienced world as representation and its underlying character as will. His account of restless striving gives suffering a central place, while aesthetic contemplation, compassion, and ascetic practices offer different ways to loosen its hold.",
+      "related": [
+        "altruism",
+        "asceticism"
+      ]
+    },
+    {
+      "id": "augustine-of-hippo",
+      "name": "Augustine of Hippo",
+      "image": "augustine-of-hippo.jxl",
+      "birthYear": 354,
+      "deathYear": 430,
+      "summary": "Augustine of Hippo brought classical philosophical questions into sustained engagement with Christian theology. His works examine time, memory, will, evil, and political life, while his account of inward reflection influenced later approaches to self-knowledge and religious experience.",
+      "related": [
+        "problem-of-evil",
+        "free-will",
+        "time"
+      ]
+    },
+    {
+      "id": "averroes",
+      "name": "Averroes",
+      "image": "averroes.jxl",
+      "birthYear": 1126,
+      "deathYear": 1198,
+      "summary": "Averroes was an Andalusian philosopher, jurist, and physician known for his commentaries on Aristotle. He defended philosophical demonstration and examined how reason and revealed texts could be understood together, influencing debates about intellect and interpretation across religious traditions.",
+      "related": [
+        "averroism",
+        "aristotelianism",
+        "hermeneutics"
+      ]
+    },
+    {
+      "id": "avicenna",
+      "name": "Avicenna",
+      "image": "avicenna.jxl",
+      "birthYear": 980,
+      "deathYear": 1037,
+      "summary": "Avicenna was a Persian philosopher and physician whose synthesis of Aristotelian philosophy profoundly shaped Islamic and Latin thought. He distinguished essence from existence and argued for a necessary existent, while his discussions of self-awareness and intellect opened lasting debates about mind.",
+      "related": [
+        "avicennism",
+        "essence",
+        "necessary-being"
+      ]
+    },
+    {
+      "id": "baruch-spinoza",
+      "name": "Baruch Spinoza",
+      "image": "baruch-spinoza.jxl",
+      "birthYear": 1632,
+      "deathYear": 1677,
+      "summary": "Baruch Spinoza argued that reality is one substance, understood as God or Nature, with thought and extension among its attributes. His Ethics connects necessity and the causal understanding of emotions with a conception of freedom through adequate understanding.",
+      "related": [
+        "spinozism",
+        "monism",
+        "pantheism"
+      ]
+    },
+    {
+      "id": "bertrand-russell",
+      "name": "Bertrand Russell",
+      "image": "bertrand-russell.jxl",
+      "birthYear": 1872,
+      "deathYear": 1970,
+      "summary": "Bertrand Russell helped establish analytic philosophy through work on logic, descriptions, and the foundations of mathematics. His discovery of a contradiction in unrestricted set formation prompted major revisions to logical foundations, while his public writings applied philosophical criticism to politics and religion.",
+      "related": [
+        "analytic-philosophy",
+        "definite-description-concept",
+        "russell-s-paradox"
+      ]
+    },
+    {
+      "id": "confucius",
+      "name": "Confucius",
+      "image": "confucius.jxl",
+      "birthYear": -551,
+      "deathYear": -479,
+      "summary": "Confucius taught that ethical cultivation takes place through learning, ritual, and humane relationships. The Analects presents a demanding practice of self-improvement and exemplary government rather than a detached system of abstract rules; his teachings became foundational to several East Asian traditions.",
+      "related": [
+        "confucianism",
+        "confucian-ren",
+        "confucian-li"
+      ]
+    },
+    {
+      "id": "cornel-west",
+      "name": "Cornel West",
+      "image": "cornel-west.jxl",
+      "birthYear": 1953,
+      "deathYear": null,
+      "summary": "Cornel West draws on pragmatism, Christianity, and Black intellectual traditions to examine racism, democracy, and social suffering. His public philosophy connects criticism of domination with solidarity and a demanding account of democratic participation and moral witness.",
+      "related": [
+        "classical-pragmatism",
+        "anti-racism",
+        "democracy"
+      ]
+    },
+    {
+      "id": "david-hume",
+      "name": "David Hume",
+      "image": "david-hume.jxl",
+      "birthYear": 1711,
+      "deathYear": 1776,
+      "summary": "David Hume examined how experience, habit, and sentiment shape human belief and action. His arguments about induction, causation, and the self challenge claims to rational certainty, while his moral philosophy gives feeling a central role in evaluation.",
+      "related": [
+        "induction-problem",
+        "causation",
+        "bundle-theory"
+      ]
+    },
+    {
+      "id": "derek-parfit",
+      "name": "Derek Parfit",
+      "image": "derek-parfit.jxl",
+      "birthYear": 1942,
+      "deathYear": 2017,
+      "summary": "Derek Parfit used carefully constructed cases to investigate personal identity, rationality, and ethics. His accounts of psychological continuity challenge the moral importance assigned to strict identity, while his work on future populations exposes tensions among plausible principles of aggregation.",
+      "related": [
+        "personal-identity",
+        "teletransportation-paradox",
+        "parfit-s-repugnant-conclusion"
+      ]
+    },
+    {
+      "id": "erasmus",
+      "name": "Desiderius Erasmus",
+      "image": "erasmus.jxl",
+      "birthYear": 1466,
+      "deathYear": 1536,
+      "summary": "Desiderius Erasmus was a Renaissance humanist who used classical learning, satire, and textual scholarship to criticize religious and social abuses. He defended education and moral reform while disputing claims that left no room for human freedom. His birth year is disputed; 1466 is one scholarly dating.",
+      "related": [
+        "humanism",
+        "free-will"
+      ]
+    },
+    {
+      "id": "edmund-husserl",
+      "name": "Edmund Husserl",
+      "image": "edmund-husserl.jxl",
+      "birthYear": 1859,
+      "deathYear": 1938,
+      "summary": "Edmund Husserl founded phenomenology as a disciplined examination of conscious experience and its structures. His analyses of intentionality and the suspension of ordinary assumptions seek to clarify how objects have meaning for us and how knowledge can be grounded.",
+      "related": [
+        "phenomenology",
+        "intentionality",
+        "phenomenological-description"
+      ]
+    },
+    {
+      "id": "epictetus",
+      "name": "Epictetus",
+      "image": "epictetus.jxl",
+      "birthYear": 50,
+      "deathYear": 135,
+      "summary": "Epictetus was a Stoic teacher whose teachings survive principally through his student Arrian. He distinguished what depends on our judgment and choice from external events, treating freedom as disciplined use of impressions and action rather than control over circumstances. His dates are approximate.",
+      "related": [
+        "stoicism",
+        "agency",
+        "virtue"
+      ]
+    },
+    {
+      "id": "francis-bacon",
+      "name": "Francis Bacon",
+      "image": "francis-bacon.jxl",
+      "birthYear": 1561,
+      "deathYear": 1626,
+      "summary": "Francis Bacon advocated a reform of inquiry based on organized observation, experiment, and careful generalization. His account of the idols describes recurrent obstacles to understanding, connecting intellectual discipline with institutions for producing useful knowledge.",
+      "related": [
+        "inductive-reasoning",
+        "scientific-method",
+        "empiricism"
+      ]
+    },
+    {
+      "id": "friedrich-nietzsche",
+      "name": "Friedrich Nietzsche",
+      "image": "friedrich-nietzsche.jxl",
+      "birthYear": 1844,
+      "deathYear": 1900,
+      "summary": "Friedrich Nietzsche investigated how moral values arise and how they can serve different forms of life. His genealogical critiques of morality, discussions of nihilism, and experiments in perspective challenge inherited ideals while asking what affirmative value creation could involve.",
+      "related": [
+        "genealogical-critique",
+        "perspectivism"
+      ]
+    },
+    {
+      "id": "elizabeth-anscombe",
+      "name": "G. E. M. Anscombe",
+      "image": "elizabeth-anscombe.jxl",
+      "birthYear": 1919,
+      "deathYear": 2001,
+      "summary": "G. E. M. Anscombe transformed discussions of action by examining intention and the reasons that make conduct intelligible. Her criticism of modern moral philosophy helped renew interest in virtue ethics, while her ethical work defended the importance of what an agent deliberately chooses to do.",
+      "related": [
+        "agency",
+        "virtue-ethics",
+        "doctrine-of-double-effect"
+      ]
+    },
+    {
+      "id": "g-e-moore",
+      "name": "G. E. Moore",
+      "image": "g-e-moore.jxl",
+      "birthYear": 1873,
+      "deathYear": 1958,
+      "summary": "G. E. Moore argued for careful analysis and defended common-sense judgments against skeptical and idealist theories. His ethics questioned attempts to define goodness in natural terms, and his puzzle about assertion and belief continues to shape philosophical discussions of rationality.",
+      "related": [
+        "ethical-non-naturalism",
+        "moore-s-paradox",
+        "epistemology"
+      ]
+    },
+    {
+      "id": "georg-hegel",
+      "name": "Georg Wilhelm Friedrich Hegel",
+      "image": "georg-hegel.jxl",
+      "birthYear": 1770,
+      "deathYear": 1831,
+      "summary": "Georg Wilhelm Friedrich Hegel developed an account of thought, history, and social life through changing forms of understanding and their internal tensions. His discussions of recognition and ethical institutions connect freedom with relations through which people become able to act as self-conscious agents.",
+      "related": [
+        "german-idealism",
+        "dialectic"
+      ]
+    },
+    {
+      "id": "george-berkeley",
+      "name": "George Berkeley",
+      "image": "george-berkeley.jxl",
+      "birthYear": 1685,
+      "deathYear": 1753,
+      "summary": "George Berkeley argued against material substance understood as existing independently of perception. His immaterialism treats sensible objects as ideas perceived by minds, while appealing to God to explain their order and continuity; the view aims to defend common experience rather than dismiss it.",
+      "related": [
+        "idealism",
+        "immaterialism",
+        "perception"
+      ]
+    },
+    {
+      "id": "gottfried-leibniz",
+      "name": "Gottfried Wilhelm Leibniz",
+      "image": "gottfried-leibniz.jxl",
+      "birthYear": 1646,
+      "deathYear": 1716,
+      "summary": "Gottfried Wilhelm Leibniz developed a metaphysics of simple substances called monads and defended principles of sufficient reason and the identity of indiscernibles. His work connects logic, possibility, and divine choice with an account of a world whose order is intelligible.",
+      "related": [
+        "principle-of-sufficient-reason",
+        "possible-world"
+      ]
+    },
+    {
+      "id": "hannah-arendt",
+      "name": "Hannah Arendt",
+      "image": "hannah-arendt.jxl",
+      "birthYear": 1906,
+      "deathYear": 1975,
+      "summary": "Hannah Arendt examined political action, plurality, totalitarianism, and the conditions of public freedom. Her accounts of judgment and responsibility ask how people think and act within institutions, including circumstances in which ordinary participation helps sustain grave wrongdoing.",
+      "related": [
+        "totalitarianism",
+        "agency"
+      ]
+    },
+    {
+      "id": "henry-david-thoreau",
+      "name": "Henry David Thoreau",
+      "image": "henry-david-thoreau.jxl",
+      "birthYear": 1817,
+      "deathYear": 1862,
+      "summary": "Henry David Thoreau examined deliberate living, nature, and the moral limits of obedience to the state. His reflections on simplicity connect personal practice with criticism of social conformity, while his defense of resisting injustice helped shape later accounts of civil disobedience.",
+      "related": [
+        "civil-disobedience",
+        "transcendentalism",
+        "environmental-ethics"
+      ]
+    },
+    {
+      "id": "immanuel-kant",
+      "name": "Immanuel Kant",
+      "image": "immanuel-kant.jxl",
+      "birthYear": 1724,
+      "deathYear": 1804,
+      "summary": "Immanuel Kant argued that experience depends on structures supplied by human cognition, while limiting theoretical knowledge to possible experience. In ethics he grounded obligation in rational autonomy and the categorical imperative, joining questions about knowledge, freedom, and universal moral law.",
+      "related": [
+        "transcendental-idealism",
+        "categorical-imperative",
+        "autonomy"
+      ]
+    },
+    {
+      "id": "jean-jacques-rousseau",
+      "name": "Jean-Jacques Rousseau",
+      "image": "jean-jacques-rousseau.jxl",
+      "birthYear": 1712,
+      "deathYear": 1778,
+      "summary": "Jean-Jacques Rousseau investigated how social institutions transform freedom, dependence, and inequality. His social-contract theory connects legitimate political authority with collective self-government, while his writings on education examine how development can be protected from corrupting forms of social comparison.",
+      "related": [
+        "social-contract",
+        "equality"
+      ]
+    },
+    {
+      "id": "john-locke",
+      "name": "John Locke",
+      "image": "john-locke.jxl",
+      "birthYear": 1632,
+      "deathYear": 1704,
+      "summary": "John Locke examined the origins and limits of human understanding while defending natural rights and government by consent. His accounts of personal identity and political legitimacy became central points of reference for later debates about memory, property, toleration, and authority.",
+      "related": [
+        "empiricism",
+        "personal-identity",
+        "social-contract"
+      ]
+    },
+    {
+      "id": "john-rawls",
+      "name": "John Rawls",
+      "image": "john-rawls.jxl",
+      "birthYear": 1921,
+      "deathYear": 2002,
+      "summary": "John Rawls developed justice as fairness through a hypothetical choice situation that excludes knowledge of one's social advantages. His principles of justice and method of reflective equilibrium connect institutional design with judgments about equal citizenship and fair cooperation.",
+      "related": [
+        "original-position",
+        "veil-of-ignorance",
+        "reflective-equilibrium"
+      ]
+    },
+    {
+      "id": "john-stuart-mill",
+      "name": "John Stuart Mill",
+      "image": "john-stuart-mill.jxl",
+      "birthYear": 1806,
+      "deathYear": 1873,
+      "summary": "John Stuart Mill defended utilitarian ethics while emphasizing liberty, individuality, and the value of open discussion. He distinguished kinds of pleasure and examined when social or legal interference with a person's conduct can be justified, influencing liberal and feminist political thought.",
+      "related": [
+        "utilitarianism",
+        "harm-principle",
+        "freedom-of-expression"
+      ]
+    },
+    {
+      "id": "karl-marx",
+      "name": "Karl Marx",
+      "image": "karl-marx.jxl",
+      "birthYear": 1818,
+      "deathYear": 1883,
+      "summary": "Karl Marx analyzed capitalism through labor, class relations, and the historical organization of production. His critique connects economic institutions with alienation and domination, treating philosophy as part of an effort to understand and transform social conditions rather than interpret them in isolation.",
+      "related": [
+        "marxism",
+        "alienation",
+        "class-struggle"
+      ]
+    },
+    {
+      "id": "ludwig-wittgenstein",
+      "name": "Ludwig Wittgenstein",
+      "image": "ludwig-wittgenstein.jxl",
+      "birthYear": 1889,
+      "deathYear": 1951,
+      "summary": "Ludwig Wittgenstein's early work examined the relation between language, logic, and the world. His later philosophy shifted toward the varied uses of language in human practices, using cases about rules, meaning, and understanding to loosen the grip of misleading philosophical pictures.",
+      "related": [
+        "language-game",
+        "rule-following-problem",
+        "family-resemblance"
+      ]
+    },
+    {
+      "id": "marcus-aurelius",
+      "name": "Marcus Aurelius",
+      "image": "marcus-aurelius.jxl",
+      "birthYear": 121,
+      "deathYear": 180,
+      "summary": "Marcus Aurelius was a Roman emperor whose private reflections are now known as the Meditations. Drawing on Stoicism, he examined duty, impermanence, and the distinction between events and our judgments about them while reflecting on life within a larger human community.",
+      "related": [
+        "stoicism",
+        "duty",
+        "cosmopolitanism"
+      ]
+    },
+    {
+      "id": "martha-nussbaum",
+      "name": "Martha Nussbaum",
+      "image": "martha-nussbaum.jxl",
+      "birthYear": 1947,
+      "deathYear": null,
+      "summary": "Martha Nussbaum connects ancient philosophy with contemporary questions about justice, emotion, and human development. Her capabilities approach evaluates social arrangements by what people are actually able to do and be, emphasizing dignity and the conditions needed for a fully human life.",
+      "related": [
+        "capabilities-approach"
+      ]
+    },
+    {
+      "id": "martin-heidegger",
+      "name": "Martin Heidegger",
+      "image": "martin-heidegger.jxl",
+      "birthYear": 1889,
+      "deathYear": 1976,
+      "summary": "Martin Heidegger investigated the question of being through an analysis of human existence as situated, practical, and temporal. His discussions of being-in-the-world, anxiety, and mortality influenced phenomenology and existentialism; his commitment to Nazism remains essential context for assessing his life and thought.",
+      "related": [
+        "being",
+        "phenomenology",
+        "authenticity"
+      ]
+    },
+    {
+      "id": "mary-wollstonecraft",
+      "name": "Mary Wollstonecraft",
+      "image": "mary-wollstonecraft.jxl",
+      "birthYear": 1759,
+      "deathYear": 1797,
+      "summary": "Mary Wollstonecraft defended women's equal rational and moral standing and criticized education that cultivated dependence rather than judgment. Her political philosophy links freedom and virtue with social conditions, challenging inherited hierarchies within both domestic and public life.",
+      "related": [
+        "feminism",
+        "equality",
+        "autonomy"
+      ]
+    },
+    {
+      "id": "mencius",
+      "name": "Mencius",
+      "image": "mencius.jxl",
+      "birthYear": -372,
+      "deathYear": -289,
+      "summary": "Mencius developed the Confucian claim that human beings possess beginnings of moral concern that require cultivation. He connected humane government with people's material security and argued that a ruler who abandons ethical responsibilities can lose legitimate authority. His dates follow a traditional, approximate chronology.",
+      "related": [
+        "confucianism",
+        "virtue-ethics",
+        "ethics"
+      ]
+    },
+    {
+      "id": "montaigne",
+      "name": "Michel de Montaigne",
+      "image": "montaigne.jxl",
+      "birthYear": 1533,
+      "deathYear": 1592,
+      "summary": "Michel de Montaigne made the essay a vehicle for examining judgment, custom, friendship, and mortality through his own experience. His skeptical comparisons of cultures and opinions challenge overconfidence while seeking practical ways to live with uncertainty.",
+      "related": [
+        "skepticism",
+        "cultural-relativism",
+        "friendship"
+      ]
+    },
+    {
+      "id": "michel-foucault",
+      "name": "Michel Foucault",
+      "image": "michel-foucault.jxl",
+      "birthYear": 1926,
+      "deathYear": 1984,
+      "summary": "Michel Foucault investigated how institutions and practices produce forms of knowledge, authority, and subjectivity. His histories of punishment, medicine, and sexuality examine the interaction of power and truth, while later work explores ethical practices through which people shape their lives.",
+      "related": [
+        "genealogical-critique",
+        "domination",
+        "self"
+      ]
+    },
+    {
+      "id": "mozi",
+      "name": "Mozi",
+      "image": "mozi.jxl",
+      "birthYear": -470,
+      "deathYear": -391,
+      "summary": "Mozi challenged inherited privilege and costly ritual while defending impartial concern and policies judged by their benefit to people. The Mohist tradition also developed arguments about language, knowledge, and standards of reasoning. His birth and death years are approximate.",
+      "related": [
+        "mohism",
+        "impartiality",
+        "consequentialism"
+      ]
+    },
+    {
+      "id": "nagarjuna",
+      "name": "Nagarjuna",
+      "image": "nagarjuna.jxl",
+      "birthYear": 150,
+      "deathYear": 250,
+      "summary": "Nagarjuna was a Buddhist philosopher whose arguments against intrinsic nature helped establish the Madhyamaka tradition. He connected emptiness with dependent origination, challenging attempts to treat ordinary things or emptiness itself as independently existing foundations. His life dates are approximate.",
+      "related": [
+        "madhyamaka",
+        "buddhist-emptiness",
+        "buddhist-dependent-origination"
+      ]
+    },
+    {
+      "id": "machiavelli",
+      "name": "Niccolò Machiavelli",
+      "image": "machiavelli.jxl",
+      "birthYear": 1469,
+      "deathYear": 1527,
+      "summary": "Niccolò Machiavelli examined political power through historical examples and the conditions of effective rule. The Prince and the Discourses explore leadership, conflict, fortune, and republican institutions, leaving a contested legacy about the relationship between political success and moral judgment.",
+      "related": [
+        "republicanism",
+        "state"
+      ]
+    },
+    {
+      "id": "peter-singer",
+      "name": "Peter Singer",
+      "image": "peter-singer.jxl",
+      "birthYear": 1946,
+      "deathYear": null,
+      "summary": "Peter Singer applies consequentialist reasoning to animal ethics, global poverty, and personal responsibility. His arguments challenge species-based exclusions from moral concern and ask how the ability to prevent serious suffering changes what relatively affluent people ought to do.",
+      "related": [
+        "animal-ethics",
+        "utilitarianism",
+        "drowning-child"
+      ]
+    },
+    {
+      "id": "plato",
+      "name": "Plato",
+      "image": "plato.jxl",
+      "birthYear": -428,
+      "deathYear": -348,
+      "summary": "Plato founded the Academy in Athens and wrote dialogues examining knowledge, justice, love, and the good life. His accounts of Forms and the education of the soul connect metaphysics with ethics and politics, while the dialogue form often leaves readers to assess competing arguments. Both catalog dates are approximate.",
+      "related": [
+        "platonism",
+        "ring-of-gyges",
+        "socrates",
+        "aristotle"
+      ]
+    },
+    {
+      "id": "plotinus",
+      "name": "Plotinus",
+      "image": "plotinus.jxl",
+      "birthYear": 204,
+      "deathYear": 270,
+      "summary": "Plotinus developed a form of Platonism in which reality proceeds from the One through Intellect and Soul. His writings connect metaphysical explanation with the soul's effort to understand itself and turn toward its source. His birth year is approximate.",
+      "related": [
+        "neoplatonism",
+        "platonism"
+      ]
+    },
+    {
+      "id": "rene-descartes",
+      "name": "René Descartes",
+      "image": "rene-descartes.jxl",
+      "birthYear": 1596,
+      "deathYear": 1650,
+      "summary": "René Descartes used systematic doubt to seek secure foundations for knowledge and argued that thinking reveals the thinker's existence. His distinction between mind and body shaped modern philosophy, while his work in mathematics and natural philosophy connected metaphysical foundations with scientific explanation.",
+      "related": [
+        "methodological-skepticism",
+        "cartesian-dualism",
+        "rationalism"
+      ]
+    },
+    {
+      "id": "seneca",
+      "name": "Seneca",
+      "image": "seneca.jxl",
+      "birthYear": -4,
+      "deathYear": 65,
+      "summary": "Seneca was a Roman Stoic writer, statesman, and adviser to Nero. His essays and letters examine anger, mortality, friendship, and the use of wealth, connecting philosophical reflection with daily exercises in judgment and self-command.",
+      "related": [
+        "stoicism",
+        "friendship"
+      ]
+    },
+    {
+      "id": "simone-de-beauvoir",
+      "name": "Simone de Beauvoir",
+      "image": "simone-de-beauvoir.jxl",
+      "birthYear": 1908,
+      "deathYear": 1986,
+      "summary": "Simone de Beauvoir connected existential freedom with the social conditions that constrain concrete lives. The Second Sex analyzes the production of women's subordinate status, while her ethics examines ambiguity, mutual freedom, and responsibility toward other people.",
+      "related": [
+        "existentialism",
+        "feminism",
+        "freedom"
+      ]
+    },
+    {
+      "id": "socrates",
+      "name": "Socrates",
+      "image": "socrates.jxl",
+      "birthYear": -470,
+      "deathYear": -399,
+      "summary": "Socrates was an Athenian philosopher known through the writings of others, especially Plato and Xenophon. His questioning of definitions and demands for reasons made ethical self-examination central to philosophy; his trial and execution became enduring cases for thinking about justice and civic obligation. His birth year is approximate.",
+      "related": [
+        "socratic-questioning",
+        "virtue-ethics",
+        "plato"
+      ]
+    },
+    {
+      "id": "soren-kierkegaard",
+      "name": "Søren Kierkegaard",
+      "image": "soren-kierkegaard.jxl",
+      "birthYear": 1813,
+      "deathYear": 1855,
+      "summary": "Søren Kierkegaard used pseudonymous and religious writings to examine choice, anxiety, despair, and commitment. His focus on how an individual lives a truth challenges attempts to resolve existence through detached systems, making him an important precursor of existentialism.",
+      "related": [
+        "existentialism",
+        "christian-existentialism",
+        "authenticity"
+      ]
+    },
+    {
+      "id": "thomas-aquinas",
+      "name": "Thomas Aquinas",
+      "image": "thomas-aquinas.jxl",
+      "birthYear": 1225,
+      "deathYear": 1274,
+      "summary": "Thomas Aquinas brought Aristotelian philosophy into dialogue with Christian theology through systematic argument and engagement with objections. His accounts of natural law, virtue, and being connect human practical reasoning with a broader metaphysics of creation. His birth year is approximate.",
+      "related": [
+        "thomism",
+        "virtue-ethics"
+      ]
+    },
+    {
+      "id": "thomas-hobbes",
+      "name": "Thomas Hobbes",
+      "image": "thomas-hobbes.jxl",
+      "birthYear": 1588,
+      "deathYear": 1679,
+      "summary": "Thomas Hobbes explained political authority through the need to escape insecurity and conflict. His social-contract argument gives a sovereign broad powers to maintain peace, connecting an account of human motivation with a materialist approach to nature and mind.",
+      "related": [
+        "social-contract",
+        "state-of-nature",
+        "materialism"
+      ]
+    },
+    {
+      "id": "william-james",
+      "name": "William James",
+      "image": "william-james.jxl",
+      "birthYear": 1842,
+      "deathYear": 1910,
+      "summary": "William James helped develop pragmatism and investigated consciousness, religious experience, and the practical significance of belief. He emphasized the plurality of human experience and assessed ideas through their consequences for inquiry and life, without reducing truth to whatever is convenient.",
+      "related": [
+        "classical-pragmatism",
+        "philosophy-of-religion"
+      ]
+    },
+    {
+      "id": "zhuangzi",
+      "name": "Zhuangzi",
+      "image": "zhuangzi.jxl",
+      "birthYear": -369,
+      "deathYear": -286,
+      "summary": "Zhuangzi is associated with a Daoist text that uses stories, dialogue, and humor to unsettle rigid distinctions and claims to privileged perspective. Its discussions of skill, transformation, and spontaneous action question how fixed judgments can constrain a life. The text has multiple authors, and the catalog dates for its namesake are approximate.",
+      "related": [
+        "daoism",
+        "perspectivism",
+        "virtue-of-wu-wei"
+      ]
+    }
+  ]
+}

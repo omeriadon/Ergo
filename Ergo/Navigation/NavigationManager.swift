@@ -10,29 +10,21 @@ import SwiftUI
 @MainActor
 @Observable
 final class NavigationManager {
-	// Currently visible tab
+	/// Currently visible tab
 	var selectedTab: AppTab = .check
 
 	// Independent navigation histories
-	var searchPath: [ItemRoute] = []
 	var libraryPath: [ItemRoute] = []
 	var debatePath: [DebateRoute] = []
 
-	// Currently presented sheet
+	/// Currently presented sheet
 	var presentedSheet: AppSheet?
 
 	// MARK: - Item Navigation
 
-	func open(_ route: ItemRoute, from tab: ItemTab) {
-		switch tab {
-			case .search:
-				selectedTab = .search
-				searchPath.append(route)
-
-			case .library:
-				selectedTab = .library
-				libraryPath.append(route)
-		}
+	func open(_ route: ItemRoute, from _: ItemTab) {
+		selectedTab = .library
+		libraryPath.append(route)
 	}
 
 	// MARK: - Debate Navigation
@@ -48,7 +40,6 @@ final class NavigationManager {
 		presentedSheet = sheet
 	}
 
-
 	func dismissSheet() {
 		presentedSheet = nil
 	}
@@ -63,8 +54,6 @@ final class NavigationManager {
 				debatePath.removeAll()
 			case .library:
 				libraryPath.removeAll()
-			case .search:
-				searchPath.removeAll()
 		}
 	}
 }

@@ -16,6 +16,8 @@ final class CatalogStore {
 	private(set) var fallacies: FallacyCatalog = .init(fallacies: [])
 	private(set) var razors: RazorCatalog = .init(razors: [])
 	private(set) var logicSymbols: LogicSymbolCatalog = .init(symbols: [])
+	private(set) var paradoxes: ParadoxCatalog = .init(paradoxes: [])
+	private(set) var philosophers: PhilosopherCatalog = .init(philosophers: [])
 
 	private(set) var isLoaded = false
 
@@ -25,13 +27,17 @@ final class CatalogStore {
 		async let fallacies: FallacyCatalog = Self.decode("fallacies")
 		async let razors: RazorCatalog = Self.decode("razors")
 		async let logicSymbols: LogicSymbolCatalog = Self.decode("symbols")
+		async let paradoxes: ParadoxCatalog = Self.decode("paradoxes")
+		async let philosophers: PhilosopherCatalog = Self.decode("philosophers")
 
 		let results = try await (
 			biases,
 			concepts,
 			fallacies,
 			razors,
-			logicSymbols
+			logicSymbols,
+			paradoxes,
+			philosophers
 		)
 
 		self.biases = results.0
@@ -39,11 +45,13 @@ final class CatalogStore {
 		self.fallacies = results.2
 		self.razors = results.3
 		self.logicSymbols = results.4
+		self.paradoxes = results.5
+		self.philosophers = results.6
 
 		isLoaded = true
 	}
 
-	nonisolated private static func decode<T: Decodable & Sendable>(
+	private nonisolated static func decode<T: Decodable & Sendable>(
 		_ name: String
 	) throws -> T {
 		guard let url = Bundle.main.url(

@@ -1,0 +1,62 @@
+{
+  "categories": {
+    "biases": [
+      "attention",
+      "attribution",
+      "belief-assessment",
+      "decision-making",
+      "memory",
+      "research-and-measurement",
+      "social-judgment"
+    ],
+    "fallacies": [
+      "causal-reasoning",
+      "ethics-history-and-economics",
+      "formal-logic",
+      "generalization-and-sampling",
+      "language-and-ambiguity",
+      "premises-and-evidence",
+      "probability-and-statistics",
+      "relevance-and-appeals",
+      "relevance-and-debate"
+    ],
+    "razors": [
+      "attribution",
+      "decision-making",
+      "evidence",
+      "interpretation",
+      "parsimony"
+    ],
+    "symbols": [
+      "modal-logic",
+      "predicate-logic",
+      "proof-notation",
+      "propositional-logic",
+      "set-notation"
+    ],
+    "concepts": [
+      "aesthetics-and-culture",
+      "decision-theory-systems-and-methods",
+      "epistemology-and-philosophy-of-science",
+      "ethics-and-value",
+      "language-meaning-and-interpretation",
+      "logic-and-reasoning",
+      "memory-learning-and-reported-psychological-effects",
+      "metaphysics-and-ontology",
+      "mind-consciousness-and-agency",
+      "philosophical-schools-and-isms",
+      "political-ideologies-and-isms",
+      "political-philosophy-and-institutions",
+      "reasoning-methods",
+      "religion-asian-african-and-indigenous-philosophy",
+      "thought-experiments"
+    ],
+    "paradoxes": [
+      "ethics-and-value",
+      "knowledge-and-meaning",
+      "logic-and-language",
+      "metaphysics"
+    ],
+    "philosophers": []
+  }
+}
