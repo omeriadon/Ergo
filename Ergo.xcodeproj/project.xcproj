@@ -10,6 +10,15 @@
       "Base",
     ],
   },
+  "packages": [
+    {
+      "kind": "remote",
+      "repository": "https://github.com/ordo-one/FuzzyMatch",
+      "version": {
+        "up-to-next-major-version": "1.4.0",
+      },
+    },
+  ],
   "files": [
     {
       "kind": "folder",
@@ -43,6 +52,13 @@
         "compile-sources",
         "frameworks",
         "resources",
+      ],
+      "package-product-members": [
+        {
+          "package": "FuzzyMatch",
+          "product-name": "FuzzyMatch",
+          "build-phase": { "build-phase": "frameworks" },
+        },
       ],
       "build-settings": {
         "ASSETCATALOG_COMPILER_APPICON_NAME": "Ergo",

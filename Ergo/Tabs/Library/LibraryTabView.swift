@@ -15,7 +15,7 @@ private struct CardView: View {
 		HStack(alignment: .center) {
 			VStack(alignment: .leading) {
 				Text(title)
-					.font(.title3)
+					.font(.title2)
 					.padding(.bottom)
 			}
 
@@ -43,7 +43,22 @@ struct LibraryTabView: View {
 		ScrollView {
 			if searchPresented {
 				if searchTerm.isEmpty {
-					ContentUnavailableView("Search Something", image: "Ergo")
+					VStack(spacing: 20) {
+						Image("Ergo")
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+							.foregroundStyle(.accent.gradient)
+							.frame(width: 50, height: 50)
+						Text("Search Something")
+							.font(.title3)
+					}
+					.padding(.top, 90)
+					.listRowBackground(Color.clear)
+					.frame(maxWidth: .infinity, alignment: .center)
+					.transition(.opacity)
+				} else {
+					//					results here
+					//									.transition(.opacity)
 				}
 
 			} else {
@@ -63,30 +78,32 @@ struct LibraryTabView: View {
 							CardView(title: "Fallacies", color: .blue)
 						}
 
-						NavigationLink(value: LibraryRoute.category(.concepts)) {
+						NavigationLink(value: LibraryRoute.category(.symbols)) {
 							CardView(title: "Symbols", color: .brown)
 						}
 					}
 
 					GridRow {
-						NavigationLink(value: LibraryRoute.category(.concepts)) {
+						NavigationLink(value: LibraryRoute.category(.paradoxes)) {
 							CardView(title: "Paradoxes", color: .mint)
 						}
 
-						NavigationLink(value: LibraryRoute.category(.concepts)) {
+						NavigationLink(value: LibraryRoute.category(.philosophers)) {
 							CardView(title: "Philosophers", color: .purple)
 						}
 					}
 
 					GridRow {
-						NavigationLink(value: LibraryRoute.category(.concepts)) {
+						NavigationLink(value: LibraryRoute.category(.razors)) {
 							CardView(title: "Razors", color: .yellow)
 						}
 					}
 				}
 				.padding()
+				.transition(.opacity)
 			}
 		}
+		.animation(.easeInOut(duration: 0.1), value: "\(searchPresented)\(searchTerm.isEmpty)")
 		.buttonStyle(.plain)
 		.searchable(
 			text: $searchTerm,
@@ -95,6 +112,7 @@ struct LibraryTabView: View {
 			prompt: "Search anything"
 		)
 		.navigationBarTitleDisplayMode(.inline)
+		.navigationTitle("Library")
 		.toolbar {
 			ToolbarItem(placement: .title) {
 				Text("Library")

@@ -36,7 +36,7 @@ struct ContentView: View {
 				Label("Debate", systemImage: "bubble.left.and.text.bubble.right")
 			}
 
-			Tab(value: .library) {
+			Tab(value: .library, role: .prominent) {
 				NavigationStack(path: $router.libraryPath) {
 					LibraryTabView()
 						.navigationDestination(for: LibraryRoute.self) { route in
@@ -88,5 +88,9 @@ struct ContentView: View {
 		.environment(catalog)
 		.onAppear {
 			thing.selectedTab = .library
+			thing.libraryPath = [.category(.symbols)]
+			Task {
+				try? await catalog.load()
+			}
 		}
 }
