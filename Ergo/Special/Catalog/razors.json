@@ -1,0 +1,896 @@
+{
+  "razors": [
+    {
+      "id": "25-plus-razor",
+      "name": "25-plus razor",
+      "aliases": [
+        "25+ razor"
+      ],
+      "symbolName": "scissors",
+      "summary": "Avoid dismissing unfamiliar technologies solely because younger people value them.",
+      "body": "Unfamiliarity can masquerade as informed criticism. The age label is rhetorical and does not identify a scientifically established threshold. The age cutoff is arbitrary advice, not a scientific threshold.",
+      "lensQuestion": "Am I evaluating this unfamiliar trend by its actual merits or by discomfort with a younger audience?",
+      "examples": [
+        {
+          "text": "An older manager rejects a new communication format before examining how clients use it.",
+          "note": "Investigating the use case is more informative than treating either age group as automatically right."
+        }
+      ],
+      "limitations": [
+        "The age cutoff is arbitrary advice, not a scientific threshold."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "alders-razor",
+      "name": "Alder's razor",
+      "aliases": [
+        "Newton's flaming laser sword"
+      ],
+      "symbolName": "scissors",
+      "summary": "Restrict debate to questions that observation or experiment can settle.",
+      "body": "The rule narrows a method of inquiry rather than settling every worthwhile question. Ethics, mathematics, and conceptual analysis cannot simply be dismissed because they are not experiments. A contestable methodological stance; not a theorem about meaning or value.",
+      "lensQuestion": "Which observation could distinguish the competing claims?",
+      "examples": [
+        {
+          "text": "Two accounts say the world has different invisible causes, but stipulate identical observable consequences forever.",
+          "note": "There is no proposed empirical test between them. Alder's stance would set this empirical debate aside."
+        }
+      ],
+      "limitations": [
+        "A contestable methodological stance; not a theorem about meaning or value."
+      ],
+      "related": [],
+      "tags": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "boredom-razor",
+      "name": "Boredom razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Stepping away from stimulation can provide space to reconsider a problem.",
+      "body": "Periods without new stimulation can give room for reflection. Restlessness does not guarantee insight, and some problems require new information rather than incubation. Context-dependent advice.",
+      "lensQuestion": "Would stepping away from constant input help me reconsider the problem?",
+      "examples": [
+        {
+          "text": "After repeatedly rereading an unproductive draft, a writer takes a quiet walk before revising.",
+          "note": "The pause may permit a new perspective, but it does not replace the later work of checking the draft."
+        }
+      ],
+      "limitations": [
+        "Context-dependent advice."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "bragging-razor",
+      "name": "Bragging razor",
+      "aliases": [
+        "Braggers' razor"
+      ],
+      "symbolName": "scissors",
+      "summary": "Discount self-promotional claims until independently supported.",
+      "body": "Self-presentation is often selected for persuasive effect. Modesty and confidence are both compatible with genuine achievement or deception. Popular numerical prescriptions such as halving claims have no general justification.",
+      "lensQuestion": "What independent evidence supports this person's self-description?",
+      "examples": [
+        {
+          "text": "A seller repeatedly advertises extraordinary trading returns but refuses to show an audited record.",
+          "note": "The promotional claim supplies a reason to request evidence, not a numerical estimate of the true return."
+        }
+      ],
+      "limitations": [
+        "Popular numerical prescriptions such as halving claims have no general justification."
+      ],
+      "related": [],
+      "tags": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "charisma-razor",
+      "name": "Charisma razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Evaluate the argument separately from the speaker's charm.",
+      "body": "Delivery can change perceived credibility independently of evidence. The opposite appearance, awkwardness, is also not a reliable signal of truth. Lack of charisma also does not establish credibility.",
+      "lensQuestion": "Would I accept the same argument in writing without this speaker's delivery?",
+      "examples": [
+        {
+          "text": "A polished presenter offers an investment claim with no supporting data.",
+          "note": "Removing the performance leaves an evidential gap that charm cannot fill."
+        }
+      ],
+      "limitations": [
+        "Lack of charisma also does not establish credibility."
+      ],
+      "related": [
+        "halo-effect"
+      ],
+      "tags": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "chattons-anti-razor",
+      "name": "Chatton's anti-razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Add explanatory resources when fewer resources cannot account for what must be explained.",
+      "body": "Necessary complexity is not an offense against parsimony. The additional entity or mechanism still needs justification rather than being introduced merely to save a favored theory. A counterweight to excessive parsimony.",
+      "lensQuestion": "Have explanatory resources been removed even though the remaining account cannot explain the facts?",
+      "examples": [
+        {
+          "text": "One mechanism explains a machine's overheating, but a separate electrical fault explains its intermittent shutdowns.",
+          "note": "A second mechanism is warranted if the one-cause account cannot explain both observations."
+        }
+      ],
+      "limitations": [
+        "A counterweight to excessive parsimony."
+      ],
+      "related": [
+        "occams-razor"
+      ],
+      "tags": [
+        "parsimony"
+      ]
+    },
+    {
+      "id": "discomfort-razor",
+      "name": "Discomfort razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Do not automatically reject opportunities because they involve discomfort.",
+      "body": "Some useful activities are initially uncomfortable because they are unfamiliar. Discomfort alone does not distinguish development from injury or exploitation. Discomfort does not by itself establish growth or benefit.",
+      "lensQuestion": "Is this discomfort a manageable cost of learning or a signal of genuine harm?",
+      "examples": [
+        {
+          "text": "A novice avoids asking any questions because speaking in a study group feels awkward.",
+          "note": "The awkwardness may be a manageable obstacle to learning; dangerous or degrading treatment would be different."
+        }
+      ],
+      "limitations": [
+        "Discomfort does not by itself establish growth or benefit."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "early-late-razor",
+      "name": "Early–late razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Different communities may reflect different adoption stages.",
+      "body": "Different communities can encounter innovations at different times. Platform stereotypes and timing rules can become obsolete quickly. Platform-specific timing claims are unstable generalizations.",
+      "lensQuestion": "Does this community provide evidence about adoption timing relevant to my actual audience?",
+      "examples": [
+        {
+          "text": "A niche forum discusses a product long before it appears in a mainstream trade publication.",
+          "note": "This may indicate different audiences, but the platform alone cannot establish future adoption."
+        }
+      ],
+      "limitations": [
+        "Platform-specific timing claims are unstable generalizations."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "einsteins-razor",
+      "name": "Einstein's razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Simplify an account as far as possible while preserving necessary adequacy.",
+      "body": "Simplicity is constrained by what an account must explain. Removing complexity that carries necessary information defeats the purpose of simplification. The familiar slogan is a paraphrase with uncertain exact attribution.",
+      "lensQuestion": "What can be removed without losing explanatory or predictive adequacy?",
+      "examples": [
+        {
+          "text": "A useful model needs temperature and pressure, but a shorter model discards pressure and misses known outcomes.",
+          "note": "The shorter model is too simple for the task, despite containing fewer variables."
+        }
+      ],
+      "limitations": [
+        "The familiar slogan is a paraphrase with uncertain exact attribution."
+      ],
+      "related": [
+        "occams-razor"
+      ],
+      "tags": [
+        "parsimony"
+      ]
+    },
+    {
+      "id": "elons-razor",
+      "name": "Elon's razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "The most entertaining outcome is supposedly the most likely.",
+      "body": "The saying treats entertainment as if it predicted outcomes. It is best understood as playful speculation rather than a reliable guide to belief. A playful conjecture; no established probability principle supports it.",
+      "lensQuestion": "Am I confusing an entertaining story with a well-supported forecast?",
+      "examples": [
+        {
+          "text": "A dramatic corporate reversal is judged likely because it would make a compelling film.",
+          "note": "Narrative appeal supplies no probability estimate without evidence about the underlying events."
+        }
+      ],
+      "limitations": [
+        "A playful conjecture; no established probability principle supports it."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "everyday-razor",
+      "name": "Everyday razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Frequent repetition can accumulate substantial output.",
+      "body": "Frequency can support habit and repeated feedback. Recovery, quality, and diminishing returns prevent a simple equation between repetition and improvement. Arithmetic about days of practice is not evidence of guaranteed compounded skill growth.",
+      "lensQuestion": "Would a sustainable increase in practice frequency improve cumulative progress?",
+      "examples": [
+        {
+          "text": "A learner replaces one irregular monthly session with brief, attentive daily practice.",
+          "note": "The potential benefit comes from useful practice and continuity, not a guaranteed mathematical growth rate."
+        }
+      ],
+      "limitations": [
+        "Arithmetic about days of practice is not evidence of guaranteed compounded skill growth."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "feynman-razor",
+      "name": "Feynman razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Clear explanation can expose gaps in understanding.",
+      "body": "A request for clarity can diagnose gaps in understanding. Some subjects still require prerequisites, notation, or substantial time even when the expert understands them well. Modern label; not a verified quotation or a test that every expert topic must be explainable to a child.",
+      "lensQuestion": "Can I explain the mechanism clearly without using jargon to hide a gap?",
+      "examples": [
+        {
+          "text": "A student repeats the word 'optimization' but cannot describe what is optimized or what changes.",
+          "note": "The explanation exposes a missing account of the objective and process, not merely unfamiliar vocabulary."
+        }
+      ],
+      "limitations": [
+        "Modern label; not a verified quotation or a test that every expert topic must be explainable to a child."
+      ],
+      "related": [],
+      "tags": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "gell-mann-razor",
+      "name": "Gell-Mann razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Retain skepticism about media reporting beyond your own expertise.",
+      "body": "Expertise makes some errors easier to detect, while unfamiliarity can conceal others. The response is source checking, not a presumption that every report is false. Related to Gell-Mann amnesia; not a quantified estimate of journalistic error.",
+      "lensQuestion": "Would I scrutinize this report as closely as a report about my own expertise?",
+      "examples": [
+        {
+          "text": "An engineer notices serious errors in a report about her field but assumes the adjacent economics report must be accurate.",
+          "note": "The contrast reveals inconsistent scrutiny; it does not prove the economics report is wrong."
+        }
+      ],
+      "limitations": [
+        "Related to Gell-Mann amnesia; not a quantified estimate of journalistic error."
+      ],
+      "related": [],
+      "tags": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "grices-razor",
+      "name": "Grice's razor",
+      "aliases": [
+        "Modified Occam's razor"
+      ],
+      "symbolName": "scissors",
+      "summary": "Avoid multiplying semantic meanings when pragmatic inference adequately explains the difference.",
+      "body": "An inferred conversational suggestion need not be part of a word's conventional meaning. Genuine lexical ambiguity still needs evidence and cannot be eliminated by stipulation. Do not conflate with the general principle of charity.",
+      "lensQuestion": "Can context and conversational inference explain the wording without adding another dictionary meaning?",
+      "examples": [
+        {
+          "text": "'Some students passed' is taken to suggest that not all passed.",
+          "note": "The 'not all' suggestion can be a cancellable implicature: 'Some passed; in fact, all did.'"
+        }
+      ],
+      "limitations": [
+        "Do not conflate with the general principle of charity."
+      ],
+      "related": [
+        "implicature"
+      ],
+      "tags": [
+        "interpretation"
+      ]
+    },
+    {
+      "id": "guillaumes-razor",
+      "name": "Guillaume's razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "A linguistic parsimony principle associated with minimizing unnecessary semantic distinctions.",
+      "body": "This name circulates with varying linguistic formulations. It should not be treated as a universally standardized rule or as an exact synonym for every account of Gricean pragmatics. Sometimes identified with Grice's razor; attribution and formulation vary.",
+      "lensQuestion": "Is the apparent semantic distinction better explained by an independently motivated contextual process?",
+      "examples": [
+        {
+          "text": "A familiar word appears to convey a special implication only in one conversational setting.",
+          "note": "A contextual explanation may avoid inventing a new lexical sense for every setting."
+        }
+      ],
+      "limitations": [
+        "Sometimes identified with Grice's razor; attribution and formulation vary."
+      ],
+      "related": [],
+      "tags": [
+        "interpretation"
+      ]
+    },
+    {
+      "id": "hanlons-razor",
+      "name": "Hanlon's razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Avoid inferring malice when error or incompetence adequately explains the behavior.",
+      "body": "Intent is an additional claim requiring support. The practical response to harm can remain firm even while the motive is uncertain. A defeasible heuristic, not evidence that malice never occurs.",
+      "lensQuestion": "Could error, missing information, or neglect explain this outcome without hostile intent?",
+      "examples": [
+        {
+          "text": "A colleague omits your name from an announcement, and you infer deliberate sabotage.",
+          "note": "An outdated template could explain the omission. Repeated documented exclusion would change the assessment."
+        }
+      ],
+      "limitations": [
+        "A defeasible heuristic, not evidence that malice never occurs."
+      ],
+      "related": [
+        "hostile-attribution-bias"
+      ],
+      "tags": [
+        "attribution"
+      ]
+    },
+    {
+      "id": "hitchens-razor",
+      "name": "Hitchens's razor",
+      "aliases": [
+        "Hitchens' razor"
+      ],
+      "symbolName": "scissors",
+      "summary": "An unsupported assertion may be dismissed without proving its negation.",
+      "body": "The razor concerns the burden of supporting a claim. Rejecting the offered justification does not prove that the claim's negation is true. Withholding acceptance is distinct from establishing falsity.",
+      "lensQuestion": "What evidence has been offered for the assertion being made?",
+      "examples": [
+        {
+          "text": "Someone claims an invisible device controls your dreams but offers no observation that distinguishes this from ordinary dreaming.",
+          "note": "You can withhold acceptance without having to locate and disprove every possible device."
+        }
+      ],
+      "limitations": [
+        "Withholding acceptance is distinct from establishing falsity."
+      ],
+      "related": [
+        "shifting-the-burden-of-proof"
+      ],
+      "tags": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "humes-guillotine",
+      "name": "Hume's guillotine",
+      "aliases": [
+        "Is–ought principle"
+      ],
+      "symbolName": "scissors",
+      "summary": "A normative conclusion cannot follow from exclusively descriptive premises without a normative bridge.",
+      "body": "Facts can be indispensable to moral reasoning without supplying its entire normative basis. Adding an explicit value premise makes the missing commitment available for assessment. Listed with razors by convention; it is a constraint on inference rather than a parsimony heuristic.",
+      "lensQuestion": "Which normative premise connects the descriptive facts to the proposed obligation?",
+      "examples": [
+        {
+          "text": "Most employees work late; therefore every employee ought to work late.",
+          "note": "The conclusion needs a normative bridge explaining why common behavior creates an obligation."
+        }
+      ],
+      "limitations": [
+        "Listed with razors by convention; it is a constraint on inference rather than a parsimony heuristic."
+      ],
+      "related": [
+        "is-ought-fallacy"
+      ],
+      "tags": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "humes-razor",
+      "name": "Hume's razor",
+      "aliases": [
+        "Hume's proportionality of cause"
+      ],
+      "symbolName": "scissors",
+      "summary": "A proposed cause must have enough explanatory capacity to produce its assigned effect.",
+      "body": "The apparent size of a cause does not settle its causal capacity: a small trigger can release stored energy. Assess the whole mechanism rather than comparing appearances. Distinct from Hume's guillotine.",
+      "lensQuestion": "Does the proposed cause have the demonstrated capacity to produce this effect?",
+      "examples": [
+        {
+          "text": "A small desk fan is offered as the sole explanation for structural damage across a city.",
+          "note": "The account needs evidence of a mechanism with the relevant scale of causal power."
+        }
+      ],
+      "limitations": [
+        "Distinct from Hume's guillotine."
+      ],
+      "related": [],
+      "tags": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "instagram-razor",
+      "name": "Instagram razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Published images often reflect selection from many alternatives.",
+      "body": "A published image is a selected observation rather than a random sample of life. Selection can distort impressions without making the depicted moment entirely fabricated. The name does not imply a known number of rejected images.",
+      "lensQuestion": "What selection process produced this image or success story?",
+      "examples": [
+        {
+          "text": "A flawless travel photograph is presented as an ordinary moment of a trip.",
+          "note": "The frame may omit failed shots, staging, editing, or unpleasant surrounding events."
+        }
+      ],
+      "limitations": [
+        "The name does not imply a known number of rejected images."
+      ],
+      "related": [
+        "selection-bias"
+      ],
+      "tags": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "kants-counter-razor",
+      "name": "Kant's counter-razor",
+      "aliases": [
+        "Kant's anti-razor"
+      ],
+      "symbolName": "scissors",
+      "summary": "Do not prematurely reduce the genuine variety of things.",
+      "body": "Economy should not eliminate real variety merely for convenience. The rule is a counterweight, not a demand to treat every superficial difference as fundamental. A restraint on unjustified simplification.",
+      "lensQuestion": "Am I erasing a genuine distinction before establishing that it is unnecessary?",
+      "examples": [
+        {
+          "text": "Two different measurement processes are assumed identical because merging them gives a shorter report.",
+          "note": "Independent evidence of their different error patterns is a reason to preserve the distinction."
+        }
+      ],
+      "limitations": [
+        "A restraint on unjustified simplification."
+      ],
+      "related": [],
+      "tags": [
+        "parsimony"
+      ]
+    },
+    {
+      "id": "luck-razor",
+      "name": "Luck razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Consider options that increase exposure to useful opportunities.",
+      "body": "Some actions create more opportunities for beneficial encounters than others. Exposure also brings costs and risks, so more contact is not always better. Outcomes remain uncertain.",
+      "lensQuestion": "Which feasible choice exposes me to more useful, diverse opportunities?",
+      "examples": [
+        {
+          "text": "A researcher chooses between isolated browsing and an affordable interdisciplinary workshop relevant to her work.",
+          "note": "The workshop may increase useful contacts, but its cost and relevance still need assessment."
+        }
+      ],
+      "limitations": [
+        "Outcomes remain uncertain."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "mengers-anti-razor",
+      "name": "Menger's anti-razor",
+      "aliases": [
+        "Law against miserliness"
+      ],
+      "symbolName": "scissors",
+      "summary": "Do not use fewer explanatory resources than are necessary.",
+      "body": "Too little structure can mislead as much as too much structure. An adequate model can require several assumptions, variables, or mechanisms. A counterweight to excessive parsimony.",
+      "lensQuestion": "Is the simplest proposed account missing a resource required to explain the observations?",
+      "examples": [
+        {
+          "text": "A forecast drops all seasonal terms and consequently misses a repeated annual cycle.",
+          "note": "Seasonal structure is justified by the repeated pattern rather than gratuitous complication."
+        }
+      ],
+      "limitations": [
+        "A counterweight to excessive parsimony."
+      ],
+      "related": [
+        "chattons-anti-razor"
+      ],
+      "tags": [
+        "parsimony"
+      ]
+    },
+    {
+      "id": "narcissism-razor",
+      "name": "Narcissism razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "People may be less focused on you than you assume.",
+      "body": "People's attention is limited and often directed toward their own concerns. Some actions nevertheless receive sustained attention, so the advice must remain contextual. Not a diagnosis of narcissism.",
+      "lensQuestion": "What evidence shows that others are attending to this detail as intensely as I am?",
+      "examples": [
+        {
+          "text": "You assume everyone at a conference noticed a small stumble in your introduction.",
+          "note": "Other attendees may be preoccupied with their own presentations and conversations."
+        }
+      ],
+      "limitations": [
+        "Not a diagnosis of narcissism."
+      ],
+      "related": [],
+      "tags": [
+        "attribution"
+      ]
+    },
+    {
+      "id": "navals-razor",
+      "name": "Naval's razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "For otherwise comparable options, consider the one with short-term difficulty and long-term benefits.",
+      "body": "This advice counters short-term avoidance in otherwise comparable choices. Pain can also signal a bad plan, and feasibility and downside risk still matter. Context-dependent decision advice, not a general rule to maximize pain.",
+      "lensQuestion": "Am I rejecting a durable benefit solely because its immediate cost is uncomfortable?",
+      "examples": [
+        {
+          "text": "Two training options have similar prospects, but one demands difficult foundational study before later benefits.",
+          "note": "Consider the delayed benefit without assuming that the more painful option is automatically better."
+        }
+      ],
+      "limitations": [
+        "Context-dependent decision advice, not a general rule to maximize pain."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "network-razor",
+      "name": "Network razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Connect people when the introduction is likely to benefit both.",
+      "body": "Connecting people can reduce search costs and open collaboration. Relevance, consent, and others' attention constrain when an introduction helps. General social advice rather than a rule of inference.",
+      "lensQuestion": "Would both people plausibly benefit from an introduction they are comfortable receiving?",
+      "examples": [
+        {
+          "text": "Two researchers separately mention complementary projects and welcome an introduction.",
+          "note": "A consented introduction could benefit both; sharing contact details without permission would change the case."
+        }
+      ],
+      "limitations": [
+        "General social advice rather than a rule of inference."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "new-opportunity-razor",
+      "name": "New-opportunity razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Evaluate both the desired outcome and the work needed to reach it.",
+      "body": "An opportunity contains a process as well as an imagined reward. Assessing both can prevent commitment based only on a flattering outcome scenario. General decision advice, included because it circulates explicitly as a razor.",
+      "lensQuestion": "Do I value the likely outcome and accept the recurring work and downside needed to pursue it?",
+      "examples": [
+        {
+          "text": "A prospective founder likes the idea of owning a company but dislikes selling, hiring, and handling uncertainty.",
+          "note": "Considering the daily work reveals a mismatch concealed by the attractive end state."
+        }
+      ],
+      "limitations": [
+        "General decision advice, included because it circulates explicitly as a razor."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "occams-razor",
+      "name": "Occam's razor",
+      "aliases": [
+        "Ockham's razor",
+        "Principle of parsimony"
+      ],
+      "symbolName": "scissors",
+      "summary": "Prefer fewer unnecessary assumptions between otherwise adequately supported explanations.",
+      "body": "Parsimony compares explanatory adequacy as well as assumption costs. A more complicated explanation can be preferable when it explains evidence the simpler one cannot. Does not establish that the simplest imaginable explanation is true.",
+      "lensQuestion": "Which account fits the evidence with the fewest unsupported assumptions?",
+      "examples": [
+        {
+          "text": "The printer stopped after its paper tray emptied. A second account proposes a hidden remote attack.",
+          "note": "Checking and refilling the empty tray tests an explanation with direct support; the attack requires additional evidence."
+        }
+      ],
+      "limitations": [
+        "Does not establish that the simplest imaginable explanation is true."
+      ],
+      "related": [
+        "hanlons-razor",
+        "chattons-anti-razor"
+      ],
+      "tags": [
+        "parsimony"
+      ]
+    },
+    {
+      "id": "opinion-razor",
+      "name": "Opinion razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Withhold firm opinions until sufficiently informed about the question and objections.",
+      "body": "Confidence should reflect the work and evidence behind a judgment. Practical decisions can still require provisional views under uncertainty. A popular epistemic maxim.",
+      "lensQuestion": "Do I understand enough of the evidence and objections to hold this view confidently?",
+      "examples": [
+        {
+          "text": "Someone asks for a firm position on a technical dispute you have only seen in a headline.",
+          "note": "Withholding judgment preserves the distinction between a first impression and an informed conclusion."
+        }
+      ],
+      "limitations": [
+        "A popular epistemic maxim."
+      ],
+      "related": [
+        "epistemic-humility"
+      ],
+      "tags": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "optimist-razor",
+      "name": "Optimist razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Consider the benefits of constructive, possibility-oriented collaborators.",
+      "body": "Possibility-oriented collaborators can make action and learning easier. Pessimistic warnings can also be accurate and should be judged on their reasons. Optimism does not guarantee accuracy or success.",
+      "lensQuestion": "Does this collaborator pair constructive possibilities with honest attention to constraints?",
+      "examples": [
+        {
+          "text": "One team member proposes testable ways forward while another dismisses every experiment without examining it.",
+          "note": "Constructive engagement can help the team act; uncritical optimism would still miss real risks."
+        }
+      ],
+      "limitations": [
+        "Optimism does not guarantee accuracy or success."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "poppers-razor",
+      "name": "Popper's razor",
+      "aliases": [
+        "Falsifiability criterion"
+      ],
+      "symbolName": "scissors",
+      "summary": "A scientific theory should rule out possible observations and thus risk refutation.",
+      "body": "Falsifiability concerns a theory's exposure to potential counterevidence. Actual testing also depends on measurement, auxiliary assumptions, and the possibility of experimental error. A summary of Popper's contested demarcation proposal; falsifiability does not establish truth.",
+      "lensQuestion": "What possible observation would count against this theory?",
+      "examples": [
+        {
+          "text": "A prediction is revised after every outcome so that the theory always claims success.",
+          "note": "The account does not take a clear observational risk if every result is declared compatible afterward."
+        }
+      ],
+      "limitations": [
+        "A summary of Popper's contested demarcation proposal; falsifiability does not establish truth."
+      ],
+      "related": [
+        "falsifiability"
+      ],
+      "tags": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "pygmalion-razor",
+      "name": "Pygmalion razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Consider environments with constructive expectations for your development.",
+      "body": "Expectations can influence interaction, opportunities, and persistence. Their effects depend on context and should not be mistaken for control over another person's achievement. Not a guarantee that expectations determine achievement.",
+      "lensQuestion": "Does this environment combine constructive expectations with realistic support?",
+      "examples": [
+        {
+          "text": "A tutor expects a student to improve and supplies specific feedback and practice.",
+          "note": "The support can matter; pressure without resources or attainable goals is a different situation."
+        }
+      ],
+      "limitations": [
+        "Not a guarantee that expectations determine achievement."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "rands-conceptual-razor",
+      "name": "Rand's conceptual razor",
+      "aliases": [
+        "Rand's razor: conceptual economy"
+      ],
+      "symbolName": "scissors",
+      "summary": "Do not create or merge concepts without a justified cognitive need.",
+      "body": "Conceptual economy concerns the justification of distinctions and integrations. It does not prohibit technical terms that capture a useful, previously unmarked difference. One of two different formulations circulated under Rand's razor.",
+      "lensQuestion": "Does this new category identify a distinction the inquiry genuinely needs?",
+      "examples": [
+        {
+          "text": "A database invents a separate basic kind for red, left-handed, Tuesday-born customers without a relevant purpose.",
+          "note": "The combination can be described without treating it as an explanatory kind."
+        }
+      ],
+      "limitations": [
+        "One of two different formulations circulated under Rand's razor."
+      ],
+      "related": [],
+      "tags": [
+        "parsimony"
+      ]
+    },
+    {
+      "id": "rands-primaries-razor",
+      "name": "Rand's primaries razor",
+      "aliases": [
+        "Rand's razor: primaries"
+      ],
+      "symbolName": "scissors",
+      "summary": "Identify the fundamental premises on which the argument depends.",
+      "body": "Tracing an argument to its foundations exposes commitments that may otherwise remain hidden. It does not itself establish that the selected foundations are correct. Distinct from the conceptual-economy formulation.",
+      "lensQuestion": "Which basic premises must be accepted for this argument to work?",
+      "examples": [
+        {
+          "text": "A policy argument assumes, without stating it, that only aggregate income matters.",
+          "note": "Stating that premise allows disagreement about values to be separated from disagreement about predicted income."
+        }
+      ],
+      "limitations": [
+        "Distinct from the conceptual-economy formulation."
+      ],
+      "related": [],
+      "tags": [
+        "interpretation"
+      ]
+    },
+    {
+      "id": "room-razor",
+      "name": "Room razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Seek environments where other people can teach you.",
+      "body": "Learning often benefits from contact with people who know things one does not. An intimidating setting without support or relevance may be unhelpful. Advice about learning, not a measure of intelligence.",
+      "lensQuestion": "Will this setting expose me to useful knowledge and permit constructive participation?",
+      "examples": [
+        {
+          "text": "An experienced designer joins a workshop where others have deeper accessibility expertise.",
+          "note": "The learning opportunity comes from the relevant expertise and exchange, not from a global ranking of intelligence."
+        }
+      ],
+      "limitations": [
+        "Advice about learning, not a measure of intelligence."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "sagan-standard",
+      "name": "Sagan standard",
+      "aliases": [
+        "Sagan's razor"
+      ],
+      "symbolName": "scissors",
+      "summary": "Claims with very low prior plausibility require particularly strong evidential support.",
+      "body": "A surprising claim can be established by ordinary methods when the evidence is sufficiently discriminating. Prior improbability is a reason to demand strength, not a license to ignore evidence. Extraordinary evidence means evidential strength, not necessarily an exotic kind of evidence.",
+      "lensQuestion": "How strongly does this evidence favor the claim over plausible alternatives?",
+      "examples": [
+        {
+          "text": "A blurry photograph is offered as proof of a previously unknown spacecraft.",
+          "note": "Camera artifacts and ordinary aircraft must be assessed before the image can carry the proposed evidential weight."
+        }
+      ],
+      "limitations": [
+        "Extraordinary evidence means evidential strength, not necessarily an exotic kind of evidence."
+      ],
+      "related": [
+        "base-rate-fallacy"
+      ],
+      "tags": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "smart-friends-razor",
+      "name": "Smart-friends razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Treat informed peers' unusual interests as leads for investigation.",
+      "body": "An informed peer can provide a valuable lead for investigation. Shared incentives and common sources can also generate correlated mistakes. Social agreement is not proof and can propagate shared error.",
+      "lensQuestion": "What do these informed people know, and are their reasons independent?",
+      "examples": [
+        {
+          "text": "Several colleagues investigate the same new tool, but all learned about it from one sponsored post.",
+          "note": "Their apparent agreement is not independent corroboration; inspect the underlying evidence."
+        }
+      ],
+      "limitations": [
+        "Social agreement is not proof and can propagate shared error."
+      ],
+      "related": [],
+      "tags": [
+        "decision-making"
+      ]
+    },
+    {
+      "id": "tarzwells-razor",
+      "name": "Tarzwell's razor",
+      "aliases": [],
+      "symbolName": "scissors",
+      "summary": "Treat strong emotion as a reason to reassess confidence in judgment.",
+      "body": "Emotion can draw attention to real concerns while also changing confidence and interpretation. Calmness is not proof of correctness either. Popular attribution and formulation; not an independently verified empirical law.",
+      "lensQuestion": "Should I reassess this judgment after the immediate emotional surge subsides?",
+      "examples": [
+        {
+          "text": "After an angry meeting, you conclude a colleague's entire career is fraudulent.",
+          "note": "Delaying the global judgment permits the actual evidence to be assessed separately from anger."
+        }
+      ],
+      "limitations": [
+        "Popular attribution and formulation; not an independently verified empirical law."
+      ],
+      "related": [],
+      "tags": [
+        "evidence"
+      ]
+    }
+  ]
+}

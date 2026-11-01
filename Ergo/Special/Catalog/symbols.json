@@ -1,0 +1,2215 @@
+{
+  "symbols": [
+    {
+      "id": "accessibility-relation",
+      "name": "Accessibility relation",
+      "glyph": "R",
+      "alternateGlyphs": [],
+      "aliases": [
+        "R(w, v)"
+      ],
+      "group": "modal",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "World v is accessible from world w in a Kripke frame.",
+      "body": "World v is accessible from world w in a Kripke frame. Properties of R determine which modal principles hold. Together these facts witness ◇P at w in ordinary Kripke semantics.",
+      "examples": [
+        {
+          "text": "wRv and v satisfies P.",
+          "note": "Together these facts witness ◇P at w in ordinary Kripke semantics."
+        }
+      ],
+      "limitations": [
+        "Properties of R determine which modal principles hold."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "modal-logic"
+      ]
+    },
+    {
+      "id": "always-operator",
+      "name": "Always operator",
+      "glyph": "G",
+      "alternateGlyphs": [],
+      "aliases": [
+        "□φ in temporal notation"
+      ],
+      "group": "modal",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [
+        "always in the relevant future"
+      ],
+      "summary": "φ holds at all relevant future times.",
+      "body": "φ holds at all relevant future times. Whether the present is included depends on the temporal semantics. No relevant future state contains an error under the selected temporal semantics.",
+      "examples": [
+        {
+          "text": "G¬Error.",
+          "note": "No relevant future state contains an error under the selected temporal semantics."
+        }
+      ],
+      "limitations": [
+        "Whether the present is included depends on the temporal semantics."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "modal-logic"
+      ]
+    },
+    {
+      "id": "because-marker",
+      "name": "Because marker",
+      "glyph": "∵",
+      "alternateGlyphs": [],
+      "aliases": [
+        "because"
+      ],
+      "group": "relation",
+      "arity": 0,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Introduces a stated reason.",
+      "body": "Introduces a stated reason. An argument-layout convention, not normally an object-language connective. The marker introduces the stated supporting reasons.",
+      "examples": [
+        {
+          "text": "Q, ∵ P and P → Q.",
+          "note": "The marker introduces the stated supporting reasons."
+        }
+      ],
+      "limitations": [
+        "An argument-layout convention, not normally an object-language connective."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "belief-operator",
+      "name": "Belief operator",
+      "glyph": "Bₐ",
+      "alternateGlyphs": [],
+      "aliases": [
+        "B_a φ"
+      ],
+      "group": "modal",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [
+        "believes that"
+      ],
+      "summary": "Agent a believes φ.",
+      "body": "Agent a believes φ. Belief does not normally entail truth. A model can represent agent a believing P while P is false.",
+      "examples": [
+        {
+          "text": "BₐP ∧ ¬P.",
+          "note": "A model can represent agent a believing P while P is false."
+        }
+      ],
+      "limitations": [
+        "Belief does not normally entail truth."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "modal-logic"
+      ]
+    },
+    {
+      "id": "bounded-existential-quantifier",
+      "name": "Bounded existential quantifier",
+      "glyph": "∃x ∈ A",
+      "alternateGlyphs": [],
+      "aliases": [
+        "∃x(x ∈ A ∧ P(x))"
+      ],
+      "group": "quantifier",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Some member of A satisfies P.",
+      "body": "Some member of A satisfies P. Notice conjunction here, compared with the conditional in bounded universal quantification. Expand as ∃x(x ∈ Students ∧ Passed(x)); the witness must actually be a student.",
+      "examples": [
+        {
+          "text": "∃x ∈ Students Passed(x).",
+          "note": "Expand as ∃x(x ∈ Students ∧ Passed(x)); the witness must actually be a student."
+        }
+      ],
+      "limitations": [
+        "Notice conjunction here, compared with the conditional in bounded universal quantification."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "bounded-universal-quantifier",
+      "name": "Bounded universal quantifier",
+      "glyph": "∀x ∈ A",
+      "alternateGlyphs": [],
+      "aliases": [
+        "∀x(x ∈ A → P(x))"
+      ],
+      "group": "quantifier",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Every member of A satisfies P.",
+      "body": "Every member of A satisfies P. A set-theoretic abbreviation rather than an additional core FOL quantifier. Expand as ∀x(x ∈ Students → Passed(x)); nonstudents need not pass.",
+      "examples": [
+        {
+          "text": "∀x ∈ Students Passed(x).",
+          "note": "Expand as ∀x(x ∈ Students → Passed(x)); nonstudents need not pass."
+        }
+      ],
+      "limitations": [
+        "A set-theoretic abbreviation rather than an additional core FOL quantifier."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "conjunction",
+      "name": "Conjunction",
+      "glyph": "∧",
+      "alternateGlyphs": [
+        "&",
+        "·",
+        "•"
+      ],
+      "aliases": [
+        "p & q",
+        "p • q",
+        "Kpq"
+      ],
+      "group": "connective",
+      "arity": 2,
+      "shortcodes": [
+        "&",
+        "/\\",
+        "and"
+      ],
+      "englishReadings": [
+        "and",
+        "but",
+        "although"
+      ],
+      "summary": "Both p and q are true.",
+      "body": "Both p and q are true. Juxtaposition and multiplication signs are also used in Boolean algebra. Both the open door and the illuminated light are required.",
+      "examples": [
+        {
+          "text": "P means the door is open; Q means the light is on. P ∧ Q.",
+          "note": "Both the open door and the illuminated light are required."
+        }
+      ],
+      "limitations": [
+        "Juxtaposition and multiplication signs are also used in Boolean algebra."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "disjunction",
+          "note": "Conjunction requires both parts; inclusive disjunction requires at least one."
+        }
+      ],
+      "related": [
+        "disjunction"
+      ],
+      "tags": [
+        "propositional-logic"
+      ]
+    },
+    {
+      "id": "definite-description",
+      "name": "Definite description",
+      "glyph": "ι",
+      "alternateGlyphs": [],
+      "aliases": [
+        "iota operator"
+      ],
+      "group": "quantifier",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "The individual satisfying P, when the governing description theory permits it.",
+      "body": "The individual satisfying P, when the governing description theory permits it. Existence and uniqueness conditions vary by formal system. Whether a nonexisting or nonunique king yields a denotation depends on the adopted description theory.",
+      "examples": [
+        {
+          "text": "ιx KingOfFrance(x).",
+          "note": "Whether a nonexisting or nonunique king yields a denotation depends on the adopted description theory."
+        }
+      ],
+      "limitations": [
+        "Existence and uniqueness conditions vary by formal system."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "definition-marker",
+      "name": "Definition marker",
+      "glyph": "≔",
+      "alternateGlyphs": [
+        ":=",
+        "≝"
+      ],
+      "aliases": [
+        ":=",
+        "=def",
+        "≝"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [
+        ":="
+      ],
+      "englishReadings": [],
+      "summary": "Introduces a definition or stipulated abbreviation.",
+      "body": "Introduces a definition or stipulated abbreviation. A definition marker is not a claim of empirical identity. The right side stipulates the meaning of the abbreviation on the left.",
+      "examples": [
+        {
+          "text": "P ⊕ Q ≔ (P ∨ Q) ∧ ¬(P ∧ Q).",
+          "note": "The right side stipulates the meaning of the abbreviation on the left."
+        }
+      ],
+      "limitations": [
+        "A definition marker is not a claim of empirical identity."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "empty-set",
+      "name": "Empty set",
+      "glyph": "∅",
+      "alternateGlyphs": [],
+      "aliases": [
+        "{}"
+      ],
+      "group": "set",
+      "arity": 0,
+      "shortcodes": [
+        "{}"
+      ],
+      "englishReadings": [],
+      "summary": "The set with no elements.",
+      "body": "The set with no elements. Not interchangeable with the falsity constant ⊥. There is no member of ∅ that could violate the subset condition.",
+      "examples": [
+        {
+          "text": "∅ ⊆ {1, 2}.",
+          "note": "There is no member of ∅ that could violate the subset condition."
+        }
+      ],
+      "limitations": [
+        "Not interchangeable with the falsity constant ⊥."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "set-notation"
+      ]
+    },
+    {
+      "id": "end-of-proof-marker",
+      "name": "End-of-proof marker",
+      "glyph": "∎",
+      "alternateGlyphs": [
+        "□"
+      ],
+      "aliases": [
+        "QED",
+        "□"
+      ],
+      "group": "relation",
+      "arity": 0,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Marks the completion of a proof.",
+      "body": "Marks the completion of a proof. □ also means necessity in modal logic. This is a document convention and adds no premise or inference.",
+      "examples": [
+        {
+          "text": "After deriving the required conclusion, write ∎.",
+          "note": "This is a document convention and adds no premise or inference."
+        }
+      ],
+      "limitations": [
+        "□ also means necessity in modal logic."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "eventually-operator",
+      "name": "Eventually operator",
+      "glyph": "F",
+      "alternateGlyphs": [],
+      "aliases": [
+        "◇φ in temporal notation"
+      ],
+      "group": "modal",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [
+        "eventually"
+      ],
+      "summary": "φ holds at some relevant future time.",
+      "body": "φ holds at some relevant future time. F can also denote prohibition or falsity in other contexts. At some relevant future state Delivered holds; no particular deadline is specified.",
+      "examples": [
+        {
+          "text": "F Delivered.",
+          "note": "At some relevant future state Delivered holds; no particular deadline is specified."
+        }
+      ],
+      "limitations": [
+        "F can also denote prohibition or falsity in other contexts."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "modal-logic"
+      ]
+    },
+    {
+      "id": "exclusive-disjunction",
+      "name": "Exclusive disjunction",
+      "glyph": "⊕",
+      "alternateGlyphs": [
+        "⊻"
+      ],
+      "aliases": [
+        "p XOR q",
+        "p ⊻ q"
+      ],
+      "group": "connective",
+      "arity": 2,
+      "shortcodes": [
+        "xor"
+      ],
+      "englishReadings": [
+        "either, but not both",
+        "exactly one"
+      ],
+      "summary": "Exactly one of p and q is true.",
+      "body": "Exactly one of p and q is true. Definable as (p ∨ q) ∧ ¬(p ∧ q). Exactly one alternative is allowed; both true and both false are excluded.",
+      "examples": [
+        {
+          "text": "P means the coin lands heads; Q means it lands tails. P ⊕ Q.",
+          "note": "Exactly one alternative is allowed; both true and both false are excluded."
+        }
+      ],
+      "limitations": [
+        "Definable as (p ∨ q) ∧ ¬(p ∧ q)."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "propositional-logic"
+      ]
+    },
+    {
+      "id": "existential-quantifier",
+      "name": "Existential quantifier",
+      "glyph": "∃",
+      "alternateGlyphs": [],
+      "aliases": [
+        "(Ex)P(x)"
+      ],
+      "group": "quantifier",
+      "arity": 1,
+      "shortcodes": [
+        "exists"
+      ],
+      "englishReadings": [
+        "there exists",
+        "at least one",
+        "some"
+      ],
+      "summary": "There is at least one individual x for which P(x) holds.",
+      "body": "There is at least one individual x for which P(x) holds. ∃ does not mean exactly one. At least one object is both a cat and black; other cats can have other colors.",
+      "examples": [
+        {
+          "text": "∃x (Cat(x) ∧ Black(x)).",
+          "note": "At least one object is both a cat and black; other cats can have other colors."
+        }
+      ],
+      "limitations": [
+        "∃ does not mean exactly one."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "unique-existential-quantifier",
+          "note": "Existence requires at least one witness; unique existence additionally excludes distinct witnesses."
+        }
+      ],
+      "related": [
+        "unique-existential-quantifier"
+      ],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "failure-of-entailment",
+      "name": "Failure of entailment",
+      "glyph": "⊭",
+      "alternateGlyphs": [],
+      "aliases": [
+        "nonentailment"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [
+        "!|="
+      ],
+      "englishReadings": [],
+      "summary": "At least one relevant interpretation satisfies Γ while falsifying φ.",
+      "body": "At least one relevant interpretation satisfies Γ while falsifying φ. Does not entail Γ ⊨ ¬φ. P false and Q true provides a countermodel; the premise does not entail ¬P either.",
+      "examples": [
+        {
+          "text": "{P ∨ Q} ⊭ P.",
+          "note": "P false and Q true provides a countermodel; the premise does not entail ¬P either."
+        }
+      ],
+      "limitations": [
+        "Does not entail Γ ⊨ ¬φ."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "falsity-constant",
+      "name": "Falsity constant",
+      "glyph": "⊥",
+      "alternateGlyphs": [
+        "F",
+        "0"
+      ],
+      "aliases": [
+        "F",
+        "0",
+        "falsum"
+      ],
+      "group": "constant",
+      "arity": 0,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "A formula that is always false.",
+      "body": "A formula that is always false. Also used as the contradiction marker in natural deduction. The proof derives contradiction from a statement together with its negation.",
+      "examples": [
+        {
+          "text": "P ∧ ¬P ⊢ ⊥.",
+          "note": "The proof derives contradiction from a statement together with its negation."
+        }
+      ],
+      "limitations": [
+        "Also used as the contradiction marker in natural deduction.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "empty-set",
+          "note": "Falsum is a logical constant; the empty set is a mathematical object."
+        }
+      ],
+      "related": [
+        "empty-set"
+      ],
+      "tags": [
+        "propositional-logic"
+      ]
+    },
+    {
+      "id": "formal-derivability",
+      "name": "Formal derivability",
+      "glyph": "⊢",
+      "alternateGlyphs": [],
+      "aliases": [
+        "provability",
+        "turnstile"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [
+        "|-"
+      ],
+      "englishReadings": [
+        "is derivable from",
+        "is provable from"
+      ],
+      "summary": "φ has a formal derivation from Γ in the specified calculus.",
+      "body": "φ has a formal derivation from Γ in the specified calculus. Always relative to a proof system. Modus ponens supplies a derivation in a proof system containing that rule.",
+      "examples": [
+        {
+          "text": "P → Q, P ⊢ Q.",
+          "note": "Modus ponens supplies a derivation in a proof system containing that rule."
+        }
+      ],
+      "limitations": [
+        "Always relative to a proof system."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "semantic-consequence",
+          "note": "Provability is syntactic; entailment is semantic. Soundness and completeness connect them for suitable systems."
+        }
+      ],
+      "related": [
+        "semantic-consequence"
+      ],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "formal-nonderivability",
+      "name": "Formal nonderivability",
+      "glyph": "⊬",
+      "alternateGlyphs": [],
+      "aliases": [
+        "nonprovability"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [
+        "!|-"
+      ],
+      "englishReadings": [],
+      "summary": "No derivation of φ from Γ exists in the specified calculus.",
+      "body": "No derivation of φ from Γ exists in the specified calculus. Not synonymous with φ being false. Since a countermodel exists, soundness prevents such a derivation.",
+      "examples": [
+        {
+          "text": "P ∨ Q ⊬ P, in a sound classical proof system.",
+          "note": "Since a countermodel exists, soundness prevents such a derivation."
+        }
+      ],
+      "limitations": [
+        "Not synonymous with φ being false."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "formula-metavariable",
+      "name": "Formula metavariable",
+      "glyph": "φ",
+      "alternateGlyphs": [
+        "ψ",
+        "χ"
+      ],
+      "aliases": [
+        "A, B in schematic contexts"
+      ],
+      "group": "constant",
+      "arity": 0,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Ranges over formulas in a metalinguistic statement.",
+      "body": "Ranges over formulas in a metalinguistic statement. Do not read φ as an individual variable unless the language explicitly assigns that role. φ is a placeholder for a formula, not a quantified individual inside the object language.",
+      "examples": [
+        {
+          "text": "For every formula φ, φ → φ is valid in classical logic.",
+          "note": "φ is a placeholder for a formula, not a quantified individual inside the object language."
+        }
+      ],
+      "limitations": [
+        "Do not read φ as an individual variable unless the language explicitly assigns that role.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "function-application",
+      "name": "Function application",
+      "glyph": "f(·)",
+      "alternateGlyphs": [],
+      "aliases": [
+        "g(x, y)"
+      ],
+      "group": "relation",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "A term denoting the function's output on the arguments.",
+      "body": "A term denoting the function's output on the arguments. Terms denote objects; formulas express claims. MotherOf(a) is an object-denoting term; identity combines it with b to form a formula.",
+      "examples": [
+        {
+          "text": "MotherOf(a) = b.",
+          "note": "MotherOf(a) is an object-denoting term; identity combines it with b to form a formula."
+        }
+      ],
+      "limitations": [
+        "Terms denote objects; formulas express claims.",
+        "A predicate or function's actual arity is supplied by its signature. The integer here describes the displayed example, not every use of this notation."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "grouping-delimiters",
+      "name": "Grouping delimiters",
+      "glyph": "( )",
+      "alternateGlyphs": [],
+      "aliases": [
+        "[ ]",
+        "{ }"
+      ],
+      "group": "constant",
+      "arity": 0,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Mark formula structure and operator scope.",
+      "body": "Mark formula structure and operator scope. Braces often denote sets instead; punctuation depends on the language. The first denies their conjunction; the second requires Q and denies P.",
+      "examples": [
+        {
+          "text": "¬(P ∧ Q), compared with (¬P ∧ Q).",
+          "note": "The first denies their conjunction; the second requires Q and denies P."
+        }
+      ],
+      "limitations": [
+        "Braces often denote sets instead; punctuation depends on the language.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "hilbert-choice-operator",
+      "name": "Hilbert choice operator",
+      "glyph": "ε",
+      "alternateGlyphs": [],
+      "aliases": [
+        "epsilon operator"
+      ],
+      "group": "quantifier",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Selects an object satisfying P when one exists, under an epsilon calculus.",
+      "body": "Selects an object satisfying P when one exists, under an epsilon calculus. Not part of baseline first-order logic notation. The selected object supplies a witness when a witness exists.",
+      "examples": [
+        {
+          "text": "If ∃x P(x), then P(εx P(x)) in a suitable epsilon calculus.",
+          "note": "The selected object supplies a witness when a witness exists."
+        }
+      ],
+      "limitations": [
+        "Not part of baseline first-order logic notation."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "identity",
+      "name": "Identity",
+      "glyph": "=",
+      "alternateGlyphs": [],
+      "aliases": [
+        "identity predicate"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [
+        "is identical to",
+        "is the same object as"
+      ],
+      "summary": "The two terms denote the same individual.",
+      "body": "The two terms denote the same individual. Identity is distinct from similarity, co-reference claims in opaque contexts, or logical equivalence. The two names denote one object, so the property transfers in this context.",
+      "examples": [
+        {
+          "text": "a = b; P(a). Therefore P(b), in an ordinary extensional first-order context.",
+          "note": "The two names denote one object, so the property transfers in this context."
+        }
+      ],
+      "limitations": [
+        "Identity is distinct from similarity, co-reference claims in opaque contexts, or logical equivalence."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "disjunction",
+      "name": "Inclusive disjunction",
+      "glyph": "∨",
+      "alternateGlyphs": [],
+      "aliases": [
+        "Apq"
+      ],
+      "group": "connective",
+      "arity": 2,
+      "shortcodes": [
+        "\\/",
+        "or"
+      ],
+      "englishReadings": [
+        "or",
+        "at least one"
+      ],
+      "summary": "At least one of p and q is true, possibly both.",
+      "body": "At least one of p and q is true, possibly both. Computing uses | or || in some languages; | also denotes NAND elsewhere. The formula is true if Ada attends, Ben attends, or both attend.",
+      "examples": [
+        {
+          "text": "P means Ada attends; Q means Ben attends. P ∨ Q.",
+          "note": "The formula is true if Ada attends, Ben attends, or both attend."
+        }
+      ],
+      "limitations": [
+        "Computing uses | or || in some languages; | also denotes NAND elsewhere."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "exclusive-disjunction",
+          "note": "Inclusive disjunction permits both operands to be true; exclusive disjunction does not."
+        }
+      ],
+      "related": [
+        "exclusive-disjunction"
+      ],
+      "tags": [
+        "propositional-logic"
+      ]
+    },
+    {
+      "id": "individual-constant",
+      "name": "Individual constant",
+      "glyph": "a",
+      "alternateGlyphs": [
+        "b",
+        "c"
+      ],
+      "aliases": [
+        "name",
+        "object constant"
+      ],
+      "group": "constant",
+      "arity": 0,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Denotes an individual under an interpretation.",
+      "body": "Denotes an individual under an interpretation. A constant's interpretation can differ between structures. The name a denotes an individual; the formula applies Human to that individual.",
+      "examples": [
+        {
+          "text": "Human(a).",
+          "note": "The name a denotes an individual; the formula applies Human to that individual."
+        }
+      ],
+      "limitations": [
+        "A constant's interpretation can differ between structures.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "individual-variable",
+      "name": "Individual variable",
+      "glyph": "x",
+      "alternateGlyphs": [
+        "y",
+        "z"
+      ],
+      "aliases": [
+        "object variable"
+      ],
+      "group": "constant",
+      "arity": 0,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Ranges over individuals in the domain.",
+      "body": "Ranges over individuals in the domain. These are variables, not quantifiers. x ranges over the domain and is bound by ∀; a remains an individual constant.",
+      "examples": [
+        {
+          "text": "∀x Loves(x, a).",
+          "note": "x ranges over the domain and is bound by ∀; a remains an individual constant."
+        }
+      ],
+      "limitations": [
+        "These are variables, not quantifiers.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "interpretation-brackets",
+      "name": "Interpretation brackets",
+      "glyph": "⟦ ⟧",
+      "alternateGlyphs": [],
+      "aliases": [
+        "semantic brackets"
+      ],
+      "group": "relation",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Denotes a semantic value under a stated interpretation.",
+      "body": "Denotes a semantic value under a stated interpretation. The value can be a truth value, extension, intension, or other semantic object. The brackets refer to the formula's semantic value rather than merely its written form.",
+      "examples": [
+        {
+          "text": "⟦P ∧ Q⟧ᵥ = true when valuation v makes both P and Q true.",
+          "note": "The brackets refer to the formula's semantic value rather than merely its written form."
+        }
+      ],
+      "limitations": [
+        "The value can be a truth value, extension, intension, or other semantic object."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "knowledge-operator",
+      "name": "Knowledge operator",
+      "glyph": "Kₐ",
+      "alternateGlyphs": [],
+      "aliases": [
+        "K_a φ"
+      ],
+      "group": "modal",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [
+        "knows that"
+      ],
+      "summary": "Agent a knows φ in the specified epistemic system.",
+      "body": "Agent a knows φ in the specified epistemic system. The adopted axioms determine the modeled idealizations about knowledge. In a standard epistemic model, P holds throughout the worlds compatible with agent a's knowledge.",
+      "examples": [
+        {
+          "text": "KₐP.",
+          "note": "In a standard epistemic model, P holds throughout the worlds compatible with agent a's knowledge."
+        }
+      ],
+      "limitations": [
+        "The adopted axioms determine the modeled idealizations about knowledge."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "modal-logic"
+      ]
+    },
+    {
+      "id": "lambda-abstraction",
+      "name": "Lambda abstraction",
+      "glyph": "λ",
+      "alternateGlyphs": [],
+      "aliases": [
+        "lambda binder"
+      ],
+      "group": "relation",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Forms a function or abstraction from a variable and an expression.",
+      "body": "Forms a function or abstraction from a variable and an expression. Not a connective of ordinary first-order logic. The bound variable is replaced by the argument according to the calculus's reduction rules.",
+      "examples": [
+        {
+          "text": "(λx.x)(a) reduces to a.",
+          "note": "The bound variable is replaced by the argument according to the calculus's reduction rules."
+        }
+      ],
+      "limitations": [
+        "Not a connective of ordinary first-order logic."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "logical-equivalence-marker",
+      "name": "Logical equivalence marker",
+      "glyph": "⇔",
+      "alternateGlyphs": [],
+      "aliases": [
+        "φ ≡ ψ"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "The formulas agree in truth across the relevant interpretations.",
+      "body": "The formulas agree in truth across the relevant interpretations. Notation varies; some authors use these signs inside the object language instead. De Morgan's law states that both formulas agree on every valuation.",
+      "examples": [
+        {
+          "text": "¬(P ∧ Q) ⇔ (¬P ∨ ¬Q), in classical logic.",
+          "note": "De Morgan's law states that both formulas agree on every valuation."
+        }
+      ],
+      "limitations": [
+        "Notation varies; some authors use these signs inside the object language instead."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "logical-validity-marker",
+      "name": "Logical validity marker",
+      "glyph": "⊨",
+      "alternateGlyphs": [],
+      "aliases": [
+        "validity"
+      ],
+      "group": "relation",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "φ holds in every relevant interpretation.",
+      "body": "φ holds in every relevant interpretation. For propositional logic, a tautology; semantic classes can differ in other logics. Every classical valuation makes this formula true; other logics require separate assessment.",
+      "examples": [
+        {
+          "text": "⊨ P ∨ ¬P, in classical logic.",
+          "note": "Every classical valuation makes this formula true; other logics require separate assessment."
+        }
+      ],
+      "limitations": [
+        "For propositional logic, a tautology; semantic classes can differ in other logics."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "material-biconditional",
+      "name": "Material biconditional",
+      "glyph": "↔",
+      "alternateGlyphs": [
+        "≡"
+      ],
+      "aliases": [
+        "p ≡ q",
+        "Epq"
+      ],
+      "group": "connective",
+      "arity": 2,
+      "shortcodes": [
+        "<->"
+      ],
+      "englishReadings": [
+        "if and only if",
+        "exactly when"
+      ],
+      "summary": "p if and only if q: they have the same truth value.",
+      "body": "p if and only if q: they have the same truth value. ≡ and ⇔ may instead denote metalinguistic equivalence; check the convention. Both directions are asserted, so either truth-value mismatch makes the formula false.",
+      "examples": [
+        {
+          "text": "P means the number is even; Q means it is divisible by two. P ↔ Q.",
+          "note": "Both directions are asserted, so either truth-value mismatch makes the formula false."
+        }
+      ],
+      "limitations": [
+        "≡ and ⇔ may instead denote metalinguistic equivalence; check the convention."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "material-conditional",
+          "note": "The biconditional requires both directions; the conditional requires only one."
+        }
+      ],
+      "related": [
+        "material-conditional"
+      ],
+      "tags": [
+        "propositional-logic"
+      ]
+    },
+    {
+      "id": "material-conditional",
+      "name": "Material conditional",
+      "glyph": "→",
+      "alternateGlyphs": [
+        "⊃"
+      ],
+      "aliases": [
+        "p ⊃ q",
+        "Cpq"
+      ],
+      "group": "connective",
+      "arity": 2,
+      "shortcodes": [
+        "->"
+      ],
+      "englishReadings": [
+        "if ... then",
+        "only if",
+        "provided that"
+      ],
+      "summary": "If p then q; false exactly when p is true and q is false.",
+      "body": "If p then q; false exactly when p is true and q is false. Does not by itself assert causation or relevance. ⇒ is also used by some authors. A counterexample is an on switch with an unlit lamp. The formula alone gives no causal mechanism.",
+      "examples": [
+        {
+          "text": "P means the switch is on; Q means the lamp is lit. P → Q.",
+          "note": "A counterexample is an on switch with an unlit lamp. The formula alone gives no causal mechanism."
+        }
+      ],
+      "limitations": [
+        "Does not by itself assert causation or relevance. ⇒ is also used by some authors.",
+        "In English, 'P only if Q' places P in the antecedent and Q in the consequent; 'P if Q' reverses those roles."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "semantic-consequence",
+          "note": "A conditional is a formula; semantic consequence relates premises to conclusions over interpretations."
+        },
+        {
+          "targetID": "affirming-the-consequent",
+          "note": "Treating the conditional as reversible produces this formal fallacy."
+        }
+      ],
+      "related": [
+        "semantic-consequence",
+        "affirming-the-consequent"
+      ],
+      "tags": [
+        "propositional-logic"
+      ]
+    },
+    {
+      "id": "model-satisfaction",
+      "name": "Model satisfaction",
+      "glyph": "⊨",
+      "alternateGlyphs": [],
+      "aliases": [
+        "satisfaction relation"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "φ is satisfied in structure M under assignment s.",
+      "body": "φ is satisfied in structure M under assignment s. The same glyph is used in related but distinct semantic roles. In the particular structure M, a denotes an object in the extension of Cat.",
+      "examples": [
+        {
+          "text": "M ⊨ Cat(a).",
+          "note": "In the particular structure M, a denotes an object in the extension of Cat."
+        }
+      ],
+      "limitations": [
+        "The same glyph is used in related but distinct semantic roles."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "nand",
+      "name": "NAND",
+      "glyph": "↑",
+      "alternateGlyphs": [
+        "|"
+      ],
+      "aliases": [
+        "p | q",
+        "Sheffer stroke"
+      ],
+      "group": "connective",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Not both p and q.",
+      "body": "Not both p and q. The stroke | has unrelated uses in other systems. The formula fails only when both alarms are active.",
+      "examples": [
+        {
+          "text": "P means alarm A is active; Q means alarm B is active. P ↑ Q.",
+          "note": "The formula fails only when both alarms are active."
+        }
+      ],
+      "limitations": [
+        "The stroke | has unrelated uses in other systems."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "propositional-logic"
+      ]
+    },
+    {
+      "id": "necessity-operator",
+      "name": "Necessity operator",
+      "glyph": "□",
+      "alternateGlyphs": [],
+      "aliases": [
+        "Lφ"
+      ],
+      "group": "modal",
+      "arity": 1,
+      "shortcodes": [
+        "[]"
+      ],
+      "englishReadings": [
+        "necessarily"
+      ],
+      "summary": "φ is necessary under the chosen modal semantics.",
+      "body": "φ is necessary under the chosen modal semantics. An extension beyond ordinary propositional and first-order logic. P holds at every world accessible from the current world in the chosen modal model.",
+      "examples": [
+        {
+          "text": "□P.",
+          "note": "P holds at every world accessible from the current world in the chosen modal model."
+        }
+      ],
+      "limitations": [
+        "An extension beyond ordinary propositional and first-order logic."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "possibility-operator",
+          "note": "Necessity concerns every accessible world; possibility requires at least one."
+        }
+      ],
+      "related": [
+        "possibility-operator"
+      ],
+      "tags": [
+        "modal-logic"
+      ]
+    },
+    {
+      "id": "negated-existential-quantifier",
+      "name": "Negated existential quantifier",
+      "glyph": "∄",
+      "alternateGlyphs": [],
+      "aliases": [
+        "¬∃x P(x)"
+      ],
+      "group": "quantifier",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [
+        "there is no",
+        "none"
+      ],
+      "summary": "No individual in the domain satisfies P.",
+      "body": "No individual in the domain satisfies P. An abbreviation for a negated existential formula. Nothing in the domain is both a cat and a reptile.",
+      "examples": [
+        {
+          "text": "∄x (Cat(x) ∧ Reptile(x)).",
+          "note": "Nothing in the domain is both a cat and a reptile."
+        }
+      ],
+      "limitations": [
+        "An abbreviation for a negated existential formula."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "negation",
+      "name": "Negation",
+      "glyph": "¬",
+      "alternateGlyphs": [
+        "~",
+        "!"
+      ],
+      "aliases": [
+        "~p",
+        "!p",
+        "Np"
+      ],
+      "group": "connective",
+      "arity": 1,
+      "shortcodes": [
+        "!",
+        "~",
+        "not"
+      ],
+      "englishReadings": [
+        "not",
+        "it is not the case that"
+      ],
+      "summary": "Not p: reverses its truth value.",
+      "body": "Not p: reverses its truth value. ! is common in computing; N is Polish prefix notation. The formula says the door is not open; it does not say the door is locked.",
+      "examples": [
+        {
+          "text": "P means the door is open. ¬P.",
+          "note": "The formula says the door is not open; it does not say the door is locked."
+        }
+      ],
+      "limitations": [
+        "! is common in computing; N is Polish prefix notation."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "conjunction",
+          "note": "Negating a conjunction differs from negating each conjunct and retaining conjunction."
+        },
+        {
+          "targetID": "contradiction",
+          "note": "Contradiction is the concept of incompatible truth commitments; ¬ is a formal connective."
+        }
+      ],
+      "related": [
+        "conjunction",
+        "contradiction"
+      ],
+      "tags": [
+        "propositional-logic"
+      ]
+    },
+    {
+      "id": "next-operator",
+      "name": "Next operator",
+      "glyph": "X",
+      "alternateGlyphs": [
+        "○"
+      ],
+      "aliases": [
+        "○φ"
+      ],
+      "group": "modal",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [
+        "at the next state"
+      ],
+      "summary": "φ holds at the next state.",
+      "body": "φ holds at the next state. Typically used with a discrete successor-time semantics. Ready must hold at the next state, rather than merely at some later state.",
+      "examples": [
+        {
+          "text": "X Ready.",
+          "note": "Ready must hold at the next state, rather than merely at some later state."
+        }
+      ],
+      "limitations": [
+        "Typically used with a discrete successor-time semantics."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "modal-logic"
+      ]
+    },
+    {
+      "id": "nonidentity",
+      "name": "Nonidentity",
+      "glyph": "≠",
+      "alternateGlyphs": [],
+      "aliases": [
+        "¬(a = b)"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [
+        "!="
+      ],
+      "englishReadings": [
+        "is distinct from"
+      ],
+      "summary": "The terms denote different individuals.",
+      "body": "The terms denote different individuals. Usually defined using negation and identity. The interpretation must assign the two terms different objects.",
+      "examples": [
+        {
+          "text": "a ≠ b.",
+          "note": "The interpretation must assign the two terms different objects."
+        }
+      ],
+      "limitations": [
+        "Usually defined using negation and identity."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "nor",
+      "name": "NOR",
+      "glyph": "↓",
+      "alternateGlyphs": [],
+      "aliases": [
+        "Peirce arrow",
+        "Quine dagger"
+      ],
+      "group": "connective",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Neither p nor q.",
+      "body": "Neither p nor q. Definable as ¬(p ∨ q). The formula holds only when neither person is present.",
+      "examples": [
+        {
+          "text": "P means Ada is present; Q means Ben is present. P ↓ Q.",
+          "note": "The formula holds only when neither person is present."
+        }
+      ],
+      "limitations": [
+        "Definable as ¬(p ∨ q)."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "propositional-logic"
+      ]
+    },
+    {
+      "id": "obligation-operator",
+      "name": "Obligation operator",
+      "glyph": "O",
+      "alternateGlyphs": [],
+      "aliases": [
+        "O(φ)"
+      ],
+      "group": "modal",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [
+        "it is obligatory that"
+      ],
+      "summary": "φ is obligatory under the chosen deontic interpretation.",
+      "body": "φ is obligatory under the chosen deontic interpretation. Conditional obligations need richer notation or semantics. The formula represents an obligation; it does not assert that the book is actually returned.",
+      "examples": [
+        {
+          "text": "O(ReturnBorrowedBook).",
+          "note": "The formula represents an obligation; it does not assert that the book is actually returned."
+        }
+      ],
+      "limitations": [
+        "Conditional obligations need richer notation or semantics."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "modal-logic"
+      ]
+    },
+    {
+      "id": "permission-operator",
+      "name": "Permission operator",
+      "glyph": "P",
+      "alternateGlyphs": [],
+      "aliases": [
+        "P(φ)"
+      ],
+      "group": "modal",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [
+        "it is permitted that"
+      ],
+      "summary": "φ is permitted under the chosen deontic interpretation.",
+      "body": "φ is permitted under the chosen deontic interpretation. P is also a predicate letter elsewhere; context is essential. The action is permitted in the modeled normative system, without being required.",
+      "examples": [
+        {
+          "text": "P(EnterPark).",
+          "note": "The action is permitted in the modeled normative system, without being required."
+        }
+      ],
+      "limitations": [
+        "P is also a predicate letter elsewhere; context is essential."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "modal-logic"
+      ]
+    },
+    {
+      "id": "possibility-operator",
+      "name": "Possibility operator",
+      "glyph": "◇",
+      "alternateGlyphs": [],
+      "aliases": [
+        "Mφ"
+      ],
+      "group": "modal",
+      "arity": 1,
+      "shortcodes": [
+        "<>"
+      ],
+      "englishReadings": [
+        "possibly"
+      ],
+      "summary": "φ is possible under the chosen modal semantics.",
+      "body": "φ is possible under the chosen modal semantics. In standard normal modal logics, ◇φ abbreviates ¬□¬φ. At least one accessible world satisfies P in the standard Kripke interpretation.",
+      "examples": [
+        {
+          "text": "◇P.",
+          "note": "At least one accessible world satisfies P in the standard Kripke interpretation."
+        }
+      ],
+      "limitations": [
+        "In standard normal modal logics, ◇φ abbreviates ¬□¬φ."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "modal-logic"
+      ]
+    },
+    {
+      "id": "predicate-application",
+      "name": "Predicate application",
+      "glyph": "P(·)",
+      "alternateGlyphs": [],
+      "aliases": [
+        "Pa"
+      ],
+      "group": "relation",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Asserts that the object denoted by a satisfies P.",
+      "body": "Asserts that the object denoted by a satisfies P. Some notations omit parentheses. The formula says that the individual denoted by ada belongs to the extension of Tall.",
+      "examples": [
+        {
+          "text": "Tall(ada).",
+          "note": "The formula says that the individual denoted by ada belongs to the extension of Tall."
+        }
+      ],
+      "limitations": [
+        "Some notations omit parentheses."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "predicate-letter",
+      "name": "Predicate letter",
+      "glyph": "P",
+      "alternateGlyphs": [
+        "Q",
+        "R"
+      ],
+      "aliases": [
+        "F, G, H"
+      ],
+      "group": "constant",
+      "arity": 0,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Denotes a property or relation of a specified arity.",
+      "body": "Denotes a property or relation of a specified arity. Arity must be declared; a unary predicate and binary relation are different uses. P applies to one term and R to two; the symbolization key supplies their intended meanings.",
+      "examples": [
+        {
+          "text": "P is unary; R is binary. P(a) ∧ R(a, b).",
+          "note": "P applies to one term and R to two; the symbolization key supplies their intended meanings."
+        }
+      ],
+      "limitations": [
+        "Arity must be declared; a unary predicate and binary relation are different uses.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role.",
+        "A predicate or function's actual arity is supplied by its signature. The integer here describes the displayed example, not every use of this notation."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "premise-set-metavariable",
+      "name": "Premise-set metavariable",
+      "glyph": "Γ",
+      "alternateGlyphs": [
+        "Δ"
+      ],
+      "aliases": [
+        "context metavariable"
+      ],
+      "group": "constant",
+      "arity": 0,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Represents a set, list, or multiset of premises, depending on the calculus.",
+      "body": "Represents a set, list, or multiset of premises, depending on the calculus. Structural rules depend on whether order and multiplicity matter. Γ abbreviates the premises and is not an additional premise letter.",
+      "examples": [
+        {
+          "text": "Γ = {P → Q, P}; Γ ⊢ Q.",
+          "note": "Γ abbreviates the premises and is not an additional premise letter."
+        }
+      ],
+      "limitations": [
+        "Structural rules depend on whether order and multiplicity matter.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "prohibition-operator",
+      "name": "Prohibition operator",
+      "glyph": "F",
+      "alternateGlyphs": [],
+      "aliases": [
+        "F(φ)"
+      ],
+      "group": "modal",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [
+        "it is forbidden that"
+      ],
+      "summary": "φ is forbidden under the chosen deontic interpretation.",
+      "body": "φ is forbidden under the chosen deontic interpretation. Commonly defined as O¬φ; F also means eventually in temporal logic. Under the common definition O¬φ, refraining from indoor smoking is obligatory.",
+      "examples": [
+        {
+          "text": "F(SmokeInside).",
+          "note": "Under the common definition O¬φ, refraining from indoor smoking is obligatory."
+        }
+      ],
+      "limitations": [
+        "Commonly defined as O¬φ; F also means eventually in temporal logic."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "modal-logic"
+      ]
+    },
+    {
+      "id": "proper-subset",
+      "name": "Proper subset",
+      "glyph": "⊊",
+      "alternateGlyphs": [
+        "⊂"
+      ],
+      "aliases": [
+        "strict subset"
+      ],
+      "group": "set",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [
+        "is a proper subset of"
+      ],
+      "summary": "A is a subset of B and A differs from B.",
+      "body": "A is a subset of B and A differs from B. Some authors use ⊂ for this meaning. Inclusion holds and the larger set has an element, 3, absent from the smaller one.",
+      "examples": [
+        {
+          "text": "{1, 2} ⊊ {1, 2, 3}.",
+          "note": "Inclusion holds and the larger set has an element, 3, absent from the smaller one."
+        }
+      ],
+      "limitations": [
+        "Some authors use ⊂ for this meaning."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "set-notation"
+      ]
+    },
+    {
+      "id": "relation-application",
+      "name": "Relation application",
+      "glyph": "R(·,·)",
+      "alternateGlyphs": [],
+      "aliases": [
+        "Rab"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Asserts that a and b stand in relation R in that order.",
+      "body": "Asserts that a and b stand in relation R in that order. A relation need not be symmetric. The order matters: Ada being taller than Ben does not imply the reverse.",
+      "examples": [
+        {
+          "text": "Taller(ada, ben).",
+          "note": "The order matters: Ada being taller than Ben does not imply the reverse."
+        }
+      ],
+      "limitations": [
+        "A relation need not be symmetric."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "semantic-consequence",
+      "name": "Semantic consequence",
+      "glyph": "⊨",
+      "alternateGlyphs": [],
+      "aliases": [
+        "entailment"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [
+        "|="
+      ],
+      "englishReadings": [
+        "entails",
+        "is a semantic consequence of"
+      ],
+      "summary": "Every relevant interpretation satisfying Γ also satisfies φ.",
+      "body": "Every relevant interpretation satisfying Γ also satisfies φ. Semantic consequence is not the material conditional → or syntactic derivability ⊢. No valuation makes both premises true while making Q false.",
+      "examples": [
+        {
+          "text": "{P → Q, P} ⊨ Q.",
+          "note": "No valuation makes both premises true while making Q false."
+        }
+      ],
+      "limitations": [
+        "Semantic consequence is not the material conditional → or syntactic derivability ⊢."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "formal-derivability",
+          "note": "Semantic consequence concerns models; derivability concerns proofs in a calculus."
+        }
+      ],
+      "related": [
+        "formal-derivability"
+      ],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "sentence-letter",
+      "name": "Sentence letter",
+      "glyph": "p",
+      "alternateGlyphs": [
+        "q",
+        "r"
+      ],
+      "aliases": [
+        "A, B, C"
+      ],
+      "group": "constant",
+      "arity": 0,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Represents an atomic proposition under a chosen valuation.",
+      "body": "Represents an atomic proposition under a chosen valuation. Letters have no fixed subject matter and are distinct from formula metavariables. p names the proposition for this formalization; it is not a variable ranging over trains.",
+      "examples": [
+        {
+          "text": "Assign p the sentence 'the train is late'.",
+          "note": "p names the proposition for this formalization; it is not a variable ranging over trains."
+        }
+      ],
+      "limitations": [
+        "Letters have no fixed subject matter and are distinct from formula metavariables.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "propositional-logic"
+      ]
+    },
+    {
+      "id": "sequent-arrow",
+      "name": "Sequent arrow",
+      "glyph": "⇒",
+      "alternateGlyphs": [],
+      "aliases": [
+        "Γ ⟹ Δ"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Separates antecedent and succedent in a sequent calculus.",
+      "body": "Separates antecedent and succedent in a sequent calculus. May have different interpretations in classical, intuitionistic, and substructural calculi. The antecedent contains the two premises and the succedent contains the conclusion.",
+      "examples": [
+        {
+          "text": "P, P → Q ⇒ Q.",
+          "note": "The antecedent contains the two premises and the succedent contains the conclusion."
+        }
+      ],
+      "limitations": [
+        "May have different interpretations in classical, intuitionistic, and substructural calculi."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "set-intersection",
+      "name": "Set intersection",
+      "glyph": "∩",
+      "alternateGlyphs": [],
+      "aliases": [
+        "intersection"
+      ],
+      "group": "set",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "The set containing objects in both A and B.",
+      "body": "The set containing objects in both A and B. Related to conjunction but is a set operation, not a propositional connective. Only 2 belongs to both input sets.",
+      "examples": [
+        {
+          "text": "{1, 2} ∩ {2, 3} = {2}.",
+          "note": "Only 2 belongs to both input sets."
+        }
+      ],
+      "limitations": [
+        "Related to conjunction but is a set operation, not a propositional connective."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "set-notation"
+      ]
+    },
+    {
+      "id": "set-membership",
+      "name": "Set membership",
+      "glyph": "∈",
+      "alternateGlyphs": [],
+      "aliases": [
+        "element of"
+      ],
+      "group": "set",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [
+        "is an element of"
+      ],
+      "summary": "Object x belongs to set A.",
+      "body": "Object x belongs to set A. This is a nonlogical predicate of ordinary set-theoretic languages, not a universal FOL primitive. The numeral 2 denotes an element of the displayed set.",
+      "examples": [
+        {
+          "text": "2 ∈ {1, 2, 3}.",
+          "note": "The numeral 2 denotes an element of the displayed set."
+        }
+      ],
+      "limitations": [
+        "This is a nonlogical predicate of ordinary set-theoretic languages, not a universal FOL primitive."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "subset",
+          "note": "Membership relates an object to a set; inclusion relates sets through their members."
+        }
+      ],
+      "related": [
+        "subset"
+      ],
+      "tags": [
+        "set-notation"
+      ]
+    },
+    {
+      "id": "set-nonmembership",
+      "name": "Set nonmembership",
+      "glyph": "∉",
+      "alternateGlyphs": [],
+      "aliases": [
+        "not an element of"
+      ],
+      "group": "set",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [
+        "is not an element of"
+      ],
+      "summary": "Object x does not belong to set A.",
+      "body": "Object x does not belong to set A. Abbreviates negated membership. The displayed set contains no element equal to 4.",
+      "examples": [
+        {
+          "text": "4 ∉ {1, 2, 3}.",
+          "note": "The displayed set contains no element equal to 4."
+        }
+      ],
+      "limitations": [
+        "Abbreviates negated membership."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "set-notation"
+      ]
+    },
+    {
+      "id": "set-union",
+      "name": "Set union",
+      "glyph": "∪",
+      "alternateGlyphs": [],
+      "aliases": [
+        "union"
+      ],
+      "group": "set",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "The set containing objects in A or B.",
+      "body": "The set containing objects in A or B. Related to disjunction but is a set operation, not a propositional connective. An object from either input belongs to the union; repetitions do not create additional elements.",
+      "examples": [
+        {
+          "text": "{1, 2} ∪ {2, 3} = {1, 2, 3}.",
+          "note": "An object from either input belongs to the union; repetitions do not create additional elements."
+        }
+      ],
+      "limitations": [
+        "Related to disjunction but is a set operation, not a propositional connective."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "set-notation"
+      ]
+    },
+    {
+      "id": "subset",
+      "name": "Subset",
+      "glyph": "⊆",
+      "alternateGlyphs": [],
+      "aliases": [
+        "subset or equal"
+      ],
+      "group": "set",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [
+        "is a subset of"
+      ],
+      "summary": "Every member of A is a member of B.",
+      "body": "Every member of A is a member of B. ⊂ is ambiguous between strict and non-strict inclusion across authors. Every element of the first set belongs to the second.",
+      "examples": [
+        {
+          "text": "{1, 2} ⊆ {1, 2, 3}.",
+          "note": "Every element of the first set belongs to the second."
+        }
+      ],
+      "limitations": [
+        "⊂ is ambiguous between strict and non-strict inclusion across authors."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "set-notation"
+      ]
+    },
+    {
+      "id": "substitution-notation",
+      "name": "Substitution notation",
+      "glyph": "[t/x]",
+      "alternateGlyphs": [],
+      "aliases": [
+        "φ[x := t]"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Replace free occurrences of x in φ by t subject to capture restrictions.",
+      "body": "Replace free occurrences of x in φ by t subject to capture restrictions. Some authors reverse the order inside the brackets; declare the convention. Replace the free x by a. Substituting a variable may require renaming binders to avoid capture.",
+      "examples": [
+        {
+          "text": "P(x)[a/x] = P(a).",
+          "note": "Replace the free x by a. Substituting a variable may require renaming binders to avoid capture."
+        }
+      ],
+      "limitations": [
+        "Some authors reverse the order inside the brackets; declare the convention."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "theoremhood-marker",
+      "name": "Theoremhood marker",
+      "glyph": "⊢",
+      "alternateGlyphs": [],
+      "aliases": [
+        "theorem marker"
+      ],
+      "group": "relation",
+      "arity": 1,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "φ can be derived with no undischarged premises.",
+      "body": "φ can be derived with no undischarged premises. A theorem of the specified calculus. The conditional can be proved without any undischarged assumption.",
+      "examples": [
+        {
+          "text": "⊢ P → P.",
+          "note": "The conditional can be proved without any undischarged assumption."
+        }
+      ],
+      "limitations": [
+        "A theorem of the specified calculus."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "therefore-marker",
+      "name": "Therefore marker",
+      "glyph": "∴",
+      "alternateGlyphs": [],
+      "aliases": [
+        "therefore"
+      ],
+      "group": "relation",
+      "arity": 0,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Introduces an argument's conclusion.",
+      "body": "Introduces an argument's conclusion. The mark does not certify that the argument is valid. The marker identifies the conclusion; validity still depends on the premises and inference.",
+      "examples": [
+        {
+          "text": "P; P → Q; ∴ Q.",
+          "note": "The marker identifies the conclusion; validity still depends on the premises and inference."
+        }
+      ],
+      "limitations": [
+        "The mark does not certify that the argument is valid."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "proof-notation"
+      ]
+    },
+    {
+      "id": "truth-constant",
+      "name": "Truth constant",
+      "glyph": "⊤",
+      "alternateGlyphs": [
+        "T",
+        "1"
+      ],
+      "aliases": [
+        "T",
+        "1",
+        "verum"
+      ],
+      "group": "constant",
+      "arity": 0,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "A formula that is always true.",
+      "body": "A formula that is always true. T can also be a sentence letter; 1 is a Boolean-algebra convention. This has the same truth value as P because the right conjunct is always true.",
+      "examples": [
+        {
+          "text": "P ∧ ⊤.",
+          "note": "This has the same truth value as P because the right conjunct is always true."
+        }
+      ],
+      "limitations": [
+        "T can also be a sentence letter; 1 is a Boolean-algebra convention.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "logical-validity-marker",
+          "note": "⊤ is an object-language truth constant; ⊨ asserts semantic validity in the metalanguage."
+        }
+      ],
+      "related": [
+        "logical-validity-marker"
+      ],
+      "tags": [
+        "propositional-logic"
+      ]
+    },
+    {
+      "id": "type-annotation",
+      "name": "Type annotation",
+      "glyph": ":",
+      "alternateGlyphs": [],
+      "aliases": [
+        "type judgment"
+      ],
+      "group": "relation",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [],
+      "summary": "Term t has type τ in the relevant context.",
+      "body": "Term t has type τ in the relevant context. A colon also has ordinary punctuation and set-builder uses. The context assigns x the Boolean type, restricting its admissible use in typed expressions.",
+      "examples": [
+        {
+          "text": "x : Bool.",
+          "note": "The context assigns x the Boolean type, restricting its admissible use in typed expressions."
+        }
+      ],
+      "limitations": [
+        "A colon also has ordinary punctuation and set-builder uses."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "unique-existential-quantifier",
+      "name": "Unique existential quantifier",
+      "glyph": "∃!",
+      "alternateGlyphs": [],
+      "aliases": [
+        "∃₁x P(x)"
+      ],
+      "group": "quantifier",
+      "arity": 1,
+      "shortcodes": [
+        "exists!"
+      ],
+      "englishReadings": [
+        "exactly one",
+        "there exists a unique"
+      ],
+      "summary": "Exactly one individual satisfies P.",
+      "body": "Exactly one individual satisfies P. Usually a defined abbreviation, not a primitive of first-order logic. There is a captain, and any two objects satisfying Captain must be identical.",
+      "examples": [
+        {
+          "text": "∃!x Captain(x).",
+          "note": "There is a captain, and any two objects satisfying Captain must be identical."
+        }
+      ],
+      "limitations": [
+        "Usually a defined abbreviation, not a primitive of first-order logic."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "universal-quantifier",
+      "name": "Universal quantifier",
+      "glyph": "∀",
+      "alternateGlyphs": [],
+      "aliases": [
+        "(x)P(x)"
+      ],
+      "group": "quantifier",
+      "arity": 1,
+      "shortcodes": [
+        "forall"
+      ],
+      "englishReadings": [
+        "for every",
+        "for all",
+        "each"
+      ],
+      "summary": "For every individual x in the domain, P(x) holds.",
+      "body": "For every individual x in the domain, P(x) holds. Universal quantification does not imply that P has an instance in every logic or domain convention. Every object that is a cat is a mammal. The formula does not assert that cats exist.",
+      "examples": [
+        {
+          "text": "∀x (Cat(x) → Mammal(x)).",
+          "note": "Every object that is a cat is a mammal. The formula does not assert that cats exist."
+        }
+      ],
+      "limitations": [
+        "Classical first-order semantics normally assumes a nonempty domain. In systems permitting empty domains, universal formulas are vacuously true there.",
+        "Even in a nonempty domain, ∀x(Unicorn(x) → Blue(x)) does not assert that any unicorn exists.",
+        "The bound variable need not occur in the body: ∀x P is syntactically permitted in many systems and is vacuous quantification."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "existential-quantifier",
+          "note": "Universal quantification requires the property throughout the domain; existential quantification requires a witness."
+        }
+      ],
+      "related": [
+        "existential-quantifier"
+      ],
+      "tags": [
+        "predicate-logic"
+      ]
+    },
+    {
+      "id": "until-operator",
+      "name": "Until operator",
+      "glyph": "U",
+      "alternateGlyphs": [],
+      "aliases": [
+        "until"
+      ],
+      "group": "modal",
+      "arity": 2,
+      "shortcodes": [],
+      "englishReadings": [
+        "until"
+      ],
+      "summary": "ψ eventually holds and φ holds at preceding relevant times.",
+      "body": "ψ eventually holds and φ holds at preceding relevant times. Weak until is a distinct operator and need not guarantee ψ. Service eventually occurs, and Waiting holds at each preceding relevant state.",
+      "examples": [
+        {
+          "text": "Waiting U Served.",
+          "note": "Service eventually occurs, and Waiting holds at each preceding relevant state."
+        }
+      ],
+      "limitations": [
+        "Weak until is a distinct operator and need not guarantee ψ."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "modal-logic"
+      ]
+    }
+  ]
+}
