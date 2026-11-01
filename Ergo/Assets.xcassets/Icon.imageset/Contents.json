@@ -1,0 +1,22 @@
+{
+  "images" : [
+    {
+      "filename" : "Ergo-iOS-Default-1024@1x.png",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Ergo-iOS-Dark-1024@1x.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
