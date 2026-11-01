@@ -5,25 +5,29 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
-import Foundation
+import SwiftUI
 
-//struct ItemDetailView: View {
-//	let route: ItemRoute
-//	let origin: ItemTab
-//
-//	var body: some View {
-//		switch route {
-//			case .claim(let id):
-//				ClaimDetailView(id: id, origin: origin)
-//
-//			case .source(let id):
+struct ItemDetailView: View {
+	let route: ItemRoute
+	let origin: ItemTab
+
+	var body: some View {
+		switch route {
+			case .claim(_):
+//				ClaimDetailView(id: id)
+				Text("not yet")
+
+			case .source(_):
 //				SourceDetailView(id: id)
-//
-//			case .analysis(let id):
+				Text("not yet")
+
+			case .analysis(_):
 //				AnalysisDetailView(id: id)
-//
-//			case .evidence(let id):
+				Text("not yet")
+
+			case .evidence(_):
 //				EvidenceDetailView(id: id)
-//		}
-//	}
-//}
+				Text("not yet")
+		}
+	}
+}

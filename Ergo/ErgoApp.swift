@@ -11,7 +11,16 @@ import SwiftUI
 struct ErgoApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+			AppScene()
         }
     }
+}
+
+struct AppScene: View {
+	@State private var navigation = NavigationManager()
+
+	var body: some View {
+		ContentView()
+			.environment(navigation)
+	}
 }
