@@ -66,6 +66,6 @@ struct ToolbarTitleItem: ToolbarContent {
 struct ToolbarTitleView: View {
 	var body: some View {
 		Image("Ergo")
-			.foregroundStyle(.primary)
+			.foregroundStyle(.accent)
 	}
 }

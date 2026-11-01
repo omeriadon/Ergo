@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct Example: Codable {
+nonisolated struct Example: Codable, Sendable {
     let text: String
     let note: String?
 
@@ -14,7 +14,7 @@ struct Example: Codable {
     }
 }
 
-struct CatalogLink: Codable {
+nonisolated struct CatalogLink: Codable, Sendable {
     let targetID: String
     let note: String
 
@@ -24,12 +24,12 @@ struct CatalogLink: Codable {
     }
 }
 
-enum CheckMode: String, Codable {
+nonisolated enum CheckMode: String, Codable, Sendable {
     case solver
     case model
 }
 
-enum SymbolGroup: String, Codable {
+nonisolated enum SymbolGroup: String, Codable, Sendable {
     case connective
     case quantifier
     case modal
@@ -38,7 +38,7 @@ enum SymbolGroup: String, Codable {
     case set
 }
 
-struct Fallacy: Codable, Identifiable {
+nonisolated struct Fallacy: Codable, Identifiable, Sendable {
     let id: String
     let name: String
     let aliases: [String]
@@ -70,7 +70,7 @@ struct Fallacy: Codable, Identifiable {
     }
 }
 
-struct Razor: Codable, Identifiable {
+nonisolated struct Razor: Codable, Identifiable, Sendable {
     let id: String
     let name: String
     let aliases: [String]
@@ -98,7 +98,7 @@ struct Razor: Codable, Identifiable {
     }
 }
 
-struct Bias: Codable, Identifiable {
+nonisolated struct Bias: Codable, Identifiable, Sendable {
     let id: String
     let name: String
     let aliases: [String]
@@ -130,7 +130,7 @@ struct Bias: Codable, Identifiable {
     }
 }
 
-struct LogicSymbol: Codable, Identifiable {
+nonisolated struct LogicSymbol: Codable, Identifiable, Sendable {
     let id: String
     let name: String
     let glyph: String
@@ -168,7 +168,7 @@ struct LogicSymbol: Codable, Identifiable {
     }
 }
 
-struct Concept: Codable, Identifiable {
+nonisolated struct Concept: Codable, Identifiable, Sendable {
     let id: String
     let name: String
     let aliases: [String]
@@ -202,7 +202,7 @@ struct Concept: Codable, Identifiable {
     }
 }
 
-struct FallacyCatalog: Codable {
+nonisolated struct FallacyCatalog: Codable, Sendable {
     let fallacies: [Fallacy]
 
     private enum CodingKeys: String, CodingKey {
@@ -210,7 +210,7 @@ struct FallacyCatalog: Codable {
     }
 }
 
-struct RazorCatalog: Codable {
+nonisolated struct RazorCatalog: Codable, Sendable {
     let razors: [Razor]
 
     private enum CodingKeys: String, CodingKey {
@@ -218,7 +218,7 @@ struct RazorCatalog: Codable {
     }
 }
 
-struct BiasCatalog: Codable {
+nonisolated struct BiasCatalog: Codable, Sendable {
     let biases: [Bias]
 
     private enum CodingKeys: String, CodingKey {
@@ -226,7 +226,7 @@ struct BiasCatalog: Codable {
     }
 }
 
-struct LogicSymbolCatalog: Codable {
+nonisolated struct LogicSymbolCatalog: Codable, Sendable {
     let symbols: [LogicSymbol]
 
     private enum CodingKeys: String, CodingKey {
@@ -234,7 +234,7 @@ struct LogicSymbolCatalog: Codable {
     }
 }
 
-struct ConceptCatalog: Codable {
+nonisolated struct ConceptCatalog: Codable, Sendable {
     let concepts: [Concept]
 
     private enum CodingKeys: String, CodingKey {

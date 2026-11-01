@@ -18,9 +18,14 @@ struct ErgoApp: App {
 
 struct AppScene: View {
 	@State private var navigation = NavigationManager()
+	@State private var catalog = CatalogStore()
 
 	var body: some View {
 		ContentView()
+			.environment(catalog)
 			.environment(navigation)
+			.task {
+				try? await catalog.load()
+			}
 	}
 }
