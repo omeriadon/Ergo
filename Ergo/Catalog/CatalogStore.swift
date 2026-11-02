@@ -22,37 +22,63 @@ final class CatalogStore {
 	private(set) var isLoaded = false
 
 	func load() async throws {
-		async let biases: BiasCatalog = Self.decode("biases")
-		async let concepts: ConceptCatalog = Self.decode("concepts")
-		async let fallacies: FallacyCatalog = Self.decode("fallacies")
-		async let razors: RazorCatalog = Self.decode("razors")
-		async let logicSymbols: LogicSymbolCatalog = Self.decode("symbols")
-		async let paradoxes: ParadoxCatalog = Self.decode("paradoxes")
-		async let philosophers: PhilosopherCatalog = Self.decode("philosophers")
+		async let pendingIndex = Self.makeIndex()
+		let newIndex = try await pendingIndex
+		async let newBiases: BiasCatalog = Self.decode("biases", using: newIndex)
+		async let newConcepts: ConceptCatalog = Self.decode("concepts", using: newIndex)
+		async let newFallacies: FallacyCatalog = Self.decode("fallacies", using: newIndex)
+		async let newRazors: RazorCatalog = Self.decode("razors", using: newIndex)
+		async let newLogicSymbols: LogicSymbolCatalog = Self.decode("symbols", using: newIndex)
+		async let newParadoxes: ParadoxCatalog = Self.decode("paradoxes", using: newIndex)
+		async let newPhilosophers: PhilosopherCatalog = Self.decode("philosophers", using: newIndex)
 
 		let results = try await (
-			biases,
-			concepts,
-			fallacies,
-			razors,
-			logicSymbols,
-			paradoxes,
-			philosophers
+			newBiases,
+			newConcepts,
+			newFallacies,
+			newRazors,
+			newLogicSymbols,
+			newParadoxes,
+			newPhilosophers
 		)
+		try Self.validate(concepts: results.1, paradoxes: results.5)
 
-		self.biases = results.0
-		self.concepts = results.1
-		self.fallacies = results.2
-		self.razors = results.3
-		self.logicSymbols = results.4
-		self.paradoxes = results.5
-		self.philosophers = results.6
-
+		biases = results.0
+		concepts = results.1
+		fallacies = results.2
+		razors = results.3
+		logicSymbols = results.4
+		paradoxes = results.5
+		philosophers = results.6
+		index = newIndex
 		isLoaded = true
 	}
 
+	private(set) var index = CatalogIndex()
+
+	func rebuildIndex() throws {
+		var newIndex = CatalogIndex()
+
+		try newIndex.register(
+			logicSymbols.symbols,
+			category: .symbols,
+			id: \.id,
+			name: \.name
+		)
+
+		try newIndex.register(fallacies.fallacies, category: .fallacies, id: \.id, name: \.name)
+		try newIndex.register(razors.razors, category: .razors, id: \.id, name: \.name)
+		try newIndex.register(biases.biases, category: .biases, id: \.id, name: \.name)
+		try newIndex.register(concepts.concepts, category: .concepts, id: \.id, name: \.name)
+		try newIndex.register(paradoxes.paradoxes, category: .paradoxes, id: \.id, name: \.name)
+		try newIndex.register(philosophers.philosophers, category: .philosophers, id: \.id, name: \.name)
+
+		index = newIndex
+	}
+
 	private nonisolated static func decode<T: Decodable & Sendable>(
-		_ name: String
+		_ name: String,
+		using index: CatalogIndex
 	) throws -> T {
 		guard let url = Bundle.main.url(
 			forResource: name,
@@ -62,6 +88,58 @@ final class CatalogStore {
 		}
 
 		let data = try Data(contentsOf: url)
-		return try JSONDecoder().decode(T.self, from: data)
+		let decoder = JSONDecoder()
+		decoder.userInfo[.catalogIndex] = index
+		return try decoder.decode(T.self, from: data)
 	}
+
+	private nonisolated static func makeIndex() throws -> CatalogIndex {
+		var newIndex = CatalogIndex()
+		try registerMetadata("symbols", category: .symbols, in: &newIndex)
+		try registerMetadata("fallacies", category: .fallacies, in: &newIndex)
+		try registerMetadata("razors", category: .razors, in: &newIndex)
+		try registerMetadata("biases", category: .biases, in: &newIndex)
+		try registerMetadata("concepts", category: .concepts, in: &newIndex)
+		try registerMetadata("paradoxes", category: .paradoxes, in: &newIndex)
+		try registerMetadata("philosophers", category: .philosophers, in: &newIndex)
+		return newIndex
+	}
+
+	private nonisolated static func registerMetadata(
+		_ name: String,
+		category: LibraryContent,
+		in index: inout CatalogIndex
+	) throws {
+		guard let url = Bundle.main.url(forResource: name, withExtension: "json") else {
+			throw CocoaError(.fileNoSuchFile)
+		}
+
+		let data = try Data(contentsOf: url)
+		let metadata = try JSONDecoder().decode([String: [CatalogMetadata]].self, from: data)
+		guard let entries = metadata[name] else {
+			throw DecodingError.dataCorrupted(.init(
+				codingPath: [],
+				debugDescription: "Missing catalog collection: \(name)"
+			))
+		}
+		try index.register(entries, category: category, id: \.id, name: \.name)
+	}
+
+	private nonisolated static func validate(
+		concepts: ConceptCatalog,
+		paradoxes: ParadoxCatalog
+	) throws {
+		for entry in concepts.concepts where entry.keyFigures.contains(where: { $0.category != .philosophers }) {
+			throw CatalogIndexError.invalidKeyFigure(entry.id)
+		}
+
+		for entry in paradoxes.paradoxes where entry.keyFigures.contains(where: { $0.category != .philosophers }) {
+			throw CatalogIndexError.invalidKeyFigure(entry.id)
+		}
+	}
+}
+
+private struct CatalogMetadata: Decodable, Sendable {
+	let id: String
+	let name: String
 }

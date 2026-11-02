@@ -10,11 +10,11 @@ import Foundation
 extension Bundle {
 	/// Returns the marketing version (e.g., "1.0.0")
 	var appVersion: String {
-		return infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+		infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
 	}
 
 	/// Returns the build number (e.g., "42")
 	var buildNumber: String {
-		return infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+		infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
 	}
 }

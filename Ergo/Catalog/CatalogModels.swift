@@ -1,6 +1,4 @@
 // Models for the seven bundled JSON catalogs.
-// Catalog IDs and crosslinks are readable String slugs.
-// Non-biographical entries have exactly one category in tags.
 
 import Foundation
 
@@ -15,13 +13,81 @@ nonisolated struct Example: Codable, Sendable {
 }
 
 nonisolated struct CatalogLink: Codable, Sendable {
-	let targetID: String
+	let target: CatalogReference
 	let note: String
 
 	private enum CodingKeys: String, CodingKey {
 		case targetID
 		case note
 	}
+
+	init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		let targetID = try container.decode(String.self, forKey: .targetID)
+		target = try CatalogReference(id: targetID, from: decoder)
+		note = try container.decode(String.self, forKey: .note)
+	}
+
+	func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try container.encode(target.id, forKey: .targetID)
+		try container.encode(note, forKey: .note)
+	}
+}
+
+nonisolated enum BiasTag: String, Codable, CaseIterable, Hashable, Sendable {
+	case attention
+	case attribution
+	case beliefAssessment = "belief-assessment"
+	case decisionMaking = "decision-making"
+	case memory
+	case researchAndMeasurement = "research-and-measurement"
+	case socialJudgment = "social-judgment"
+}
+
+nonisolated enum FallacyTag: String, Codable, CaseIterable, Hashable, Sendable {
+	case causalReasoning = "causal-reasoning"
+	case ethicsHistoryAndEconomics = "ethics-history-and-economics"
+	case formalLogic = "formal-logic"
+	case generalizationAndSampling = "generalization-and-sampling"
+	case languageAndAmbiguity = "language-and-ambiguity"
+	case premisesAndEvidence = "premises-and-evidence"
+	case probabilityAndStatistics = "probability-and-statistics"
+	case relevanceAndAppeals = "relevance-and-appeals"
+	case relevanceAndDebate = "relevance-and-debate"
+}
+
+nonisolated enum RazorTag: String, Codable, CaseIterable, Hashable, Sendable {
+	case attribution
+	case decisionMaking = "decision-making"
+	case evidence
+	case interpretation
+	case parsimony
+}
+
+nonisolated enum ConceptTag: String, Codable, CaseIterable, Hashable, Sendable {
+	case aestheticsAndCulture = "aesthetics-and-culture"
+	case decisionTheorySystemsAndMethods = "decision-theory-systems-and-methods"
+	case epistemologyAndPhilosophyOfScience = "epistemology-and-philosophy-of-science"
+	case ethicsAndValue = "ethics-and-value"
+	case languageMeaningAndInterpretation = "language-meaning-and-interpretation"
+	case logicAndReasoning = "logic-and-reasoning"
+	case memoryLearningAndReportedPsychologicalEffects = "memory-learning-and-reported-psychological-effects"
+	case metaphysicsAndOntology = "metaphysics-and-ontology"
+	case mindConsciousnessAndAgency = "mind-consciousness-and-agency"
+	case philosophicalSchoolsAndIsms = "philosophical-schools-and-isms"
+	case politicalIdeologiesAndIsms = "political-ideologies-and-isms"
+	case politicalPhilosophyAndInstitutions = "political-philosophy-and-institutions"
+	case reasoningMethods = "reasoning-methods"
+	case religionAsianAfricanAndIndigenousPhilosophy = "religion-asian-african-and-indigenous-philosophy"
+	case thoughtExperiments = "thought-experiments"
+}
+
+nonisolated enum ParadoxTag: String, Codable, CaseIterable, Hashable, Sendable {
+	case ethicsAndValue = "ethics-and-value"
+	case knowledgeAndMeaning = "knowledge-and-meaning"
+	case logicAndLanguage = "logic-and-language"
+	case metaphysics
 }
 
 nonisolated enum CheckMode: String, Codable, Sendable {
@@ -54,8 +120,8 @@ nonisolated struct Fallacy: Codable, Identifiable, Sendable {
 	let examples: [Example]
 	let doesNotCountWhen: [String]
 	let lookalikes: [CatalogLink]
-	let related: [String]
-	let tags: [String]
+	let related: [CatalogReference]
+	let tags: [FallacyTag]
 
 	private enum CodingKeys: String, CodingKey {
 		case id
@@ -84,8 +150,8 @@ nonisolated struct Razor: Codable, Identifiable, Sendable {
 	let lensQuestion: String
 	let examples: [Example]
 	let limitations: [String]
-	let related: [String]
-	let tags: [String]
+	let related: [CatalogReference]
+	let tags: [RazorTag]
 
 	private enum CodingKeys: String, CodingKey {
 		case id
@@ -114,8 +180,8 @@ nonisolated struct Bias: Codable, Identifiable, Sendable {
 	let limitations: [String]
 	let evidenceNote: String?
 	let lookalikes: [CatalogLink]
-	let related: [String]
-	let tags: [String]
+	let related: [CatalogReference]
+	let tags: [BiasTag]
 
 	private enum CodingKeys: String, CodingKey {
 		case id
@@ -149,8 +215,8 @@ nonisolated struct LogicSymbol: Codable, Identifiable, Sendable {
 	let examples: [Example]
 	let limitations: [String]
 	let lookalikes: [CatalogLink]
-	let related: [String]
-	let tags: [String]
+	let related: [CatalogReference]
+	let tags: [SymbolTag]
 
 	private enum CodingKeys: String, CodingKey {
 		case id
@@ -172,7 +238,7 @@ nonisolated struct LogicSymbol: Codable, Identifiable, Sendable {
 	}
 }
 
-nonisolated struct Concept: Codable, Identifiable, Sendable {
+nonisolated struct ConceptEntry<Tag: Codable & Hashable & Sendable>: Codable, Identifiable, Sendable {
 	let id: String
 	let name: String
 	let aliases: [String]
@@ -180,13 +246,13 @@ nonisolated struct Concept: Codable, Identifiable, Sendable {
 	let summary: String
 	let body: String
 	let origin: String?
-	let keyFigures: [String]
+	let keyFigures: [CatalogReference]
 	let examples: [Example]
 	let commonMisreadings: [String]
 	let criticisms: [String]
 	let lookalikes: [CatalogLink]
-	let related: [String]
-	let tags: [String]
+	let related: [CatalogReference]
+	let tags: [Tag]
 
 	private enum CodingKeys: String, CodingKey {
 		case id
@@ -206,7 +272,8 @@ nonisolated struct Concept: Codable, Identifiable, Sendable {
 	}
 }
 
-typealias Paradox = Concept
+typealias Concept = ConceptEntry<ConceptTag>
+typealias Paradox = ConceptEntry<ParadoxTag>
 
 nonisolated struct FallacyCatalog: Codable, Sendable {
 	let fallacies: [Fallacy]
@@ -263,7 +330,7 @@ nonisolated struct Philosopher: Codable, Identifiable, Sendable {
 	let birthYear: Int
 	let deathYear: Int?
 	let summary: String
-	let related: [String]
+	let related: [CatalogReference]
 
 	private enum CodingKeys: String, CodingKey {
 		case id

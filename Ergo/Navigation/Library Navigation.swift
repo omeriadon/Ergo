@@ -5,12 +5,13 @@
 //  Created by Adon Omeri on 2/11/2026.
 //
 
+import Defaults
 import Foundation
 
 // MARK: - Library
 
 /// all the content middle views library can go to
-enum LibraryContent: Hashable {
+nonisolated enum LibraryContent: Hashable, Codable, Sendable, Defaults.Serializable {
 	case biases
 	case concepts
 	case fallacies
@@ -28,28 +29,79 @@ enum LibraryRoute: Hashable {
 	case symbols(filter: SymbolSearchToken)
 }
 
+nonisolated struct CatalogReference: Hashable, Identifiable, Codable, Sendable, Defaults.Serializable {
+	let id: String
+	let name: String
+	let category: LibraryContent
+
+	private enum CodingKeys: String, CodingKey {
+		case id
+		case name
+		case category
+	}
+
+	init(id: String, name: String, category: LibraryContent) {
+		self.id = id
+		self.name = name
+		self.category = category
+	}
+
+	init(from decoder: Decoder) throws {
+		if let id = try? decoder.singleValueContainer().decode(String.self) {
+			self = try CatalogReference(id: id, from: decoder)
+			return
+		}
+
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		let decodedID = try container.decode(String.self, forKey: .id)
+		if decoder.userInfo[.catalogIndex] != nil {
+			self = try CatalogReference(id: decodedID, from: decoder)
+			return
+		}
+
+		id = decodedID
+		name = try container.decode(String.self, forKey: .name)
+		category = try container.decode(LibraryContent.self, forKey: .category)
+	}
+
+	func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try container.encode(id, forKey: .id)
+		try container.encode(name, forKey: .name)
+		try container.encode(category, forKey: .category)
+	}
+
+	var route: LibraryRoute {
+		.detail(category: category, id: id)
+	}
+}
+
 // MARK: - Symbol
 
-enum SymbolTag: String, Hashable, Identifiable, CaseIterable {
-	case Modal
-	case Predicate
-	case Proof
-	case Propositional
-	case Set
+enum SymbolTag: String, Codable, Hashable, Identifiable, CaseIterable, Sendable {
+	case modalLogic = "modal-logic"
+	case predicateLogic = "predicate-logic"
+	case proofNotation = "proof-notation"
+	case propositionalLogic = "propositional-logic"
+	case setNotation = "set-notation"
 
 	var desciption: String {
 		switch self {
-			case .Modal:
+			case .modalLogic:
 				"Modal logic"
-			case .Predicate:
+			case .predicateLogic:
 				"Predicate logic"
-			case .Proof:
+			case .proofNotation:
 				"Proof notation"
-			case .Propositional:
-				"Propotisional logic"
-			case .Set:
+			case .propositionalLogic:
+				"Propositional logic"
+			case .setNotation:
 				"Set notation"
 		}
+	}
+
+	var title: String {
+		desciption
 	}
 
 	var id: Self {
@@ -71,7 +123,7 @@ enum SymbolSearchToken: Hashable, Identifiable {
 				group.rawValue.capitalized
 
 			case let .tag(tag):
-				tag.rawValue
+				tag.title
 		}
 	}
 

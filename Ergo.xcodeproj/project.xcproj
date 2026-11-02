@@ -17,6 +17,12 @@
       "version": {
         "up-to-next-major-version": "1.4.0",
       },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/sindresorhus/Defaults",
+      "version": {
+        "up-to-next-major-version": "9.0.9",
+      },
     },
   ],
   "files": [
@@ -55,6 +61,14 @@
       ],
       "package-product-members": [
         {
+          "package": "Defaults",
+          "product-name": "Defaults",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Defaults",
+          "product-name": "DefaultsMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
           "package": "FuzzyMatch",
           "product-name": "FuzzyMatch",
           "build-phase": { "build-phase": "frameworks" },

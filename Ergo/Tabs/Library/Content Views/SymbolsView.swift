@@ -98,6 +98,7 @@ struct SymbolsView: View {
 		) { token in
 			Text(token.title)
 		}
+		.searchPresentationToolbarBehavior(.avoidHidingContent)
 		.navigationTitle("Symbols")
 		.animation(.easeInOut(duration: 0.2), value: tokens)
 	}
@@ -126,7 +127,7 @@ struct SymbolsView: View {
 
 	private var filteredSymbols: [LogicSymbol] {
 		let groups = selectedGroups
-		let tags = Set(selectedTags.map(\.rawValue))
+		let tags = selectedTags
 
 		let filtered = catalog.logicSymbols.symbols.filter { symbol in
 			let groupMatches =
@@ -207,7 +208,6 @@ struct SymbolsView: View {
 				}
 			}
 			.menuActionDismissBehavior(.disabled)
-			.tint(.accent)
 
 			Menu("Tags", systemImage: "tag") {
 				ForEach(SymbolTag.allCases) { tag in
@@ -221,7 +221,6 @@ struct SymbolsView: View {
 				}
 			}
 			.menuActionDismissBehavior(.disabled)
-			.tint(.accent)
 
 			Divider()
 
@@ -231,7 +230,6 @@ struct SymbolsView: View {
 				}
 			}
 			.disabled(tokens.isEmpty)
-			.tint(.accent)
 		} label: {
 			Image(systemName: "line.3.horizontal.decrease")
 		}
