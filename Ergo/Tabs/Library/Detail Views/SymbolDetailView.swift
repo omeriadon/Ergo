@@ -78,7 +78,7 @@ struct SymbolDetailView: View {
 						notes
 							.padding(.top)
 
-						lookalikes
+						LookalikeSection(list: symbol.lookalikes)
 							.padding(.top)
 
 						RelatedSection(list: symbol.related)
@@ -139,37 +139,6 @@ struct SymbolDetailView: View {
 	}
 
 	@ContentBuilder
-	var tags: some View {
-		if let symbol = catalog.logicSymbols.symbols.first(where: { $0.id == id }) {
-			if !symbol.tags.isEmpty {
-				VStack(alignment: .leading, spacing: 13) {
-					Text("Tags")
-						.textCase(.uppercase)
-						.foregroundStyle(.accent)
-
-					VStack(alignment: .leading, spacing: 4) {
-						ForEach(symbol.tags, id: \.self) { tag in
-							NavigationLink(value: LibraryRoute.symbols(filter: .tag(tag))) {
-								HStack {
-									Image(systemName: "tag")
-										.imageScale(.small)
-
-									Text(tag.title)
-									Spacer()
-									Image(systemName: "chevron.right")
-								}
-							}
-						}
-					}
-				}
-				.padding(12)
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-			}
-		}
-	}
-
-	@ContentBuilder
 	var examples: some View {
 		if let symbol = catalog.logicSymbols.symbols.first(where: { $0.id == id }) {
 			VStack(alignment: .leading, spacing: 13) {
@@ -209,58 +178,6 @@ struct SymbolDetailView: View {
 			.padding(12)
 			.frame(maxWidth: .infinity, alignment: .leading)
 			.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-		}
-	}
-
-	@ContentBuilder
-	var lookalikes: some View {
-		if let symbol = catalog.logicSymbols.symbols.first(where: { $0.id == id }) {
-			if !symbol.lookalikes.isEmpty {
-				VStack(alignment: .leading, spacing: 13) {
-					Text("Not To Be Confused With:")
-						.textCase(.uppercase)
-						.foregroundStyle(.accent)
-
-					VStack(alignment: .leading, spacing: 4) {
-						ForEach(symbol.lookalikes, id: \.target.id) { lookalike in
-							let target = lookalike.target
-							let isBookmarked = bookmarks.contains(target)
-
-							NavigationLink(value: target.route) {
-								HStack {
-									Text(target.name)
-									Spacer()
-									Image(systemName: "chevron.right")
-								}
-								.contextMenu {
-									Button {
-										withAnimation(.easeInOut) {
-											if isBookmarked {
-												bookmarks.remove(target)
-											} else {
-												bookmarks.insert(target)
-											}
-										}
-									} label: {
-										if isBookmarked {
-											Label("Remove Bookmark", systemImage: "bookmark.fill")
-										} else {
-											Label("Bookmark", systemImage: "bookmark")
-										}
-									}
-								} preview: {
-									LibraryDetailView(category: target.category, id: target.id)
-										.environment(catalog)
-										.environment(navigation)
-								}
-							}
-						}
-					}
-				}
-				.padding(12)
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-			}
 		}
 	}
 

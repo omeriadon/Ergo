@@ -55,6 +55,9 @@ struct ContentView: View {
 
 								case let .razors(filter):
 									RazorsView(initialFilter: filter)
+
+								case let .paradoxes(filter):
+									ParadoxesView(initialFilter: filter)
 							}
 						}
 						.toolbarTitleItem()
@@ -97,7 +100,7 @@ struct ContentView: View {
 		.environment(catalog)
 		.onAppear {
 			thing.selectedTab = .library
-			thing.libraryPath = [.category(.razors), .detail(category: .razors, id: "bragging-razor")]
+			thing.libraryPath = [.category(.paradoxes), .detail(category: .paradoxes, id: "grandfather-paradox")]
 			Task {
 				try? await catalog.load()
 			}

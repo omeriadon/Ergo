@@ -2897,20 +2897,23 @@
       "name": "Assertion",
       "aliases": [],
       "symbolName": null,
-      "summary": "A speech act in which a speaker presents a proposition as true or worthy of acceptance.",
-      "body": "A speech act in which a speaker presents a proposition as true or worthy of acceptance. Assertions commonly undertake a responsibility to truth and invite assessment by evidence or reasons.",
+      "summary": "A claim offered as true, so that its speaker undertakes to stand behind it and makes it open to assessment.",
+      "body": "An assertion is an act of presenting a proposition as the case, rather than merely mentioning it, asking whether it is true, or ordering someone to make it true. A speaker normally represents herself as entitled to the claim and invites the hearer to accept it, challenge it, or request reasons. The commitment can be explicit or carried by ordinary declarative speech.\n\nAssertions need not be correct, certain, or well supported. Saying “the bridge is open” asserts that it is open even if the speaker is mistaken; saying it under a fiction or while quoting someone can change the speech act. The important distinction is between the proposition asserted and the conversational act of putting it forward.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Saying \"the meeting starts at noon\" asserts that the meeting has a particular start time.",
-          "note": "The speaker offers the statement as a claim about how things are."
+          "text": "A project lead says, “The safety test passed,” and accepts responsibility for that report.",
+          "note": "The sentence is not just a string of words: it presents a fact as true and makes the speaker answerable for its accuracy."
         }
       ],
       "commonMisreadings": [
-        "An assertion differs from a question, command, hypothesis, or quotation."
+        "An assertion is not guaranteed to be true; truth is what the act claims, not what it automatically achieves.",
+        "A question, command, supposition, and quotation can contain the same words without asserting the quoted or supposed proposition."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Some theories dispute whether assertion has one fixed norm, such as truth, knowledge, or justified belief, across every conversational context."
+      ],
       "lookalikes": [],
       "related": [
         "moore-s-paradox"
@@ -2924,20 +2927,23 @@
       "name": "Associationism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A psychological and philosophical theory that explains mental connections through learned associations between ideas or experiences.",
-      "body": "A psychological and philosophical theory that explains mental connections through learned associations between ideas or experiences. Associationist accounts hold that repeated contiguity, similarity, or causal interaction can link representations.",
+      "summary": "A theory that explains mental connections by learned links among ideas, sensations, memories, and actions.",
+      "body": "Associationism says that one mental event can make another easier to recall or expect because the two have become connected. Repetition, temporal contiguity, similarity, contrast, and causal interaction are common proposed routes of connection. In psychological versions, learning changes the probability of a response; in philosophical versions, complex thoughts are analyzed as formations from simpler contents.\n\nThe theory explains why a smell can call up a place or why a signal can prepare an organism for what usually follows. It does not require every association to be conscious, nor does it by itself explain attention, language, reasoning, or the way people reorganize what they learn. Modern learning theory retains some associative mechanisms while treating them as one part of a larger account.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "After repeatedly hearing a bell before food, a dog may salivate when it hears the bell alone.",
-          "note": "The learned response reflects an association between the sound and feeding."
+          "text": "After a tone has repeatedly preceded food, a dog begins to salivate when the tone sounds alone.",
+          "note": "The response is acquired because the tone has become predictive of feeding, not because the animal consciously reasons through the connection."
         }
       ],
       "commonMisreadings": [
-        "Associationism is not the claim that every mental process is consciously chosen."
+        "Associationism is not the claim that all thought is a passive chain of images or that people never form deliberate concepts.",
+        "An observed correlation between two events is not automatically a learned mental association."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that association alone cannot explain compositional thought, novel reasoning, or the role of structured representations and goals."
+      ],
       "lookalikes": [],
       "related": [
         "david-hume"
@@ -2951,20 +2957,23 @@
       "name": "Atheism",
       "aliases": [],
       "symbolName": null,
-      "summary": "The lack of belief in gods or the belief that no gods exist, depending on the definition used.",
-      "body": "The lack of belief in gods or the belief that no gods exist, depending on the definition used. Atheist positions range from withholding theistic belief to affirmatively denying divine beings.",
+      "summary": "A position that lacks belief in gods, or more strongly holds that no gods exist; usage depends on the intended definition.",
+      "body": "Atheism concerns the relation to theistic belief. In a broad or negative use, an atheist does not accept that any god exists, perhaps because the evidence seems insufficient. In a narrower or positive use, atheism is the belief that gods do not exist. The first position withholds assent; the second makes a claim about reality, so they carry different burdens of argument.\n\nAtheism does not by itself settle questions about morality, ritual, meaning, metaphysics, or political organization. An atheist may be agnostic about whether the question can be known, reject organized religion, participate in a religious culture, or defend a naturalistic worldview. Those further commitments must be stated separately.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A person who finds no sufficient evidence for gods and therefore does not believe in them may be an atheist.",
-          "note": "The example illustrates atheism as absence of theistic belief without requiring certainty."
+          "text": "After considering several arguments for a deity and finding none persuasive, a person declines to believe that any deity exists.",
+          "note": "This is atheism in the belief-lacking sense; it does not require certainty that gods are impossible."
         }
       ],
       "commonMisreadings": [
-        "Atheism is not automatically anti-religion, materialism, or a claim to know that gods are impossible."
+        "Atheism is not automatically hostility to religion, materialism, nihilism, or knowledge that no god exists.",
+        "A person can be both atheist in belief and agnostic about whether the existence of gods is knowable."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics of strong atheism argue that universal negative claims about gods require more than the absence of evidence for a particular religious proposal."
+      ],
       "lookalikes": [],
       "related": [
         "agnosticism"
@@ -2978,20 +2987,23 @@
       "name": "Atman",
       "aliases": [],
       "symbolName": null,
-      "summary": "In several Indian philosophical traditions, the self or deepest principle of a person, with its meaning varying by school.",
-      "body": "In several Indian philosophical traditions, the self or deepest principle of a person, with its meaning varying by school. In Advaita Vedanta, Atman is ultimately identical with Brahman, while Buddhism rejects a permanent atman.",
+      "summary": "A term for self or deepest personal principle whose meaning changes across Indian philosophical traditions.",
+      "body": "Atman is not a single cross-traditional synonym for “soul.” In the Upanishadic and Vedanta traditions it can name the innermost self, and Advaita Vedanta argues that the deepest atman is not ultimately different from Brahman. Other Hindu schools give the self a different relation to God and the world. The word therefore has to be interpreted within a school’s account of personhood and liberation.\n\nBuddhist traditions generally reject an enduring atman as the explanation of personal continuity, analyzing experience through conditioned processes instead. The disagreement is not merely about a label: it concerns whether freedom requires recognizing an unchanging self, a relation to the divine, or the absence of such an essence.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An Advaitin interprets awareness beneath changing mental states as Atman.",
-          "note": "The example treats the deepest self as distinct from transient thoughts and sensations."
+          "text": "An Advaita teacher asks a student to distinguish the changing body, moods, and thoughts from the witnessing self identified as atman.",
+          "note": "The exercise illustrates one school’s use of atman as the stable subject beneath changing experience, not a definition accepted by every Indian tradition."
         }
       ],
       "commonMisreadings": [
-        "Atman is not a uniformly defined concept across all Indian traditions."
+        "Atman is not defined identically in Vedanta, Samkhya, Jain, Buddhist, and other traditions.",
+        "Atman is not simply the everyday personality or a detachable ghost inside the body."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Buddhist and other critics argue that introspection finds changing processes and relations rather than an independently existing permanent self."
+      ],
       "lookalikes": [],
       "related": [
         "shankara"
@@ -3005,20 +3017,23 @@
       "name": "Atomism",
       "aliases": [],
       "symbolName": null,
-      "summary": "The doctrine that reality is composed of indivisible or fundamental units and that complex things arise from their combinations.",
-      "body": "The doctrine that reality is composed of indivisible or fundamental units and that complex things arise from their combinations. Atomist theories may concern physical particles, logical elements, linguistic units, or metaphysical simples.",
+      "summary": "The view that complex reality is built from basic units whose combinations explain larger structures.",
+      "body": "Atomism begins with a division between fundamental constituents and the compounds or patterns formed from them. In ancient Greek atomism, indivisible bodies move through void and differ by shape, arrangement, and motion. Later theories use “atom” more broadly for logical, semantic, experiential, or metaphysical simples. What counts as basic therefore depends on the version of atomism; the term need not refer to modern chemical atoms.\n\nAtomism offers a strategy for explaining change without making everything infinitely divisible: compounds alter when their constituents move or regroup. Its pressure point is whether the proposed units are genuinely indivisible, whether relations can be reduced to combinations, and whether higher-level properties are adequately explained by their parts.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Ancient Greek atomists explained visible objects as arrangements of indivisible atoms moving in the void.",
-          "note": "Macroscopic properties were attributed to the configuration of basic units."
+          "text": "An ancient atomist explains the hardness and color of a stone by the arrangement and motion of unseen bodies.",
+          "note": "The explanation treats visible qualities as effects of a more basic structure rather than as fundamental features in their own right."
         }
       ],
       "commonMisreadings": [
-        "Atomism is not limited to modern atomic physics and does not always mean contemporary chemical atoms."
+        "Atomism is not restricted to contemporary physics and does not imply that every theory uses indivisible physical particles.",
+        "Explaining a whole through parts does not by itself show that the whole’s organization has no higher-level significance."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics question whether atomism can account for continuity, emergent properties, mathematical structure, and relations that do not look like additional pieces."
+      ],
       "lookalikes": [],
       "related": [
         "democritus",
@@ -3033,20 +3048,23 @@
       "name": "Attention",
       "aliases": [],
       "symbolName": null,
-      "summary": "The selective allocation of cognitive resources to some information, activity, or object rather than others.",
-      "body": "The selective allocation of cognitive resources to some information, activity, or object rather than others. Attention can be guided by goals, salient stimuli, expectations, and learned priorities.",
+      "summary": "The selective prioritization of some information or activity for enhanced processing while other possibilities receive less processing.",
+      "body": "Attention is how a mind or organism allocates limited processing capacity. Goals can direct it, as when a driver searches for a pedestrian; salient movement or sound can capture it; and habits, expectations, and learned priorities can bias what wins selection. Attention can operate across locations, objects, features, tasks, and time, and it can shift voluntarily or involuntarily.\n\nAttention is not identical to consciousness or effort. Some attended information may guide behavior without entering reportable awareness, while a conscious scene may include unattended background detail. The concept describes a family of selection processes rather than one single mental spotlight, and its effects depend on task demands and available capacity.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A driver focuses on a pedestrian crossing while filtering out an unrelated billboard.",
-          "note": "Processing resources are directed toward information relevant to safe driving."
+          "text": "While cycling through traffic, a rider prioritizes a turning car and the gap ahead over an interesting shop sign.",
+          "note": "The rider’s goals and immediate hazards determine which inputs receive detailed processing, even though other stimuli remain present."
         }
       ],
       "commonMisreadings": [
-        "Attention is not identical to consciousness, because some attended processing may remain unconscious."
+        "Attention is not simply concentration, and it is not identical to whatever a person consciously notices.",
+        "Selective attention does not guarantee accurate perception; a chosen target can still be misunderstood or missed."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Researchers disagree about whether attention is best modeled as a single limited resource, several specialized mechanisms, or a property emerging from competition among representations."
+      ],
       "lookalikes": [],
       "related": [
         "simone-weil"
@@ -3060,22 +3078,27 @@
       "name": "Attentional blink",
       "aliases": [],
       "symbolName": null,
-      "summary": "A temporary reduction in the ability to detect a second target shortly after detecting a first target in rapid visual succession.",
-      "body": "A temporary reduction in the ability to detect a second target shortly after detecting a first target in rapid visual succession. The effect suggests limits in attentional selection and consolidation over brief time intervals.",
+      "summary": "A temporary drop in reporting a second target when it follows a first target quickly in a rapid stream of items.",
+      "body": "In a rapid serial visual presentation task, a person may correctly identify a first target and then fail to report a second target arriving roughly 200–500 milliseconds later. The attentional blink names this measurable reduction in second-target detection, especially when the first target must be identified and the intervening items compete for processing. It is a timing effect, not a literal interruption of vision.\n\nThe phenomenon is used to study selection and the consolidation of information into reportable memory. Its size varies with target discriminability, task instructions, timing, and whether the first item actually captures processing. It therefore indicates a constraint under particular conditions, not a fixed limit shared identically by every person or visual situation.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "In a rapid stream of letters, viewers often miss a digit appearing about 200 milliseconds after another detected digit.",
-          "note": "The second target falls within the short interval in which attention is already engaged with the first."
+          "text": "In a stream of letters, a viewer reports the first digit but misses a second digit shown about 300 milliseconds later.",
+          "note": "The second target appears during a commonly observed window of reduced report accuracy after processing the first target."
         }
       ],
       "commonMisreadings": [
-        "Attentional blink is not ordinary forgetting across long periods."
+        "The attentional blink is not ordinary forgetting over minutes or evidence that the eyes stop receiving input.",
+        "A missed second target does not prove that it was never processed at any level; detection and later report can come apart."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Competing models disagree about whether the main bottleneck is attentional selection, working-memory consolidation, interference, or a combination of these processes."
+      ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "attention"
+      ],
       "tags": [
         "memory-learning-and-reported-psychological-effects"
       ]
@@ -3085,20 +3108,23 @@
       "name": "Authenticity",
       "aliases": [],
       "symbolName": null,
-      "summary": "The condition of acting, expressing, or existing in a way that is faithful to one's considered values or identity rather than merely conforming to external pressure.",
-      "body": "The condition of acting, expressing, or existing in a way that is faithful to one's considered values or identity rather than merely conforming to external pressure. Authenticity involves self-understanding and ownership of commitments, not simply spontaneous behavior.",
+      "summary": "Living and acting in a way one can genuinely own as expressive of one’s considered commitments, rather than merely performing an imposed role.",
+      "body": "Authenticity concerns the relation between a person and the commitments that shape her life. An authentic choice is not simply spontaneous: it involves some self-understanding and an ability to recognize the commitment as one’s own, even when the choice is difficult or socially unpopular. Existentialist accounts connect authenticity with facing freedom and situation without pretending that either determines everything.\n\nAuthenticity does not require inventing oneself without history, other people, or social norms. Values are formed in relationships and can be examined, revised, or criticized. A person can sincerely own a harmful commitment, so authenticity is not the same as moral goodness; nor does a strong feeling automatically reveal an authentic self.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A musician chooses an unconventional genre because it reflects her convictions despite pressure to imitate a profitable style.",
-          "note": "Her choice is owned as an expression of values rather than dictated by approval."
+          "text": "A musician keeps a difficult, noncommercial style because she has examined the reasons it matters to her and accepts the costs.",
+          "note": "The choice is authentic because it is owned as a considered commitment, not merely because it is unusual or emotionally intense."
         }
       ],
       "commonMisreadings": [
-        "Authenticity does not guarantee that a person's values are good or that every genuine impulse should be followed."
+        "Authenticity is not whatever impulse feels strongest at the moment and does not make every sincerely held value admirable.",
+        "It does not mean isolation from tradition, relationships, or social criticism."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that ideals of authenticity can hide the social conditions that shape a supposedly private self and can turn self-expression into another market demand."
+      ],
       "lookalikes": [],
       "related": [
         "martin-heidegger",
@@ -3115,20 +3141,23 @@
       "name": "Authoritarianism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A political system or disposition that concentrates power and demands obedience to authority with limited accountability.",
-      "body": "A political system or disposition that concentrates power and demands obedience to authority with limited accountability. Authoritarian rule restricts pluralism, dissent, or political participation and often relies on coercive enforcement.",
+      "summary": "A system or pattern of rule that concentrates power and treats obedience as more important than meaningful political accountability.",
+      "body": "Authoritarianism describes rule with restricted pluralism, weak checks on executive power, and limited avenues for opposition or public control. Leaders may rely on censorship, surveillance, patronage, police power, emergency claims, or controlled elections. The central issue is not simply that rules exist; it is that those who make binding decisions cannot be effectively challenged by the people subject to them.\n\nAuthoritarian regimes can seek popular approval and may deliver services, stability, or economic growth. Those outcomes do not by themselves remove the authoritarian structure. The concept is comparative and institutional: it asks how power is acquired, constrained, transferred, and contested, rather than treating every strong leader or temporary emergency measure as authoritarian.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A government that bans opposition parties and imprisons critics for public disagreement is authoritarian.",
-          "note": "Political power is insulated from meaningful challenge and dissent is treated as disobedience."
+          "text": "A government permits elections but bars serious opposition, controls major media, and prosecutes peaceful critics.",
+          "note": "Formal voting remains, but organized power is insulated from meaningful competition and dissent is made costly."
         }
       ],
       "commonMisreadings": [
-        "Authoritarianism is not identical to any government with rules, leadership, or temporary emergency powers."
+        "Authoritarianism is not identical to leadership, public rules, or every temporary restriction during an emergency.",
+        "It can coexist with elections, constitutions, or popular rhetoric; those features do not guarantee accountability."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "The category can become too broad if it treats every illiberal policy as authoritarian and ignores differences in degree, institutions, and coercive capacity."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3140,20 +3169,23 @@
       "name": "Authority",
       "aliases": [],
       "symbolName": null,
-      "summary": "A recognized right or legitimate power to issue directives, make decisions, or guide conduct.",
-      "body": "A recognized right or legitimate power to issue directives, make decisions, or guide conduct. Authority differs from mere coercion because it claims a justification that those subject to it ought to accept.",
+      "summary": "A recognized or claimed right to direct conduct, make decisions, or settle questions within a domain.",
+      "body": "Authority is power presented as legitimate: an authority does not merely have the ability to make others comply but claims that its directives should guide them. The claim may come from law, expertise, office, consent, tradition, or a relationship of responsibility. Its scope matters: a judge may have authority to sentence within a court’s jurisdiction, not to decide every question of private life.\n\nAuthority can be accepted, contested, or abused. Coercion can enforce an order without making it authoritative, while influence can change behavior without issuing a binding directive. A good account must therefore explain both why a directive is entitled to obedience and how the authority is limited, reviewable, or withdrawn.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A licensed judge has legal authority to impose a sentence within the court's jurisdiction.",
-          "note": "The judge's directive is backed by an institutional right, not only by physical ability."
+          "text": "A licensed building inspector can require a developer to correct a fire-safety defect under the relevant building code.",
+          "note": "The inspector’s office supplies a domain-specific claim to direct action; physical ability or personal popularity is not the basis."
         }
       ],
       "commonMisreadings": [
-        "Authority can be legitimate or illegitimate and is distinct from influence or domination."
+        "Authority is not the same as force, status, expertise, or influence, though any of them can support a claim to authority.",
+        "Recognized authority can still be unjust or exceed its proper jurisdiction."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics dispute whether legitimate authority can require obedience for reasons the subject does not independently share, especially in political institutions."
+      ],
       "lookalikes": [],
       "related": [
         "joseph-raz"
@@ -3167,20 +3199,23 @@
       "name": "Autonomism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A political tendency emphasizing self-organized, autonomous activity outside and against centralized party or state control.",
-      "body": "A political tendency emphasizing self-organized, autonomous activity outside and against centralized party or state control. Autonomist traditions often focus on workers' self-activity, refusal, commons, and flexible networks of struggle.",
+      "summary": "A political current that emphasizes collective self-activity and self-organization against centralized party, state, or managerial control.",
+      "body": "Autonomism treats people’s capacity to organize directly as politically primary. In its Italian workerist and later movements, the focus falls on workers’ refusal, strikes, occupations, commons, migration, social reproduction, and networks that escape fixed command structures. The point is not simply to win control of an existing state but to build forms of cooperation in which participants determine the activity themselves.\n\nAutonomist practice can use assemblies, federations, temporary coordination, and shared resources; autonomy therefore does not mean that every person acts alone. Its challenge is practical as well as theoretical: decentralized movements must coordinate complex work, handle conflict, and prevent informal inequalities from replacing the formal authority they oppose.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Workers who occupy a factory and operate it through an assembly practice autonomist politics.",
-          "note": "The workers act directly and manage production without waiting for a centralized authority."
+          "text": "Workers occupy a factory, decide production through an assembly, and coordinate supplies with neighboring workplaces rather than waiting for a party directive.",
+          "note": "The example makes collective self-management, rather than private independence, the source of political autonomy."
         }
       ],
       "commonMisreadings": [
-        "Autonomism is not simply personal independence; it concerns collective political autonomy."
+        "Autonomism is not a synonym for personal independence or withdrawal from collective life.",
+        "It is not simply anti-state rhetoric; its positive claim concerns how people organize work, care, and decisions directly."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics question whether networked self-organization can sustain large-scale coordination and whether informal expertise can become an unaccountable hierarchy."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3192,20 +3227,23 @@
       "name": "Autonomy",
       "aliases": [],
       "symbolName": null,
-      "summary": "The capacity to govern oneself through deliberation, choice, and commitments that one can meaningfully own.",
-      "body": "The capacity to govern oneself through deliberation, choice, and commitments that one can meaningfully own. Moral autonomy involves acting from reasons one endorses rather than merely submitting to external control or compulsion.",
+      "summary": "The capacity to direct one’s life through choices and commitments one can understand, endorse, and meaningfully act on.",
+      "body": "Autonomy is self-government, not mere preference satisfaction. A person acts autonomously when she understands relevant options, can deliberate without controlling coercion or manipulation, and can identify the decision as her own. Different theories emphasize rational endorsement, effective independence, freedom from domination, or the social conditions that make self-direction possible.\n\nAutonomy is compatible with advice, dependence, disability, and relationships. A patient can choose with help, and a person can lose autonomy when poverty, deception, addiction, or intimidation makes alternatives nominal rather than real. Autonomy also has limits where one person’s self-direction would violate another person’s rights or welfare.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A patient who understands treatment options and chooses among them exercises medical autonomy.",
-          "note": "The decision is informed and owned by the person whose body and interests are at stake."
+          "text": "A patient receives understandable information, asks questions, and chooses between medically reasonable treatments without family or clinical pressure.",
+          "note": "The decision is informed and owned by the patient while still relying on professional knowledge and relational support."
         }
       ],
       "commonMisreadings": [
-        "Autonomy does not require isolation from advice, relationships, or social support."
+        "Autonomy does not require making choices without advice, care, or social dependence.",
+        "Having a preference is not enough when manipulation, incapacity, or coercion prevents meaningful self-direction."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Relational and feminist critics argue that individualist accounts can hide the care, resources, and social recognition required for autonomy to be exercised."
+      ],
       "lookalikes": [],
       "related": [
         "agency",
@@ -3223,20 +3261,23 @@
       "name": "Avant-garde",
       "aliases": [],
       "symbolName": null,
-      "summary": "Innovative art or cultural practice that deliberately challenges established conventions and institutions.",
-      "body": "Innovative art or cultural practice that deliberately challenges established conventions and institutions. Avant-garde work seeks formal, conceptual, or social experimentation and often provokes controversy.",
+      "summary": "Art or cultural practice that deliberately tests established forms, expectations, and institutions in pursuit of new possibilities.",
+      "body": "The avant-garde is defined by a relation to an existing cultural order. An artist or movement may break conventions of form, medium, authorship, audience, or subject matter and may connect that experiment to social or political transformation. Novelty alone is not enough: a work is avant-garde when its innovation challenges what a field takes to be permissible, valuable, or intelligible.\n\nThe label is historically unstable because yesterday’s provocation can become an institution’s standard style. Avant-garde work can also be absorbed by galleries, markets, and advertising, turning opposition into a recognizable commodity. Its experimental force and its later success are therefore not mutually exclusive, but neither is guaranteed by difficulty or shock.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A gallery exhibition made entirely from industrial noise and audience instructions can be avant-garde.",
-          "note": "It unsettles conventional expectations about materials, authorship, and what counts as art."
+          "text": "An exhibition asks visitors to rearrange industrial objects and treats their instructions as part of the work rather than displaying finished paintings.",
+          "note": "The experiment challenges conventional ideas about artistic material, authorship, and the boundary between artwork and audience."
         }
       ],
       "commonMisreadings": [
-        "Avant-garde does not mean every new or unusual work is artistically successful."
+        "Avant-garde does not mean simply new, obscure, or offensive, and it does not guarantee artistic success.",
+        "A work can challenge one convention while preserving others; the label is not an all-or-nothing moral judgment."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that avant-garde institutions can reproduce elite cultural authority and that provocation may become a predictable style rather than a genuine challenge."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3248,20 +3289,23 @@
       "name": "Averroism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A medieval philosophical tradition based on interpretations of Ibn Rushd, known in Latin as Averroes.",
-      "body": "A medieval philosophical tradition based on interpretations of Ibn Rushd, known in Latin as Averroes. Latin Averroist debates engaged Aristotle's philosophy, the intellect, the eternity of the world, and the relation between reason and revelation.",
+      "summary": "A family of medieval interpretations of Ibn Rushd that used Aristotelian philosophy to debate intellect, worldhood, and reason’s relation to revelation.",
+      "body": "Averroism is best understood as a contested reception of Ibn Rushd, known in Latin as Averroes, rather than as one doctrine shared by all his readers. Latin university debates associated with the label concerned the eternity of the world, the nature of the intellect, human cognition, and whether philosophical conclusions could conflict with theological teaching. Some positions called Averroist were criticized by contemporaries as much for their institutional setting as for their exact arguments.\n\nThe label can obscure differences between Averroes’s own Arabic works, Latin translations, and later interpretations. It should therefore identify a historical tradition of reading and controversy, not the assumption that every claim attributed to an Averroist was simply Ibn Rushd’s personal position.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A thirteenth-century scholar defending a single possible intellect for all humans would be associated with Latin Averroism.",
-          "note": "The position reflects a contested interpretation of Averroes on intellect and human cognition."
+          "text": "A medieval Latin master defends a shared possible intellect while distinguishing that philosophical thesis from theological claims about individual salvation.",
+          "note": "The case illustrates a disputed Latin Averroist interpretation, not a settled summary of Averroes or medieval philosophy as a whole."
         }
       ],
       "commonMisreadings": [
-        "Averroism is not a single uniform doctrine and should not be equated with all of Averroes's own views."
+        "Averroism is not one uniform doctrine and is not identical to everything Ibn Rushd wrote.",
+        "The label does not by itself prove that medieval philosophers held a simple doctrine of two separate truths."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that the category was sometimes imposed by opponents and can flatten important differences among Arabic, Jewish, and Latin receptions of Aristotle."
+      ],
       "lookalikes": [],
       "related": [
         "averroes"
@@ -3275,20 +3319,23 @@
       "name": "Avicennism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A philosophical tradition developing the ideas of Ibn Sina, known in Latin as Avicenna.",
-      "body": "A philosophical tradition developing the ideas of Ibn Sina, known in Latin as Avicenna. Avicennist metaphysics distinguishes essence from existence and analyzes necessary and contingent being.",
+      "summary": "The diverse philosophical reception of Ibn Sina, or Avicenna, especially his analyses of essence, existence, causation, intellect, and the soul.",
+      "body": "Avicennism develops ideas associated with Ibn Sina rather than repeating one fixed creed. A central distinction holds that a thing’s essence—what it is—does not by itself explain why it exists. Contingent beings require an explanation, while a necessary existent is understood as existing through itself. Avicennist debates also concern the soul, knowledge, logic, medicine, and the relation between philosophy and theology.\n\nThe tradition changed as it moved through Arabic, Persian, Jewish, and Latin settings. Later authors accepted, revised, or rejected parts of Avicenna’s system, so “Avicennist” should mark an intellectual inheritance, not a claim that all followers agreed about the necessary existent or the powers of the soul.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An Avicennist argument holds that contingent beings require an explanation while a necessary being exists through itself.",
-          "note": "The distinction between contingent dependence and necessary existence structures the argument."
+          "text": "A philosopher argues that a possible being cannot explain its own existence because its description leaves open whether it exists.",
+          "note": "The argument uses the essence–existence distinction to motivate a question about dependence, rather than treating it as a complete proof without further premises."
         }
       ],
       "commonMisreadings": [
-        "Avicennism is broader than a single proof of God and includes logic, psychology, and natural philosophy."
+        "Avicennism is broader than one argument for God and includes logic, psychology, natural philosophy, and metaphysics.",
+        "A distinction between essence and existence is not automatically a commitment to every conclusion Avicenna drew from it."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics challenge whether the move from contingent explanations to a necessary existent is valid and whether “necessary” names a real being or a conceptual stopping point."
+      ],
       "lookalikes": [],
       "related": [
         "avicenna"
@@ -3302,20 +3349,23 @@
       "name": "Axiology",
       "aliases": [],
       "symbolName": null,
-      "summary": "The philosophical study of value, including moral, aesthetic, political, and epistemic value.",
-      "body": "The philosophical study of value, including moral, aesthetic, political, and epistemic value. Axiology asks what is valuable, how values relate, and whether value is objective, subjective, or constructed.",
+      "summary": "The philosophical study of value: what is good, worthwhile, beautiful, just, meaningful, or epistemically desirable.",
+      "body": "Axiology asks what makes something valuable and how different kinds of value relate. It includes moral value, aesthetic value, political value, and epistemic value, while also examining whether values are objective, dependent on attitudes, constructed through practices, or plural and irreducible. Asking whether knowledge is worth having for its own sake is axiological even though it is also an epistemological question.\n\nValue theory is not a price list. It can analyze conflicts between welfare and justice, beauty and truth, or individual and collective goods. Axiological conclusions need arguments about reasons, human practices, or forms of experience; simply saying that people prefer something reports a preference but does not settle whether the preference is justified or the object is valuable.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Investigating whether knowledge is valuable for its own sake is an axiological question.",
-          "note": "The inquiry concerns the worth of knowledge rather than only its definition or causes."
+          "text": "A city debates whether to preserve an old wetland even though building on it would produce more short-term revenue.",
+          "note": "The debate compares ecological, cultural, economic, and intergenerational values rather than calculating price alone."
         }
       ],
       "commonMisreadings": [
-        "Axiology is not limited to monetary valuation or economic price."
+        "Axiology is not limited to economic valuation or the measurement of market price.",
+        "It is not one theory of value; it is the field in which competing theories are examined."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Some naturalistic critics argue that axiology can become detached from motivation and practice if it treats values as mysterious properties with no account of how they guide action."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3327,20 +3377,23 @@
       "name": "Axiom",
       "aliases": [],
       "symbolName": null,
-      "summary": "A proposition accepted as a starting point within a formal system or an organized body of reasoning.",
-      "body": "A proposition accepted as a starting point within a formal system or an organized body of reasoning. Axioms provide assumptions from which theorems or further conclusions are derived, though their status varies by context.",
+      "summary": "A starting proposition adopted within a formal system or organized inquiry from which further results are derived.",
+      "body": "An axiom supplies a rule or assumption at the beginning of a system. In mathematics and logic, theorems are proved relative to axioms and rules of inference; changing the axioms can change which conclusions follow. Axioms may express structural commitments, definitions, or idealizations, and their usefulness depends on consistency, fruitfulness, and fit with the intended subject.\n\nCalling a proposition an axiom does not mean that it is self-evident, universally true, or beyond criticism. Euclidean and non-Euclidean geometries use different choices about parallels, while empirical sciences may use “axiom” more loosely. The relevant question is what role the assumption plays and what follows from accepting it.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "In Euclidean geometry, the parallel postulate functions as an axiom of the system.",
-          "note": "Geometric results are established relative to that explicitly adopted starting assumption."
+          "text": "A geometry adopts a parallel postulate and proves results about lines relative to that choice.",
+          "note": "The postulate functions as a system-level starting point; its status is not settled by calling it an axiom."
         }
       ],
       "commonMisreadings": [
-        "An axiom need not be self-evident, universally true, or immune to revision outside its system."
+        "An axiom need not be psychologically obvious or true in every possible subject matter.",
+        "An axiom is not the same as a conclusion that has been proved from earlier assumptions."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Formal systems can be criticized for inconsistency, expressive weakness, or a poor match between their axioms and the structures they are intended to describe."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3352,20 +3405,23 @@
       "name": "Backfire effect",
       "aliases": [],
       "symbolName": null,
-      "summary": "The tendency for a correction or counterargument sometimes to strengthen a person's original false belief.",
-      "body": "The tendency for a correction or counterargument sometimes to strengthen a person's original false belief. The effect is context-dependent and may arise when people defend identity-relevant beliefs or distrust the source.",
+      "summary": "A sometimes-observed increase in commitment to a mistaken belief after an attempted correction, not a reliable law of persuasion.",
+      "body": "The backfire effect names a correction that appears to make a false claim more accepted, more familiar, or more confidently defended in a particular setting. It is often discussed when a correction threatens identity, comes from a distrusted source, or repeats a claim in a way that increases familiarity. The effect must be defined against a comparison condition: resistance is not automatically backfire if belief merely fails to change.\n\nEvidence does not support treating backfire as a universal response to fact-checking. Replication studies have found many corrections reduce or leave unchanged false belief, while occasional increases depend on wording, timing, prior belief, source credibility, and the measure used. The practical lesson is to correct misinformation clearly and evaluate the audience and evidence rather than assuming correction is harmful.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A person shown evidence correcting a rumor may repeat the rumor more confidently after dismissing the evidence as hostile.",
-          "note": "The attempted correction produces resistance rather than the intended belief revision."
+          "text": "A skeptical audience dismisses a correction from an untrusted source and later reports slightly greater confidence in the original rumor than a comparable control group.",
+          "note": "This counts as backfire only if the increase exceeds the relevant comparison; simple disagreement with a correction is not enough."
         }
       ],
       "commonMisreadings": [
-        "The backfire effect is not a universal law that every correction worsens misinformation."
+        "The backfire effect is not a universal law that every correction strengthens misinformation.",
+        "A correction can fail, meet resistance, or increase familiarity without producing a measured increase in false belief."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "The construct has faced replication and measurement problems, and broad claims about identity-threatening corrections often exceed what individual experiments establish."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3414,20 +3470,23 @@
       "name": "Bayesian epistemology",
       "aliases": [],
       "symbolName": null,
-      "summary": "An epistemological framework that represents degrees of belief with probabilities and updates them in response to evidence.",
-      "body": "An epistemological framework that represents degrees of belief with probabilities and updates them in response to evidence. Bayesian epistemologists use coherence constraints and conditionalization to analyze rational belief revision.",
+      "summary": "An approach to rational belief that represents confidence with probabilities and constrains revision by probabilistic coherence.",
+      "body": "Bayesian epistemology treats belief as capable of degree. A rational agent assigns credences to hypotheses, satisfies probability constraints, and updates those credences when evidence arrives. Conditionalization or related rules describe how a prior distribution should change in light of evidence, while decision theory can connect credence to action through expected value.\n\nThe framework is a model of rational management of uncertainty, not necessarily the claim that every belief is a private guess or that probability replaces truth. Its difficult questions include how priors are chosen, how evidence is modeled, whether ideal coherence is enough for rationality, and how real agents should act when probabilities are imprecise or incomparable.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A person who assigns a 0.6 probability to rain and raises it after receiving a reliable storm warning is reasoning Bayesianly.",
-          "note": "The belief changes by combining a prior degree of confidence with the evidential likelihood."
+          "text": "An ecologist assigns competing explanations for a fish decline different initial probabilities and revises them after a new survey changes the relative likelihoods.",
+          "note": "The reasoning is Bayesian because confidence is graded and updated by how expected the evidence is under each hypothesis."
         }
       ],
       "commonMisreadings": [
-        "Bayesian epistemology concerns rational credence and need not claim that all knowledge is merely subjective probability."
+        "Bayesian epistemology does not reduce truth to subjective confidence or imply that every prior is equally defensible.",
+        "Coherent probabilities are not by themselves evidence that the underlying model or data are good."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that arbitrary or dogmatic priors can dominate evidence and that formal coherence leaves important questions about evidence quality and epistemic goals unresolved."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3439,22 +3498,27 @@
       "name": "Bayesian inference",
       "aliases": [],
       "symbolName": null,
-      "summary": "The process of updating a hypothesis's probability by combining prior probability with the likelihood of observed evidence.",
-      "body": "The process of updating a hypothesis's probability by combining prior probability with the likelihood of observed evidence. Bayes' theorem relates posterior probability to the prior probability and the probability of the evidence under the hypothesis.",
+      "summary": "Inference that combines prior probabilities with the likelihood of observed evidence to calculate updated probabilities for hypotheses.",
+      "body": "Bayesian inference asks how much an observation should change confidence in a hypothesis. Bayes’ theorem relates the posterior probability of a hypothesis to its prior probability and to how likely the evidence would be if the hypothesis were true. The result depends on both the evidence and the comparison alternatives; a vivid result can be weak evidence if it is also common when the hypothesis is false.\n\nThe method makes base rates and model assumptions visible. A medical test, for example, must be interpreted against the prevalence of the disease and the test’s false-positive behavior. Bayesian inference does not guarantee a good conclusion when priors, likelihoods, data quality, or the hypothesis space are poorly specified.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A disease test result is interpreted differently when the disease is rare than when it is common.",
-          "note": "The base rate changes the posterior probability even when the test sensitivity and specificity stay fixed."
+          "text": "A positive test changes the probability of a rare disease less than a positive test for a common disease when sensitivity and specificity are the same.",
+          "note": "The different base rates alter the posterior because the result must be compared with false positives among the much larger healthy population."
         }
       ],
       "commonMisreadings": [
-        "Bayesian inference is not the same as ignoring evidence in favor of prior opinion."
+        "Bayesian inference does not ignore evidence in favor of a prior opinion; the likelihood of the evidence is part of the calculation.",
+        "A high test accuracy does not mean every positive result has a high posterior probability."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Inference is sensitive to the chosen prior and likelihood model, and critics question whether those inputs can always be justified without importing the conclusion."
+      ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "bayesian-updating"
+      ],
       "tags": [
         "reasoning-methods"
       ]
@@ -3464,22 +3528,27 @@
       "name": "Bayesian updating",
       "aliases": [],
       "symbolName": null,
-      "summary": "Bayesian updating is the revision of a belief's probability in response to new evidence.",
-      "body": "Bayesian updating is the revision of a belief's probability in response to new evidence. It combines a prior probability with the likelihood of observed evidence to produce a posterior probability.",
+      "summary": "The revision of probabilistic confidence when new evidence changes how plausible competing hypotheses are.",
+      "body": "Bayesian updating is a change rule. Begin with a prior degree of belief, assess how expected the new evidence would be under each relevant hypothesis, and obtain a posterior degree of belief. Strong evidence is not merely surprising; it favors one hypothesis over its alternatives. Repeated updates can accumulate, provided the evidence is modeled and the observations are not counted twice.\n\nUpdating is compatible with uncertainty and partial revision. A person need not move from disbelief to certainty after one observation, and a weak or unreliable signal may make only a small difference. The method also exposes why a new fact can rationally lower confidence in a belief even when the fact is not a proof of its negation.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A doctor raises the estimated probability of a disease after a highly specific test returns positive.",
-          "note": "The test result changes the prior estimate because its likelihood differs between sick and healthy patients."
+          "text": "A clinician raises a disease estimate after a specific test is positive, but keeps it below certainty because false positives and the prior prevalence remain relevant.",
+          "note": "The result changes the prior rather than replacing it, and the posterior reflects both diagnostic evidence and background frequency."
         }
       ],
       "commonMisreadings": [
-        "It is not the same as simply accepting every new claim or treating all evidence as equally informative."
+        "Bayesian updating is not accepting every new claim or treating all observations as equally informative.",
+        "It does not require a dramatic change after every piece of evidence; the size and reliability of the likelihood difference matter."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics question whether people can specify reliable likelihoods and priors in open-ended domains where the possible explanations are not settled."
+      ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "bayesian-inference"
+      ],
       "tags": [
         "decision-theory-systems-and-methods"
       ]
@@ -3489,20 +3558,23 @@
       "name": "Beauty",
       "aliases": [],
       "symbolName": null,
-      "summary": "Beauty is a quality or value associated with experiences of perceptual, intellectual, or moral excellence.",
-      "body": "Beauty is a quality or value associated with experiences of perceptual, intellectual, or moral excellence. Philosophers disagree about whether beauty is an objective feature, a subjective response, or a relation between objects and perceivers.",
+      "summary": "Aesthetic value or excellence experienced in perception, understanding, character, or form, with its basis disputed.",
+      "body": "Beauty is an evaluative concept applied to objects, scenes, actions, ideas, and works. A judgment of beauty may respond to proportion, unity, intensity, grace, complexity, expression, or the way an experience invites sustained attention. Philosophers disagree whether beauty is an objective feature, a response grounded in human capacities, a relation between object and perceiver, or a value constituted through cultural practices.\n\nBeauty is not reducible to liking, usefulness, popularity, or physical attractiveness. A person may find a tragic work beautiful without finding it pleasant, and a beautiful arrangement can be morally troubling. Judgments can be educated and argued over without becoming purely subjective or becoming measurements as exact as physical quantities.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A landscape may be judged beautiful because its colors, proportions, and atmosphere produce a compelling aesthetic experience.",
-          "note": "The example illustrates beauty as an evaluative response to organized perceptual features."
+          "text": "A mathematical proof is called beautiful because a short, unexpected structure makes a difficult result intelligible.",
+          "note": "The example shows that beauty can concern intellectual form and clarity, not only sensory appearance or comfort."
         }
       ],
       "commonMisreadings": [
-        "Beauty is not identical to mere pleasantness, popularity, or physical attractiveness."
+        "Beauty is not identical to pleasure, popularity, symmetry, or conventional attractiveness.",
+        "Calling something beautiful does not prove that it is morally good or objectively valuable in one uncontested sense."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Subjectivists challenge the idea that beauty exists independently of response, while objectivists argue that mere preference cannot explain criticism, training, and disagreement."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3514,20 +3586,23 @@
       "name": "Becoming",
       "aliases": [],
       "symbolName": null,
-      "summary": "Becoming is the process by which something comes into existence, changes, or develops.",
-      "body": "Becoming is the process by which something comes into existence, changes, or develops. The concept emphasizes temporality and transformation rather than treating reality as a collection of finished states.",
+      "summary": "The process through which something emerges, changes, develops, or becomes otherwise than it was.",
+      "body": "Becoming directs attention to formation and transformation rather than treating reality as a set of finished, static things. A seed develops into a plant, a person acquires a character, and an institution changes through practices that alter what it can do. The concept can describe ordinary temporal change, but in metaphysics it may also challenge the assumption that stable substances are more fundamental than processes.\n\nDifferent philosophers use becoming differently. Heraclitus emphasizes pervasive change, while process philosophies treat events and relations as basic; other theories explain change as the alteration of enduring entities. Becoming therefore does not by itself deny persistence. It asks how continuity, novelty, and identity are constituted through change.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An acorn becoming an oak tree involves ordered biological development over time.",
-          "note": "The acorn exemplifies becoming because its identity includes a process of unfolding potential."
+          "text": "A child becomes a skilled violinist through repeated practice, instruction, bodily adaptation, and changing standards of performance.",
+          "note": "The identity is not a single jump from ignorance to skill but an organized process in which capacities and self-understanding develop."
         }
       ],
       "commonMisreadings": [
-        "Becoming is not simply motion through space or a synonym for any isolated event."
+        "Becoming is not merely motion through space and does not imply that nothing persists across change.",
+        "It is not a synonym for any event; the emphasis is on emergence, development, or transformation."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics ask whether process language can explain stable identities and truths without quietly relying on the enduring entities it was meant to replace."
+      ],
       "lookalikes": [],
       "related": [
         "alfred-north-whitehead",
@@ -3543,20 +3618,23 @@
       "name": "Behaviorism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Behaviorism is the view that psychology should explain behavior through observable actions and their environmental conditions.",
-      "body": "Behaviorism is the view that psychology should explain behavior through observable actions and their environmental conditions. Classical behaviorism often treats learning as conditioning and avoids using unobservable mental states as fundamental explanations.",
+      "summary": "A family of approaches that explain behavior through observable action, environmental conditions, and learning histories rather than treating private mental states as the basic data.",
+      "body": "Behaviorism asks psychology to describe and explain what organisms do, under what conditions they do it, and how consequences alter future behavior. Classical forms emphasize conditioning and often avoid unobservable mental entities in scientific explanation. Operant approaches study how reinforcement, punishment, extinction, and schedules change the probability of a response.\n\nBehaviorism is not one claim that inner life is unreal. Some behaviorists bracket private events because they are difficult to measure, while others treat them as behavior that also requires explanation. Cognitive science challenged strong versions by showing the value of internal representations, but behavioral methods remain important in learning research and applied settings. The real dispute is explanatory priority, not whether organisms have brains.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A rat presses a lever more often after receiving food whenever it performs the action.",
-          "note": "The increased pressing is explained by reinforcement linking behavior to its consequence."
+          "text": "A child completes homework more often after a consistent privilege follows completion and the privilege is removed when the task is skipped.",
+          "note": "The behavior changes as its consequences change; the example illustrates an operant explanation without assuming that reward is the only cause."
         }
       ],
       "commonMisreadings": [
-        "Behaviorism is not the claim that organisms lack internal states or that every behavior has a single stimulus."
+        "Behaviorism is not the claim that organisms have no unobserved processes or that every action has one simple stimulus.",
+        "It does not mean behavior can be understood without history, context, biological constraints, or reinforcement patterns."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that strong behaviorism cannot adequately explain language, planning, conscious experience, or flexible behavior in novel situations."
+      ],
       "lookalikes": [],
       "related": [
         "gilbert-ryle"
@@ -3570,20 +3648,23 @@
       "name": "Being",
       "aliases": [],
       "symbolName": null,
-      "summary": "Being refers to existence or to what it means for something to be.",
-      "body": "Being refers to existence or to what it means for something to be. In ontology, the term can concern entities generally while also raising questions about the conditions under which particular things exist.",
+      "summary": "Existence, or the question of what it means for anything to be at all.",
+      "body": "Being is the broadest ontological question: what kinds of things exist, in what ways, and under what conditions? A tree, a number, an event, and a person may all be said to be, but not necessarily in the same mode. Philosophers distinguish existence from properties, relations, appearance, possibility, and nothingness in order to ask what makes an entity intelligible as an entity.\n\nThe word does not name one substance behind all things. In Parmenidean, Aristotelian, existential, and phenomenological traditions it takes different roles. Heidegger, for example, distinguishes the question of Being from listing particular beings. A clear use therefore states whether “being” means existence in general, a mode of existence, or a theory about the structure of reality.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A tree is a being insofar as it exists as a living entity with properties and relations.",
-          "note": "The tree provides a concrete instance of something that can be described as existing."
+          "text": "A philosopher asks not only whether a tree exists but what kind of existence belongs to a living organism, its properties, and its relations.",
+          "note": "The question moves from listing an entity to examining the conditions and mode of its being."
         }
       ],
       "commonMisreadings": [
-        "Being is broader than a particular category such as matter, life, or consciousness."
+        "Being is not automatically matter, consciousness, life, or one hidden universal object.",
+        "A discussion of beings—particular entities—is not yet an answer to what Being means in general."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that the most general use of Being can become too indeterminate to guide inquiry or can confuse grammatical features with metaphysical structure."
+      ],
       "lookalikes": [],
       "related": [
         "martin-heidegger",
@@ -3598,20 +3679,23 @@
       "name": "Belief",
       "aliases": [],
       "symbolName": null,
-      "summary": "Belief is a mental attitude of taking a proposition or representation to be true.",
-      "body": "Belief is a mental attitude of taking a proposition or representation to be true. A belief can guide inference and action even when the proposition believed is false or poorly supported.",
+      "summary": "A mental commitment that treats a proposition or representation as true enough to guide thought, expectation, or action.",
+      "body": "To believe something is to take it to be the case, whether or not it is in fact true and whether or not the believer can state the belief in words. Beliefs organize inference and action: believing that a train is delayed can make a person wait, search for alternatives, or explain the delay. They can be stable, revisable, unconscious, implicit, or held with different degrees of confidence.\n\nBelief is not the same as knowledge, certainty, or a passing guess. A belief may be justified and true without meeting a preferred account of knowledge, or it may be deeply held and false. The concept also raises questions about whether beliefs are discrete stored states, dispositions to act, interpretive commitments, or patterns realized in a broader cognitive system.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Someone believes that a train is delayed and therefore waits on the platform.",
-          "note": "The expectation directs conduct regardless of whether the train is actually late."
+          "text": "A traveler believes the platform has changed and walks to the new platform, even though the station display was faulty.",
+          "note": "The false belief still explains the action because it represents the situation as requiring a particular response."
         }
       ],
       "commonMisreadings": [
-        "Belief is not equivalent to knowledge, certainty, or a consciously verbalized opinion."
+        "Belief is not automatically knowledge, certainty, conscious opinion, or religious faith.",
+        "A person can act from an implicit belief without having formulated a sentence in her head."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Behaviorist, pragmatist, and predictive-processing accounts disagree about whether belief is best understood as an inner representation, a disposition, or a role in a larger activity."
+      ],
       "lookalikes": [],
       "related": [
         "epistemic-lottery-paradox",
@@ -3628,20 +3712,23 @@
       "name": "Beneficence",
       "aliases": [],
       "symbolName": null,
-      "summary": "Beneficence is the ethical requirement or virtue of promoting another's welfare.",
-      "body": "Beneficence is the ethical requirement or virtue of promoting another's welfare. It can require active assistance, but its demands are usually balanced against harms, rights, consent, and available resources.",
+      "summary": "The moral requirement or virtue of promoting another’s welfare through helpful action or support.",
+      "body": "Beneficence directs an agent to do good for others rather than merely avoid harming them. In medicine it can include treating illness, relieving pain, preventing injury, or supporting a patient’s interests. In broader ethics it may be a duty, a virtue, or a principle whose force depends on need, relationship, capacity, cost, and the expected benefit.\n\nBeneficence is not unlimited permission to override people for their own good. It must be weighed against consent, autonomy, justice, privacy, and the risk that an intervention will harm or humiliate. A beneficent intention can produce a bad act when the agent misunderstands the person’s interests or treats “help” as a license for paternalism.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A physician recommends a treatment because its expected health benefit outweighs its foreseeable risks.",
-          "note": "The recommendation is beneficent because it aims at the patient's welfare."
+          "text": "A clinician recommends the treatment with the best expected balance of relief and risk after discussing what outcome the patient values.",
+          "note": "The recommendation aims at welfare while treating the patient’s own priorities and consent as morally relevant."
         }
       ],
       "commonMisreadings": [
-        "Beneficence differs from nonmaleficence, which primarily requires avoiding harm."
+        "Beneficence is not identical to nonmaleficence, which focuses primarily on avoiding harm.",
+        "Good intentions do not make an intervention beneficent if it predictably undermines the person’s welfare or agency."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics worry that open-ended duties of beneficence can be paternalistic, demanding, or used to justify imposing a professional’s view of another person’s good."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3653,20 +3740,23 @@
       "name": "Biconditional",
       "aliases": [],
       "symbolName": null,
-      "summary": "A biconditional is a proposition asserting that two statements are true under exactly the same conditions.",
-      "body": "A biconditional is a proposition asserting that two statements are true under exactly the same conditions. In classical logic, the biconditional is written p if and only if q and is true when p and q share a truth value.",
+      "summary": "A statement that says two propositions hold together in both directions: each is true if and only if the other is true.",
+      "body": "A biconditional has the form “p if and only if q.” It asserts both the conditional from p to q and the conditional from q to p. In classical propositional logic it is true when p and q have the same truth value, so it is false when exactly one of them is true. In definitions, the two directions matter because they establish both necessity and sufficiency.\n\nNatural-language “if” can be ambiguous, but “if and only if” is intended to make the two-way condition explicit. A biconditional need not describe a causal relation: two conditions can coincide logically without either causing the other. Whether the statement is true still depends on the meanings and domain being used.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "The statement A shape is a square if and only if it is a four-sided regular rectangle expresses a biconditional.",
-          "note": "Both directions are required for the definition to classify the same shapes."
+          "text": "A whole number is even if and only if it is divisible by two.",
+          "note": "Divisibility by two is both sufficient and necessary for evenness within the stated domain."
         }
       ],
       "commonMisreadings": [
-        "A biconditional is stronger than a one-way conditional implication."
+        "A biconditional is stronger than a one-way conditional; proving only p implies q is incomplete.",
+        "“If and only if” does not by itself say that one condition causes the other."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "In informal definitions, borderline cases and shifting meanings can make it unclear whether both directions really hold even when the wording is biconditional."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3678,20 +3768,23 @@
       "name": "Bioethics",
       "aliases": [],
       "symbolName": null,
-      "summary": "Bioethics is the systematic study of ethical questions arising in biology, medicine, and health care.",
-      "body": "Bioethics is the systematic study of ethical questions arising in biology, medicine, and health care. It addresses issues such as informed consent, reproductive technologies, research subjects, allocation, and end-of-life decisions.",
+      "summary": "The systematic study of ethical questions in medicine, biology, health care, research, and technologies that affect living beings.",
+      "body": "Bioethics examines what should be done when biological knowledge or medical power creates competing interests and risks. Topics include consent, capacity, research with human participants, reproductive technologies, genetics, disability, end-of-life care, public health, animal research, and the distribution of scarce treatment. It draws on moral philosophy, law, clinical practice, social science, and the experiences of affected communities.\n\nThe field does not apply a single checklist mechanically. Principles such as autonomy, beneficence, nonmaleficence, and justice can conflict, and a sound analysis asks who bears risks, who receives benefits, what alternatives exist, and whether institutions are fair. Professional policy and legal compliance may be relevant without exhausting the ethical question.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An ethics committee may assess whether a clinical trial adequately protects participants from avoidable risk.",
-          "note": "The committee's review applies moral principles to a biomedical practice."
+          "text": "An ethics committee requires a clinical trial to explain risks plainly, justify its participant selection, and provide an independent consent process.",
+          "note": "The review connects research design to autonomy, welfare, and justice rather than treating scientific value as sufficient permission."
         }
       ],
       "commonMisreadings": [
-        "Bioethics is broader than medical etiquette and is not limited to disputes about abortion."
+        "Bioethics is broader than medical etiquette and is not limited to one controversy such as abortion.",
+        "A legally permitted intervention can still raise serious ethical questions about consent, exploitation, or unequal access."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that principle-based bioethics can become abstract or culturally narrow when it neglects institutions, history, disability perspectives, and unequal power."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3703,20 +3796,23 @@
       "name": "Biological naturalism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Biological naturalism is the view that consciousness is a biological phenomenon caused by brain processes but not reducible to a computer program.",
-      "body": "Biological naturalism is the view that consciousness is a biological phenomenon caused by brain processes but not reducible to a computer program. It treats mental states as higher-level features of organisms while maintaining that they depend on physical neurobiology.",
+      "summary": "John Searle’s view that consciousness is a real biological feature caused by brain processes and is not thereby reduced to a computer program.",
+      "body": "Biological naturalism holds that conscious experiences are produced by the biological operations of brains, much as digestion is produced by an organism, while remaining higher-level features of that organism. Mental states are not a separate immaterial substance, but neither are they identical in every explanatory respect to a program’s formal symbol manipulation. The causal powers of the biological system matter to the account.\n\nThe view therefore rejects both substance dualism and the claim that any system implementing the same abstract computation must have the same conscious experience. It does not deny that artificial systems can be intelligent or that neuroscience can explain consciousness; it disputes a particular reduction of consciousness to syntax alone.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Pain occurs in a person because of neural activity in a living brain, not merely because a device follows a pain-processing algorithm.",
-          "note": "The example captures both causal dependence on biology and resistance to software-only reduction."
+          "text": "A living brain produces pain through its organized biological activity, whereas a device that merely follows a pain-description algorithm may not feel pain.",
+          "note": "The case captures Searle’s distinction between causal dependence on biological organization and the formal steps of a program."
         }
       ],
       "commonMisreadings": [
-        "Biological naturalism is not substance dualism or the claim that mental events float free of bodies."
+        "Biological naturalism is not substance dualism; mental features depend on biological processes.",
+        "It is not the claim that nonhuman or artificial consciousness is impossible in principle, only that computation alone has not established it."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that the view gives biology a privileged role without explaining which physical organization is sufficient for consciousness or why functional organization would be inadequate."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3766,20 +3862,23 @@
       "name": "Bioregionalism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Bioregionalism is a political and ecological orientation that organizes human life around natural regions and their local limits.",
-      "body": "Bioregionalism is a political and ecological orientation that organizes human life around natural regions and their local limits. It emphasizes watersheds, native ecosystems, local knowledge, and forms of governance suited to ecological interdependence.",
+      "summary": "An ecological and political orientation that treats natural regions, such as watersheds, as important units for inhabitation and governance.",
+      "body": "Bioregionalism asks people to organize practical life around the ecological systems that sustain them rather than only around inherited administrative borders. Attention goes to watersheds, soils, climate, native species, seasonal limits, local knowledge, and the effects of extraction and waste. The aim is usually a culture of place: economies and institutions should fit the carrying conditions and relationships of a region.\n\nBioregionalism need not mean complete isolation or the abolition of national institutions. Rivers cross jurisdictions, supply chains connect regions, and ecological justice can require wider coordination. The proposal is best understood as a change in what counts as relevant political knowledge and responsibility, not as a simple rule that everything local is good.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Residents of a river basin coordinate farming and water use according to the basin's seasonal capacity.",
-          "note": "The watershed becomes the practical unit because it reflects ecological connections better than an arbitrary boundary."
+          "text": "Communities sharing a river basin set farm withdrawals by seasonal flow and jointly restore wetlands that filter the water.",
+          "note": "The watershed organizes cooperation because water movement and ecological dependence do not follow municipal boundaries."
         }
       ],
       "commonMisreadings": [
-        "Bioregionalism is not simply localism or a rejection of every wider political institution."
+        "Bioregionalism is not merely local pride or a demand to reject all wider political coordination.",
+        "A natural region is not automatically socially harmonious; class, race, and competing interests still operate within it."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics question how bioregions should be delimited, how unequal regions should share resources, and whether local ecological knowledge can replace wider expertise."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3791,22 +3890,27 @@
       "name": "Bizarreness effect",
       "aliases": [],
       "symbolName": null,
-      "summary": "The bizarreness effect is the tendency for unusual or distinctive information to be remembered better than ordinary information in some conditions.",
-      "body": "The bizarreness effect is the tendency for unusual or distinctive information to be remembered better than ordinary information in some conditions. Distinctiveness can make an item more attention-grabbing and provide additional retrieval cues.",
+      "summary": "A sometimes-observed memory advantage for distinctive or unusual material, often because it attracts attention or supplies extra retrieval cues.",
+      "body": "The bizarreness effect concerns how unusual items can be recalled better than ordinary items under some encoding and testing conditions. Distinctiveness may make an item stand out in a list and create a cue that helps retrieve it later. The effect is not one simple property of “weirdness”: the odd item can also disrupt the context or relations that help people remember surrounding details.\n\nResults depend on age, task, delay, emotional content, and whether the test asks for the item itself or its source and context. Bizarre material can therefore be memorable while its surrounding details are less well remembered. The concept describes a pattern of performance, not a guarantee that unusual events are encoded accurately or retained forever.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "People often recall a purple cow in a list of common farm animals more accurately than another ordinary cow.",
-          "note": "The unusual color makes the item stand out from its surrounding material."
+          "text": "In a list of ordinary household objects, a bright blue toaster is recalled as an item more often than another ordinary toaster.",
+          "note": "Its distinctive feature supplies a discriminating retrieval cue, provided the task and comparison list allow that advantage to appear."
         }
       ],
       "commonMisreadings": [
-        "The effect does not mean that every bizarre event is remembered accurately or permanently."
+        "The bizarreness effect does not mean every strange event is remembered accurately, permanently, or with all its context.",
+        "Distinctiveness can improve memory for an item while harming memory for its relations or surrounding details."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Researchers disagree about whether the advantage comes from attention, unusual imagery, encoding strategy, retrieval cues, or interactions among these factors."
+      ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "attention"
+      ],
       "tags": [
         "memory-learning-and-reported-psychological-effects"
       ]
@@ -3816,20 +3920,23 @@
       "name": "Bonapartism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Bonapartism is a political pattern in which a strong executive claims to stand above competing social classes while concentrating authority in personal rule.",
-      "body": "Bonapartism is a political pattern in which a strong executive claims to stand above competing social classes while concentrating authority in personal rule. The ruler often appeals directly to the nation and uses plebiscites, administration, or the military to weaken ordinary parliamentary conflict.",
+      "summary": "A pattern of personal executive rule that claims to stand above social conflict while concentrating authority in a strong leader and state apparatus.",
+      "body": "Bonapartism describes a regime in which a leader presents himself as the direct expression of the nation and as the solution to a conflict that ordinary parties or classes cannot resolve. Personal executive power is supported by administration, the military, plebiscites, propaganda, and controlled institutions. In Marxist political analysis, the ruler’s apparent independence can reflect a temporary balance in which competing social forces are unable to dominate openly.\n\nThe concept is historically tied to Napoleon Bonaparte and Louis-Napoleon, but later uses are comparative and disputed. It does not mean simply “dictatorship” or “military government.” The useful question is how personal authority, popular legitimation, class conflict, and institutional weakness combine in a particular case.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Louis-Napoleon Bonaparte used a centralized presidency and popular votes to legitimize personal power in nineteenth-century France.",
-          "note": "His regime exemplifies executive authority presented as a national reconciliation above faction."
+          "text": "Louis-Napoleon used a centralized presidency, plebiscitary votes, and administrative control to present personal rule as national reconciliation.",
+          "note": "The example fits because executive concentration was legitimated as standing above faction rather than merely imposed by a military coup."
         }
       ],
       "commonMisreadings": [
-        "Bonapartism is not simply any dictatorship or any government led by a military figure."
+        "Bonapartism is not any dictatorship, charismatic leader, or government with military influence.",
+        "A plebiscite can provide popular legitimation without creating ongoing popular control over executive power."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that the concept can be stretched across very different regimes and can make leaders appear more autonomous from social forces than they really are."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3841,20 +3948,23 @@
       "name": "Boolean algebra",
       "aliases": [],
       "symbolName": null,
-      "summary": "Boolean algebra is an algebra of values and operations used to represent logical relations.",
-      "body": "Boolean algebra is an algebra of values and operations used to represent logical relations. Its basic operations include conjunction, disjunction, and complementation, with identities that support simplification of digital circuits.",
+      "summary": "An algebraic system for reasoning about two-valued or Boolean quantities through operations such as AND, OR, and NOT.",
+      "body": "Boolean algebra represents logical combinations with algebra-like laws. A variable can take values such as true and false, and operations include conjunction, disjunction, and complementation. Identities such as x AND true = x and x OR false = x allow expressions to be simplified, checked, or transformed into equivalent circuits and programs.\n\nThe same formal structure can be used for sets, propositions, search filters, and digital electronics, but its symbols do not have ordinary arithmetic meanings. Boolean algebra is valuable because it exposes which combinations preserve a result and which conditions are redundant. Its applications still depend on choosing the right variables and translating the real problem accurately.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "The expression x AND true simplifies to x under Boolean algebra.",
-          "note": "The identity preserves the value of x while showing how a redundant logical input can be removed."
+          "text": "A security rule written as “badge valid AND door unlocked” rejects access whenever either condition is false.",
+          "note": "The conjunction models a requirement that both inputs must hold, and Boolean simplification can reveal equivalent rules."
         }
       ],
       "commonMisreadings": [
-        "Boolean algebra is not ordinary arithmetic even though both systems use symbols and equations."
+        "Boolean algebra is not ordinary arithmetic; true and false do not behave like arbitrary numerical quantities.",
+        "The word “or” can mean inclusive OR in the algebra, so it need not exclude the possibility that both inputs are true."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "The formal system does not decide whether a real-world condition was measured correctly or whether a two-valued representation loses important uncertainty."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3866,21 +3976,33 @@
       "name": "Bound variable",
       "aliases": [],
       "symbolName": null,
-      "summary": "A bound variable is a variable whose occurrences fall within the scope of a quantifier or another binding operator.",
-      "body": "A bound variable is a variable whose occurrences fall within the scope of a quantifier or another binding operator. Its value is determined locally by the binding expression rather than by a free assignment outside that scope.",
+      "summary": "A variable occurrence whose value or range is controlled by a quantifier or another binding expression.",
+      "body": "A bound variable gets its role from a local binder. In “for every x, x is greater than zero,” the quantifier binds x within its scope, so the formula does not depend on an outside assignment for that occurrence. Renaming the bound variable consistently leaves the meaning unchanged: “for every y, y is greater than zero” has the same structure.\n\nBy contrast, a free variable depends on an assignment supplied from outside the expression. The distinction matters in logic, programming languages, and mathematics because substitution must respect scope. A variable can be bound in one part of a formula and free in another, and careless renaming can capture a variable that was previously free.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "In the formula for every x, x is greater than zero, each occurrence of x is bound by the universal quantifier.",
-          "note": "The quantifier controls which objects the variable ranges over."
+          "text": "In “there exists a number n such that n is prime,” the occurrence of n is bound by the existential quantifier.",
+          "note": "The quantifier determines the range of possible values, so n is not an unresolved name supplied by the surrounding context."
         }
       ],
       "commonMisreadings": [
-        "A bound variable is distinct from a free variable, whose value depends on an external assignment."
+        "A bound variable is not a named object with one value throughout every formula; its value is controlled by its binder and scope.",
+        "A variable can be free outside a quantifier and bound inside it, so the status is local rather than permanent."
       ],
-      "criticisms": [],
-      "lookalikes": [],
+      "criticisms": [
+        "Formal accounts differ over binding in natural language and programming languages, especially where context, types, or implicit parameters complicate simple scope rules."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "individual-variable",
+          "note": "An individual variable is a variable ranging over objects; it becomes bound only when a quantifier or binder controls its occurrence."
+        },
+        {
+          "targetID": "universal-quantifier",
+          "note": "A universal quantifier is one kind of binder; a bound variable is the occurrence whose scope it governs."
+        }
+      ],
       "related": [
         "individual-variable",
         "universal-quantifier"
@@ -3894,20 +4016,23 @@
       "name": "Bounded rationality",
       "aliases": [],
       "symbolName": null,
-      "summary": "Bounded rationality is the view that decision makers seek satisfactory choices under limits of information, time, and cognitive capacity.",
-      "body": "Bounded rationality is the view that decision makers seek satisfactory choices under limits of information, time, and cognitive capacity. Instead of maximizing over every possible option, people often use heuristics and settle for an acceptable alternative.",
+      "summary": "The view that real decision makers choose under limits of time, information, attention, and computation, often seeking a satisfactory option rather than the absolute best.",
+      "body": "Bounded rationality revises the ideal of an agent who knows every option, consequence, and probability and can calculate a maximum. People and organizations instead use incomplete information, rules of thumb, defaults, search limits, and stopping rules. Herbert Simon’s term “satisficing” captures choosing an option that meets an acceptable threshold once further search is not worth its cost.\n\nThe theory does not make judgment irrational by definition. A shortcut can be efficient when it fits the environment, and a limited search can be the best response to scarce time. The question is how the strategy performs under the actual constraints and incentives, not whether it matches an impossible standard of omniscient optimization.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A manager chooses the first supplier meeting minimum quality and price requirements rather than comparing every supplier worldwide.",
-          "note": "The choice reflects satisficing under practical limits."
+          "text": "A buyer stops comparing laptops after finding one that meets the required price, battery life, and repairability threshold.",
+          "note": "The buyer uses an explicit stopping rule because exhaustive comparison would cost more time than the remaining improvement is worth."
         }
       ],
       "commonMisreadings": [
-        "Bounded rationality does not assert that people are irrational in every decision."
+        "Bounded rationality does not say people are irrational in every choice or that heuristics are always errors.",
+        "Satisficing is not careless guessing; it can be a deliberate response to search and information costs."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that the framework can describe limits without predicting when a particular heuristic will succeed and can understate systematic bias or unequal access to information."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3919,20 +4044,23 @@
       "name": "Brahman",
       "aliases": [],
       "symbolName": null,
-      "summary": "Brahman is the ultimate reality or ground of being in many schools of Hindu philosophy, especially Vedanta.",
-      "body": "Brahman is the ultimate reality or ground of being in many schools of Hindu philosophy, especially Vedanta. It is often described as infinite and foundational, though traditions differ over whether it is personal, impersonal, or identical with the self.",
+      "summary": "The ultimate reality or ground of existence in several Hindu philosophical traditions, especially Vedanta, with major differences among schools.",
+      "body": "Brahman is a central term in Vedanta for what is ultimately real and foundational. Advaita Vedanta identifies Brahman with nondual reality and interprets the deepest self, atman, as not ultimately separate from it. Other Vedanta schools preserve a stronger distinction or relation between God, selves, and the world, so Brahman cannot be defined by one school’s formulation alone.\n\nBrahman is not simply a powerful being among other beings, nor is it the same as Brahma, the creator deity. Depending on the tradition, it is described as personal, impersonal, qualified, or beyond ordinary conceptual divisions. The concept is tied to liberation because knowing reality rightly changes how self, world, and attachment are understood.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Advaita Vedanta identifies the deepest self, atman, with Brahman through the claim that ultimate reality is nondual.",
-          "note": "The example shows Brahman as the reality underlying apparent multiplicity."
+          "text": "An Advaita teacher uses the identity of atman and Brahman to argue that apparent separateness does not describe ultimate reality.",
+          "note": "The example presents a specifically nondual Vedanta interpretation, not a claim shared by every Hindu school."
         }
       ],
       "commonMisreadings": [
-        "Brahman is not the same figure as Brahma, the creator deity in Hindu mythology."
+        "Brahman is not Brahma, the creator deity, and is not simply a Hindu version of one finite god.",
+        "The relation among Brahman, individual selves, and the world differs across Vedanta traditions."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Dualist and qualified-nondual Vedanta critics argue that nondualism cannot adequately explain the reality of difference, devotion, or the experienced world."
+      ],
       "lookalikes": [],
       "related": [
         "shankara",
@@ -3947,20 +4075,23 @@
       "name": "Brain in a vat",
       "aliases": [],
       "symbolName": null,
-      "summary": "The brain-in-a-vat scenario imagines a brain receiving artificial sensory signals that perfectly imitate ordinary experience.",
-      "body": "The brain-in-a-vat scenario imagines a brain receiving artificial sensory signals that perfectly imitate ordinary experience. It is used to test whether knowledge of the external world requires a non-deceptive causal connection to that world.",
+      "summary": "A skeptical thought experiment in which a brain receives artificial signals that match ordinary experience, challenging claims to know the external world.",
+      "body": "The brain-in-a-vat scenario imagines a brain kept alive and connected to a system that stimulates it exactly as the world would. From the brain’s perspective, its experiences could be indistinguishable from those of a normally embodied person. The case asks whether experience alone guarantees that the perceived tables, streets, and bodies exist outside the experience in the ordinary way.\n\nThe argument is not that such a vat has been discovered. It is a test of the connection between evidence, conceptual reference, embodiment, and external-world knowledge. Responses may deny that the scenario is coherent, argue that ordinary knowledge does not require ruling out every skeptical possibility, or revise what counts as a successful causal connection to the world.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A scientist could preserve a brain in nutrient fluid and connect it to a computer generating experiences of walking through a city.",
-          "note": "The case challenges confidence that experience alone guarantees an external environment."
+          "text": "A computer feeds a preserved brain signals matching a walk through a city, while no city is connected to the brain’s current experience.",
+          "note": "The setup separates the character of experience from the ordinary source we usually take that experience to have."
         }
       ],
       "commonMisreadings": [
-        "It is a skeptical thought experiment, not an established description of ordinary human biology."
+        "The brain-in-a-vat is a skeptical model, not an established account of human biology.",
+        "It does not show by itself that ordinary beliefs are false; it creates a challenge about what would justify them."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that the scenario assumes a disputed picture of reference and ignores the bodily, linguistic, and social conditions through which claims about a world acquire meaning."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -3972,20 +4103,23 @@
       "name": "Buddhism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Buddhism is a family of religious and philosophical traditions centered on understanding suffering and cultivating liberation through the Buddha's teachings.",
-      "body": "Buddhism is a family of religious and philosophical traditions centered on understanding suffering and cultivating liberation through the Buddha's teachings. Its traditions commonly emphasize impermanence, ethical conduct, meditation, and insight into the causes of attachment.",
+      "summary": "A family of traditions rooted in the Buddha’s teaching that diagnoses suffering and cultivates liberation through ethics, meditation, and insight.",
+      "body": "Buddhism begins from the problem of suffering and dissatisfaction and investigates the conditions that sustain them. Across diverse schools, practices commonly include ethical discipline, meditation, attention to impermanence, and examination of craving and ignorance. The Four Noble Truths and the Noble Eightfold Path provide influential frameworks, but Buddhist traditions differ in metaphysics, ritual, texts, institutions, and accounts of awakening.\n\nBuddhism is not reducible to quietism or a single doctrine of reincarnation and self. The teaching of non-self, dependent origination, compassion, and emptiness has been developed in different ways, including Theravada, Mahayana, and Vajrayana settings. A fair description distinguishes shared family resemblances from claims specific to one lineage.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A practitioner follows the Noble Eightfold Path by combining right conduct with meditation and disciplined understanding.",
-          "note": "The path links ethical and mental training to the reduction of suffering."
+          "text": "A practitioner responds to anger by observing its bodily and mental conditions, refraining from harmful speech, and cultivating a less reactive response.",
+          "note": "The example joins insight to ethical practice; liberation is presented as a transformation of conduct and perception, not only as assent to a belief."
         }
       ],
       "commonMisreadings": [
-        "Buddhism is not a single uniform doctrine shared identically by every Buddhist school."
+        "Buddhism is not one uniform doctrine and is not simply atheism, pessimism, or relaxation training.",
+        "The goal is not merely to suppress every feeling; traditions distinguish attachment and ignorance from compassion and responsive care."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics question how Buddhist accounts of karma, rebirth, or liberation should be interpreted and whether some institutions have reproduced the suffering and hierarchy they diagnose."
+      ],
       "lookalikes": [],
       "related": [
         "vasubandhu",
@@ -4003,23 +4137,32 @@
         "Pratityasamutpada"
       ],
       "symbolName": null,
-      "summary": "Buddhist dependent origination is the teaching that phenomena arise through conditions and relations rather than existing independently.",
-      "body": "Buddhist dependent origination is the teaching that phenomena arise through conditions and relations rather than existing independently. The traditional twelve-link formulation explains how ignorance and craving sustain cycles of suffering, while the broader principle applies to conditioned existence generally.",
+      "summary": "The Buddhist teaching that phenomena arise through conditions and relations rather than from independent, permanent essences.",
+      "body": "Dependent origination explains events by tracing the conditions that allow them to arise, persist, and cease. In the traditional twelve-link presentation, ignorance conditions formations, consciousness, craving, clinging, and other links that sustain suffering and rebirth. More broadly, the teaching shows that a person, feeling, or institution depends on interacting physical, mental, social, and historical conditions.\n\nThe point is not that causes form one simple line or that nothing is real. Because phenomena depend on conditions, changing conditions can change what arises; this supports ethical practice and liberation. The teaching also challenges the idea that a thing has an independent essence that remains untouched by relations, while allowing conventional identities and causal continuity.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A painful resentment persists when an injury is combined with repeated recollection, self-identification, and craving for revenge.",
-          "note": "The resentment depends on interacting mental conditions rather than an isolated permanent essence."
+          "text": "Resentment persists when an injury is joined to repeated recollection, a threatened self-image, social reinforcement, and desire for revenge; changing those conditions can weaken it.",
+          "note": "The emotion is explained as a conditioned process rather than as a permanent inner substance or a single isolated cause."
         }
       ],
       "commonMisreadings": [
-        "Dependent origination is not the claim that events lack causes or that one linear cause explains everything."
+        "Dependent origination is not the denial of causation; it is an account of causation as conditional and interdependent.",
+        "The twelve links are not always meant as one crude chronological chain, and the teaching does not erase conventional persons or responsibility."
       ],
-      "criticisms": [],
-      "lookalikes": [],
+      "criticisms": [
+        "Critics debate how the twelve links, rebirth, and the broader conditionality principle fit together and whether the framework explains enough without specifying mechanisms."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "buddhism",
+          "note": "Dependent origination is a central Buddhist teaching, while Buddhism includes many additional practices, doctrines, and traditions."
+        }
+      ],
       "related": [
-        "nagarjuna"
+        "nagarjuna",
+        "buddhism"
       ],
       "tags": [
         "religion-asian-african-and-indigenous-philosophy"

@@ -125,11 +125,28 @@ nonisolated enum ConceptTag: String, Codable, CaseIterable, Hashable, Sendable {
 	case thoughtExperiments = "thought-experiments"
 }
 
-nonisolated enum ParadoxTag: String, Codable, CaseIterable, Hashable, Sendable {
+nonisolated enum ParadoxTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
 	case ethicsAndValue = "ethics-and-value"
 	case knowledgeAndMeaning = "knowledge-and-meaning"
 	case logicAndLanguage = "logic-and-language"
 	case metaphysics
+
+	var title: String {
+		switch self {
+			case .ethicsAndValue:
+				"Ethics & Value"
+			case .knowledgeAndMeaning:
+				"Knowledge & Meanings"
+			case .logicAndLanguage:
+				"Logic & Language"
+			case .metaphysics:
+				"Metaphysics"
+		}
+	}
+
+	var id: Self {
+		self
+	}
 }
 
 nonisolated enum CheckMode: String, Codable, Sendable {

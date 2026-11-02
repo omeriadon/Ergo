@@ -1148,12 +1148,12 @@
         "continued influence of misinformation"
       ],
       "symbolName": null,
-      "summary": "Using corrected misinformation in later reasoning even after acknowledging the correction.",
-      "body": "Using corrected misinformation in later reasoning even after acknowledging the correction. A correction may change explicit belief without removing the misinformation's role in an explanation. The inaccurate detail remains available when the person reconstructs what happened, especially if no supported alternative account replaces it.",
+      "summary": "Using corrected misinformation in later reasoning after accepting that it was false.",
+      "body": "The continued influence effect occurs when a false detail keeps shaping an explanation after a person has accepted a correction. The correction can change explicit belief without removing the detail from memory or replacing the causal story built around it.\n\nThe risk is greatest when a correction says only what was wrong. A person may repeat the false premise to fill an explanatory gap without consciously believing the original report. This is a problem of later reasoning, not proof of deception.",
       "examples": [
         {
-          "text": "A report first blames a warehouse fire on stored chemicals, then corrects that detail. Later you explain the fire's spread by referring to the chemicals anyway.",
-          "note": null
+          "text": "A report blames a warehouse fire on stored chemicals, then corrects that detail. Later you explain the fire by referring to the chemicals anyway.",
+          "note": "The withdrawn detail still supplies the missing cause in the later explanation."
         }
       ],
       "lookalikes": [],
@@ -1161,12 +1161,14 @@
         "belief-perseverance"
       ],
       "counters": [
-        "State what is known after the correction and build an explanation that does not depend on the withdrawn detail."
+        "State replacement facts and build a complete alternative explanation.",
+        "Mark withdrawn premises when reviewing later inferences."
       ],
       "limitations": [
-        "Remembering that a false report occurred is not the same as using its contents as factual support."
+        "Remembering a false report is not the same as using it as factual support.",
+        "New evidence or an ambiguous correction can produce later use without persistence."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A supported misinformation-memory finding whose persistence varies with correction quality, repetition, delay, and causal usefulness.",
       "tags": [
         "belief-assessment"
       ]
@@ -1176,21 +1178,23 @@
       "name": "Contrast effect",
       "aliases": [],
       "symbolName": null,
-      "summary": "Judging an item differently because it is compared with a recently encountered item.",
-      "body": "Judging an item differently because it is compared with a recently encountered item. The comparison context can shift a rating without changing the target's attributes.",
+      "summary": "Judging an option differently because a recent comparison changes the reference point.",
+      "body": "The contrast effect changes a judgment because the immediately available comparison shifts the standard used to evaluate a target. An ordinary option can seem unusually good after a poor one and unusually poor after an excellent one, even when the target is unchanged.\n\nComparison is not inherently irrational: a benchmark can reveal real relative value. The concern arises when an incidental preceding item displaces the absolute criteria that should determine the decision.",
       "examples": [
         {
-          "text": "A moderately priced meal seems cheap immediately after viewing a much more expensive menu.",
-          "note": null
+          "text": "After viewing luxury apartments, a modest apartment seems unusually cheap despite unchanged defects.",
+          "note": "The luxury apartments shift the comparison standard; they do not improve the target."
         }
       ],
       "counters": [
-        "Use a stable reference set and compare the target under more than one presentation order."
+        "Define stable criteria before viewing a sequence of comparisons.",
+        "Repeat important evaluations after changing order or using a fixed benchmark."
       ],
       "limitations": [
-        "A relevant comparison can improve judgment when it matches the actual choice set."
+        "A relevant comparison can rationally update value.",
+        "A changed judgment is not bias when the preceding option supplied useful evidence."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A recurring comparative-judgment pattern moderated by similarity, order, range, and task structure.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1202,21 +1206,23 @@
       "name": "Courtesy bias",
       "aliases": [],
       "symbolName": null,
-      "summary": "Giving an agreeable or favorable response to avoid offending the person requesting it.",
-      "body": "Giving an agreeable or favorable response to avoid offending the person requesting it. Interpersonal politeness can conceal dissatisfaction in interviews or feedback.",
+      "summary": "Giving a more agreeable answer to avoid offending the person who asks.",
+      "body": "Courtesy bias is a response distortion in which politeness or concern for a relationship changes what someone reports. Criticism may be softened, agreement supplied, or satisfaction overstated because candor feels rude or risky.\n\nThe requester’s authority and presence increase the risk. A favorable answer can still be sincere; the useful clue is a gap between private, anonymous, behavior-based information and answers given directly to the interested party.",
       "examples": [
         {
-          "text": "A guest praises a meal to the host but rates it poorly on an anonymous questionnaire.",
-          "note": null
+          "text": "A patient says a treatment works well because the clinician is present, despite continuing symptoms.",
+          "note": "Concern for rapport makes the spoken evaluation more favorable than the experience."
         }
       ],
       "counters": [
-        "Offer private, neutral channels for feedback and normalize criticism."
+        "Collect sensitive evaluations privately and explain that criticism has no penalty.",
+        "Ask for concrete outcomes and changes, not only global satisfaction."
       ],
       "limitations": [
-        "A favorable answer can be sincere; anonymity is not a guarantee of accuracy."
+        "Politeness cues alone do not prove distortion.",
+        "Privacy cannot remove recall errors, fear, or question ambiguity."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A measurement risk whose size varies with power, topic sensitivity, anonymity, and relationship.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1228,21 +1234,23 @@
       "name": "Coverage bias",
       "aliases": [],
       "symbolName": null,
-      "summary": "Distorting a population estimate because the sampling frame leaves out relevant parts of that population.",
-      "body": "Distorting a population estimate because the sampling frame leaves out relevant parts of that population. People outside the frame have no chance, or an inadequate chance, of appearing in the sample.",
+      "summary": "A population estimate is distorted because the sampling frame misses part of the population.",
+      "body": "Coverage bias arises when the list or channel used for sampling omits people or cases the estimate is meant to describe. Even a large random sample can represent its frame accurately while misrepresenting the target population if omitted groups differ on the outcome.\n\nCoverage is determined before selection and differs from nonresponse after contact. A frame can be complete for one question and incomplete for another, so the target population must be stated precisely.",
       "examples": [
         {
-          "text": "An internet-only poll estimates preferences of all residents while excluding residents without internet access.",
-          "note": null
+          "text": "An online survey estimates citywide transport habits while excluding residents without reliable internet.",
+          "note": "People outside the frame cannot contribute and may travel differently."
         }
       ],
       "counters": [
-        "Compare the sampling frame with the target population and address excluded groups."
+        "Compare the frame with the target population and identify zero-probability groups.",
+        "Use multiple channels or calibrated weights when omitted groups can be identified."
       ],
       "limitations": [
-        "Restricting a frame is legitimate when the target population is explicitly restricted in the same way."
+        "A narrow frame is valid when it is the stated target.",
+        "Weighting cannot repair a wholly absent group without external information."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A standard survey-quality concern whose impact depends on omissions, outcome differences, and adjustment data.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1254,21 +1262,23 @@
       "name": "Cryptomnesia",
       "aliases": [],
       "symbolName": null,
-      "summary": "Remembering an idea while failing to recognize that it came from an earlier source.",
-      "body": "Remembering an idea while failing to recognize that it came from an earlier source. The content feels newly generated because its origin is not retrieved.",
+      "summary": "Remembering an idea without recognizing that it came from an earlier source.",
+      "body": "Cryptomnesia is a source-monitoring failure: content is remembered while its origin is not. Familiarity and fluency can then feel like originality, even when the person sincerely believes the idea appeared spontaneously.\n\nThe risk rises after delay, repeated discussion, or poor attribution records. Similarity alone cannot establish the error because independent rediscovery is possible; the relevant question is whether prior exposure plausibly supplied the content.",
       "examples": [
         {
-          "text": "A songwriter sincerely believes a recalled melody is an original composition.",
-          "note": null
+          "text": "A manager repeats a colleague’s scheduling idea weeks later as a new idea and cannot recall the conversation.",
+          "note": "The idea survives while its association with the colleague is lost."
         }
       ],
       "counters": [
-        "Check prior exposure and keep source notes while developing ideas."
+        "Record ideas with dates, sources, and context.",
+        "Separate brainstorming from credit assignment and invite earlier versions."
       ],
       "limitations": [
-        "Independent discovery of a similar idea can occur without forgotten exposure."
+        "Similar ideas can arise independently.",
+        "Source-memory failure does not itself establish intentional plagiarism."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Source-monitoring errors are documented; individual attribution requires evidence about exposure, timing, and independent generation.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1282,21 +1292,23 @@
         "Asymmetric dominance effect"
       ],
       "symbolName": null,
-      "summary": "Changing preference between two options after adding a third option dominated by one of them.",
-      "body": "Changing preference between two options after adding a third option dominated by one of them. The inferior decoy makes its dominating neighbor appear more attractive by comparison.",
+      "summary": "A dominated third option shifts preference between two original options.",
+      "body": "The decoy effect occurs when adding an inferior option changes the relative appeal of two existing options. The decoy is worse than one target on relevant dimensions but comparable enough to make that target look clearly superior.\n\nNot every added option is a decoy effect. A new choice can legitimately provide information or meet a need. The concern is strongest when the added option is unattractive on its own and mainly redirects comparison.",
       "examples": [
         {
-          "text": "A small subscription and a large subscription attract equal interest until an overpriced medium plan boosts sales of the large plan.",
-          "note": null
+          "text": "A cinema adds a $9 medium popcorn only slightly smaller than a $10 large, and large sales rise.",
+          "note": "The medium makes the large look like the obvious value without improving it."
         }
       ],
       "counters": [
-        "Compare the original options without the dominated alternative."
+        "Evaluate each option against needs and total cost before comparison.",
+        "Ask whether the added option would be selected on its own."
       ],
       "limitations": [
-        "A new option can legitimately change a decision when it adds relevant information or constraints."
+        "A real option can rationally change a choice.",
+        "Effects vary with presentation, familiarity, and option quality."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A recognized choice-context finding with magnitude sensitive to task design and attribute alignment.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1308,21 +1320,23 @@
       "name": "Default effect",
       "aliases": [],
       "symbolName": null,
-      "summary": "Choosing an option more often because it is preselected or applies without active intervention.",
-      "body": "Choosing an option more often because it is preselected or applies without active intervention. Inertia, perceived endorsement, and switching effort can each contribute.",
+      "summary": "Choosing an option more often because it is preselected or requires no action.",
+      "body": "The default effect is a shift toward the option that applies when a person does nothing. Defaults reduce effort, signal a recommendation, preserve the status quo, and can exploit inattention.\n\nDefaults are not inherently manipulative. A safe, disclosed, reversible default can be rational. The concern is whether acceptance reflects the person’s considered preference or inertia, confusion, or unequal switching costs.",
       "examples": [
         {
-          "text": "Employees remain in a preset retirement contribution plan without comparing available rates.",
-          "note": null
+          "text": "Customers keep an automatic annual renewal although uncertain usage suits a monthly plan.",
+          "note": "Retaining the annual plan requires no action before the deadline."
         }
       ],
       "counters": [
-        "Review the default against personal objectives and make an active selection."
+        "Make alternatives visible and equally easy to choose.",
+        "Explain consequences and review important settings after a pause."
       ],
       "limitations": [
-        "A well-chosen default can serve the user's interests and reduce decision costs."
+        "A safe default may be a legitimate recommendation.",
+        "High uptake does not reveal persuasion, inattention, constraint, or satisfaction."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Repeatedly observed across choice settings; effects vary with switching cost, disclosure, salience, and reversibility.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1334,21 +1348,23 @@
       "name": "Defensive attribution",
       "aliases": [],
       "symbolName": null,
-      "summary": "Explaining harm in ways that protect one's belief in personal safety or distance oneself from the victim.",
-      "body": "Explaining harm in ways that protect one's belief in personal safety or distance oneself from the victim. Perceived similarity and perceived avoidability can affect assignments of blame.",
+      "summary": "Explaining harm in a way that protects one’s sense of safety or distance from the victim.",
+      "body": "Defensive attribution is a self-protective explanation of another person’s misfortune. Blaming the victim can make harm feel controllable and less likely to happen to the observer; blaming a responsible actor can preserve a belief that events have clear causes.\n\nThe explanation may still identify a real contributor. The pattern is more plausible when causal judgments change with perceived similarity or threat and evidence that the same event could happen to the observer is discounted.",
       "examples": [
         {
-          "text": "A driver blames an accident victim's character to sustain the belief that careful people like herself are safe.",
-          "note": null
+          "text": "Neighbors blame a burglary victim for carelessness although nearby homes with the same locks were also targeted.",
+          "note": "Victim blame creates distance by implying careful people are safe."
         }
       ],
       "counters": [
-        "Separate evidence about responsibility from the desire to feel protected."
+        "Separate causal contribution from moral blame.",
+        "Compare the victim’s exposure with the observer’s and list alternative pathways."
       ],
       "limitations": [
-        "An attribution of responsibility may be justified by documented conduct and circumstances."
+        "Identifying preventable behavior is not automatically defensive.",
+        "Responsibility for an action does not settle moral blame for the outcome."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A qualified social-judgment tendency moderated by similarity, responsibility, severity, and threat.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1360,21 +1376,23 @@
       "name": "Denomination effect",
       "aliases": [],
       "symbolName": null,
-      "summary": "Spending equivalent amounts differently depending on whether money is held in large or small denominations.",
-      "body": "Spending equivalent amounts differently depending on whether money is held in large or small denominations. Breaking a large note can feel more consequential than spending several small notes of the same total value.",
+      "summary": "Spending equivalent money differently depending on whether it is held in large or small units.",
+      "body": "The denomination effect is a tendency to spend small notes or coins more readily than an equal amount represented by one large note. A large unit makes breaking a reserve salient, while several small units make each purchase feel incremental.\n\nThis concerns representation, not objective value. Convenience, acceptance, earmarking, and a deliberate reserve can produce the same pattern without a bias.",
       "examples": [
         {
-          "text": "A shopper keeps one fifty-dollar note but spends five ten-dollar notes.",
-          "note": null
+          "text": "A person spends five $10 notes on snacks but keeps a single $50 note untouched.",
+          "note": "Small units make spending feel incremental; breaking the large note makes the reserve salient."
         }
       ],
       "counters": [
-        "Track total expenditure independently of the denominations used."
+        "Track total amount and budget category, not physical unit size.",
+        "Use a planned allowance that displays the relevant total."
       ],
       "limitations": [
-        "Transaction costs or change availability can make denominations practically relevant."
+        "Denominations can differ in acceptance, security, and earmarking.",
+        "Keeping a large note for a purpose may be sound budgeting."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Observed in spending tasks, with variation by payment method, liquidity, earmarking, and context.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1386,21 +1404,23 @@
       "name": "Denominator neglect",
       "aliases": [],
       "symbolName": null,
-      "summary": "Judging frequency, risk, or success from a numerator while neglecting the relevant total.",
-      "body": "Judging frequency, risk, or success from a numerator while neglecting the relevant total. A large count can seem impressive even when it represents a small proportion.",
+      "summary": "Judging a frequency or risk from the numerator while giving too little weight to its total.",
+      "body": "Denominator neglect occurs when the count of successes or harms draws attention away from the total that gives it meaning. Ten successes can sound better than one despite coming from a much larger set.\n\nThe denominator may be absent, vividness may dominate, or the decision may actually concern absolute benefit. A sound judgment first identifies whether the objective is a rate, a total, or both.",
       "examples": [
         {
-          "text": "A treatment's ten recoveries are praised without noting that one thousand people received it.",
-          "note": null
+          "text": "One treatment helps 20 of 1,000 patients; another helps 15 of 30.",
+          "note": "The larger numerator hides that the second treatment has the higher rate."
         }
       ],
       "counters": [
-        "State the total population and calculate comparable proportions."
+        "Write every count with its total and compare rates.",
+        "State whether the objective is probability, expected number, or another quantity."
       ],
       "limitations": [
-        "Counts remain relevant when total burden rather than individual probability is the question."
+        "A denominator is irrelevant when fixed or when total count is the objective.",
+        "Small denominators make rates unstable."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A recurring frequency-presentation finding, with real decisions also shaped by uncertainty, base rates, and objective.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1412,21 +1432,23 @@
       "name": "Detection bias",
       "aliases": [],
       "symbolName": null,
-      "summary": "Creating systematic differences in measured outcomes through unequal methods of outcome assessment.",
-      "body": "Creating systematic differences in measured outcomes through unequal methods of outcome assessment. Assessors' knowledge or different surveillance procedures can change what gets recorded.",
+      "summary": "Unequal methods of detecting outcomes create systematic differences in measured results.",
+      "body": "Detection bias occurs when outcome assessment differs between groups in testing intensity, follow-up, thresholds, assessor expectations, or knowledge of treatment. One group can then appear to have more outcomes because its outcomes are easier to notice or classify.\n\nIt is a measurement problem after cases enter the study, not a sampling-frame problem. A real difference can coexist with biased detection, and blinding reduces risk without guaranteeing its absence.",
       "examples": [
         {
-          "text": "An unblinded evaluator searches more intensively for side effects in one trial group.",
-          "note": null
+          "text": "Patients on a new therapy receive more scans, so more mild recurrences are recorded than among standard-care patients.",
+          "note": "The surveillance schedule makes outcomes more detectable in one group."
         }
       ],
       "counters": [
-        "Use comparable assessment procedures and blind assessors where feasible."
+        "Predefine criteria, standardize assessment, and blind assessors where feasible.",
+        "Audit missing follow-up and subjective coding across groups."
       ],
       "limitations": [
-        "A measured difference may remain real after differences in detection are addressed."
+        "Different monitoring can be clinically necessary.",
+        "Blinding may be impossible, requiring standardized procedures and sensitivity checks."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A standard outcome-measurement threat whose direction depends on surveillance, subjectivity, and missing data.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1438,21 +1460,23 @@
       "name": "Disposition effect",
       "aliases": [],
       "symbolName": null,
-      "summary": "Selling investments that have gained value too readily while holding losing investments too long.",
-      "body": "Selling investments that have gained value too readily while holding losing investments too long. The purchase price can become a psychological reference point that displaces expected future performance.",
+      "summary": "Selling investments that gained value too soon while holding losing investments too long.",
+      "body": "The disposition effect is an asymmetry in closing positions: gains are realized readily while losses remain open. Selling a winner confirms success; holding a loser postpones the psychological finality of admitting a poor purchase.\n\nThe correct comparison is each asset’s current expected return, risk, and portfolio role, not its entry price. Taxes, liquidity, and new information can legitimately make the two actions different.",
       "examples": [
         {
-          "text": "An investor sells a promising winner to lock in a gain but keeps a failing stock to avoid realizing a loss.",
-          "note": null
+          "text": "An investor sells a small winner but refuses to sell a weaker stock because selling would make the loss official.",
+          "note": "The entry price controls both decisions although current cases should be compared independently."
         }
       ],
       "counters": [
-        "Compare expected future returns and risks without treating the purchase price as a target."
+        "Review each holding as if deciding whether to buy it today.",
+        "Set exit rules before outcomes and document evidence for exceptions."
       ],
       "limitations": [
-        "Tax rules, transaction costs, and portfolio needs can justify different sale decisions."
+        "Taxes, costs, liquidity, and changing risk can justify different actions.",
+        "One trade cannot establish a repeated disposition pattern."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A repeatedly observed investor-behavior pattern, but trades also reflect constraints, taxes, risk, and information.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1464,21 +1488,23 @@
       "name": "Distinction bias",
       "aliases": [],
       "symbolName": null,
-      "summary": "Overweighting differences between options when comparing them together that matter less when experiencing one alone.",
-      "body": "Overweighting differences between options when comparing them together that matter less when experiencing one alone. Joint evaluation can highlight small attributes that are hard to notice in ordinary use.",
+      "summary": "Overweighting differences when options are compared together that matter less when one is experienced alone.",
+      "body": "Distinction bias arises when joint comparison makes small, measurable differences seem more important than they feel in separate experience. Side-by-side evaluation invites attribute ranking; separate evaluation emphasizes living with the option.\n\nA difference may still matter greatly for safety, cost, or function. The concern is that an abstract distinction becomes vivid while frequency, duration, and lived consequences are neglected.",
       "examples": [
         {
-          "text": "A buyer pays much more for a screen difference visible side by side but imperceptible at home.",
-          "note": null
+          "text": "A traveler fixates on a two-minute hotel walking difference but later finds noise and location determine the stay.",
+          "note": "The measurable difference dominates the evaluation of the actual experience."
         }
       ],
       "counters": [
-        "Evaluate each option separately under realistic use conditions."
+        "Evaluate each option separately against conditions of use first.",
+        "Ask how the difference affects repeated real-world experience."
       ],
       "limitations": [
-        "Side-by-side differences matter when the task actually requires precise discrimination."
+        "Joint comparison is valuable when precise differences are the objective.",
+        "Separate evaluation can also be noisy, so both views may be needed."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A context-sensitive shift between joint and separate evaluation, moderated by measurability and experience.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1490,21 +1516,23 @@
       "name": "Diversification bias",
       "aliases": [],
       "symbolName": null,
-      "summary": "Choosing excessive variety when selecting several future consumptions at once compared with choosing them separately.",
-      "body": "Choosing excessive variety when selecting several future consumptions at once compared with choosing them separately. Simultaneous selection can exaggerate the value of variety over repeated enjoyment of a favorite.",
+      "summary": "Choosing more variety for future consumption when selecting several items at once.",
+      "body": "Diversification bias is the tendency to choose a wider assortment for future use when several choices are made together than when each is chosen at the time of consumption. Planning makes variety protect against imagined boredom; later preferences may favor repetition.\n\nThe effect is not a claim that variety is bad. It matters when forecasts of a future self ignore observed preferences or when advance variety creates waste and unused capacity.",
       "examples": [
         {
-          "text": "A student orders a different snack for every week in advance but chooses the same favorite when deciding weekly.",
-          "note": null
+          "text": "A shopper buys seven different lunch flavors at once but normally repeats two favorites when choosing daily.",
+          "note": "The bundle gives anticipated variety more weight than observed preference."
         }
       ],
       "counters": [
-        "Consider the preference likely to apply at each consumption time."
+        "Use consumption records before selecting a bundle.",
+        "Leave some choices open when freshness or preference uncertainty matters."
       ],
       "limitations": [
-        "Variety can rationally hedge uncertain tastes or changing availability."
+        "Advance variety is rational when future opportunities are limited.",
+        "Repetition may reflect habit or availability rather than stable preference."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Supported in bundled-consumption research; size depends on horizon, assortment, novelty, and self-knowledge.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1516,21 +1544,23 @@
       "name": "Dread aversion",
       "aliases": [],
       "symbolName": null,
-      "summary": "Preferring to bring forward an unpleasant event to reduce the burden of anticipating it.",
-      "body": "Preferring to bring forward an unpleasant event to reduce the burden of anticipating it. Waiting can add disutility beyond the unpleasant event itself.",
+      "summary": "Preferring an unpleasant event sooner to reduce the burden of waiting for it.",
+      "body": "Dread aversion is a preference to bring forward an unpleasant event so the period of waiting and anticipation ends sooner. The aversive object is partly the anticipation, not only the event.\n\nActing early can be rational when delay adds risk or disruption. It can be mistaken when immediate relief sacrifices useful information or a better option; the mechanism concerns the value assigned to anticipation relative to timing.",
       "examples": [
         {
-          "text": "A person chooses an earlier painful appointment to stop spending weeks anticipating it.",
-          "note": null
+          "text": "Someone chooses an uncomfortable procedure immediately rather than a more convenient date with no clinical difference.",
+          "note": "The earlier date ends dread without improving the procedure."
         }
       ],
       "counters": [
-        "Separate the event's consequences from the costs of waiting and anticipation."
+        "Separate practical timing costs from the emotional cost of waiting.",
+        "Use a fixed decision date and information plan."
       ],
       "limitations": [
-        "Reducing genuine anticipatory distress can be a coherent preference rather than an error."
+        "Earlier action can be sensible when delay has real costs.",
+        "Anticipatory distress can contain useful information about values or readiness."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Documented in intertemporal choice and affective forecasting, with preferences shaped by uncertainty, control, and delay cost.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1542,21 +1572,23 @@
       "name": "Duration neglect",
       "aliases": [],
       "symbolName": null,
-      "summary": "Giving an episode's length too little weight when evaluating its total pleasantness or unpleasantness.",
-      "body": "Giving an episode's length too little weight when evaluating its total pleasantness or unpleasantness. Retrospective ratings may depend more on salient moments and endings than elapsed duration.",
+      "summary": "Giving too little weight to how long an episode lasted when evaluating it overall.",
+      "body": "Duration neglect occurs when retrospective evaluation follows a peak, ending, or vivid feature while giving too little weight to length. A long event can receive a similar rating to a short event with the same memorable ending.\n\nDuration is not always the proper unit: a peak or lasting consequence may matter more. The concern arises when a whole-episode judgment ignores exposure time that should affect the decision.",
       "examples": [
         {
-          "text": "A longer uncomfortable procedure is rated better because its final minutes are milder.",
-          "note": null
+          "text": "Two dental visits end equally well, but one includes an hour of painful waiting and is later rated equally tolerable.",
+          "note": "The shared ending dominates recall despite more unpleasant time."
         }
       ],
       "counters": [
-        "Record duration and moment-by-moment experience when total burden matters."
+        "Record total exposure when duration matters.",
+        "Rate peak, ending, frequency, and total time separately."
       ],
       "limitations": [
-        "Duration can be irrelevant when the question concerns peak intensity or the ending itself."
+        "Duration should not dominate when a brief event has lasting consequences.",
+        "Remembered evaluation and real-time utility can differ legitimately."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A recurring retrospective-evaluation finding, moderated by the question, peak and end experiences, and consequences.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1568,21 +1600,23 @@
       "name": "Ecological sampling bias",
       "aliases": [],
       "symbolName": null,
-      "summary": "Distorting inference because the locations, times, or situations sampled do not represent the environment of interest.",
-      "body": "Distorting inference because the locations, times, or situations sampled do not represent the environment of interest. This broad label concerns the match between observation settings and the ecological target.",
+      "summary": "Inference is distorted because sampled places, times, or situations do not represent the environment of interest.",
+      "body": "Ecological sampling bias occurs when observations come from selected contexts and are generalized to a wider environment. Missing dimensions can include location, time, season, social setting, device, or task. Random selection within chosen contexts does not fix a selective context set.\n\nIt differs from omitting people from a sampling frame: the issue is where and when behavior is observed. A narrow sample is valid for a narrow claim, but not automatically for the whole environment.",
       "examples": [
         {
-          "text": "A wildlife survey samples only roadside habitats and generalizes to an entire forest.",
-          "note": null
+          "text": "A workplace study samples only open-plan offices on weekday afternoons and generalizes to all work settings.",
+          "note": "Other layouts and times may produce different interruption patterns."
         }
       ],
       "counters": [
-        "Sample across relevant habitats and times according to the intended population."
+        "Define the target environment and sample relevant contexts.",
+        "Report context limits and test the dimensions most likely to matter."
       ],
       "limitations": [
-        "A roadside sample is appropriate when the target is specifically roadside wildlife."
+        "A focused sample is correct for a focused question.",
+        "Broader sampling can introduce incompatible tasks or obscure a mechanism."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A standard generalization risk whose impact depends on contextual variation and claim breadth.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1594,21 +1628,23 @@
       "name": "Effort justification",
       "aliases": [],
       "symbolName": null,
-      "summary": "Valuing an outcome more highly because obtaining it required substantial effort or sacrifice.",
-      "body": "Valuing an outcome more highly because obtaining it required substantial effort or sacrifice. Positive evaluation can reduce tension between the cost endured and the outcome received.",
+      "summary": "Valuing an outcome more because obtaining it required substantial effort or sacrifice.",
+      "body": "Effort justification is increased valuation after investing effort, discomfort, money, or status. The investment can become evidence that the goal was important, reducing tension between sacrifice and a disappointing result.\n\nEffort can genuinely build skill or quality. The bias appears when effort itself stands in for produced value. Past effort is sunk; it can explain attachment but does not make an inferior option worth further investment.",
       "examples": [
         {
-          "text": "A club member insists a mediocre group is exceptional after enduring a difficult initiation.",
-          "note": null
+          "text": "After months on a cumbersome volunteer project, a coordinator insists it was highly valuable despite little measurable benefit.",
+          "note": "The project’s difficulty is being used as evidence of its value."
         }
       ],
       "counters": [
-        "Assess the outcome using standards set before the effort was spent."
+        "Evaluate outputs against preset criteria and use an independent review.",
+        "Separate learning or assets created from whether to invest further."
       ],
       "limitations": [
-        "Effort can genuinely develop skill, attachment, or enjoyment that increases value."
+        "Effort can be a valid signal when it creates expertise or quality.",
+        "Pride and commitment do not alone prove distorted evaluation."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Supported in commitment and dissonance research, while real cases also reflect learning, identity, and actual returns.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1620,21 +1656,23 @@
       "name": "Egocentric bias",
       "aliases": [],
       "symbolName": null,
-      "summary": "Giving one's own perspective or contribution excessive weight relative to other people's.",
-      "body": "Giving one's own perspective or contribution excessive weight relative to other people's. Access to one's own experiences can make them seem disproportionately central.",
+      "summary": "Giving one’s own perspective or contribution excessive weight in a social judgment.",
+      "body": "Egocentric bias is overreliance on one’s viewpoint, effort, or information when judging a shared situation. Private work is easier to recall than others’ unseen work, and personal priorities are more available than other people’s constraints.\n\nThe self may genuinely have made most of the contribution. The bias is more plausible when private evidence is treated as shared, competing work is not reconstructed, or the self is used as the default model of what others know and want.",
       "examples": [
         {
-          "text": "Each coauthor estimates having completed most of a shared project.",
-          "note": null
+          "text": "After a group presentation, each member remembers their own research and concludes they carried most of it.",
+          "note": "Accessible private effort overshadows work performed outside each person’s view."
         }
       ],
       "counters": [
-        "Compare contribution estimates with shared records and independent accounts."
+        "Create a shared record of tasks and decisions before evaluating contributions.",
+        "Identify what information and constraints were private to each person."
       ],
       "limitations": [
-        "A person can actually contribute more; unequal estimates need evidential assessment."
+        "Self-report can be the best evidence for private effort.",
+        "Different perceptions may reflect genuinely different roles."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A recurring social-judgment pattern shaped by memory access, task structure, role visibility, and self-knowledge.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1646,21 +1684,23 @@
       "name": "Egocentric memory bias",
       "aliases": [],
       "symbolName": null,
-      "summary": "Remembering shared events in ways that exaggerate one's own role or contribution.",
-      "body": "Remembering shared events in ways that exaggerate one's own role or contribution. Readily retrieved personal actions may crowd out other participants' less accessible actions.",
+      "summary": "Remembering a shared event in a way that exaggerates one’s own role or contribution.",
+      "body": "Egocentric memory bias is a source and contribution error in recall of shared events. Personal actions are encoded from a privileged viewpoint, so they remain more accessible than others’ actions; reconstruction can give the remembered self too much of the event.\n\nA self-focused memory can be accurate when one person had the central role. The bias matters when a personal account is accepted without checking shared records or other participants’ experiences.",
       "examples": [
         {
-          "text": "Years after a team success, a member remembers generating nearly every important idea.",
-          "note": null
+          "text": "After a team rescue, one volunteer remembers directing the response although the radio log shows distributed coordination.",
+          "note": "The volunteer’s visible decisions are easier to retrieve than the group’s recorded work."
         }
       ],
       "counters": [
-        "Use contemporaneous notes and other participants' accounts."
+        "Use contemporaneous logs and multiple independent accounts.",
+        "List each person’s actions before judging relative contribution."
       ],
       "limitations": [
-        "Clear records of a major personal contribution can support an unequal attribution."
+        "Records can omit unlogged support or improvisation.",
+        "A self-focused account can be accurate."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A documented memory concern whose expression depends on salience, role visibility, delay, and corroboration.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1674,21 +1714,23 @@
         "Hot–cold empathy gap"
       ],
       "symbolName": null,
-      "summary": "Underestimating how a different emotional or bodily state will affect preferences or behavior.",
-      "body": "Underestimating how a different emotional or bodily state will affect preferences or behavior. A person in a calm or satiated state may poorly anticipate decisions made under anger, pain, or hunger.",
+      "summary": "Underestimating how a different emotional or bodily state will change preferences and behavior.",
+      "body": "The empathy gap is a forecasting failure across states. Hunger, pain, fear, fatigue, arousal, calm, and social pressure can change what feels urgent and what costs seem acceptable. A cool state predicts a hot state using current preferences; a hot state may underestimate future restraint.\n\nThis is not a claim that people lack empathy generally. Predictions can be accurate with similar states, experience, and a concrete plan; the gap matters when state-dependent impulses are treated as temporary or irrelevant.",
       "examples": [
         {
-          "text": "After lunch, someone plans to skip dinner easily and is surprised by intense evening hunger.",
-          "note": null
+          "text": "Before a long shift, a worker promises not to buy takeaway but does so while hungry and exhausted.",
+          "note": "The earlier prediction gives too little weight to the later bodily state."
         }
       ],
       "counters": [
-        "Make plans using evidence from past behavior in the relevant state."
+        "Plan in advance and specify what to do in the relevant state.",
+        "Use records from comparable states instead of intuition."
       ],
       "limitations": [
-        "Preferences may remain stable across states, and prediction errors are not inevitable."
+        "State changes can reveal real needs.",
+        "Past behavior under one state does not determine behavior under another context."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Supported across affective and bodily states, with accuracy improved by experience, planning, and similar-state evidence.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1700,21 +1742,23 @@
       "name": "Endowment effect",
       "aliases": [],
       "symbolName": null,
-      "summary": "Valuing an item more highly when owning it than when considering acquiring the same item.",
-      "body": "Valuing an item more highly when owning it than when considering acquiring the same item. Ownership can change reference points and the perceived cost of giving something up.",
+      "summary": "Valuing an item more after owning it than before acquiring the same item.",
+      "body": "The endowment effect is a gap between what an owner demands to give up an item and what they would pay to acquire it. Possession makes the item part of the current state and makes giving it up feel like a loss.\n\nFamiliarity, transaction costs, sentiment, and changed use can also explain a gap. The effect is most plausible with recent arbitrary ownership and interchangeable goods when the gap persists after comparing money and item in the same frame.",
       "examples": [
         {
-          "text": "A person will pay ten dollars for a mug but demands thirty dollars to sell it once assigned ownership.",
-          "note": null
+          "text": "A student asks $40 for a mug received minutes earlier but would have paid $20 before receiving it.",
+          "note": "Arbitrary possession changes perceived loss without changing use or quality."
         }
       ],
       "counters": [
-        "Compare buy and sell decisions using the same alternatives and information."
+        "Ask whether the item would be bought today at its current price.",
+        "Delay irreversible choices and use blind valuations when sentiment is irrelevant."
       ],
       "limitations": [
-        "Transaction costs, attachment, and information differences can create legitimate valuation gaps."
+        "Sentiment and switching costs can make ownership genuinely valuable.",
+        "Different terms or information make buying and selling values non-diagnostic."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A repeatedly observed valuation pattern moderated by ownership duration, involvement, market experience, and transaction context.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1726,21 +1770,23 @@
       "name": "Escalation of commitment",
       "aliases": [],
       "symbolName": null,
-      "summary": "Investing further resources in a failing course partly because resources have already been committed.",
-      "body": "Investing further resources in a failing course partly because resources have already been committed. Protecting an earlier decision can displace comparison of future costs and benefits.",
+      "summary": "Investing more in a failing course partly because resources have already been committed.",
+      "body": "Escalation of commitment occurs when prior investment increases support for a course whose current prospects no longer justify it. Continuing can protect identity, avoid admitting error, preserve hope, or defend the earlier decision.\n\nFurther investment is not automatically escalation: new evidence, obligations, or option value can change the forward-looking case. Compare continuation with alternatives using future costs, benefits, and probabilities, not unrecoverable past cost.",
       "examples": [
         {
-          "text": "A firm keeps funding an unviable project to avoid admitting its earlier investment was wasted.",
-          "note": null
+          "text": "A team keeps funding a product with declining demand because it has already spent two years building it.",
+          "note": "Elapsed investment is treated as a reason to continue rather than a sunk cost."
         }
       ],
       "counters": [
-        "Evaluate only future consequences and establish independent stopping criteria."
+        "Ask what would be chosen if the prior investment had not occurred.",
+        "Use independent review points and precommitted stop criteria."
       ],
       "limitations": [
-        "Continuing is justified when expected future benefits exceed future costs."
+        "Past investment can create assets, learning, contracts, or obligations.",
+        "Stopping does not prove the earlier investment was irrational."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Strongly represented in decision research, but real cases combine sunk-cost pressure with learning and changing conditions.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1752,25 +1798,27 @@
       "name": "Essentialism bias",
       "aliases": [],
       "symbolName": null,
-      "summary": "Treating a category as if all members share a deep, fixed essence that explains their traits.",
-      "body": "Treating a category as if all members share a deep, fixed essence that explains their traits. This psychological tendency can encourage rigid generalizations about social or biological groups.",
+      "summary": "Treating a category as if its members share a deep, fixed essence that causes their traits.",
+      "body": "Essentialism bias represents a category as if an unseen stable essence makes its members what they are. It encourages expectations of shared properties, natural boundaries, and fixed differences while obscuring history, context, development, and interaction.\n\nSome categories track real mechanisms. The error is inferring a hidden cause from a label without checking heterogeneity, process, or change, then applying a group tendency as a verdict about an individual.",
       "examples": [
         {
-          "text": "A child assumes an adopted animal must behave exactly like its birth category regardless of upbringing.",
-          "note": null
+          "text": "A manager assumes people from a neighborhood are naturally unreliable and treats one missed deadline as proof.",
+          "note": "A social label becomes a fixed inner cause while circumstances and variation disappear."
         }
       ],
       "counters": [
-        "Examine within-category variation and the processes that produce the trait."
+        "Describe the specific trait and causal process instead of using the label as explanation.",
+        "Check within-group variation and evidence that the trait can change."
       ],
       "limitations": [
-        "Some categories track stable causal structures, but their existence does not justify every essentialist inference."
+        "Some categories have real biological or functional structure.",
+        "A statistical tendency need not justify judging an individual without individual evidence."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A broad category-learning and social-cognition tendency, with consequences depending on category and supporting evidence.",
       "lookalikes": [],
       "related": [],
       "tags": [
-        "decision-making"
+        "social-judgment"
       ]
     },
     {
@@ -1778,21 +1826,23 @@
       "name": "Exaggerated expectation",
       "aliases": [],
       "symbolName": null,
-      "summary": "Forming an extreme forecast from limited or selectively salient evidence.",
-      "body": "Forming an extreme forecast from limited or selectively salient evidence. This is a broad, less standardized label rather than one sharply defined cognitive effect.",
+      "summary": "Forming an extreme forecast from limited, selective, or salient evidence.",
+      "body": "Exaggerated expectation is an overconfident forecast that an outcome will be unusually large, good, bad, or likely because evidence is narrow or emotionally salient. A recent success or vivid warning can stand in for the broader distribution.\n\nExtreme outcomes can be justified by a genuine regime change or strong mechanism. The bias is a mismatch between forecast certainty or extremity and the information available when it was made, not merely a forecast that later proved wrong.",
       "examples": [
         {
-          "text": "After one record sales week, a retailer forecasts record sales every week of the coming year.",
-          "note": null
+          "text": "After one viral post, a small business predicts nearly every future launch will sell out.",
+          "note": "One salient success is treated as the stable baseline without ordinary cases."
         }
       ],
       "counters": [
-        "Compare the forecast with base rates and uncertainty ranges."
+        "Start with a reference class and state a range with assumptions.",
+        "Record forecasts before outcomes and update with new evidence."
       ],
       "limitations": [
-        "An extreme forecast can be justified by strong evidence of a sustained structural change."
+        "Historical averages can fail after a real regime change.",
+        "Severe low-probability outcomes deserve attention without becoming the central forecast."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Related to overconfidence and base-rate neglect; strength varies with feedback, expertise, reference class, and process stability.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1804,25 +1854,27 @@
       "name": "Experimenter expectancy effect",
       "aliases": [],
       "symbolName": null,
-      "summary": "Allowing a researcher's expectations to influence participants' behavior, measurement, or interpretation.",
-      "body": "Allowing a researcher's expectations to influence participants' behavior, measurement, or interpretation. Subtle cues and flexible observations can transmit a preferred outcome without deliberate fraud.",
+      "summary": "A researcher’s expectations influence participant behavior, measurement, or interpretation.",
+      "body": "The experimenter expectancy effect occurs when a researcher’s beliefs about a condition or result alter the study through tone, instructions, follow-up, coding, exclusions, or interpretation. Influence can be unconscious and small differences can accumulate when outcomes are flexible.\n\nA favorable result is not automatically expectancy-driven. Risk is greatest when assignment is known, outcomes are subjective, participant contact differs, and the researcher has discretion over scoring or analysis.",
       "examples": [
         {
-          "text": "A researcher gives more encouragement to participants expected to perform well.",
-          "note": null
+          "text": "An assessor expecting a therapy to help probes improvement more in treated patients and codes borderline answers favorably.",
+          "note": "Unequal interaction and coding can create a group difference without a treatment effect."
         }
       ],
       "counters": [
-        "Standardize instructions and blind relevant researchers to conditions or hypotheses."
+        "Conceal allocation, standardize scripts, blind assessment, and preregister rules.",
+        "Separate collection from interpretation and audit interactions and coding."
       ],
       "limitations": [
-        "An observed effect is not evidence of expectancy influence without a plausible pathway and supporting data."
+        "Blinding may be infeasible for visible interventions.",
+        "Participant expectancy and analytic flexibility are related but distinct threats."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A methodological concern whose risk varies with subjectivity, contact, blinding, and discretion.",
       "lookalikes": [],
       "related": [],
       "tags": [
-        "decision-making"
+        "research-and-measurement"
       ]
     },
     {
@@ -1831,20 +1883,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Giving too little weight to how many cases or objects a judgment covers.",
-      "body": "Giving too little weight to how many cases or objects a judgment covers. A rating based on a vivid exemplar may remain nearly unchanged when the set grows substantially.",
+      "body": "Extension neglect occurs when qualities of a described case dominate judgment while the size of the set affected receives too little weight. A vivid benefit or harm can feel equally important whether it concerns one case or many.\n\nScale is not always the objective: rights, thresholds, and unequal distribution may matter more than totals. The bias is plausible when the same evaluation persists after the affected set changes materially and aggregate impact should matter.",
       "examples": [
         {
-          "text": "A donor offers almost the same amount to save two thousand birds as to save two hundred thousand birds.",
-          "note": null
+          "text": "A charity gives the same funding decision to one rescued child and a program preventing the same harm for 1,000 children.",
+          "note": "The vivid case dominates the number of people affected."
         }
       ],
       "counters": [
-        "Make the size of the affected set explicit and compare marginal outcomes."
+        "State per-case impact and number of cases, then calculate aggregate consequence when relevant.",
+        "Test whether judgment changes when the affected set is multiplied."
       ],
       "limitations": [
-        "Value need not grow linearly with count when resources, saturation, or other values matter."
+        "Moral decisions may prioritize identifiable individuals.",
+        "Aggregate totals can hide distribution and rights."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Documented in judgment and helping decisions, with proper weight depending on ethical rule and distributional effects.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1856,21 +1910,23 @@
       "name": "Extremeness aversion",
       "aliases": [],
       "symbolName": null,
-      "summary": "Avoiding options at the extremes of a choice set because of their relative position.",
-      "body": "Avoiding options at the extremes of a choice set because of their relative position. The available range can influence preferences even when an option's own attributes stay fixed.",
+      "summary": "Avoiding an extreme option because of its position relative to other choices.",
+      "body": "Extremeness aversion is preference for a middle option because extremes look risky, excessive, or socially difficult in the choice set. A moderate option can gain appeal when cheaper and more expensive alternatives appear, even though its absolute features are unchanged.\n\nA middle choice can genuinely best fit needs. The effect is more plausible when preference changes with the range, extremes are irrelevant or deliberately poor, and the person cannot explain the middle option in objective terms.",
       "examples": [
         {
-          "text": "A diner avoids a wine mainly because it is the most expensive bottle on the menu.",
-          "note": null
+          "text": "A buyer selects a middle laptop price because the cheapest seems weak and the most expensive excessive, without checking requirements.",
+          "note": "Relative position supplies reassurance more than relevant capability."
         }
       ],
       "counters": [
-        "Compare each option with actual preferences and budget independently of rank."
+        "Set requirements and limits before seeing the whole choice set.",
+        "Ask whether the middle remains preferred if an extreme is removed."
       ],
       "limitations": [
-        "An extreme price can provide relevant information about financial burden."
+        "Extreme options may reveal real trade-offs.",
+        "Added options can legitimately supply quality or fit information."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Compromise and extremeness effects are context effects moderated by option quality, familiarity, and goals.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1882,21 +1938,23 @@
       "name": "Extrinsic incentives bias",
       "aliases": [],
       "symbolName": null,
-      "summary": "Expecting other people to be more driven by external rewards than oneself.",
-      "body": "Expecting other people to be more driven by external rewards than oneself. People may emphasize purpose in explaining their own choices but money in explaining others' choices.",
+      "summary": "Expecting other people to be more motivated by external rewards than oneself.",
+      "body": "Extrinsic incentives bias is a self–other attribution pattern: another person’s behavior is explained by pay, status, or penalties while one’s own similar behavior is explained by values or interest. Visible rewards are easy to observe; private motives are not.\n\nDifferent people can have different incentives and values. The bias is suggested when identical behavior receives different motive explanations solely because of whose behavior it is, or when the other person’s intrinsic interest is dismissed without evidence.",
       "examples": [
         {
-          "text": "A manager says she works for meaningful impact while assuming colleagues care only about bonuses.",
-          "note": null
+          "text": "A manager says an employee volunteers only for a bonus but calls their own extra hours commitment, although both receive recognition.",
+          "note": "The manager applies an incentive explanation only to the other person."
         }
       ],
       "counters": [
-        "Ask about others' motives and compare behavior under equivalent conditions."
+        "Use the same list of motives for self and other.",
+        "Ask what behavior would change if the reward disappeared."
       ],
       "limitations": [
-        "Some people are primarily motivated by financial incentives in particular contexts."
+        "People may genuinely have different values, rewards, and alternatives.",
+        "Recognizing incentives does not reduce every action to a payoff."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A qualified social-attribution pattern shaped by incentive visibility, relationship, behavior, and available information.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1908,21 +1966,23 @@
       "name": "Fading affect bias",
       "aliases": [],
       "symbolName": null,
-      "summary": "Finding that negative emotional reactions to remembered events fade faster than positive reactions.",
-      "body": "Finding that negative emotional reactions to remembered events fade faster than positive reactions. The label concerns the affect attached to autobiographical memories, not necessarily loss of factual detail.",
+      "summary": "Finding that negative feeling tied to remembered events fades faster than positive feeling in some contexts.",
+      "body": "Fading affect bias refers to an asymmetry in remembered emotion: negative feeling associated with an unpleasant event may diminish faster than positive feeling associated with a pleasant one. Event details can remain while their emotional tone changes through time, reinterpretation, or sharing.\n\nThis is not a rule that all bad memories fade. Severe, repeated, or unresolved events may remain intense, and positive affect can fade too. It matters when retrospective feeling guides later choices or narratives.",
       "examples": [
         {
-          "text": "An old holiday's stressful delays lose their sting while its enjoyable moments remain emotionally vivid.",
-          "note": null
+          "text": "Years later, a person remembers a difficult trip’s setbacks as minor but still recalls the destination’s excitement.",
+          "note": "Negative affect has softened more than positive affect, improving the remembered overall trip."
         }
       ],
       "counters": [
-        "Use records made at the time when evaluating the original experience."
+        "Use contemporaneous ratings when original intensity matters.",
+        "Separate remembered facts from current emotional reaction."
       ],
       "limitations": [
-        "Trauma and other conditions can produce different emotional memory patterns."
+        "Fading can reflect successful coping.",
+        "A calmer memory does not show the original event was harmless."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A qualified autobiographical-memory finding moderated by event type, rehearsal, culture, time, and resolution.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1934,21 +1994,23 @@
       "name": "False consensus effect",
       "aliases": [],
       "symbolName": null,
-      "summary": "Overestimating how widely other people share one's beliefs, preferences, or behavior.",
-      "body": "Overestimating how widely other people share one's beliefs, preferences, or behavior. One's social circle and personal choice can be mistaken for a representative sample.",
+      "summary": "Overestimating how widely other people share one’s beliefs, preferences, or behavior.",
+      "body": "The false consensus effect is an inflated estimate of how common one’s own choices or views are. One’s perspective is directly available, similar people are noticed more easily, and one’s social circle may be selected for similarity.\n\nAgreement can be genuinely common. The effect is projection from one case to a population without accounting for selection, nonresponse, subgroup differences, or evidence about the actual distribution.",
       "examples": [
         {
-          "text": "A cyclist assumes almost everyone supports a road proposal because all her cycling friends do.",
-          "note": null
+          "text": "A remote-work supporter hears agreement from close colleagues and assumes most employees want the same arrangement.",
+          "note": "A selected social circle is treated as representative of the workforce."
         }
       ],
       "counters": [
-        "Seek representative data beyond your immediate network."
+        "Estimate prevalence from a representative sample or structured poll.",
+        "Report uncertainty and inspect absent subgroups."
       ],
       "limitations": [
-        "A belief may actually be widespread; prevalence requires evidence."
+        "Shared norms can be genuinely common in the relevant population.",
+        "A biased survey can be worse than informed local knowledge."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A well-known social-perception pattern shaped by group composition, salience, feedback, and information quality.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1961,20 +2023,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Recalling an event or detail that did not occur or occurred differently.",
-      "body": "Recalling an event or detail that did not occur or occurred differently. Memory reconstructs experiences and can incorporate inference, suggestion, or material from another source.",
+      "body": "A false memory is a recollection experienced as memory although its event, detail, timing, or source is inaccurate. Later suggestions, expectations, related events, and familiar stories can blend with original experience; vividness and confidence do not guarantee accuracy.\n\nIt is not ordinary uncertainty or an intentional lie. A memory can contain accurate elements alongside one invented detail, and conflict between accounts is not proof without independent evidence.",
       "examples": [
         {
-          "text": "A witness remembers a stop sign at an intersection that actually had a yield sign.",
-          "note": null
+          "text": "After hearing that a red car was involved, a witness remembers seeing one despite an obstructed view.",
+          "note": "Later information becomes part of the reconstruction and feels like original perception."
         }
       ],
       "counters": [
-        "Compare independent contemporaneous evidence without leading the witness."
+        "Record recollections before hearing suggestions.",
+        "Distinguish direct observation from later information and check independent records."
       ],
       "limitations": [
-        "Vividness and confidence alone establish neither accuracy nor falsity."
+        "Accurate corroborated memories should not be dismissed merely because reconstruction is possible.",
+        "A mistaken memory does not establish deception."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Frequently observed in memory research, with form and rate depending on suggestion, delay, source confusion, arousal, and test method.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1986,21 +2050,23 @@
       "name": "False uniqueness effect",
       "aliases": [],
       "symbolName": null,
-      "summary": "Underestimating how widely other people share one's desirable qualities or choices.",
-      "body": "Underestimating how widely other people share one's desirable qualities or choices. A positive trait may feel unusually distinctive when comparable behavior in others is not visible.",
+      "summary": "Underestimating how widely other people share one’s desirable qualities or choices.",
+      "body": "The false uniqueness effect is an overly low estimate of how common one’s valued traits, skills, or choices are. Personal examples are more familiar, while ordinary behavior by others is less visible; modesty norms can also reduce reports of similarity.\n\nA quality can genuinely be rare. The effect is suggested when a small visible sample is treated as the population or when self-enhancement persists against prevalence data. Being uncommon and being excellent are separate claims.",
       "examples": [
         {
-          "text": "A volunteer assumes very few peers donate time despite a survey showing volunteering is common.",
-          "note": null
+          "text": "A volunteer thinks few neighbors recycle because they rarely discuss it, although collection data show most households participate.",
+          "note": "Ordinary participation is less visible than the volunteer’s own effort."
         }
       ],
       "counters": [
-        "Compare self-assessment with representative information about others."
+        "Define the comparison population and use prevalence data.",
+        "Separate rarity from goodness, skill, and personal meaning."
       ],
       "limitations": [
-        "A trait can truly be rare; the issue is an inaccurate prevalence estimate."
+        "Population data may not capture intensity or context.",
+        "A person can be above average and still wrong about how many share the trait."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A qualified self-perception finding shaped by desirability, comparison group, observability, and information.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2012,21 +2078,23 @@
       "name": "Favoritism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Giving preferential treatment on the basis of a personal relationship rather than relevant merit or rules.",
-      "body": "Giving preferential treatment on the basis of a personal relationship rather than relevant merit or rules. A decision may serve affiliation while being presented as an impartial evaluation.",
+      "summary": "Giving preferential treatment because of a personal relationship rather than relevant merit or rules.",
+      "body": "Favoritism is unequal treatment that advantages someone because of friendship, family, loyalty, identity, or connection rather than decision-relevant criteria. It can affect hiring, access, assignments, discipline, or evaluation while appearing to the decision maker as trust or familiarity.\n\nA personal recommendation can provide relevant evidence, and family duties can be legitimate. The concern is that the relationship substitutes for the stated standard, conflicts are hidden, or similarly qualified people receive different treatment without a defensible role-related reason.",
       "examples": [
         {
-          "text": "A supervisor awards a contract to a friend despite a better qualified competing bid.",
-          "note": null
+          "text": "A supervisor gives a desirable shift to a close friend despite a published rotation and equal qualifications.",
+          "note": "The friendship, not a transparent job-relevant criterion, determines access."
         }
       ],
       "counters": [
-        "Use documented criteria and independent assessment when relationships create conflicts."
+        "State criteria in advance, document exceptions, and use independent review.",
+        "Disclose conflicts and recuse interested decision makers."
       ],
       "limitations": [
-        "A relationship can be relevant when trust or established performance is explicitly part of the task."
+        "Trust and prior collaboration can be relevant when explicitly permitted.",
+        "An unequal outcome is not proof if the relationship supplied valid evidence."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A broad fairness and governance concern; a case depends on criteria, comparators, disclosure, and discretion.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2041,20 +2109,22 @@
       ],
       "symbolName": null,
       "summary": "Overweighting the aspect of a situation currently receiving attention.",
-      "body": "Overweighting the aspect of a situation currently receiving attention. A salient feature can dominate predictions of satisfaction while other contributors are neglected.",
+      "body": "The focusing effect occurs when a salient feature receives more weight than its actual importance warrants. A prompt, headline, recent conversation, or vivid concern narrows attention and makes one dimension stand in for the whole situation.\n\nAttention is not automatically a mistake; the highlighted feature may be causal or urgent. The bias concerns disproportion, especially when judgment changes after an irrelevant prompt or important unmentioned factors cannot be recalled.",
       "examples": [
         {
-          "text": "A house buyer predicts lasting happiness from a sea view while overlooking a long daily commute.",
-          "note": null
+          "text": "While house-hunting, a buyer focuses on the kitchen and underweights commute, maintenance, and structure.",
+          "note": "The recently inspected feature dominates less visible factors that shape daily value."
         }
       ],
       "counters": [
-        "Evaluate the whole pattern of daily consequences using a consistent checklist."
+        "Use a weighted checklist before inspecting a salient feature.",
+        "Name important dimensions absent from the prompt or scene."
       ],
       "limitations": [
-        "A focused feature may actually dominate utility in a particular decision."
+        "A feature should be highly weighted when it is safety-critical or the explicit target.",
+        "Limited time requires prioritization and partial attention can be sound."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Observed in judgment and forecasting; impact depends on salience, expertise, instructions, and feature diagnosticity.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2067,20 +2137,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Changing a judgment or choice when equivalent information is described differently.",
-      "body": "Changing a judgment or choice when equivalent information is described differently. A gain or loss description can change evaluation without changing the underlying outcomes.",
+      "body": "The framing effect occurs when wording, reference point, or presentation changes a judgment even though the underlying options are equivalent. Gains versus losses, lives saved versus deaths, and rates versus counts can direct attention to different consequences.\n\nNot every wording difference is superficial: clearer wording can improve comprehension or reveal a real constraint. The bias is present when equivalent content produces a different choice because one frame bypasses criteria that should remain stable.",
       "examples": [
         {
-          "text": "A treatment described as ninety percent survival attracts more support than the same treatment described as ten percent mortality.",
-          "note": null
+          "text": "A program is chosen more often when described as saving 90 of 100 patients than as causing 10 deaths.",
+          "note": "The two descriptions convey the same count but invite different attention to gains and losses."
         }
       ],
       "counters": [
-        "Restate the information in equivalent gain and loss terms before choosing."
+        "Translate claims into counts, rates, gains, losses, and absolute outcomes.",
+        "Set decision criteria before choosing the persuasive wording."
       ],
       "limitations": [
-        "Descriptions that communicate different facts are not equivalent frames."
+        "Different frames can carry genuinely different meanings or stakeholder concerns.",
+        "Frame stability does not ensure the underlying probabilities are correct."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Among the most replicated context effects, moderated by numeracy, familiarity, incentives, equivalence, and relevance.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2094,21 +2166,23 @@
         "Baader–Meinhof phenomenon"
       ],
       "symbolName": null,
-      "summary": "Feeling that something has become more common after newly noticing or learning about it.",
-      "body": "Feeling that something has become more common after newly noticing or learning about it. Increased attention and easier recognition can mimic a change in prevalence.",
+      "summary": "Feeling that something became more common after newly noticing or learning about it.",
+      "body": "Frequency illusion is the impression that an object, word, or event has suddenly become prevalent after it attracts attention. A mental template makes matching examples easier to notice and remember, so subjective sightings can rise without a change in the world.\n\nA real trend or changed exposure can produce the same experience. The clue is increased noticing without a measured base-rate change, especially when noninstances are not tracked.",
       "examples": [
         {
-          "text": "After learning a new word, you notice it several times and conclude its use suddenly increased.",
-          "note": null
+          "text": "After learning a car model, a driver feels it is suddenly everywhere.",
+          "note": "New attention makes matching cars more detectable and memorable."
         }
       ],
       "counters": [
-        "Compare dated frequency data instead of relying on newly heightened attention."
+        "Record observations in a defined window and compare independent frequency data.",
+        "Track noninstances and exposure opportunities."
       ],
       "limitations": [
-        "A real increase in exposure can occur alongside increased attention."
+        "Noticing more can be the first clue to a real change.",
+        "A local environment can change even if a broad rate does not."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Selective attention explains the experience; establishing a trend requires exposure-adjusted observation.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2120,21 +2194,23 @@
       "name": "Functional fixedness",
       "aliases": [],
       "symbolName": null,
-      "summary": "Failing to consider uses of an object beyond its familiar function.",
-      "body": "Failing to consider uses of an object beyond its familiar function. A learned purpose can constrain the search for a solution.",
+      "summary": "Failing to consider uses for an object beyond its familiar function.",
+      "body": "Functional fixedness is a problem-solving constraint in which an object’s customary purpose blocks consideration of another use. The familiar label directs attention away from physical properties and alternative actions.\n\nConventional use is efficient and often safer. The problem appears when the usual tool is unavailable or the task changes; an unusual use still needs to be suitable, stable, and safe.",
       "examples": [
         {
-          "text": "Someone needing a doorstop overlooks a heavy book because books are for reading.",
-          "note": null
+          "text": "A person cannot reach a shelf because they do not consider a sturdy storage crate as a step.",
+          "note": "The crate is represented as a container, so its stable height is overlooked."
         }
       ],
       "counters": [
-        "List the object's physical properties separately from its customary purpose."
+        "Describe physical properties separately from the usual label.",
+        "State the goal without naming the customary method."
       ],
       "limitations": [
-        "A customary use may remain the safest or most effective use."
+        "Conventional functions carry useful safety information.",
+        "Failure may reflect missing materials or knowledge rather than fixedness."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A classic problem-solving finding shaped by familiarity, perceptual cues, instructions, and prior experience.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2148,21 +2224,23 @@
         "Correspondence bias"
       ],
       "symbolName": null,
-      "summary": "Overweighting personal dispositions and underweighting situational constraints when explaining another person's conduct.",
-      "body": "Overweighting personal dispositions and underweighting situational constraints when explaining another person's conduct. An observed action may reveal less about stable character than the observer assumes.",
+      "summary": "Overweighting personal dispositions and underweighting situational constraints when explaining another person’s conduct.",
+      "body": "The fundamental attribution error is a tendency to explain another person’s behavior with character, ability, or intention while giving too little weight to the situation. The person is salient and context is often incomplete, so a stable story is easier than reconstructing constraints.\n\nA dispositional explanation can be justified by repeated behavior across settings or direct evidence of intent. The error is most plausible when a single act from sparse context is treated as a trait and observers fail to ask what would happen under different constraints.",
       "examples": [
         {
-          "text": "A customer calls a cashier unfriendly without accounting for a mandatory script and an exhausting shift.",
-          "note": null
+          "text": "A customer calls a rushed cashier rude without noticing the queue alarm and staffing shortage.",
+          "note": "The explanation centers on personality while omitting a salient pressure."
         }
       ],
       "counters": [
-        "Identify constraints and compare the person's behavior across situations."
+        "Ask about constraints, incentives, information, and alternatives.",
+        "Use behavior across settings and time before inferring a stable trait."
       ],
       "limitations": [
-        "Repeated behavior across varied circumstances can support a dispositional explanation."
+        "Situations do not explain every action.",
+        "Culture, relationship, and observer knowledge change available context."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A qualified, context-sensitive social-judgment pattern moderated by culture, information, relationship, valence, and repetition.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2174,21 +2252,23 @@
       "name": "Funding bias",
       "aliases": [],
       "symbolName": null,
-      "summary": "A tendency for research choices or conclusions to favor the interests of the funding source.",
-      "body": "A tendency for research choices or conclusions to favor the interests of the funding source. Study questions, comparators, publication decisions, and interpretation can all be affected.",
+      "summary": "Research choices or conclusions favor the interests of the funding source.",
+      "body": "Funding bias occurs when a sponsor’s interests influence the question, design, comparison, analysis, reporting, or interpretation in a way that favors the sponsor. Influence may be direct or may enter through priorities, access, timelines, comparator choice, or selective publication.\n\nFunded work is not automatically biased. Inspect preregistration, protocol deviations, missing outcomes, conflicts, data access, comparator quality, and independent replication. A favorable result can be true while the overall evidence base is skewed by which questions are studied or reported.",
       "examples": [
         {
-          "text": "A sponsor tests its product only against an unusually weak competing treatment and advertises superiority.",
-          "note": null
+          "text": "A company compares its medicine with an unusually weak competitor dose and does not publish an unfavorable trial.",
+          "note": "Comparator choice and selective reporting can inflate the apparent advantage."
         }
       ],
       "counters": [
-        "Inspect funding disclosures, comparator choices, preregistration, and independent replications."
+        "Require disclosure, preregistration, protocol and outcome reporting, and data access where possible.",
+        "Compare funded findings with independent studies and inspect attrition and analysis."
       ],
       "limitations": [
-        "Sponsorship alone does not show that a particular result is false."
+        "A sponsor can fund rigorous transparent work; independent work can also err.",
+        "A funding association does not identify the mechanism without design and reporting evidence."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "A recognized research-governance concern; strength of a case depends on methods, disclosure, completeness, and confirmation.",
       "lookalikes": [],
       "related": [],
       "tags": [
