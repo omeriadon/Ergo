@@ -32,6 +32,9 @@ struct LibraryCategoryView: View {
 
 			case .razors:
 				RazorsView()
+
+			case .arguments:
+				ArgumentsView()
 		}
 	}
 }

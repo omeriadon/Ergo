@@ -17,13 +17,14 @@ struct LookalikeSection: View {
 	@Default(.bookmarks) var bookmarks
 
 	let list: [CatalogLink]
+	var title = "Not To Be Confused With:"
 
 	var body: some View {
 		if !list.isEmpty {
 			VStack(alignment: .leading, spacing: 13) {
-				Text("Not To Be Confused With:")
+				Text(title)
 					.textCase(.uppercase)
-					.foregroundStyle(.accent)
+					.foregroundStyle(.secondary)
 
 				VStack(alignment: .leading, spacing: 4) {
 					ForEach(list, id: \.target.id) { lookalike in

@@ -18,6 +18,7 @@ final class CatalogStore {
 	private(set) var logicSymbols: LogicSymbolCatalog = .init(symbols: [])
 	private(set) var paradoxes: ParadoxCatalog = .init(paradoxes: [])
 	private(set) var philosophers: PhilosopherCatalog = .init(philosophers: [])
+	private(set) var arguments: ArgumentCatalog = .init(arguments: [])
 
 	private(set) var isLoaded = false
 
@@ -31,6 +32,7 @@ final class CatalogStore {
 		async let newLogicSymbols: LogicSymbolCatalog = Self.decode("symbols", using: newIndex)
 		async let newParadoxes: ParadoxCatalog = Self.decode("paradoxes", using: newIndex)
 		async let newPhilosophers: PhilosopherCatalog = Self.decode("philosophers", using: newIndex)
+		async let newArguments: ArgumentCatalog = Self.decode("arguments", using: newIndex)
 
 		let results = try await (
 			newBiases,
@@ -39,9 +41,10 @@ final class CatalogStore {
 			newRazors,
 			newLogicSymbols,
 			newParadoxes,
-			newPhilosophers
+			newPhilosophers,
+			newArguments
 		)
-		try Self.validate(concepts: results.1, paradoxes: results.5)
+		try Self.validate(concepts: results.1, paradoxes: results.5, arguments: results.7)
 
 		biases = results.0
 		concepts = results.1
@@ -50,6 +53,7 @@ final class CatalogStore {
 		logicSymbols = results.4
 		paradoxes = results.5
 		philosophers = results.6
+		arguments = results.7
 		index = newIndex
 		isLoaded = true
 	}
@@ -72,6 +76,7 @@ final class CatalogStore {
 		try newIndex.register(concepts.concepts, category: .concepts, id: \.id, name: \.name)
 		try newIndex.register(paradoxes.paradoxes, category: .paradoxes, id: \.id, name: \.name)
 		try newIndex.register(philosophers.philosophers, category: .philosophers, id: \.id, name: \.name)
+		try newIndex.register(arguments.arguments, category: .arguments, id: \.id, name: \.name)
 
 		index = newIndex
 	}
@@ -102,6 +107,7 @@ final class CatalogStore {
 		try registerMetadata("concepts", category: .concepts, in: &newIndex)
 		try registerMetadata("paradoxes", category: .paradoxes, in: &newIndex)
 		try registerMetadata("philosophers", category: .philosophers, in: &newIndex)
+		try registerMetadata("arguments", category: .arguments, in: &newIndex)
 		return newIndex
 	}
 
@@ -127,13 +133,17 @@ final class CatalogStore {
 
 	private nonisolated static func validate(
 		concepts: ConceptCatalog,
-		paradoxes: ParadoxCatalog
+		paradoxes: ParadoxCatalog,
+		arguments: ArgumentCatalog
 	) throws {
 		for entry in concepts.concepts where entry.keyFigures.contains(where: { $0.category != .philosophers }) {
 			throw CatalogIndexError.invalidKeyFigure(entry.id)
 		}
 
 		for entry in paradoxes.paradoxes where entry.keyFigures.contains(where: { $0.category != .philosophers }) {
+			throw CatalogIndexError.invalidKeyFigure(entry.id)
+		}
+		for entry in arguments.arguments where entry.keyFigures.contains(where: { $0.category != .philosophers }) {
 			throw CatalogIndexError.invalidKeyFigure(entry.id)
 		}
 	}

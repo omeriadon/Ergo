@@ -22,8 +22,10 @@ await references.append(contentsOf: store.razors.razors.flatMap(\.related))
 await references.append(contentsOf: store.logicSymbols.symbols.flatMap(\.related))
 await references.append(contentsOf: store.paradoxes.paradoxes.flatMap(\.related))
 await references.append(contentsOf: store.philosophers.philosophers.flatMap(\.related))
+await references.append(contentsOf: store.arguments.arguments.flatMap(\.related))
 await references.append(contentsOf: store.concepts.concepts.flatMap(\.keyFigures))
 await references.append(contentsOf: store.paradoxes.paradoxes.flatMap(\.keyFigures))
+await references.append(contentsOf: store.arguments.arguments.flatMap(\.keyFigures))
 await references.append(contentsOf: store.biases.biases.flatMap(\.lookalikes).map(\.target))
 await references.append(contentsOf: store.concepts.concepts.flatMap(\.lookalikes).map(\.target))
 await references.append(contentsOf: store.fallacies.fallacies.flatMap(\.lookalikes).map(\.target))
@@ -82,6 +84,7 @@ checkTag(FallacyTag.self)
 checkTag(RazorTag.self)
 checkTag(SymbolTag.self)
 checkTag(ParadoxTag.self)
+checkTag(ArgumentTag.self)
 expectCatalogFailure {
 	_ = try JSONDecoder().decode(ParadoxTag.self, from: Data("\"thought-experiments\"".utf8))
 }
@@ -96,4 +99,9 @@ expectCatalogFailure {
 	try duplicateIndex.register([reference], category: .symbols, id: \.id, name: \.name)
 }
 
-print("Catalog checks passed: all seven catalogs loaded, \(references.count) references verified, invalid references/tags rejected, bookmarks preserved.")
+for argument in await store.arguments.arguments {
+	let reference = CatalogReference(id: argument.id, name: argument.name, category: .arguments)
+	precondition(reference.route == .detail(category: .arguments, id: argument.id))
+}
+
+print("Catalog checks passed: all eight catalogs loaded, \(references.count) references verified, invalid references/tags rejected, bookmarks preserved.")

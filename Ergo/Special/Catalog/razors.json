@@ -711,7 +711,9 @@
         "hanlons-razor",
         "chattons-anti-razor",
         "einsteins-razor",
-        "william-of-ockham"
+        "william-of-ockham",
+        "kants-counter-razor",
+        "mengers-anti-razor"
       ],
       "tags": [
         "parsimony"

@@ -139,7 +139,8 @@
       "related": [
         "ontological-argument",
         "natural-theology",
-        "necessary-being"
+        "necessary-being",
+        "argument-ontological"
       ],
       "body": "Anselm's Proslogion asks whether the concept of a being than which none greater can be conceived has consequences for existence. The argument does not simply define God into existence; it turns on the distinction between possessing a thing in the understanding and its existing in reality, and on Anselm's claim that a greatest conceivable being cannot lack actuality. Subsequent objections, especially those associated with Gaunilo and Kant, dispute whether existence functions as a perfection in this way.\n\nIn Cur Deus Homo, Anselm gives a different kind of analysis: divine justice and human obligation make satisfaction necessary, while the incarnation allows a repair that finite humanity cannot supply. The account helped shift discussion of atonement toward rational analysis of debt, honor, and restoration. His method illustrates his governing conviction that rational reflection can clarify commitments already received in faith."
     },
@@ -189,7 +190,10 @@
         "composition-fallacy",
         "division-fallacy",
         "equivocation",
-        "ignoratio-elenchi"
+        "ignoratio-elenchi",
+        "being",
+        "argument-cosmological",
+        "argument-from-the-value-of-virtue-ethics"
       ],
       "body": "Aristotle's philosophy is organized by questions about what kind of explanation a subject requires. In natural philosophy, matter and form explain what a thing is, while efficient and final causes explain how it comes to be and what characteristic activity it fulfills. His teleology does not mean that every event is consciously planned; it identifies stable patterns of development and functioning.\n\nIn ethics, flourishing is an activity rather than a passive condition, and virtues are trained dispositions that let practical judgment respond well to circumstances. The doctrine of the mean is not a numerical midpoint: courage, for example, must locate an appropriate response between cowardice and rashness. Political life supplies conditions for exercising such capacities, which is why Aristotle treats the polis as more than a contract for mutual protection. His logical works also systematize syllogistic inference, giving later traditions a model of formal argument."
     },
@@ -332,7 +336,9 @@
       "related": [
         "existentialism",
         "natural-theology",
-        "pascal-s-wager"
+        "pascal-s-wager",
+        "argument-from-divine-hiddenness",
+        "argument-pascal-s-wager"
       ],
       "body": "Pascal's fragments describe human beings as capable of mathematical and scientific reasoning yet unable to secure happiness through those abilities alone. Diversion is central to this diagnosis: occupations, games, status, and constant motion keep people from confronting mortality and the instability of the self. The point is not that every activity is worthless, but that distraction can conceal the question it cannot answer.\n\nThe wager does not claim to prove Christianity by probability alone. It argues that a person already situated in uncertainty must consider the practical asymmetry between finite losses and an infinite good, while also recognizing that belief cannot be switched on by a bare calculation. Pascal's account of the heart names forms of apprehension that are not identical with deductive proof. His theological polemics, mathematical work, and reflections on probability therefore share a concern with what reason can establish and where it must acknowledge its conditions."
     },
@@ -443,7 +449,13 @@
         "humes-guillotine",
         "humes-razor",
         "associationism",
-        "compatibilism"
+        "compatibilism",
+        "argument-is-ought",
+        "argument-problem-of-evil",
+        "argument-induction",
+        "argument-teleological",
+        "argument-from-evolutionary-debunking",
+        "argument-from-the-no-self-analysis"
       ],
       "body": "Hume's problem of induction begins with a modest observation: no finite set of past cases logically guarantees that the next case will resemble them. Our expectation that fire will burn is produced by custom after repeated conjunction, not by a demonstrative insight into a necessary connection. Causation therefore describes both observed regularity and the mind's transition from one idea to another, leaving the metaphysical source of necessity obscure.\n\nThe same empirical method unsettles the idea of a simple enduring self. Introspection finds a bundle of perceptions rather than a separate substance that owns them, while memory and imagination construct continuity. Hume's moral theory does not infer obligation from pure reason; sympathy and sentiment make character and consequences matter to us, while reason informs us about facts and relations. His skepticism is thus constructive: it limits illegitimate certainty while preserving ordinary inquiry, social life, and practical judgment."
     },
@@ -474,7 +486,9 @@
         "parfit-s-repugnant-conclusion",
         "agent-neutral-reasons",
         "prioritarianism",
-        "reductionism"
+        "reductionism",
+        "argument-from-the-nonidentity-problem",
+        "argument-from-the-repugnant-conclusion"
       ],
       "body": "Parfit's teletransportation case separates numerical identity from what may matter in survival. If a person's psychological structure is reproduced elsewhere, and the original is destroyed, it is unclear why identity must be an additional fact beyond psychological continuity. His later cases make the issue harder by allowing branching, where one person has two equally continuous successors and identity cannot be one-to-one.\n\nIn Reasons and Persons, Parfit also argues that concern for future people should not depend on a simple identity relation. A reductionist view of persons can support strong reasons to care about psychological continuity, connectedness, and the quality of future lives even when no single individual remains identifiable across time. His population ethics then exposes tensions among total welfare, average welfare, equality, and the avoidance of terrible outcomes. The controversial Repugnant Conclusion is valuable partly because it forces rival principles to reveal which tradeoffs they accept."
     },
@@ -665,7 +679,8 @@
         "epistemology",
         "naturalistic-fallacy",
         "ethical-intuitionism",
-        "paradox-of-analysis"
+        "paradox-of-analysis",
+        "argument-open-question"
       ],
       "body": "G. E. Moore's ethical non-naturalism begins with the claim that goodness cannot be defined by identifying it with pleasure, desire, evolution, or any other natural property. His open-question argument says that, for any proposed definition of good, it remains intelligible to ask whether the natural property is really good; this continuing question indicates that the concepts are not identical. Moore treats goodness as simple rather than as a compound that analysis can decompose.\n\nMoore's method also defends common-sense propositions such as the existence of external objects and other minds against theories that demand a proof for every ordinary belief. In \"Moore's Paradox,\" he shows the tension in asserting \"It is raining, but I do not believe it is raining\": the conjunction may be true in a description of someone else, yet its assertion is defective when made by the believer. The paradox separates truth, belief, and the conditions of sincere assertion, anticipating later work on rationality and speech."
     },
@@ -741,7 +756,8 @@
         "possible-world",
         "identity-of-indiscernibles",
         "leibniz-s-principle-of-plenitude",
-        "theodicy"
+        "theodicy",
+        "argument-contingency"
       ],
       "body": "Gottfried Wilhelm Leibniz describes reality as composed of monads, simple centers of perception that are not spatial parts pushed together by mechanical contact. Each monad expresses the universe from its own point of view, while the pre-established harmony explains why their states correspond without direct causal exchange between substances. Bodies remain real as organized phenomena grounded in these nonextended principles.\n\nLeibniz's principle of sufficient reason says that nothing happens without a reason why it is so rather than otherwise, while the identity of indiscernibles denies two genuinely distinct things with every property in common. His modal theory distinguishes what is possible from what is actual and presents God as choosing one complete possible world. The claim that this is the best of all possible worlds does not mean that every event is locally good; it says that the total order realizes a greater balance of goods, laws, and possibilities. Critics have challenged whether this view can preserve contingency and answer the problem of evil."
     },
@@ -764,7 +780,8 @@
         "universal-quantification",
         "existential-quantification",
         "universal-quantifier",
-        "existential-quantifier"
+        "existential-quantifier",
+        "argument-from-the-authority-of-reason-against-psychologism"
       ],
       "body": "Gottlob Frege's Begriffsschrift replaces the subject-predicate structure of ordinary grammar with a function-and-argument analysis that can represent nested quantification. This makes it possible to distinguish \"Every philosopher admires some logician\" from \"Some logician is admired by every philosopher,\" a difference that syllogistic notation obscures. Frege treats propositions as having truth values and predicates as functions from objects to truth values.\n\nHis distinction between sense and reference explains how two expressions can refer to the same object while contributing different information: \"the morning star\" and \"the evening star\" have one reference but different modes of presentation. Frege's logicist project sought to derive arithmetic from logical principles, but Russell's paradox exposed inconsistency in the system of Basic Law V. Frege's later revisions did not erase the foundational problem, yet his insistence on compositionality, quantification, and the context principle established central methods of analytic philosophy and philosophy of language."
     },
@@ -878,7 +895,13 @@
         "kants-counter-razor",
         "sublime",
         "perfect-duty",
-        "imperfect-duty"
+        "imperfect-duty",
+        "argument-transcendental",
+        "argument-from-human-dignity-in-kantian-ethics",
+        "argument-from-the-moral-law",
+        "argument-from-the-principle-of-humanity",
+        "argument-from-the-unity-of-consciousness",
+        "argument-from-the-wrongness-of-lying-under-a-universal-law"
       ],
       "body": "Immanuel Kant's transcendental idealism distinguishes appearances, which are objects as experienced under human forms of sensibility and understanding, from things in themselves, which cannot be known through theoretical experience. Space and time are forms of intuition, while categories such as causality organize judgments about events. Kant's claim is not that the world is a private invention; it is that objective experience is possible only through conditions supplied by the knower.\n\nIn ethics, the categorical imperative tests maxims rather than predicting consequences. A maxim is impermissible when universalizing it would undermine the practice it presupposes, or when it treats a rational person merely as a means instead of also as an end. Autonomy means giving oneself rational law, not doing whatever one happens to want. Kant therefore connects freedom with self-legislation and with equal respect, while his exclusionary remarks about race and gender remain serious contradictions within the universal language of his moral theory."
     },
@@ -923,7 +946,8 @@
       "related": [
         "social-contract",
         "equality",
-        "general-will"
+        "general-will",
+        "argument-social-contract"
       ],
       "body": "Jean-Jacques Rousseau distinguishes natural inequalities of strength or age from moral and political inequalities created by conventions. In the Discourse on Inequality, comparison and the desire for recognition turn self-preservation into amour-propre, a socially mediated concern with rank and esteem. Property becomes politically dangerous when it allows some people to command the labor and security of others while presenting the arrangement as legitimate.\n\nThe Social Contract seeks a form of association in which each person obeys laws they share in making. The general will is not the sum of private preferences or whatever a majority happens to want; it concerns the common conditions of freedom and must be distinguished from factional interests. Rousseau's educational theory in Emile similarly tries to protect judgment from premature dependence on social opinion. His model of popular sovereignty can resist domination, but its language of unity has also raised concerns about coercive interpretations of the common good and the exclusion of dissent."
     },
@@ -975,7 +999,8 @@
         "democracy",
         "aesthetic-experience",
         "aesthetic-value",
-        "classical-pragmatism"
+        "classical-pragmatism",
+        "argument-from-the-epistemic-case-for-democracy"
       ],
       "body": "John Dewey's pragmatism begins with the practical breakdowns that interrupt habitual activity. Inquiry transforms an indeterminate situation by identifying a problem, proposing hypotheses, acting on them, and observing the consequences. Knowledge is therefore not a mirror detached from practice; it is a tested instrument for reorganizing experience. A belief is warranted when the methods supporting it survive responsible inquiry, not merely because it is useful to someone in the short term.\n\nDewey's instrumentalism extends this account to ethics and politics. Values arise in the evaluation of possible consequences, and social intelligence can reconstruct institutions that frustrate human growth. Education should develop habits of inquiry and cooperation rather than train passive obedience, making the classroom a preparation for democratic association. Democracy is not only a voting procedure; it is a way of living in which those affected by a problem can communicate, revise shared aims, and participate in its resolution. Dewey's confidence in experimental reform remains vulnerable where power prevents genuine participation or distorts the evidence available to inquiry."
     },
@@ -1028,7 +1053,10 @@
         "reflective-equilibrium",
         "justice-as-fairness",
         "public-reason",
-        "distributive-justice"
+        "distributive-justice",
+        "argument-social-contract",
+        "argument-veil-of-ignorance",
+        "argument-from-fair-play"
       ],
       "body": "John Rawls's original position asks which principles people would choose behind a veil of ignorance that hides their class, talents, gender, race, religion, and conception of the good. The device does not describe a historical contract or claim that real people are literally without knowledge; it models fairness by preventing bargaining from exploiting arbitrary social advantages. The parties choose principles for the basic structure of society, not a complete plan for every personal decision.\n\nRawls gives priority to equal basic liberties and permits inequalities only when offices are open under fair equality of opportunity and the inequalities work to the greatest benefit of the least advantaged under the difference principle. His method of reflective equilibrium moves between considered judgments, principles, and background theories until they support one another, so the theory is revisable rather than deduced from one axiom. Later Rawls distinguishes political liberalism from a comprehensive moral doctrine: citizens with different faiths and philosophies can endorse a shared political conception through public reason. Critics dispute whether the model sufficiently captures history, disability, global injustice, or structural domination."
     },
@@ -1048,7 +1076,10 @@
         "agency",
         "liberalism",
         "liberal-feminism",
-        "paradox-of-hedonism"
+        "paradox-of-hedonism",
+        "argument-other-minds",
+        "argument-from-the-harm-principle",
+        "argument-from-the-value-of-free-expression"
       ],
       "body": "John Stuart Mill's utilitarianism evaluates conduct by the promotion of happiness but rejects the idea that all pleasures differ only in quantity. Competent judges who have experienced both can prefer intellectual, moral, and imaginative activities even when they bring greater difficulty, so human development affects the quality of welfare. This refinement keeps utility from becoming a simple tally of agreeable sensations.\n\nIn On Liberty, Mill argues that coercion is justified to prevent harm to others, not merely to protect adults from their own imprudence or to enforce majority morality. The principle does not prohibit all regulation; public health, contracts, and protection from force can involve legitimate constraints. Mill defends free discussion because a suppressed opinion may be true, may contain part of the truth, or may keep a true belief from becoming a living understanding. His defense of individuality and women's equality makes social conformity a political danger, though the harm principle leaves difficult questions about indirect harms and unequal power."
     },
@@ -1064,7 +1095,8 @@
         "autonomy",
         "liberalism",
         "legal-positivism",
-        "rule-of-law"
+        "rule-of-law",
+        "argument-from-the-value-of-political-authority"
       ],
       "body": "Joseph Raz's service conception of authority holds that a directive can help a person better conform to reasons that already apply to that person. The normal justification thesis says authority is legitimate when following it makes the subject more likely to act on those reasons than trying to decide independently. This account explains why expertise can matter without making every confident command authoritative: the authority must actually improve practical conformity and remain within a justified scope.\n\nRaz's theory of autonomy differs from a bare right to choose whatever one wants. An autonomous life requires adequate options, capacities for reflection, and social conditions in which choices are not systematically blocked or degraded. His perfectionist liberalism therefore permits the state to support valuable forms of life without requiring one comprehensive ideal for everyone. The view creates a tension between respecting individual choice and judging some options as objectively valuable, and between the rule of law's formal constraints and the substantive conditions needed to make legal freedom usable."
     },
@@ -1176,7 +1208,9 @@
         "private-language-argument",
         "logical-atomism",
         "truth-table",
-        "philosophical-quietism"
+        "philosophical-quietism",
+        "argument-private-language",
+        "argument-from-the-rule-following-paradox"
       ],
       "body": "In the Tractatus, Ludwig Wittgenstein treats a proposition as a logical picture of a possible state of affairs and argues that the limits of meaningful representation are the limits of what can be said. The work distinguishes factual propositions from ethical, logical, and metaphysical matters that cannot be stated as ordinary facts. Its closing silence is not a proof that ethics is unreal, but a warning that philosophical confusion arises when language is forced beyond its logical use.\n\nThe later Wittgenstein rejects the search for one essence common to every use of a word. Language-games include asking, ordering, measuring, joking, and describing, and their meanings depend on practices within forms of life. Rule-following is not secured by a private interpretation added to each act; a rule has a role in a public practice with criteria for correct and incorrect use. Family resemblance explains how overlapping similarities can organize a concept without one defining feature. Philosophical therapy clarifies these uses and dissolves misleading demands rather than replacing them with a new metaphysical theory."
     },
@@ -1219,7 +1253,8 @@
       "related": [
         "capabilities-approach",
         "animal-ethics",
-        "flourishing"
+        "flourishing",
+        "argument-from-the-ethics-of-care-and-dependency"
       ],
       "body": "Martha Nussbaum's capabilities approach asks what people are actually able to do and to be, not merely how resources or preferences are distributed. A person may possess the same formal right or income as another while lacking bodily safety, education, political voice, or the practical conditions for affiliation. The approach therefore evaluates a social arrangement by a threshold of central capabilities, including life, bodily health, practical reason, emotion, play, and control over one's political and material environment.\n\nNussbaum draws on Aristotle and the Stoics while refusing to reduce justice to one culture's preferred lifestyle. The list is intended as a political proposal for securing dignity, and citizens may pursue different conceptions of the good once the threshold is protected. Her work on emotions argues that compassion and anger contain judgments about vulnerability and value rather than being irrational disturbances to remove from public reasoning. Critics question how a universal list can avoid paternalism and how capability thresholds should be chosen democratically, but the framework makes disability, gender, animal life, and global inequality central to evaluating institutions."
     },
@@ -1463,7 +1498,10 @@
         "altruism",
         "speciesism",
         "preference-utilitarianism",
-        "effective-altruism"
+        "effective-altruism",
+        "argument-singer-pond",
+        "argument-from-the-demandingness-objection",
+        "argument-from-the-principle-of-marginal-cases"
       ],
       "body": "Singer's animal ethics rejects species membership as a sufficient reason to discount suffering. If a being can suffer, its suffering must enter moral deliberation, even when its interests differ from a human's. The argument does not require identical treatment: equal consideration can support different practices where capacities and needs differ. His critique of speciesism challenges factory farming, experimentation, and habits that treat sentience as morally invisible.\n\nThe drowning-child case extends this impartial reasoning to global poverty. If a person can prevent serious harm at modest cost without sacrificing anything comparably important, physical distance and the presence of many other potential helpers do not by themselves remove the obligation. Singer's demanding conclusion is disputed by those who emphasize special relationships, justice, demandingness, or the institutional causes of poverty. His work remains consequentialist rather than merely charitable: the question is how resources and actions affect suffering, flourishing, and the equal moral significance of affected beings."
     },
@@ -1497,7 +1535,9 @@
         "abstract-object",
         "meno-s-paradox",
         "euthyphro-dilemma",
-        "mimesis"
+        "mimesis",
+        "argument-third-man",
+        "argument-from-religious-disagreement-euthyphro-dilemma"
       ],
       "body": "Plato's dialogues do not present one simple doctrine, but they repeatedly test whether ordinary beliefs survive questioning. In the Socratic dialogues, the elenchus exposes confidence without knowledge by asking interlocutors to explain the definitions they use. In the Republic, education turns the soul away from images and unstable opinion toward intelligible order, culminating in the Form of the Good as the condition of knowing and acting well. The theory of Forms is not merely a second list of objects; it addresses how changing things can be understood as instances of stable intelligibility.\n\nPlato's political philosophy links justice in the city to psychic order, while the philosopher-ruler raises the problem of whether knowledge can legitimately authorize rule. His myths and dramatic voices prevent the reader from treating every speech as a final proposition. The dialogues also explore erotic ascent, recollection, mathematics, rhetoric, and the limits of writing. Plato's influence lies in this combination of metaphysical ambition and dialectical testing: philosophical education must transform the questioner, not just supply a collection of answers."
     },
@@ -1540,7 +1580,8 @@
         "vedanta",
         "theism",
         "nondualism",
-        "brahman"
+        "brahman",
+        "atman"
       ],
       "body": "Ramanuja rejects the claim that the world and individual selves are merely appearances produced by ignorance. Brahman is one, but that unity is qualified by real plurality: selves and matter are related to Brahman as a body is related to its indwelling self. They depend completely on the divine without being identical to it. This model lets Ramanuja affirm both divine unity and the reality of moral agency, difference, and devotion.\n\nLiberation is not the absorption of a false individual into an undifferentiated absolute. It is a transformation of the self's relation to Brahman, achieved through knowledge, disciplined action, and especially loving devotion. Ramanuja's interpretation of the Upanishads and Brahma Sutra opposes Advaita readings that make attributeless Brahman ultimate and ordinary distinctions provisional. His theology also gives ethical and ritual life a positive role: the world is not simply an obstacle to be negated, but a dependent order in which devotion and responsibility can be enacted."
     },
@@ -1558,7 +1599,10 @@
         "a-priori-knowledge",
         "cartesianism",
         "mindbody-problem",
-        "substance-dualism"
+        "substance-dualism",
+        "argument-cogito",
+        "argument-dream-skepticism",
+        "argument-from-skeptical-scenarios-and-closure"
       ],
       "body": "Descartes' method suspends beliefs that could be mistaken, including sensory judgments, inherited opinions, and even apparently simple calculations under the hypothesis of a deceiving power. The cogito is not a syllogistic inference from a premise about thinking; the act of doubting or affirming makes the thinker's existence evident as it occurs. Descartes then argues that clear and distinct ideas, together with a non-deceiving God, can restore confidence in some judgments.\n\nHis account distinguishes thinking substance from extended substance, creating the mind-body problem that later philosophy must address. Mind is characterized by thought, while body is understood through geometrical extension and motion, but embodied human life still raises questions about sensation, imagination, and causal interaction. Descartes' rationalism does not deny experience; it assigns experience a role within a structure whose deepest certainty comes from intellectual inspection. Critics challenge the proof of God, the transition from private certainty to an external world, and the adequacy of treating conscious life as a substance with thought as its defining attribute."
     },
@@ -1574,7 +1618,10 @@
         "experience-machine",
         "libertarianism-in-politics",
         "minarchism",
-        "property-rights"
+        "property-rights",
+        "argument-experience-machine",
+        "argument-utility-monster",
+        "argument-from-the-wilt-chamberlain-case"
       ],
       "body": "Nozick's libertarianism begins with side constraints: persons may not be used as means for producing a preferred social pattern. A distribution is just when it arises through legitimate acquisition, voluntary transfer, and correction of past injustice. The argument against patterned principles is that voluntary exchanges continually disrupt any desired pattern, so preserving the pattern would require repeated interference with people's choices. The famous Wilt Chamberlain example makes this point by imagining payments that change an initially equal distribution.\n\nNozick's minimal state protects against force, theft, and fraud but does not pursue distributive equality as an independent goal. This leaves the theory exposed to the historical problem of unjust acquisition and to questions about whether contract under severe inequality is genuinely voluntary. In Anarchy, State, and Utopia, the experience machine also challenges hedonistic theories by asking whether people want to do and be certain things, not merely have pleasant experiences. Nozick's later work became more exploratory, but the rights-based structure remains his distinctive contribution to political philosophy."
     },
@@ -1759,7 +1806,9 @@
         "natural-law-theory",
         "doctrine-of-double-effect",
         "natural-theology",
-        "divine-simplicity"
+        "divine-simplicity",
+        "argument-contingency",
+        "argument-cosmological"
       ],
       "body": "Aquinas treats faith and reason as distinct but compatible modes of access to truth. Some claims about God can be approached through created effects and philosophical argument, while revealed doctrines exceed what natural reason can demonstrate. His account of being distinguishes essence from the act of existing, and his doctrine of analogy explains how finite predicates can refer to God without making divine and created being identical.\n\nIn ethics, human action is directed toward an ultimate good, but moral life is not reduced to obedience to isolated commands. Natural law expresses rational participation in an order of human flourishing, and virtues shape the stable dispositions through which practical reason judges particular circumstances. Aquinas also treats law as an ordinance for the common good by a legitimate authority, which gives political obligation a rational and communal dimension. His engagement with Aristotle is selective and argumentative: the synthesis preserves creation, providence, and grace while rejecting the idea that philosophical nature can make revelation unnecessary."
     },
@@ -1776,7 +1825,9 @@
         "materialism",
         "contractarianism",
         "political-sovereignty",
-        "political-representation"
+        "political-representation",
+        "argument-social-contract",
+        "argument-from-the-state-of-nature-to-political-authority"
       ],
       "body": "Hobbes describes human beings as embodied movers whose desires, aversions, and anticipations shape practical reasoning. Equality in vulnerability means that even a stronger person cannot assume permanent security, while competition, diffidence, and desire for reputation turn uncertainty into conflict. The state of nature is therefore not a claim that every person is constantly fighting; it is a condition in which no common power reliably settles disputes, making hostile anticipation rational.\n\nThe social contract authorizes a sovereign to represent the multitude and establish rules capable of ending private judgment by force. Hobbes' sovereign is powerful because divided authority recreates the insecurity the contract was meant to escape, but subjects retain a direct right of self-preservation. His account of language, representation, and covenant makes political order depend on public signs and enforceable interpretation rather than natural harmony. Critics object that the model sacrifices too much liberty and that fear cannot explain all political obligation, yet Hobbes decisively reframed politics around security, authorization, and institutional power."
     },
@@ -1839,7 +1890,9 @@
         "duhemquine-thesis",
         "ontological-commitment",
         "semantic-holism",
-        "naturalism"
+        "naturalism",
+        "argument-from-indeterminacy-of-translation",
+        "argument-from-indispensability"
       ],
       "body": "Quine's critique of analyticity argues that the notion of a statement true solely by meaning cannot be made clear by appealing to synonymy, because synonymy itself requires explanation. Rather than dividing knowledge into truths insulated from experience and empirical statements tested one by one, he describes a web of belief whose parts face experience together. Central logical principles are more resistant to revision than peripheral hypotheses, but no statement is absolutely immune in every imaginable revision.\n\nThis holism reshapes ontology and philosophy of language. To ask what exists is to examine the commitments of a theory, often by looking at the variables required by its best formulation. Translation between languages can be radically indeterminate because behavioral evidence may support more than one assignment of reference and meaning. Quine remains a naturalist: philosophy is continuous with empirical inquiry, though it can still clarify the structure of our theories. Critics argue that his holism underestimates conceptual normativity and the differences between revising logic and revising ordinary scientific claims."
     },

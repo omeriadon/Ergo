@@ -58,6 +58,15 @@ struct ContentView: View {
 
 								case let .paradoxes(filter):
 									ParadoxesView(initialFilter: filter)
+
+								case let .concepts(filter):
+									ConceptsView(initialFilter: filter)
+
+								case let .fallacies(filter):
+									FallaciesView(initialFilter: filter)
+
+								case let .arguments(filter):
+									ArgumentsView(initialFilter: filter)
 							}
 						}
 						.toolbarTitleItem()

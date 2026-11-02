@@ -18,8 +18,6 @@ struct BiasDetailView: View {
 
 	@Default(.bookmarks) var bookmarks
 
-	@State private var showAliases = false
-
 	var body: some View {
 		ZStack {
 			DitherView(configuration: {
@@ -35,36 +33,7 @@ struct BiasDetailView: View {
 			if let bias = catalog.biases.biases.first(where: { $0.id == id }) {
 				ScrollView {
 					VStack(alignment: .leading) {
-						Button {
-							if !bias.aliases.isEmpty {
-								showAliases = true
-							}
-						} label: {
-							Text(bias.name)
-								.foregroundStyle(.white)
-								.font(.largeTitle.bold())
-						}
-						.popover(isPresented: $showAliases) {
-							VStack(alignment: .leading) {
-								Text("Aliases")
-									.font(.caption)
-									.foregroundStyle(.secondary)
-									.textCase(.uppercase)
-
-								HStack(spacing: 45) {
-									ForEach(bias.aliases, id: \.description) { alt in
-										Text(alt)
-											.lineLimit(3)
-											.minimumScaleFactor(0.1)
-									}
-								}
-								.font(.system(.title2, design: .monospaced))
-								.monospaced()
-							}
-							.padding()
-							.foregroundStyle(.accent)
-							.presentationCompactAdaptation(.popover)
-						}
+						AliasTitle(name: bias.name, aliases: bias.aliases)
 
 						Spacer()
 							.frame(height: 10)
@@ -77,6 +46,11 @@ struct BiasDetailView: View {
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
+
+						if let evidenceNote = bias.evidenceNote, !evidenceNote.isEmpty {
+							NotesSection(list: [evidenceNote], title: "Evidence Note")
+								.padding(.top)
+						}
 
 						if !bias.counters.isEmpty {
 							VStack(alignment: .leading, spacing: 13) {
@@ -96,10 +70,10 @@ struct BiasDetailView: View {
 							.padding(.top)
 						}
 
-						examples
+						ExamplesSection(list: bias.examples)
 							.padding(.top)
 
-						notes
+						NotesSection(list: bias.limitations)
 							.padding(.top)
 
 						LookalikeSection(list: bias.lookalikes)
@@ -108,8 +82,14 @@ struct BiasDetailView: View {
 						RelatedSection(list: bias.related)
 							.padding(.top)
 
-						tags
-							.padding(.top)
+						TagSection(list: bias.tags.map { tag in
+							CatalogTag(
+								id: "biases.\(tag.rawValue)",
+								title: tag.title,
+								route: .biases(filter: tag)
+							)
+						})
+						.padding(.top)
 
 						Spacer()
 							.frame(height: 40)
@@ -159,80 +139,6 @@ struct BiasDetailView: View {
 					Text("Go Back")
 				}
 			}
-		}
-	}
-
-	@ContentBuilder
-	var tags: some View {
-		if let bias = catalog.biases.biases.first(where: { $0.id == id }) {
-			if !bias.tags.isEmpty {
-				VStack(alignment: .leading, spacing: 13) {
-					Text("Tags")
-						.textCase(.uppercase)
-						.foregroundStyle(.accent)
-
-					VStack(alignment: .leading, spacing: 4) {
-						ForEach(bias.tags, id: \.self) { tag in
-							NavigationLink(value: LibraryRoute.biases(filter: tag)) {
-								HStack {
-									Image(systemName: "tag")
-										.imageScale(.small)
-
-									Text(tag.rawValue.capitalized)
-									Spacer()
-									Image(systemName: "chevron.right")
-								}
-							}
-						}
-					}
-				}
-				.padding(12)
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-			}
-		}
-	}
-
-	@ContentBuilder
-	var examples: some View {
-		if let bias = catalog.biases.biases.first(where: { $0.id == id }) {
-			VStack(alignment: .leading, spacing: 13) {
-				Text("Examples")
-					.textCase(.uppercase)
-					.foregroundStyle(.accent)
-
-				VStack(alignment: .leading, spacing: 4) {
-					ForEach(bias.examples, id: \.text) { example in
-						Text("-  \(example.text)")
-						if let note = example.note {
-							Text("-  \(note)")
-								.padding(.leading, 30)
-						}
-					}
-				}
-			}
-			.padding(12)
-			.frame(maxWidth: .infinity, alignment: .leading)
-			.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-		}
-	}
-
-	@ContentBuilder
-	var notes: some View {
-		if let bias = catalog.biases.biases.first(where: { $0.id == id }) {
-			VStack(alignment: .leading, spacing: 13) {
-				Text("Notes")
-					.textCase(.uppercase)
-					.foregroundStyle(.accent)
-				VStack(alignment: .leading, spacing: 4) {
-					ForEach(bias.limitations, id: \.self) { limitation in
-						Text("-  \(limitation)")
-					}
-				}
-			}
-			.padding(12)
-			.frame(maxWidth: .infinity, alignment: .leading)
-			.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 		}
 	}
 }

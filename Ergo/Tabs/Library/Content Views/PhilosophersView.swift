@@ -52,7 +52,7 @@ struct PhilosophersView: View {
 	}
 
 	private var groupedPhilosophers: [(century: Int, philosophers: [Philosopher])] {
-		let groups = Dictionary(grouping: catalog.philosophers.philosophers) {
+		let groups = Dictionary(grouping: filteredPhilosphers) {
 			Int(floor(Double($0.birthYear - 1) / 100)) + 1
 		}
 
@@ -95,9 +95,19 @@ struct PhilosophersView: View {
 												warpsContentBelow: true,
 												restingBackgroundColor: .white.withAlphaComponent(0),
 												liftedDisplacement: 0
-											)
+											),
+											configure: { handle in
+												guard let flex = handle.value(for: .flexInteraction) as? NSObject else {
+													return
+												}
+
+												handle.setValue(
+													0,
+													forKeyPath: "preferredFlexSources",
+													on: flex
+												)
+											}
 										)
-//										.allowsHitTesting(false)
 									}
 							}
 							.frame(width: 40, height: 40)

@@ -57,6 +57,14 @@
       "logic-and-language",
       "metaphysics"
     ],
-    "philosophers": []
+    "philosophers": [],
+    "arguments": [
+      "ethics",
+      "epistemology",
+      "metaphysics",
+      "mind",
+      "religion",
+      "political-philosophy"
+    ]
   }
 }

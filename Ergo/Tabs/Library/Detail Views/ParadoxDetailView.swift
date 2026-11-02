@@ -18,8 +18,6 @@ struct ParadoxDetailView: View {
 
 	@Default(.bookmarks) var bookmarks
 
-	@State private var showAliases = false
-
 	var body: some View {
 		ZStack {
 			DitherView(configuration: {
@@ -35,36 +33,7 @@ struct ParadoxDetailView: View {
 			if let paradox = catalog.paradoxes.paradoxes.first(where: { $0.id == id }) {
 				ScrollView {
 					VStack(alignment: .leading) {
-						Button {
-							if !paradox.aliases.isEmpty {
-								showAliases = true
-							}
-						} label: {
-							Text(paradox.name)
-								.foregroundStyle(.white)
-								.font(.largeTitle.bold())
-						}
-						.popover(isPresented: $showAliases) {
-							VStack(alignment: .leading) {
-								Text("Aliases")
-									.font(.caption)
-									.foregroundStyle(.secondary)
-									.textCase(.uppercase)
-
-								HStack(spacing: 45) {
-									ForEach(paradox.aliases, id: \.description) { alt in
-										Text(alt)
-											.lineLimit(3)
-											.minimumScaleFactor(0.1)
-									}
-								}
-								.font(.system(.title2, design: .monospaced))
-								.monospaced()
-							}
-							.padding()
-							.foregroundStyle(.accent)
-							.presentationCompactAdaptation(.popover)
-						}
+						AliasTitle(name: paradox.name, aliases: paradox.aliases)
 
 						Spacer()
 							.frame(height: 10)
@@ -72,19 +41,45 @@ struct ParadoxDetailView: View {
 						Text(paradox.summary)
 							.lineLimit(10)
 
+						Spacer()
+							.frame(height: 20)
+
 						Text(paradox.body)
 							.padding(12)
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 
-						examples
+						if let origin = paradox.origin, !origin.isEmpty {
+							NotesSection(list: [origin], title: "Origin")
+								.padding(.top)
+						}
+
+						RelatedSection(list: paradox.keyFigures, title: "Key Figures")
+							.padding(.top)
+
+						ExamplesSection(list: paradox.examples)
+							.padding(.top)
+
+						NotesSection(list: paradox.commonMisreadings, title: "Common Misreadings")
+							.padding(.top)
+
+						NotesSection(list: paradox.criticisms, title: "Criticisms")
+							.padding(.top)
+
+						LookalikeSection(list: paradox.lookalikes)
 							.padding(.top)
 
 						RelatedSection(list: paradox.related)
 							.padding(.top)
 
-						tags
-							.padding(.top)
+						TagSection(list: paradox.tags.map { tag in
+							CatalogTag(
+								id: "paradoxes.\(tag.rawValue)",
+								title: tag.title,
+								route: .paradoxes(filter: tag)
+							)
+						})
+						.padding(.top)
 
 						Spacer()
 							.frame(height: 40)
@@ -134,61 +129,6 @@ struct ParadoxDetailView: View {
 					Text("Go Back")
 				}
 			}
-		}
-	}
-
-	@ContentBuilder
-	var tags: some View {
-		if let paradox = catalog.paradoxes.paradoxes.first(where: { $0.id == id }) {
-			if !paradox.tags.isEmpty {
-				VStack(alignment: .leading, spacing: 13) {
-					Text("Tags")
-						.textCase(.uppercase)
-						.foregroundStyle(.secondary)
-
-					VStack(alignment: .leading, spacing: 4) {
-						ForEach(paradox.tags, id: \.self) { tag in
-							NavigationLink(value: LibraryRoute.paradoxes(filter: tag)) {
-								HStack {
-									Image(systemName: "tag")
-										.imageScale(.small)
-
-									Text(tag.rawValue.capitalized)
-									Spacer()
-									Image(systemName: "chevron.right")
-								}
-							}
-						}
-					}
-				}
-				.padding(12)
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-			}
-		}
-	}
-
-	@ContentBuilder
-	var examples: some View {
-		if let paradox = catalog.paradoxes.paradoxes.first(where: { $0.id == id }) {
-			VStack(alignment: .leading, spacing: 13) {
-				Text("Examples")
-					.textCase(.uppercase)
-					.foregroundStyle(.accent)
-
-				VStack(alignment: .leading, spacing: 4) {
-					ForEach(paradox.examples, id: \.text) { example in
-						Text("-  \(example.text)")
-						if let note = example.note {
-							Text("-  \(note)")
-								.padding(.leading, 30)
-						}
-					}
-				}
-			}
-			.padding(12)
-			.frame(maxWidth: .infinity, alignment: .leading)
-			.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 		}
 	}
 }

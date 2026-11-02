@@ -16,18 +16,18 @@ struct TagSection: View {
 
 	@Default(.bookmarks) var bookmarks
 
-	let list: [Tag]
+	let list: [CatalogTag]
 
 	var body: some View {
 		if !list.isEmpty {
 			VStack(alignment: .leading, spacing: 13) {
 				Text("Tags")
 					.textCase(.uppercase)
-					.foregroundStyle(.accent)
+					.foregroundStyle(.secondary)
 
 				VStack(alignment: .leading, spacing: 4) {
-					ForEach(list, id: \.self) { tag in
-						NavigationLink(value: LibraryRoute.symbols(filter: .tag(tag))) {
+					ForEach(list) { tag in
+						NavigationLink(value: tag.route) {
 							HStack {
 								Image(systemName: "tag")
 									.imageScale(.small)
@@ -48,5 +48,5 @@ struct TagSection: View {
 }
 
 #Preview {
-	TagSection()
+	TagSection(list: [])
 }

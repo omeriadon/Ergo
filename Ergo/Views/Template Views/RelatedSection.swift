@@ -15,13 +15,14 @@ struct RelatedSection: View {
 	private var navigation
 
 	let list: [CatalogReference]
+	var title = "Related"
 
 	@Default(.bookmarks) var bookmarks
 
 	var body: some View {
 		if !list.isEmpty {
 			VStack(alignment: .leading, spacing: 13) {
-				Text("Related")
+				Text(title)
 					.textCase(.uppercase)
 					.foregroundStyle(.secondary)
 

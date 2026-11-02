@@ -129,7 +129,7 @@ struct BiasesView: View {
 	}
 
 	private var groupedBiases: [(letter: String, biases: [Bias])] {
-		let groups = Dictionary(grouping: catalog.biases.biases) {
+		let groups = Dictionary(grouping: filteredBiases) {
 			String($0.name.prefix(1)).uppercased()
 		}
 

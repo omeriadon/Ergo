@@ -72,10 +72,19 @@ struct SymbolDetailView: View {
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
 
-						examples
+						NotesSection(list: symbol.shortcodes, title: "Shortcodes")
 							.padding(.top)
 
-						notes
+						NotesSection(list: symbol.englishReadings, title: "English Readings")
+							.padding(.top)
+
+						NotesSection(list: ["Arity: \(symbol.arity)"], title: "Arity")
+							.padding(.top)
+
+						ExamplesSection(list: symbol.examples)
+							.padding(.top)
+
+						NotesSection(list: symbol.limitations)
 							.padding(.top)
 
 						LookalikeSection(list: symbol.lookalikes)
@@ -84,8 +93,14 @@ struct SymbolDetailView: View {
 						RelatedSection(list: symbol.related)
 							.padding(.top)
 
-						tags
-							.padding(.top)
+						TagSection(list: symbol.tags.map { tag in
+							CatalogTag(
+								id: "symbols.\(tag.rawValue)",
+								title: tag.title,
+								route: .symbols(filter: .tag(tag))
+							)
+						})
+						.padding(.top)
 
 						Spacer()
 							.frame(height: 40)
@@ -139,53 +154,10 @@ struct SymbolDetailView: View {
 	}
 
 	@ContentBuilder
-	var examples: some View {
-		if let symbol = catalog.logicSymbols.symbols.first(where: { $0.id == id }) {
-			VStack(alignment: .leading, spacing: 13) {
-				Text("Examples")
-					.textCase(.uppercase)
-					.foregroundStyle(.accent)
-
-				VStack(alignment: .leading, spacing: 4) {
-					ForEach(symbol.examples, id: \.text) { example in
-						Text("-  \(example.text)")
-						if let note = example.note {
-							Text("-  \(note)")
-								.padding(.leading, 30)
-						}
-					}
-				}
-			}
-			.padding(12)
-			.frame(maxWidth: .infinity, alignment: .leading)
-			.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-		}
-	}
-
-	@ContentBuilder
-	var notes: some View {
-		if let symbol = catalog.logicSymbols.symbols.first(where: { $0.id == id }) {
-			VStack(alignment: .leading, spacing: 13) {
-				Text("Notes")
-					.textCase(.uppercase)
-					.foregroundStyle(.accent)
-				VStack(alignment: .leading, spacing: 4) {
-					ForEach(symbol.limitations, id: \.self) { limitation in
-						Text("-  \(limitation)")
-					}
-				}
-			}
-			.padding(12)
-			.frame(maxWidth: .infinity, alignment: .leading)
-			.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-		}
-	}
-
-	@ContentBuilder
 	var headerButton: some View {
 		if let symbol = catalog.logicSymbols.symbols.first(where: { $0.id == id }) {
 			Button {
-				if !symbol.alternateGlyphs.isEmpty || !symbol.aliases.isEmpty {
+				if !symbol.alternateGlyphs.isEmpty || !symbol.aliases.isEmpty || !symbol.englishReadings.isEmpty {
 					showAlternateGlyphs = true
 				}
 			} label: {

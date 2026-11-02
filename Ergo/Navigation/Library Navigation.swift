@@ -19,6 +19,7 @@ nonisolated enum LibraryContent: Hashable, Codable, Sendable, Defaults.Serializa
 	case paradoxes
 	case philosophers
 	case razors
+	case arguments
 }
 
 /// the actual library route, middle plus detail
@@ -30,6 +31,9 @@ enum LibraryRoute: Hashable {
 	case biases(filter: BiasTag)
 	case razors(filter: RazorTag)
 	case paradoxes(filter: ParadoxTag)
+	case concepts(filter: ConceptTag)
+	case fallacies(filter: FallacyTag)
+	case arguments(filter: ArgumentTag)
 }
 
 nonisolated struct CatalogReference: Hashable, Identifiable, Codable, Sendable, Defaults.Serializable {

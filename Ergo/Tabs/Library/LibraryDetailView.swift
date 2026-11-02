@@ -33,6 +33,9 @@ struct LibraryDetailView: View {
 
 			case .razors:
 				RazorDetailView(id: id)
+
+			case .arguments:
+				ArgumentDetailView(id: id)
 		}
 	}
 }

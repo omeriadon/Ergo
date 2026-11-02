@@ -18,8 +18,6 @@ struct RazorDetailView: View {
 
 	@Default(.bookmarks) var bookmarks
 
-	@State private var showAliases = false
-
 	var body: some View {
 		ZStack {
 			DitherView(configuration: {
@@ -35,36 +33,7 @@ struct RazorDetailView: View {
 			if let razor = catalog.razors.razors.first(where: { $0.id == id }) {
 				ScrollView {
 					VStack(alignment: .leading) {
-						Button {
-							if !razor.aliases.isEmpty {
-								showAliases = true
-							}
-						} label: {
-							Text(razor.name)
-								.foregroundStyle(.white)
-								.font(.largeTitle.bold())
-						}
-						.popover(isPresented: $showAliases) {
-							VStack(alignment: .leading) {
-								Text("Aliases")
-									.font(.caption)
-									.foregroundStyle(.secondary)
-									.textCase(.uppercase)
-
-								HStack(spacing: 45) {
-									ForEach(razor.aliases, id: \.description) { alt in
-										Text(alt)
-											.lineLimit(3)
-											.minimumScaleFactor(0.1)
-									}
-								}
-								.font(.system(.title2, design: .monospaced))
-								.monospaced()
-							}
-							.padding()
-							.foregroundStyle(.accent)
-							.presentationCompactAdaptation(.popover)
-						}
+						AliasTitle(name: razor.name, aliases: razor.aliases)
 
 						Spacer()
 							.frame(height: 10)
@@ -94,17 +63,23 @@ struct RazorDetailView: View {
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 
-						examples
+						ExamplesSection(list: razor.examples)
 							.padding(.top)
 
-						notes
+						NotesSection(list: razor.limitations)
 							.padding(.top)
 
 						RelatedSection(list: razor.related)
 							.padding(.top)
 
-						tags
-							.padding(.top)
+						TagSection(list: razor.tags.map { tag in
+							CatalogTag(
+								id: "razors.\(tag.rawValue)",
+								title: tag.title,
+								route: .razors(filter: tag)
+							)
+						})
+						.padding(.top)
 
 						Spacer()
 							.frame(height: 40)
@@ -154,80 +129,6 @@ struct RazorDetailView: View {
 					Text("Go Back")
 				}
 			}
-		}
-	}
-
-	@ContentBuilder
-	var tags: some View {
-		if let razor = catalog.razors.razors.first(where: { $0.id == id }) {
-			if !razor.tags.isEmpty {
-				VStack(alignment: .leading, spacing: 13) {
-					Text("Tags")
-						.textCase(.uppercase)
-						.foregroundStyle(.secondary)
-
-					VStack(alignment: .leading, spacing: 4) {
-						ForEach(razor.tags, id: \.self) { tag in
-							NavigationLink(value: LibraryRoute.razors(filter: tag)) {
-								HStack {
-									Image(systemName: "tag")
-										.imageScale(.small)
-
-									Text(tag.rawValue.capitalized)
-									Spacer()
-									Image(systemName: "chevron.right")
-								}
-							}
-						}
-					}
-				}
-				.padding(12)
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-			}
-		}
-	}
-
-	@ContentBuilder
-	var notes: some View {
-		if let razor = catalog.razors.razors.first(where: { $0.id == id }) {
-			VStack(alignment: .leading, spacing: 13) {
-				Text("Notes")
-					.textCase(.uppercase)
-					.foregroundStyle(.accent)
-				VStack(alignment: .leading, spacing: 4) {
-					ForEach(razor.limitations, id: \.self) { limitation in
-						Text("-  \(limitation)")
-					}
-				}
-			}
-			.padding(12)
-			.frame(maxWidth: .infinity, alignment: .leading)
-			.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-		}
-	}
-
-	@ContentBuilder
-	var examples: some View {
-		if let razor = catalog.razors.razors.first(where: { $0.id == id }) {
-			VStack(alignment: .leading, spacing: 13) {
-				Text("Examples")
-					.textCase(.uppercase)
-					.foregroundStyle(.accent)
-
-				VStack(alignment: .leading, spacing: 4) {
-					ForEach(razor.examples, id: \.text) { example in
-						Text("-  \(example.text)")
-						if let note = example.note {
-							Text("-  \(note)")
-								.padding(.leading, 30)
-						}
-					}
-				}
-			}
-			.padding(12)
-			.frame(maxWidth: .infinity, alignment: .leading)
-			.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 		}
 	}
 }

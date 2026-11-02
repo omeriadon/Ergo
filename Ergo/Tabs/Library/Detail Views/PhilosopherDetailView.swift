@@ -49,8 +49,20 @@ struct PhilosopherDetailView: View {
 										warpsContentBelow: true,
 										restingBackgroundColor: .white.withAlphaComponent(0),
 										liftedDisplacement: 100
-									)
+									),
+									configure: { handle in
+										guard let flex = handle.value(for: .flexInteraction) as? NSObject else {
+											return
+										}
+
+										handle.setValue(
+											0,
+											forKeyPath: "preferredFlexSources",
+											on: flex
+										)
+									}
 								)
+
 								.frame(width: geo.size.width, height: geo.size.width)
 							}
 							.frame(width: geo.size.width, height: geo.size.width)

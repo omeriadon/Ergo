@@ -1,4 +1,4 @@
-// Models for the seven bundled JSON catalogs.
+// Models for the eight bundled JSON catalogs.
 
 import Foundation
 
@@ -68,7 +68,7 @@ nonisolated enum BiasTag: String, Codable, CaseIterable, Identifiable, Hashable,
 	}
 }
 
-nonisolated enum FallacyTag: String, Codable, CaseIterable, Hashable, Sendable {
+nonisolated enum FallacyTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
 	case causalReasoning = "causal-reasoning"
 	case ethicsHistoryAndEconomics = "ethics-history-and-economics"
 	case formalLogic = "formal-logic"
@@ -78,6 +78,23 @@ nonisolated enum FallacyTag: String, Codable, CaseIterable, Hashable, Sendable {
 	case probabilityAndStatistics = "probability-and-statistics"
 	case relevanceAndAppeals = "relevance-and-appeals"
 	case relevanceAndDebate = "relevance-and-debate"
+
+	var title: String {
+		rawValue.split(separator: "-").map { word in
+			switch word {
+				case "and":
+					"&"
+				case "of":
+					"of"
+				default:
+					word.capitalized
+			}
+		}.joined(separator: " ")
+	}
+
+	var id: Self {
+		self
+	}
 }
 
 nonisolated enum RazorTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
@@ -107,7 +124,7 @@ nonisolated enum RazorTag: String, Codable, CaseIterable, Identifiable, Hashable
 	}
 }
 
-nonisolated enum ConceptTag: String, Codable, CaseIterable, Hashable, Sendable {
+nonisolated enum ConceptTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
 	case aestheticsAndCulture = "aesthetics-and-culture"
 	case decisionTheorySystemsAndMethods = "decision-theory-systems-and-methods"
 	case epistemologyAndPhilosophyOfScience = "epistemology-and-philosophy-of-science"
@@ -123,6 +140,23 @@ nonisolated enum ConceptTag: String, Codable, CaseIterable, Hashable, Sendable {
 	case reasoningMethods = "reasoning-methods"
 	case religionAsianAfricanAndIndigenousPhilosophy = "religion-asian-african-and-indigenous-philosophy"
 	case thoughtExperiments = "thought-experiments"
+
+	var title: String {
+		rawValue.split(separator: "-").map { word in
+			switch word {
+				case "and":
+					"&"
+				case "of":
+					"of"
+				default:
+					word.capitalized
+			}
+		}.joined(separator: " ")
+	}
+
+	var id: Self {
+		self
+	}
 }
 
 nonisolated enum ParadoxTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
@@ -297,7 +331,7 @@ nonisolated struct LogicSymbol: Codable, Identifiable, Sendable {
 	}
 }
 
-nonisolated struct ConceptEntry<Tag: Codable & Hashable & Sendable>: Codable, Identifiable, Sendable {
+nonisolated struct Concept: Codable, Identifiable, Sendable {
 	let id: String
 	let name: String
 	let aliases: [String]
@@ -311,7 +345,7 @@ nonisolated struct ConceptEntry<Tag: Codable & Hashable & Sendable>: Codable, Id
 	let criticisms: [String]
 	let lookalikes: [CatalogLink]
 	let related: [CatalogReference]
-	let tags: [Tag]
+	let tags: [ConceptTag]
 
 	private enum CodingKeys: String, CodingKey {
 		case id
@@ -331,8 +365,39 @@ nonisolated struct ConceptEntry<Tag: Codable & Hashable & Sendable>: Codable, Id
 	}
 }
 
-typealias Concept = ConceptEntry<ConceptTag>
-typealias Paradox = ConceptEntry<ParadoxTag>
+nonisolated struct Paradox: Codable, Identifiable, Sendable {
+	let id: String
+	let name: String
+	let aliases: [String]
+	let symbolName: String?
+	let summary: String
+	let body: String
+	let origin: String?
+	let keyFigures: [CatalogReference]
+	let examples: [Example]
+	let commonMisreadings: [String]
+	let criticisms: [String]
+	let lookalikes: [CatalogLink]
+	let related: [CatalogReference]
+	let tags: [ParadoxTag]
+
+	private enum CodingKeys: String, CodingKey {
+		case id
+		case name
+		case aliases
+		case symbolName
+		case summary
+		case body
+		case origin
+		case keyFigures
+		case examples
+		case commonMisreadings
+		case criticisms
+		case lookalikes
+		case related
+		case tags
+	}
+}
 
 nonisolated struct FallacyCatalog: Codable, Sendable {
 	let fallacies: [Fallacy]

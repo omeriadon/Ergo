@@ -29,6 +29,8 @@ private struct CardView: View {
 						"brain.head.profile"
 					case "Fallacies":
 						"repeat.badge.xmark"
+					case "Arguments":
+						"text.bubble"
 					default:
 						""
 				}
@@ -59,6 +61,84 @@ struct LibraryTabView: View {
 
 	@State private var searchPresented = false
 
+	private var searchResults: [LibrarySearchEntry] {
+		let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+		guard !query.isEmpty else { return [] }
+		let biasResults = catalog.biases.biases.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .biases,
+				searchableText: ([entry.name, entry.summary, entry.body] + entry.aliases).joined(separator: " ")
+			)
+		}
+		let conceptResults = catalog.concepts.concepts.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .concepts,
+				searchableText: ([entry.name, entry.summary, entry.body] + entry.aliases).joined(separator: " ")
+			)
+		}
+		let fallacyResults = catalog.fallacies.fallacies.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .fallacies,
+				searchableText: ([entry.name, entry.summary, entry.body] + entry.aliases).joined(separator: " ")
+			)
+		}
+		let symbolResults = catalog.logicSymbols.symbols.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .symbols,
+				searchableText: ([entry.name, entry.summary, entry.body, entry.glyph] + entry.aliases).joined(separator: " ")
+			)
+		}
+		let paradoxResults = catalog.paradoxes.paradoxes.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .paradoxes,
+				searchableText: ([entry.name, entry.summary, entry.body] + entry.aliases).joined(separator: " ")
+			)
+		}
+		let philosopherResults = catalog.philosophers.philosophers.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .philosophers,
+				searchableText: [entry.name, entry.summary, entry.body].joined(separator: " ")
+			)
+		}
+		let razorResults = catalog.razors.razors.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .razors,
+				searchableText: ([entry.name, entry.summary, entry.body] + entry.aliases).joined(separator: " ")
+			)
+		}
+		let argumentResults = catalog.arguments.arguments.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .arguments,
+				searchableText: ([entry.name, entry.summary, entry.body] + entry.aliases).joined(separator: " ")
+			)
+		}
+		var entries = biasResults
+		entries += conceptResults
+		entries += fallacyResults
+		entries += symbolResults
+		entries += paradoxResults
+		entries += philosopherResults
+		entries += razorResults
+		entries += argumentResults
+		return entries.filter { $0.searchableText.localizedStandardContains(query) }
+	}
+
 	var body: some View {
 		ScrollView {
 			if searchPresented {
@@ -76,9 +156,21 @@ struct LibraryTabView: View {
 					.listRowBackground(Color.clear)
 					.frame(maxWidth: .infinity, alignment: .center)
 					.transition(.opacity)
+				} else if searchResults.isEmpty {
+					ContentUnavailableView.search(text: searchTerm)
 				} else {
-					//					results here
-					//									.transition(.opacity)
+					LazyVStack(alignment: .leading, spacing: 0) {
+						ForEach(searchResults) { result in
+							NavigationLink(
+								value: LibraryRoute.detail(category: result.category, id: result.id)
+							) {
+								Label(result.name, systemImage: "magnifyingglass")
+							}
+							.accessibilityIdentifier("library.search.\(result.category).\(result.id)")
+							.padding(.horizontal)
+							.padding(.vertical, 10)
+						}
+					}
 				}
 
 			} else {
@@ -116,6 +208,9 @@ struct LibraryTabView: View {
 					GridRow {
 						NavigationLink(value: LibraryRoute.category(.razors)) {
 							CardView(title: "Razors", color: .yellow)
+						}
+						NavigationLink(value: LibraryRoute.category(.arguments)) {
+							CardView(title: "Arguments", color: .teal)
 						}
 					}
 				}
