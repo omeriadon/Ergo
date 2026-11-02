@@ -26,10 +26,51 @@ struct SymbolDetailView: View {
 				ScrollView {
 					VStack(alignment: .leading) {
 						Button {
-							showAlternateGlyphs = true
+							if !symbol.alternateGlyphs.isEmpty || !symbol.aliases.isEmpty {
+								showAlternateGlyphs = true
+							}
 						} label: {
 							Text(symbol.glyph)
-								.font(.largeTitle.scaled(by: 1.8))
+								.font(.largeTitle.scaled(by: 2.4))
+								.popover(isPresented: $showAlternateGlyphs) {
+									VStack(alignment: .leading, spacing: 20) {
+										if !symbol.alternateGlyphs.isEmpty {
+											VStack(alignment: .leading) {
+												Text("Alternate Glyphs")
+													.font(.caption)
+													.foregroundStyle(.secondary)
+													.textCase(.uppercase)
+
+												HStack(spacing: 45) {
+													ForEach(symbol.alternateGlyphs, id: \.description) { alt in
+														Text(alt)
+													}
+												}
+												.font(.system(.largeTitle, design: .monospaced))
+												.monospaced()
+											}
+										}
+
+										if !symbol.aliases.isEmpty {
+											VStack(alignment: .leading) {
+												Text("Aliases")
+													.font(.caption)
+													.foregroundStyle(.secondary)
+													.textCase(.uppercase)
+
+												HStack(spacing: 45) {
+													ForEach(symbol.aliases, id: \.description) { alt in
+														Text(alt)
+													}
+												}
+												.font(.system(.title, design: .monospaced))
+												.monospaced()
+											}
+										}
+									}
+									.padding()
+									.presentationCompactAdaptation(.popover)
+								}
 						}
 
 						Text(symbol.name)
@@ -44,6 +85,7 @@ struct SymbolDetailView: View {
 					.padding(.horizontal)
 					.frame(maxWidth: .infinity, alignment: .leading)
 				}
+				.scrollEdgeEffectStyle(.soft, for: .all)
 				.toolbar {
 					ToolbarItem(placement: .topBarTrailing) {
 						Button {} label: {
@@ -51,6 +93,7 @@ struct SymbolDetailView: View {
 						}
 					}
 				}
+
 			} else {
 				Text("Symbol not found")
 
