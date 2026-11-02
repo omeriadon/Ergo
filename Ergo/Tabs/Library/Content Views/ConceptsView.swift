@@ -5,10 +5,11 @@
 //  Created by Adon Omeri on 2/11/2026.
 //
 
-import FuzzyMatch
 import SwiftUI
 
 struct ConceptsView: View {
+	@Environment(\.accessibilityReduceMotion) private var reduceMotion
+
 	@Environment(CatalogStore.self) private var catalog
 
 	@State private var tokens: [ConceptTag]
@@ -18,6 +19,7 @@ struct ConceptsView: View {
 	}
 
 	@State private var searchTerm = ""
+	@State private var searchedConcepts: [Concept] = []
 
 	private var matchingTokens: [ConceptTag] {
 		ConceptTag.allCases.filter { token in
@@ -66,6 +68,10 @@ struct ConceptsView: View {
 					.listRowBackground(Color.clear)
 			}
 		}
+		.animation(
+			reduceMotion ? nil : .smooth(duration: 0.22),
+			value: filteredConcepts.map(\.id)
+		)
 		.animation(.easeInOut(duration: 0.2), value: searchPresented)
 		.listSectionIndexVisibility(.visible)
 		.scrollEdgeEffectStyle(.soft, for: .all)
@@ -86,15 +92,17 @@ struct ConceptsView: View {
 	}
 
 	private var filteredConcepts: [Concept] {
-		let filtered = catalog.concepts.concepts.filter { concept in
+		let isSearching = searchPresented && !searchTerm.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+		let source = isSearching
+			? searchedConcepts
+			: catalog.concepts.concepts
+
+		let filtered = source.filter { concept in
 			tokens.isEmpty ||
 				tokens.contains { concept.tags.contains($0) }
 		}
 
-		return searchConcepts(
-			filtered,
-			query: searchPresented ? searchTerm : ""
-		)
+		return isSearching ? Array(filtered.prefix(CatalogSearch.resultLimit)) : filtered
 	}
 
 	private var groupedConcepts: [(letter: String, concepts: [Concept])] {
@@ -114,10 +122,12 @@ struct ConceptsView: View {
 
 	@ViewBuilder
 	var results: some View {
-		if groupedConcepts.isEmpty {
+		let groups = groupedConcepts
+
+		if groups.isEmpty {
 			ContentUnavailableView.search(text: searchTerm)
 		}
-		ForEach(groupedConcepts, id: \.letter) { group in
+		ForEach(groups, id: \.letter) { group in
 			Section(group.letter) {
 				ForEach(group.concepts) { concept in
 					NavigationLink(
@@ -132,6 +142,7 @@ struct ConceptsView: View {
 						}
 						.accessibilityIdentifier("library.concepts.\(concept.id)")
 					}
+					.transition(.opacity)
 				}
 			}
 			.sectionIndexLabel(group.letter)
@@ -148,6 +159,26 @@ struct ConceptsView: View {
 				ToolbarItem(placement: .topBarTrailing) {
 					filterMenu
 						.background(tokens.isEmpty ? .clear : .accent, in: Circle())
+				}
+			}
+			.task(id: "\(searchPresented)-\(searchTerm.trimmingCharacters(in: .whitespacesAndNewlines))-\(catalog.isLoaded)") {
+				let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+				guard searchPresented, !query.isEmpty, catalog.isLoaded else {
+					searchedConcepts = []
+					return
+				}
+				do {
+					try await Task.sleep(for: .milliseconds(120))
+					let matches = try await CatalogSearch.ranked(
+						catalog.concepts.concepts,
+						query: query
+					) { $0.searchFields }
+					try Task.checkCancellation()
+					searchedConcepts = matches
+				} catch is CancellationError {
+					return
+				} catch {
+					searchedConcepts = []
 				}
 			}
 	}
@@ -179,34 +210,5 @@ struct ConceptsView: View {
 		}
 		.accessibilityIdentifier("library.concepts.filters")
 		.menuActionDismissBehavior(.disabled)
-	}
-
-	func searchConcepts(
-		_ concepts: [Concept],
-		query: String
-	) -> [Concept] {
-		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-		guard !query.isEmpty else { return concepts }
-
-		let matcher = FuzzyMatcher()
-		let prepared = matcher.prepare(query)
-		var buffer = matcher.makeBuffer()
-
-		return concepts.compactMap { concept -> (Concept, Double)? in
-			let fields = concept.searchFields
-
-			let score = fields.compactMap { text, weight in
-				matcher.score(
-					text,
-					against: prepared,
-					buffer: &buffer
-				).map { $0.score * weight }
-			}.max()
-
-			guard let score else { return nil }
-			return (concept, score)
-		}
-		.sorted { $0.1 > $1.1 }
-		.map(\.0)
 	}
 }

@@ -5,10 +5,11 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
-import FuzzyMatch
 import SwiftUI
 
 struct BiasesView: View {
+	@Environment(\.accessibilityReduceMotion) private var reduceMotion
+
 	@Environment(CatalogStore.self) private var catalog
 
 	@Environment(NavigationManager.self)
@@ -21,6 +22,7 @@ struct BiasesView: View {
 	}
 
 	@State private var searchTerm = ""
+	@State private var searchedBiases: [Bias] = []
 
 	private var matchingTokens: [BiasTag] {
 		BiasTag.allCases.filter { token in
@@ -75,6 +77,10 @@ struct BiasesView: View {
 					.listRowBackground(Color.clear)
 			}
 		}
+		.animation(
+			reduceMotion ? nil : .smooth(duration: 0.22),
+			value: filteredBiases.map(\.id)
+		)
 		.animation(.easeInOut(duration: 0.2), value: searchPresented)
 		.listSectionIndexVisibility(.visible)
 		.scrollEdgeEffectStyle(.soft, for: .all)
@@ -117,15 +123,17 @@ struct BiasesView: View {
 	}
 
 	private var filteredBiases: [Bias] {
-		let filtered = catalog.biases.biases.filter { bias in
+		let isSearching = searchPresented && !searchTerm.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+		let source = isSearching
+			? searchedBiases
+			: catalog.biases.biases
+
+		let filtered = source.filter { bias in
 			tokens.isEmpty ||
 				tokens.contains { bias.tags.contains($0) }
 		}
 
-		return searchBiases(
-			filtered,
-			query: searchPresented ? searchTerm : ""
-		)
+		return isSearching ? Array(filtered.prefix(CatalogSearch.resultLimit)) : filtered
 	}
 
 	private var groupedBiases: [(letter: String, biases: [Bias])] {
@@ -158,6 +166,7 @@ struct BiasesView: View {
 							Spacer()
 						}
 					}
+					.transition(.opacity)
 				}
 			}
 			.sectionIndexLabel(group.letter)
@@ -174,6 +183,26 @@ struct BiasesView: View {
 				ToolbarItem(placement: .topBarTrailing) {
 					filterMenu
 						.background(tokens.isEmpty ? .clear : .accent, in: Circle())
+				}
+			}
+			.task(id: "\(searchPresented)-\(searchTerm.trimmingCharacters(in: .whitespacesAndNewlines))-\(catalog.isLoaded)") {
+				let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+				guard searchPresented, !query.isEmpty, catalog.isLoaded else {
+					searchedBiases = []
+					return
+				}
+				do {
+					try await Task.sleep(for: .milliseconds(120))
+					let matches = try await CatalogSearch.ranked(
+						catalog.biases.biases,
+						query: query
+					) { $0.searchFields }
+					try Task.checkCancellation()
+					searchedBiases = matches
+				} catch is CancellationError {
+					return
+				} catch {
+					searchedBiases = []
 				}
 			}
 	}
@@ -202,34 +231,5 @@ struct BiasesView: View {
 			Image(systemName: "line.3.horizontal.decrease")
 		}
 		.menuActionDismissBehavior(.disabled)
-	}
-
-	func searchBiases(
-		_ biases: [Bias],
-		query: String
-	) -> [Bias] {
-		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-		guard !query.isEmpty else { return biases }
-
-		let matcher = FuzzyMatcher()
-		let prepared = matcher.prepare(query)
-		var buffer = matcher.makeBuffer()
-
-		return biases.compactMap { bias -> (Bias, Double)? in
-			let fields = bias.searchFields
-
-			let score = fields.compactMap { text, weight in
-				matcher.score(
-					text,
-					against: prepared,
-					buffer: &buffer
-				).map { $0.score * weight }
-			}.max()
-
-			guard let score else { return nil }
-			return (bias, score)
-		}
-		.sorted { $0.1 > $1.1 }
-		.map(\.0)
 	}
 }

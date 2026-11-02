@@ -5,10 +5,11 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
-import FuzzyMatch
 import SwiftUI
 
 struct RazorsView: View {
+	@Environment(\.accessibilityReduceMotion) private var reduceMotion
+
 	@Environment(CatalogStore.self) private var catalog
 
 	@Environment(NavigationManager.self)
@@ -21,6 +22,7 @@ struct RazorsView: View {
 	}
 
 	@State private var searchTerm = ""
+	@State private var searchedRazors: [Razor] = []
 
 	private var matchingTokens: [RazorTag] {
 		RazorTag.allCases.filter { token in
@@ -75,6 +77,10 @@ struct RazorsView: View {
 					.listRowBackground(Color.clear)
 			}
 		}
+		.animation(
+			reduceMotion ? nil : .smooth(duration: 0.22),
+			value: filteredRazors.map(\.id)
+		)
 		.animation(.easeInOut(duration: 0.2), value: searchPresented)
 		.listSectionIndexVisibility(.visible)
 		.scrollEdgeEffectStyle(.soft, for: .all)
@@ -117,15 +123,17 @@ struct RazorsView: View {
 	}
 
 	private var filteredRazors: [Razor] {
-		let filtered = catalog.razors.razors.filter { razor in
+		let isSearching = searchPresented && !searchTerm.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+		let source = isSearching
+			? searchedRazors
+			: catalog.razors.razors
+
+		let filtered = source.filter { razor in
 			tokens.isEmpty ||
 				tokens.contains { razor.tags.contains($0) }
 		}
 
-		return searchRazors(
-			filtered,
-			query: searchPresented ? searchTerm : ""
-		)
+		return isSearching ? Array(filtered.prefix(CatalogSearch.resultLimit)) : filtered
 	}
 
 	private var groupedRazors: [(letter: String, razors: [Razor])] {
@@ -158,6 +166,7 @@ struct RazorsView: View {
 							Spacer()
 						}
 					}
+					.transition(.opacity)
 				}
 			}
 			.sectionIndexLabel(group.letter)
@@ -174,6 +183,26 @@ struct RazorsView: View {
 				ToolbarItem(placement: .topBarTrailing) {
 					filterMenu
 						.background(tokens.isEmpty ? .clear : .accent, in: Circle())
+				}
+			}
+			.task(id: "\(searchPresented)-\(searchTerm.trimmingCharacters(in: .whitespacesAndNewlines))-\(catalog.isLoaded)") {
+				let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+				guard searchPresented, !query.isEmpty, catalog.isLoaded else {
+					searchedRazors = []
+					return
+				}
+				do {
+					try await Task.sleep(for: .milliseconds(120))
+					let matches = try await CatalogSearch.ranked(
+						catalog.razors.razors,
+						query: query
+					) { $0.searchFields }
+					try Task.checkCancellation()
+					searchedRazors = matches
+				} catch is CancellationError {
+					return
+				} catch {
+					searchedRazors = []
 				}
 			}
 	}
@@ -202,34 +231,5 @@ struct RazorsView: View {
 			Image(systemName: "line.3.horizontal.decrease")
 		}
 		.menuActionDismissBehavior(.disabled)
-	}
-
-	func searchRazors(
-		_ razors: [Razor],
-		query: String
-	) -> [Razor] {
-		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-		guard !query.isEmpty else { return razors }
-
-		let matcher = FuzzyMatcher()
-		let prepared = matcher.prepare(query)
-		var buffer = matcher.makeBuffer()
-
-		return razors.compactMap { razor -> (Razor, Double)? in
-			let fields = razor.searchFields
-
-			let score = fields.compactMap { text, weight in
-				matcher.score(
-					text,
-					against: prepared,
-					buffer: &buffer
-				).map { $0.score * weight }
-			}.max()
-
-			guard let score else { return nil }
-			return (razor, score)
-		}
-		.sorted { $0.1 > $1.1 }
-		.map(\.0)
 	}
 }

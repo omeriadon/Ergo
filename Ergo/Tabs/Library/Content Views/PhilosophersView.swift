@@ -5,16 +5,18 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
-import FuzzyMatch
 import SwiftUI
 
 struct PhilosophersView: View {
+	@Environment(\.accessibilityReduceMotion) private var reduceMotion
+
 	@Environment(CatalogStore.self) private var catalog
 
 	@Environment(NavigationManager.self)
 	private var navigation
 
 	@State private var searchTerm = ""
+	@State private var searchedPhilosophers: [Philosopher] = []
 
 	@State private var searchPresented = false
 
@@ -29,6 +31,10 @@ struct PhilosophersView: View {
 					.listRowBackground(Color.clear)
 			}
 		}
+		.animation(
+			reduceMotion ? nil : .smooth(duration: 0.22),
+			value: filteredPhilosphers.map(\.id)
+		)
 		.animation(.easeInOut(duration: 0.2), value: searchPresented)
 		.listSectionIndexVisibility(.visible)
 		.scrollEdgeEffectStyle(.soft, for: .all)
@@ -45,10 +51,10 @@ struct PhilosophersView: View {
 	}
 
 	private var filteredPhilosphers: [Philosopher] {
-		searchPhilosophers(
-			catalog.philosophers.philosophers,
-			query: searchPresented ? searchTerm : ""
-		)
+		guard searchPresented, !searchTerm.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+			return catalog.philosophers.philosophers
+		}
+		return Array(searchedPhilosophers.prefix(CatalogSearch.resultLimit))
 	}
 
 	private var groupedPhilosophers: [(century: Int, philosophers: [Philosopher])] {
@@ -117,6 +123,7 @@ struct PhilosophersView: View {
 							Spacer()
 						}
 					}
+					.transition(.opacity)
 				}
 			}
 			.sectionIndexLabel("\(group.century)")
@@ -130,34 +137,25 @@ struct PhilosophersView: View {
 					Text("Philosphers")
 				}
 			}
-	}
-
-	func searchPhilosophers(
-		_ philosophers: [Philosopher],
-		query: String
-	) -> [Philosopher] {
-		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-		guard !query.isEmpty else { return philosophers }
-
-		let matcher = FuzzyMatcher()
-		let prepared = matcher.prepare(query)
-		var buffer = matcher.makeBuffer()
-
-		return philosophers.compactMap { philosopher -> (Philosopher, Double)? in
-			let fields = philosopher.searchFields
-
-			let score = fields.compactMap { text, weight in
-				matcher.score(
-					text,
-					against: prepared,
-					buffer: &buffer
-				).map { $0.score * weight }
-			}.max()
-
-			guard let score else { return nil }
-			return (philosopher, score)
-		}
-		.sorted { $0.1 > $1.1 }
-		.map(\.0)
+			.task(id: "\(searchPresented)-\(searchTerm.trimmingCharacters(in: .whitespacesAndNewlines))-\(catalog.isLoaded)") {
+				let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+				guard searchPresented, !query.isEmpty, catalog.isLoaded else {
+					searchedPhilosophers = []
+					return
+				}
+				do {
+					try await Task.sleep(for: .milliseconds(120))
+					let matches = try await CatalogSearch.ranked(
+						catalog.philosophers.philosophers,
+						query: query
+					) { $0.searchFields }
+					try Task.checkCancellation()
+					searchedPhilosophers = matches
+				} catch is CancellationError {
+					return
+				} catch {
+					searchedPhilosophers = []
+				}
+			}
 	}
 }

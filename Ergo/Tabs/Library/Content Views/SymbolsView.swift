@@ -5,10 +5,11 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
-import FuzzyMatch
 import SwiftUI
 
 struct SymbolsView: View {
+	@Environment(\.accessibilityReduceMotion) private var reduceMotion
+
 	@Environment(CatalogStore.self) private var catalog
 
 	@Environment(NavigationManager.self)
@@ -21,6 +22,7 @@ struct SymbolsView: View {
 	}
 
 	@State private var searchTerm = ""
+	@State private var searchedSymbols: [LogicSymbol] = []
 
 	private var matchingTokens: [SymbolSearchToken] {
 		let allTokens: [SymbolSearchToken] =
@@ -93,6 +95,10 @@ struct SymbolsView: View {
 					.listRowBackground(Color.clear)
 			}
 		}
+		.animation(
+			reduceMotion ? nil : .smooth(duration: 0.22),
+			value: filteredSymbols.map(\.id)
+		)
 		.animation(.easeInOut(duration: 0.2), value: searchPresented)
 		.scrollEdgeEffectStyle(.soft, for: .all)
 		.buttonStyle(.plain)
@@ -137,7 +143,12 @@ struct SymbolsView: View {
 		let groups = selectedGroups
 		let tags = selectedTags
 
-		let filtered = catalog.logicSymbols.symbols.filter { symbol in
+		let isSearching = searchPresented && !searchTerm.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+		let source = isSearching
+			? searchedSymbols
+			: catalog.logicSymbols.symbols
+
+		let filtered = source.filter { symbol in
 			let groupMatches =
 				groups.isEmpty ||
 				groups.contains(symbol.group)
@@ -149,15 +160,14 @@ struct SymbolsView: View {
 			return groupMatches && tagMatches
 		}
 
-		return searchSymbols(
-			filtered,
-			query: searchPresented ? searchTerm : ""
-		)
+		return isSearching ? Array(filtered.prefix(CatalogSearch.resultLimit)) : filtered
 	}
 
 	var results: some View {
-		ForEach(SymbolGroup.allCases) { group in
-			let symbols = filteredSymbols.filter { $0.group == group }
+		let filtered = filteredSymbols
+
+		return ForEach(SymbolGroup.allCases) { group in
+			let symbols = filtered.filter { $0.group == group }
 
 			if !symbols.isEmpty {
 				Section(group.rawValue.capitalized) {
@@ -182,6 +192,7 @@ struct SymbolsView: View {
 								Spacer()
 							}
 						}
+						.transition(.opacity)
 					}
 				}
 			}
@@ -198,6 +209,26 @@ struct SymbolsView: View {
 				ToolbarItem(placement: .topBarTrailing) {
 					filterMenu
 						.background(tokens.isEmpty ? .clear : .accent, in: Circle())
+				}
+			}
+			.task(id: "\(searchPresented)-\(searchTerm.trimmingCharacters(in: .whitespacesAndNewlines))-\(catalog.isLoaded)") {
+				let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+				guard searchPresented, !query.isEmpty, catalog.isLoaded else {
+					searchedSymbols = []
+					return
+				}
+				do {
+					try await Task.sleep(for: .milliseconds(120))
+					let matches = try await CatalogSearch.ranked(
+						catalog.logicSymbols.symbols,
+						query: query
+					) { $0.searchFields }
+					try Task.checkCancellation()
+					searchedSymbols = matches
+				} catch is CancellationError {
+					return
+				} catch {
+					searchedSymbols = []
 				}
 			}
 	}
@@ -241,34 +272,5 @@ struct SymbolsView: View {
 		} label: {
 			Image(systemName: "line.3.horizontal.decrease")
 		}
-	}
-
-	func searchSymbols(
-		_ symbols: [LogicSymbol],
-		query: String
-	) -> [LogicSymbol] {
-		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-		guard !query.isEmpty else { return symbols }
-
-		let matcher = FuzzyMatcher()
-		let prepared = matcher.prepare(query)
-		var buffer = matcher.makeBuffer()
-
-		return symbols.compactMap { symbol -> (LogicSymbol, Double)? in
-			let fields = symbol.searchFields
-
-			let score = fields.compactMap { text, weight in
-				matcher.score(
-					text,
-					against: prepared,
-					buffer: &buffer
-				).map { $0.score * weight }
-			}.max()
-
-			guard let score else { return nil }
-			return (symbol, score)
-		}
-		.sorted { $0.1 > $1.1 }
-		.map(\.0)
 	}
 }

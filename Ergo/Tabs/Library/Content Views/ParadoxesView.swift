@@ -5,10 +5,11 @@
 //  Created by Adon Omeri on 2/11/2026.
 //
 
-import FuzzyMatch
 import SwiftUI
 
 struct ParadoxesView: View {
+	@Environment(\.accessibilityReduceMotion) private var reduceMotion
+
 	@Environment(CatalogStore.self) private var catalog
 
 	@Environment(NavigationManager.self)
@@ -21,6 +22,7 @@ struct ParadoxesView: View {
 	}
 
 	@State private var searchTerm = ""
+	@State private var searchedParadoxes: [Paradox] = []
 
 	private var matchingTokens: [ParadoxTag] {
 		ParadoxTag.allCases.filter { token in
@@ -75,6 +77,10 @@ struct ParadoxesView: View {
 					.listRowBackground(Color.clear)
 			}
 		}
+		.animation(
+			reduceMotion ? nil : .smooth(duration: 0.22),
+			value: filteredParadoxes.map(\.id)
+		)
 		.animation(.easeInOut(duration: 0.2), value: searchPresented)
 		.listSectionIndexVisibility(.visible)
 		.scrollEdgeEffectStyle(.soft, for: .all)
@@ -117,15 +123,17 @@ struct ParadoxesView: View {
 	}
 
 	private var filteredParadoxes: [Paradox] {
-		let filtered = catalog.paradoxes.paradoxes.filter { paradox in
+		let isSearching = searchPresented && !searchTerm.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+		let source = isSearching
+			? searchedParadoxes
+			: catalog.paradoxes.paradoxes
+
+		let filtered = source.filter { paradox in
 			tokens.isEmpty ||
 				tokens.contains { paradox.tags.contains($0) }
 		}
 
-		return searchParadoxes(
-			filtered,
-			query: searchPresented ? searchTerm : ""
-		)
+		return isSearching ? Array(filtered.prefix(CatalogSearch.resultLimit)) : filtered
 	}
 
 	private var groupedParadoxes: [(letter: String, paradoxes: [Paradox])] {
@@ -158,6 +166,7 @@ struct ParadoxesView: View {
 							Spacer()
 						}
 					}
+					.transition(.opacity)
 				}
 			}
 			.sectionIndexLabel(group.letter)
@@ -174,6 +183,26 @@ struct ParadoxesView: View {
 				ToolbarItem(placement: .topBarTrailing) {
 					filterMenu
 						.background(tokens.isEmpty ? .clear : .accent, in: Circle())
+				}
+			}
+			.task(id: "\(searchPresented)-\(searchTerm.trimmingCharacters(in: .whitespacesAndNewlines))-\(catalog.isLoaded)") {
+				let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+				guard searchPresented, !query.isEmpty, catalog.isLoaded else {
+					searchedParadoxes = []
+					return
+				}
+				do {
+					try await Task.sleep(for: .milliseconds(120))
+					let matches = try await CatalogSearch.ranked(
+						catalog.paradoxes.paradoxes,
+						query: query
+					) { $0.searchFields }
+					try Task.checkCancellation()
+					searchedParadoxes = matches
+				} catch is CancellationError {
+					return
+				} catch {
+					searchedParadoxes = []
 				}
 			}
 	}
@@ -202,34 +231,5 @@ struct ParadoxesView: View {
 			Image(systemName: "line.3.horizontal.decrease")
 		}
 		.menuActionDismissBehavior(.disabled)
-	}
-
-	func searchParadoxes(
-		_ paradoxes: [Paradox],
-		query: String
-	) -> [Paradox] {
-		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-		guard !query.isEmpty else { return paradoxes }
-
-		let matcher = FuzzyMatcher()
-		let prepared = matcher.prepare(query)
-		var buffer = matcher.makeBuffer()
-
-		return paradoxes.compactMap { paradox -> (Paradox, Double)? in
-			let fields = paradox.searchFields
-
-			let score = fields.compactMap { text, weight in
-				matcher.score(
-					text,
-					against: prepared,
-					buffer: &buffer
-				).map { $0.score * weight }
-			}.max()
-
-			guard let score else { return nil }
-			return (paradox, score)
-		}
-		.sorted { $0.1 > $1.1 }
-		.map(\.0)
 	}
 }

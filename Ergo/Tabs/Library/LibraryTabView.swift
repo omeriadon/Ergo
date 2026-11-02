@@ -5,7 +5,6 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
-import FuzzyMatch
 import SwiftUI
 
 private struct CardView: View {
@@ -53,6 +52,8 @@ private struct CardView: View {
 }
 
 struct LibraryTabView: View {
+	@Environment(\.accessibilityReduceMotion) private var reduceMotion
+
 	@Environment(NavigationManager.self)
 	private var navigation
 
@@ -61,8 +62,9 @@ struct LibraryTabView: View {
 	@State private var searchTerm = ""
 
 	@State private var searchPresented = false
+	@State private var searchResults: [LibrarySearchEntry] = []
 
-	private var searchResults: [LibrarySearchEntry] {
+	private var libraryEntries: [LibrarySearchEntry] {
 		let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !query.isEmpty else { return [] }
 		let biasResults = catalog.biases.biases.map { entry in
@@ -137,35 +139,12 @@ struct LibraryTabView: View {
 		entries += philosopherResults
 		entries += razorResults
 		entries += argumentResults
-		return searchLibrary(entries, query: query)
-	}
-
-	func searchLibrary(
-		_ entries: [LibrarySearchEntry],
-		query: String
-	) -> [LibrarySearchEntry] {
-		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-		guard !query.isEmpty else { return [] }
-
-		let matcher = FuzzyMatcher()
-		let prepared = matcher.prepare(query)
-		var buffer = matcher.makeBuffer()
-		return entries.compactMap { entry -> (LibrarySearchEntry, Double)? in
-			let score = entry.searchFields.compactMap { field in
-				matcher.score(
-					field.text,
-					against: prepared,
-					buffer: &buffer
-				).map { $0.score * field.weight }
-			}.max()
-			guard let score else { return nil }
-			return (entry, score)
-		}
-		.sorted { $0.1 > $1.1 }
-		.map(\.0)
+		return entries
 	}
 
 	var body: some View {
+		let results = searchPresented ? searchResults : []
+
 		ScrollView {
 			if searchPresented {
 				if searchTerm.isEmpty {
@@ -182,24 +161,27 @@ struct LibraryTabView: View {
 					.listRowBackground(Color.clear)
 					.frame(maxWidth: .infinity, alignment: .center)
 					.transition(.opacity)
-				} else if searchResults.isEmpty {
+				} else if results.isEmpty {
 					ContentUnavailableView.search(text: searchTerm)
+						.transition(.opacity)
 				} else {
 					LazyVStack(alignment: .leading, spacing: 10) {
-						ForEach(searchResults) { result in
+						ForEach(results) { result in
 							NavigationLink(
 								value: LibraryRoute.detail(category: result.category, id: result.id)
 							) {
 								Label(result.name, systemImage: result.category.symbol)
 							}
 							.accessibilityIdentifier("library.search.\(result.category).\(result.id)")
+							.frame(maxWidth: .infinity, alignment: .leading)
 							.padding(.horizontal)
 							.padding(.vertical, 10)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
+							.transition(.opacity)
 						}
 					}
-					.animation(.easeInOut(duration: 0.2), value: searchPresented)
-					.animation(.easeInOut(duration: 0.2), value: searchTerm)
+					.padding(.horizontal)
+					.transition(.opacity)
 				}
 			} else {
 				Grid(horizontalSpacing: 12, verticalSpacing: 12) {
@@ -246,6 +228,10 @@ struct LibraryTabView: View {
 				.transition(.opacity)
 			}
 		}
+		.animation(
+			reduceMotion ? nil : .smooth(duration: 0.22),
+			value: results.map(\.id)
+		)
 		.animation(.easeInOut(duration: 0.1), value: "\(searchPresented)\(searchTerm.isEmpty)")
 		.buttonStyle(.plain)
 		.searchable(
@@ -261,6 +247,24 @@ struct LibraryTabView: View {
 				Text("Library")
 					.fontDesign(.rounded)
 					.font(.title)
+			}
+		}
+		.task(id: "\(searchPresented)-\(searchTerm.trimmingCharacters(in: .whitespacesAndNewlines))-\(catalog.isLoaded)") {
+			let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+			guard searchPresented, !query.isEmpty, catalog.isLoaded else {
+				searchResults = []
+				return
+			}
+			do {
+				try await Task.sleep(for: .milliseconds(120))
+				let entries = libraryEntries
+				let matches = try await CatalogSearch.ranked(entries, query: query) { $0.searchFields }
+				try Task.checkCancellation()
+				searchResults = Array(matches.prefix(CatalogSearch.resultLimit))
+			} catch is CancellationError {
+				return
+			} catch {
+				searchResults = []
 			}
 		}
 	}

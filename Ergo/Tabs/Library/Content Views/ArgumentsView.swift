@@ -5,10 +5,11 @@
 //  Created by Adon Omeri on 2/11/2026.
 //
 
-import FuzzyMatch
 import SwiftUI
 
 struct ArgumentsView: View {
+	@Environment(\.accessibilityReduceMotion) private var reduceMotion
+
 	@Environment(CatalogStore.self) private var catalog
 
 	@State private var tokens: [ArgumentTag]
@@ -18,6 +19,7 @@ struct ArgumentsView: View {
 	}
 
 	@State private var searchTerm = ""
+	@State private var searchedArguments: [Argument] = []
 
 	private var matchingTokens: [ArgumentTag] {
 		ArgumentTag.allCases.filter { token in
@@ -66,6 +68,10 @@ struct ArgumentsView: View {
 					.listRowBackground(Color.clear)
 			}
 		}
+		.animation(
+			reduceMotion ? nil : .smooth(duration: 0.22),
+			value: filteredArguments.map(\.id)
+		)
 		.animation(.easeInOut(duration: 0.2), value: searchPresented)
 		.listSectionIndexVisibility(.visible)
 		.scrollEdgeEffectStyle(.soft, for: .all)
@@ -86,15 +92,17 @@ struct ArgumentsView: View {
 	}
 
 	private var filteredArguments: [Argument] {
-		let filtered = catalog.arguments.arguments.filter { argument in
+		let isSearching = searchPresented && !searchTerm.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+		let source = isSearching
+			? searchedArguments
+			: catalog.arguments.arguments
+
+		let filtered = source.filter { argument in
 			tokens.isEmpty ||
 				tokens.contains { argument.tags.contains($0) }
 		}
 
-		return searchArguments(
-			filtered,
-			query: searchPresented ? searchTerm : ""
-		)
+		return isSearching ? Array(filtered.prefix(CatalogSearch.resultLimit)) : filtered
 	}
 
 	private var groupedArguments: [(letter: String, arguments: [Argument])] {
@@ -114,10 +122,12 @@ struct ArgumentsView: View {
 
 	@ViewBuilder
 	var results: some View {
-		if groupedArguments.isEmpty {
+		let groups = groupedArguments
+
+		if groups.isEmpty {
 			ContentUnavailableView.search(text: searchTerm)
 		}
-		ForEach(groupedArguments, id: \.letter) { group in
+		ForEach(groups, id: \.letter) { group in
 			Section(group.letter) {
 				ForEach(group.arguments) { argument in
 					NavigationLink(
@@ -132,6 +142,7 @@ struct ArgumentsView: View {
 						}
 						.accessibilityIdentifier("library.arguments.\(argument.id)")
 					}
+					.transition(.opacity)
 				}
 			}
 			.sectionIndexLabel(group.letter)
@@ -148,6 +159,26 @@ struct ArgumentsView: View {
 				ToolbarItem(placement: .topBarTrailing) {
 					filterMenu
 						.background(tokens.isEmpty ? .clear : .accent, in: Circle())
+				}
+			}
+			.task(id: "\(searchPresented)-\(searchTerm.trimmingCharacters(in: .whitespacesAndNewlines))-\(catalog.isLoaded)") {
+				let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+				guard searchPresented, !query.isEmpty, catalog.isLoaded else {
+					searchedArguments = []
+					return
+				}
+				do {
+					try await Task.sleep(for: .milliseconds(120))
+					let matches = try await CatalogSearch.ranked(
+						catalog.arguments.arguments,
+						query: query
+					) { $0.searchFields }
+					try Task.checkCancellation()
+					searchedArguments = matches
+				} catch is CancellationError {
+					return
+				} catch {
+					searchedArguments = []
 				}
 			}
 	}
@@ -179,34 +210,5 @@ struct ArgumentsView: View {
 		}
 		.accessibilityIdentifier("library.arguments.filters")
 		.menuActionDismissBehavior(.disabled)
-	}
-
-	func searchArguments(
-		_ arguments: [Argument],
-		query: String
-	) -> [Argument] {
-		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-		guard !query.isEmpty else { return arguments }
-
-		let matcher = FuzzyMatcher()
-		let prepared = matcher.prepare(query)
-		var buffer = matcher.makeBuffer()
-
-		return arguments.compactMap { argument -> (Argument, Double)? in
-			let fields = argument.searchFields
-
-			let score = fields.compactMap { text, weight in
-				matcher.score(
-					text,
-					against: prepared,
-					buffer: &buffer
-				).map { $0.score * weight }
-			}.max()
-
-			guard let score else { return nil }
-			return (argument, score)
-		}
-		.sorted { $0.1 > $1.1 }
-		.map(\.0)
 	}
 }
