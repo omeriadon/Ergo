@@ -83,7 +83,7 @@ struct SymbolsView: View {
 		}
 		.scrollEdgeEffectStyle(.soft, for: .all)
 		.buttonStyle(.plain)
-		.toolbarMinimizationBehavior(.onScrollDown, for: .navigationBar)
+		.toolbarMinimizationBehavior(.never, for: .navigationBar)
 		.searchable(
 			text: $searchTerm,
 			tokens: $tokens,
@@ -142,26 +142,32 @@ struct SymbolsView: View {
 	}
 
 	var results: some View {
-		Section {
-			ForEach(filteredSymbols) { symbol in
-				NavigationLink(
-					value: LibraryRoute.detail(
-						category: .symbols,
-						id: symbol.id
-					)
-				) {
-					HStack {
-						Text(symbol.glyph)
-							.font(.title)
-							.fontDesign(.monospaced)
-							.foregroundStyle(.accent)
-							.frame(
-								width: symbol.glyph.count < 3 ? 40 : 110,
-								alignment: .leading
-							)
+		ForEach(SymbolGroup.allCases) { group in
+			let symbols = filteredSymbols.filter { $0.group == group }
 
-						Text(symbol.name)
-						Spacer()
+			if !symbols.isEmpty {
+				Section(group.rawValue.capitalized) {
+					ForEach(symbols) { symbol in
+						NavigationLink(
+							value: LibraryRoute.detail(
+								category: .symbols,
+								id: symbol.id
+							)
+						) {
+							HStack {
+								Text(symbol.glyph)
+									.font(.title)
+									.fontDesign(.monospaced)
+									.foregroundStyle(.accent)
+									.frame(
+										width: symbol.glyph.count < 3 ? 40 : 110,
+										alignment: .leading
+									)
+
+								Text(symbol.name)
+								Spacer()
+							}
+						}
 					}
 				}
 			}
