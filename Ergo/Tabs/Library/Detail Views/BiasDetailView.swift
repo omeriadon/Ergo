@@ -105,7 +105,7 @@ struct BiasDetailView: View {
 						lookalikes
 							.padding(.top)
 
-						related
+						RelatedSection(list: bias.related)
 							.padding(.top)
 
 						tags
@@ -248,57 +248,6 @@ struct BiasDetailView: View {
 					VStack(alignment: .leading, spacing: 4) {
 						ForEach(bias.lookalikes, id: \.target.id) { lookalike in
 							let target = lookalike.target
-							let isBookmarked = bookmarks.contains(target)
-
-							NavigationLink(value: target.route) {
-								HStack {
-									Text(target.name)
-									Spacer()
-									Image(systemName: "chevron.right")
-								}
-								.contextMenu {
-									Button {
-										withAnimation(.easeInOut) {
-											if isBookmarked {
-												bookmarks.remove(target)
-											} else {
-												bookmarks.insert(target)
-											}
-										}
-									} label: {
-										if isBookmarked {
-											Label("Remove Bookmark", systemImage: "bookmark.fill")
-										} else {
-											Label("Bookmark", systemImage: "bookmark")
-										}
-									}
-								} preview: {
-									LibraryDetailView(category: target.category, id: target.id)
-										.environment(catalog)
-										.environment(navigation)
-								}
-							}
-						}
-					}
-				}
-				.padding(12)
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-			}
-		}
-	}
-
-	@ContentBuilder
-	var related: some View {
-		if let bias = catalog.biases.biases.first(where: { $0.id == id }) {
-			if !bias.related.isEmpty {
-				VStack(alignment: .leading, spacing: 13) {
-					Text("Related")
-						.textCase(.uppercase)
-						.foregroundStyle(.accent)
-
-					VStack(alignment: .leading, spacing: 4) {
-						ForEach(bias.related, id: \.id) { target in
 							let isBookmarked = bookmarks.contains(target)
 
 							NavigationLink(value: target.route) {

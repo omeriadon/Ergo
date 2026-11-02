@@ -331,7 +331,8 @@
       "summary": "Blaise Pascal examined human greatness and misery through the limits of reason, the distractions of self-deception, and the wager concerning faith.",
       "related": [
         "existentialism",
-        "natural-theology"
+        "natural-theology",
+        "pascal-s-wager"
       ],
       "body": "Pascal's fragments describe human beings as capable of mathematical and scientific reasoning yet unable to secure happiness through those abilities alone. Diversion is central to this diagnosis: occupations, games, status, and constant motion keep people from confronting mortality and the instability of the self. The point is not that every activity is worthless, but that distraction can conceal the question it cannot answer.\n\nThe wager does not claim to prove Christianity by probability alone. It argues that a person already situated in uncertainty must consider the practical asymmetry between finite losses and an infinite good, while also recognizing that belief cannot be switched on by a bare calculation. Pascal's account of the heart names forms of apprehension that are not identical with deductive proof. His theological polemics, mathematical work, and reflections on probability therefore share a concern with what reason can establish and where it must acknowledge its conditions."
     },
@@ -921,7 +922,8 @@
       "summary": "Jean-Jacques Rousseau traced inequality to social dependence and sought legitimate political authority in collective self-rule.",
       "related": [
         "social-contract",
-        "equality"
+        "equality",
+        "general-will"
       ],
       "body": "Jean-Jacques Rousseau distinguishes natural inequalities of strength or age from moral and political inequalities created by conventions. In the Discourse on Inequality, comparison and the desire for recognition turn self-preservation into amour-propre, a socially mediated concern with rank and esteem. Property becomes politically dangerous when it allows some people to command the labor and security of others while presenting the arrangement as legitimate.\n\nThe Social Contract seeks a form of association in which each person obeys laws they share in making. The general will is not the sum of private preferences or whatever a majority happens to want; it concerns the common conditions of freedom and must be distinguished from factional interests. Rousseau's educational theory in Emile similarly tries to protect judgment from premature dependence on social opinion. His model of popular sovereignty can resist domination, but its language of unity has also raised concerns about coercive interpretations of the common good and the exclusion of dissent."
     },
@@ -937,7 +939,8 @@
         "freedom",
         "phenomenology",
         "authenticity",
-        "nothingness"
+        "nothingness",
+        "bad-faith"
       ],
       "body": "Jean-Paul Sartre's phenomenology treats consciousness as intentional activity that is always directed beyond itself toward a world. Because consciousness is not a fixed object with a predetermined essence, a person can take up a situation in more than one way; this is the source of existential freedom. Facticity still matters: body, past, social position, and material circumstances constrain what projects are possible, but they do not by themselves determine the meaning of a choice.\n\nBad faith is the attempt to flee this tension by pretending either to be a thing fully defined by a role or to be pure freedom untouched by circumstance. Sartre's example of the waiter who overidentifies with his role shows how performance can become self-deception. Being-for-others adds another conflict: another person's gaze can objectify me, yet my projects also depend on a shared world. Sartre later connected existential responsibility to political commitment, arguing that freedom must be evaluated within structures of oppression rather than imagined as private choice alone."
     },
@@ -1289,7 +1292,9 @@
         "critical-theory",
         "marxism",
         "frankfurt-school",
-        "instrumental-rationality"
+        "instrumental-rationality",
+        "administered-society",
+        "culture-industry"
       ],
       "body": "Max Horkheimer's critical theory joins social philosophy with an account of knowledge. In his critique of traditional theory, he argues that apparently neutral concepts can conceal the social interests and historical conditions that make them possible. Reason becomes instrumental when it is reduced to calculating efficient means while refusing to ask what ends are worth pursuing. This reduction helps explain why technical progress can coexist with exploitation and political unfreedom.\n\nWorking with the Frankfurt School, Horkheimer analyzed how monopoly capitalism, mass culture, and authoritarian tendencies stabilize obedience without relying only on overt coercion. His collaboration with Theodor Adorno in Dialectic of Enlightenment argues that domination can enter enlightenment itself when the drive to control nature becomes a model for controlling people. Horkheimer later insisted that critical theory must retain a material concern for suffering and a normative hope for a less oppressive society, even when history offers no guaranteed path to emancipation."
     },
@@ -1335,7 +1340,9 @@
         "self",
         "poststructuralism",
         "power",
-        "discourse"
+        "discourse",
+        "biopolitics",
+        "disciplinary-power"
       ],
       "body": "Foucault's archaeology asks how a historical period makes some statements count as knowledge while excluding others. His genealogies then trace how practices such as examination, confinement, clinical observation, and confession join knowledge to power. Power is not only a possession of the state or a prohibition imposed from above; it circulates through institutions and ordinary techniques that shape what people can do and say.\n\nDiscipline produces useful bodies by arranging space, time, surveillance, and comparison, while biopolitics governs populations through birth, health, risk, and norms. Foucault's account of the subject is therefore not that people are unreal, but that forms of selfhood are historically made within practices. His later work on ethics examines how people can constitute themselves through reflective practices of freedom. This does not promise escape from power: resistance arises within the same field of relations and must invent new ways of living rather than appeal to a completely untouched human essence."
     },
@@ -1422,7 +1429,8 @@
       "summary": "Paul Feyerabend challenged universal scientific method and argued that historical inquiry reveals productive pluralism and rule-breaking.",
       "related": [
         "philosophy-of-science",
-        "scientific-realism"
+        "scientific-realism",
+        "methodological-anarchism"
       ],
       "body": "Feyerabend's methodological anarchism attacks the idea that one fixed set of rules explains every successful episode in science. Historical cases, especially Galileo's work, suggest that advances can require violating accepted standards, using suggestive rhetoric, preserving apparently refuted alternatives, or importing resources from other traditions. His slogan that anything goes is not a recommendation that evidence and criticism be abandoned; it is a warning against turning one historically successful strategy into a universal law.\n\nFeyerabend also criticizes the authority of science when it becomes a social institution insulated from democratic judgment. Scientific expertise is powerful and often valuable, but its political role should not automatically displace local knowledge, competing practices, or citizens' right to assess risks. His pluralism is controversial because an unrestricted proliferation of methods may seem unable to distinguish inquiry from propaganda. The strongest reading treats him as defending epistemic freedom and historical sensitivity while demanding that scientific authority remain contestable rather than sacred."
     },
@@ -1435,7 +1443,8 @@
       "summary": "Paulin Hountondji criticized ethnophilosophy and defended African philosophy as critical, authored, and historically accountable inquiry.",
       "related": [
         "decolonization",
-        "postcolonialism"
+        "postcolonialism",
+        "ethnophilosophy"
       ],
       "body": "Hountondji's critique of ethnophilosophy targets the presentation of an assumed collective worldview as though it were the philosophy of an entire people. A culture can contain concepts, proverbs, and intellectual practices without those materials constituting a single consensual system. Treating them as timeless collective wisdom can silence disagreement and make African thought appear incapable of individual argument or theoretical revision.\n\nFor Hountondji, philosophy is a critical activity carried by identifiable thinkers who publish, dispute, and answer objections. This does not mean African philosophy must imitate European academic institutions or sever itself from oral and communal traditions. It means that claims should be open to interrogation and historical reconstruction rather than protected by appeals to cultural authenticity. His project of intellectual decolonization therefore concerns the conditions under which knowledge is produced and circulated, including the unequal academic structures that make African work dependent on foreign recognition. It combines anti-exoticism with a positive demand for autonomous scholarly debate."
     },
@@ -1730,7 +1739,10 @@
       "related": [
         "critical-theory",
         "aesthetics",
-        "frankfurt-school"
+        "frankfurt-school",
+        "administered-society",
+        "culture-industry",
+        "negative-dialectics"
       ],
       "body": "Adorno's negative dialectics resists the demand that contradictions be resolved into a higher harmony. Concepts are necessary for thought, but no concept exhausts the particular object it classifies; when identity thinking treats the object as nothing more than its category, it repeats a form of domination. Philosophy should therefore attend to what a system leaves out, especially suffering that cannot be redeemed by an abstract historical totality.\n\nHis analysis of the culture industry argues that standardized entertainment can produce the appearance of choice while reproducing predictable desires and passive habits. This is not a claim that every popular work has identical effects; it is an account of how commercial organization narrows the conditions under which cultural experience can become critical. Adorno's studies of authoritarianism connect social psychology, family structure, economic insecurity, and political propaganda. His aesthetics preserves the possibility that difficult, non-identical art can resist social integration, but it does not place art outside history or material production."
     },
@@ -1809,7 +1821,8 @@
       "related": [
         "anti-racism",
         "pan-africanism",
-        "social-justice"
+        "social-justice",
+        "double-consciousness"
       ],
       "body": "Du Bois' account of double consciousness describes the divided standpoint produced when a person is compelled to see himself through a dominant society's contemptuous gaze while also sustaining an independent sense of self. The veil is not simply a metaphor for private psychology; it names the social separation that blocks mutual recognition and distributes opportunity, credibility, and citizenship unequally.\n\nDu Bois combined historical research, statistics, journalism, autobiography, and political organizing to show that racial hierarchy is made through law, labor, education, violence, and representation. He rejected both biological explanations of racial destiny and an abstract appeal to individual merit that ignored inherited conditions. His later work connected Black freedom to global colonialism, imperial capitalism, and the struggles of workers and nations. The politics that follows is not only integration into an unchanged order: democracy requires changing the institutions and narratives that make some lives appear naturally subordinate. Du Bois' method makes empirical inquiry itself part of liberation when it challenges official ignorance."
     },
@@ -1839,7 +1852,8 @@
       "summary": "Watsuji Tetsuro developed an ethics of relational existence in which persons are formed through shared practices, institutions, climate, and history.",
       "related": [
         "ethics",
-        "communitarianism"
+        "communitarianism",
+        "aidagara"
       ],
       "body": "Watsuji's ethics rejects the picture of the individual as an isolated atom who later enters society. Human existence is betweenness: a person becomes a person through relations of family, language, work, custom, and political belonging. These relations are not merely external influences on an already complete self; they are the medium in which agency and responsibility take shape.\n\nHis analysis of climate and milieu extends this relational view to the environments through which communities interpret and organize life. Watsuji distinguishes the individual moment of separation from the social moment of belonging, arguing that ethical action requires a movement between both. Community can sustain responsibility, but it can also become oppressive when conformity is mistaken for moral unity. This creates a tension in his political legacy, especially where relational ethics has been read as support for national belonging. The enduring contribution is a critique of purely individualist ethics and an account of obligation as rooted in concrete shared worlds rather than abstract persons alone."
     },
@@ -1911,7 +1925,10 @@
       "summary": "Zhu Xi systematized Neo-Confucian metaphysics around li, qi, moral cultivation, and the investigation of things.",
       "related": [
         "neo-confucianism",
-        "confucianism"
+        "confucianism",
+        "investigation-of-things",
+        "li-principle",
+        "qi"
       ],
       "body": "Zhu Xi's metaphysics distinguishes li, the patterns or principles that make things intelligible, from qi, the material force through which those patterns are embodied. Every thing has a principle, but the clarity or turbidity of its qi affects how that principle is expressed. This framework lets Zhu Xi explain moral norms as objective without treating them as detached entities existing outside the world. Human nature is linked to principle, while selfish desire and disturbed material endowment obscure its activity.\n\nMoral cultivation combines quiet-sitting, reading, self-examination, ritual practice, and the investigation of things. Gewu is not simply collecting scientific facts; it is a disciplined effort to grasp the principles embodied in concrete affairs and to correct one's conduct accordingly. Zhu Xi's commentaries made the Four Books central to later Confucian education and state examination, giving his philosophy institutional reach. Critics question whether the system overstates moral order or encourages scholastic orthodoxy, but its distinctive achievement is to connect cosmology, pedagogy, ethics, and public culture in one program of self-cultivation."
     },

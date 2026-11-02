@@ -6,20 +6,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Tending to agree with survey statements regardless of their content.",
-      "body": "Tending to agree with survey statements regardless of their content. Agreement can reflect a response habit rather than the attitude the question is intended to measure.",
+      "body": "Acquiescence bias is a response-style distortion in which agreement is chosen partly because agreeing is easier, more polite, or more familiar than evaluating each statement. It changes the mapping from an underlying attitude to an answer: a person may endorse two incompatible propositions because the response process favors yes. The comparison that establishes the bias is not agreement versus disagreement in isolation, but agreement on balanced items, reverse-keyed items, and items requiring different substantive judgments.\n\nFor example, a respondent can agree that managers should delegate routine decisions and that managers should personally approve every decision. The contradiction matters because the pair tests content while the repeated agreement pattern suggests a response habit. Reverse wording is not a cure if it creates confusion, so item comprehension and response time also matter. The pattern is evidence of possible acquiescence, not proof that every answer is invalid; some people genuinely hold conditional or inconsistent views.",
       "examples": [
         {
-          "text": "A respondent agrees both that managers should delegate more and that managers should retain every decision.",
-          "note": null
+          "text": "A respondent agrees that managers should delegate routine decisions and that managers should personally approve every decision.",
+          "note": "The two answers pull in opposite operational directions, so agreement with both is more diagnostic of a yes-saying response style than of one coherent policy preference."
         }
       ],
       "counters": [
-        "Use balanced item wording and compare agreement with oppositely phrased items."
+        "Balance positively and negatively keyed items, pilot them for comprehension, and inspect whether respondents endorse incompatible statements at unusual rates.",
+        "Offer a neutral or uncertainty response when the construct does not require forced agreement or disagreement."
       ],
       "limitations": [
-        "Agreement supported by a stable, coherent opinion is not acquiescence bias."
+        "Reverse-keyed items can introduce wording artifacts, and apparent agreement style can instead reflect a genuinely broad or conditional attitude.",
+        "This pattern is a measurement concern; it does not establish deception or a stable personality trait in the respondent."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "The phenomenon is well established as a survey-response concern, but its size depends on wording, culture, topic involvement, and the response scale.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -32,20 +34,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Preferring intervention over inaction even when waiting has better expected results.",
-      "body": "Preferring intervention over inaction even when waiting has better expected results. Acting can feel more responsible or defensible than tolerating uncertainty.",
+      "body": "Action bias is a preference for intervening when the expected value of waiting is at least as good, often because an action provides an immediate sense of responsibility or creates a defensible explanation after the outcome. The mechanism is not simply impatience: intervention changes the decision maker's psychological exposure to uncertainty, while inaction can feel like ownership of a bad result. The proper comparison is an explicit wait option with its timing, reversibility, information gain, and delay cost, not action against a vague feeling of passivity.\n\nA technician who repeatedly resets a server during a recovery process may prolong the outage because each reset interrupts the process that would have restored service. The example fits when logs show that waiting has a higher recovery probability and the resets add little information. Action is rational when a safety threshold is crossed, a deadline is binding, or delay compounds harm. A written trigger for intervention therefore counters the bias better than a general instruction to be calm.",
       "examples": [
         {
           "text": "A technician repeatedly resets a server during a recovery process that needs uninterrupted time.",
-          "note": null
+          "note": "The resets feel responsive but remove the recovery time the system requires, making intervention itself the source of avoidable delay."
         }
       ],
       "counters": [
-        "Include waiting as an explicit option and compare its likely outcomes."
+        "Write action and wait as competing options, then record the expected harm, information gained, reversibility, and deadline for each.",
+        "Set precommitted intervention thresholds so a person acts when evidence crosses a risk boundary rather than when discomfort peaks."
       ],
       "limitations": [
-        "Acting promptly is warranted when delay increases expected harm."
+        "Immediate intervention is justified when delay raises expected harm, loses a scarce opportunity, or prevents a reversible safeguard.",
+        "A later bad outcome does not prove that the original inaction was biased; decisions must be judged with the information available at the time."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Evidence for action preferences is strongest in repeated decision tasks and situations with visible accountability; its magnitude varies with stakes, feedback, and perceived control.",
       "lookalikes": [],
       "related": [
         "we-have-to-do-something"
@@ -60,20 +64,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Explaining one's own conduct through circumstances while explaining others' conduct through dispositions.",
-      "body": "Explaining one's own conduct through circumstances while explaining others' conduct through dispositions. The proposed asymmetry varies with perspective, event valence, and information; it is not a universal law.",
+      "body": "Actor–observer asymmetry describes a tendency to use situational explanations for one's own behavior while using person-centered explanations for another person's comparable behavior. The proposed mechanism is an uneven information set: an actor sees private constraints, intentions, and changing circumstances, whereas an observer sees the person against a stable background. Attention to the person and the situation also changes with perspective and with whether the outcome is favorable or unfavorable. The relevant comparison is matched behavior under comparable information, not any single difference in explanation.\n\nCalling one's lateness traffic-related while calling a colleague's lateness laziness illustrates the asymmetry only if the traffic evidence and scheduling conditions are similarly unknown. If the colleague repeatedly arrives late after receiving the same travel information, a dispositional explanation gains legitimate support. The effect is therefore an empirical tendency with important qualifications, not a rule that self-explanations are situational or other-explanations dispositional. Asking what evidence would discriminate between constraint, intention, and stable habit makes the comparison explicit.",
       "examples": [
         {
-          "text": "You call your own lateness a traffic problem but a colleague's lateness laziness.",
-          "note": null
+          "text": "You explain your own lateness with an unexpected road closure but explain a colleague's similar lateness as laziness without checking their circumstances.",
+          "note": "The contrast concerns unequal access to situational information; it is not established if the colleague had a documented recurring scheduling problem."
         }
       ],
       "counters": [
-        "Compare the situational information available about each person."
+        "Describe both people's constraints, prior behavior, and available information before assigning a stable trait.",
+        "Use the same causal questions for self and other: what changed, what was controllable, and what pattern appears across occasions?"
       ],
       "limitations": [
-        "Different explanations can be justified when the circumstances actually differ."
+        "People may have genuinely different circumstances, and observers can sometimes possess better records than actors about repeated behavior.",
+        "Research findings vary with culture, relationship, outcome valence, and whether the actor or observer has access to relevant contextual information."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "The asymmetry is a qualified social-psychological pattern rather than a universal law; evidence is sensitive to perspective, valence, and the information structure of the task.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -86,20 +92,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Overlooking improvements that remove elements while searching for improvements that add them.",
-      "body": "Overlooking improvements that remove elements while searching for improvements that add them. A search process can neglect subtraction even when removal would meet the goal more efficiently.",
+      "body": "Additive bias is a search failure in which proposed improvements disproportionately add features, steps, resources, or rules while neglecting subtraction. Addition is cognitively available because the existing structure remains intact and the new element can be described as a visible fix; removal requires noticing that an inherited element is unnecessary or that a constraint can be relaxed. The comparison is between the best additive solution and feasible subtractive changes that meet the same objective, not between adding and removing as moral opposites.\n\nA team may install approval software to speed a workflow while leaving a redundant approval step in place. The example fits if deleting that step would reduce delay without weakening the required control. A subtraction prompt is useful because ordinary brainstorming will otherwise elaborate the current design. Removal can still be wrong when the element supplies safety, legal compliance, accessibility, or resilience. The bias concerns an incomplete search, so a subtractive idea need not ultimately be selected.",
       "examples": [
         {
-          "text": "A team adds approval software to a slow workflow without considering deleting a redundant approval step.",
-          "note": null
+          "text": "A team adds approval software to a slow workflow but never tests whether one redundant approval step can be removed.",
+          "note": "The unchanged redundant step shows that the team optimized around the existing process instead of considering whether the process itself contains the bottleneck."
         }
       ],
       "counters": [
-        "Generate at least one solution that removes a step, feature, or constraint."
+        "Require a separate pass that asks what can be deleted, shortened, merged, or made optional while preserving the stated objective.",
+        "Evaluate additive and subtractive proposals against the same safety, quality, cost, and reversibility criteria."
       ],
       "limitations": [
-        "Adding something is reasonable when subtraction cannot achieve the objective."
+        "Addition is appropriate when a missing capability or safeguard is the actual constraint and removal would reduce performance or safety.",
+        "A lack of subtractive proposals does not prove a bias if the team considered removal and rejected it for documented reasons."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Experimental work supports a tendency to overlook subtraction in design tasks, but the effect depends on how the task frames constraints and on participants' domain knowledge.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -112,20 +120,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Allowing a current emotional state to color a judgment whose subject did not produce that emotion.",
-      "body": "Allowing a current emotional state to color a judgment whose subject did not produce that emotion. Mood can supply an incidental cue when information is ambiguous or processing is open-ended.",
+      "body": "Affect infusion occurs when a current mood enters a judgment through open-ended or constructive processing, even though the judged object did not cause the mood. Mood can alter which associations are accessible, how much ambiguity is tolerated, and how information is interpreted; it need not be a deliberate emotional reaction to the target. The comparison is between judgments of the same target under different incidental moods while relevant evidence is held constant.\n\nAfter a pleasant walk, a buyer may rate an unchanged apartment more favorably because the pleasant feeling is misread as information about the apartment. This fits affect infusion if the walk, rather than a newly noticed apartment feature, accounts for the shift. Mood is not automatically contaminating: concern caused by a building's unsafe wiring is relevant evidence, and affect can be an appropriate summary of accumulated experience. Writing down criteria before a high-stakes evaluation reduces the opportunity for an incidental feeling to supply the answer.",
       "examples": [
         {
-          "text": "After a pleasant walk, a buyer rates an unchanged apartment more favorably.",
-          "note": null
+          "text": "After a pleasant walk, a buyer rates an unchanged apartment more favorably than before the walk.",
+          "note": "The walk is incidental to the apartment, so the mood can become an easy cue when the property has ambiguous or incomplete evidence."
         }
       ],
       "counters": [
-        "Reassess important judgments in another mood using the same written criteria."
+        "Record object-specific criteria and evidence before evaluating, then check whether the rating changes when the same evidence is reviewed in a different mood.",
+        "Separate feelings caused by the target from feelings carried into the judgment by asking what observation would remain if the mood disappeared."
       ],
       "limitations": [
-        "Emotion can carry relevant information when it arises from the object being assessed."
+        "An emotion generated by the object can be relevant information, and a mood shift does not by itself show that a judgment is wrong.",
+        "Mood effects are less likely when judgments are highly constrained by objective rules or when the target's evidence is clear."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Mood-congruent judgment is supported in controlled research, but affect infusion is moderated by processing style, task ambiguity, and whether the feeling is relevant to the target.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -138,20 +148,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Readily attributing ambiguous events to the action of an intentional agent.",
-      "body": "Readily attributing ambiguous events to the action of an intentional agent. Patterns or noises may be interpreted as purposeful even when impersonal processes explain them.",
+      "body": "Agent detection bias is an elevated readiness to explain ambiguous patterns as the product of an intentional actor. The mechanism treats coordination, movement, or apparent responsiveness as evidence of a goal-directed source before alternative causes have been compared. It differs from anthropomorphism: an agent-detection error can posit an unseen human, animal, or hostile actor without attributing human feelings or motives to it. The relevant comparison is the likelihood of intentional and impersonal explanations given the same observations and base rates.\n\nA branch tapping a window may be interpreted as someone deliberately signaling. That interpretation fits the bias if wind direction, repeated timing, and the branch's position explain the taps at least as well, while no independent evidence indicates a person. A real intruder, coordinated attack, or animal can of course produce purposeful evidence. The corrective is not to deny agency but to delay commitment until predictions differ: an agent hypothesis should predict traces, responses, or regularities that a physical process would not.",
       "examples": [
         {
-          "text": "A branch tapping a window is interpreted as someone deliberately signaling.",
-          "note": null
+          "text": "A branch tapping a window is interpreted as a person deliberately signaling despite wind and branch movement explaining the timing.",
+          "note": "The ambiguous sound supports an agency story emotionally, but the mechanical explanation accounts for the same pattern without an intentional source."
         }
       ],
       "counters": [
-        "Compare intentional and nonintentional explanations against the same observations."
+        "List an intentional explanation and at least one physical or stochastic explanation, then identify observations on which their predictions diverge.",
+        "Check base rates and seek independent traces of an actor before escalating from an ambiguous pattern to a threat claim."
       ],
       "limitations": [
-        "Evidence of coordinated, goal-directed behavior can support an agency explanation."
+        "Repeated goal-directed responses, tool use, or evidence of coordination can make an agency explanation more probable than a purely mechanical account.",
+        "Detecting agency can be adaptive under asymmetric danger costs, so a precautionary alert is not identical to a settled causal belief."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Agency-detection findings are robust in perception and social inference tasks, but the threshold shifts with threat, cultural learning, base rates, and the cost of missed detection.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -164,11 +176,11 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Rejecting an algorithm after an error more strongly than its comparative performance warrants.",
-      "body": "Rejecting an algorithm after an error more strongly than its comparative performance warrants. An observed mistake can make an automated forecast feel less acceptable than a human forecast with a worse track record. The relevant comparison is overall performance on the task, including costs and error types, rather than whether either source is flawless.",
+      "body": "Algorithm aversion is a disproportionate loss of trust in an algorithm after observing an error, relative to its comparative accuracy and failure costs. A visible machine mistake can feel more diagnostic than a human mistake because people expect a program to be consistent and because they can imagine correcting their own judgment. The correct comparison is performance on the same task and population, including calibration, error severity, opportunity for human override, and the consequences of distribution shift.\n\nIf a forecasting tool makes one public error, a user may abandon it for a colleague whose logged forecasts are less accurate overall. The example fits only after comparable records show that the algorithm's error does not signal a changed data regime or an unacceptable failure mode. Users may rationally reject a system that is opaque, unmonitorable, or misaligned with their objective even when its average score is good. Showing error distributions and allowing informed correction addresses the mechanism better than insisting that the tool is objective.",
       "examples": [
         {
-          "text": "A forecasting tool makes one visible error. You stop using it and return to a colleague whose logged forecasts are less accurate overall.",
-          "note": null
+          "text": "A forecasting tool makes one visible error, so a manager returns to a colleague whose logged forecasts are less accurate overall.",
+          "note": "The aversion is disproportionate only if the human comparison is fair and the isolated algorithmic error does not reveal a deployment problem."
         }
       ],
       "lookalikes": [],
@@ -176,12 +188,14 @@
         "automation-bias"
       ],
       "counters": [
-        "Compare humans and algorithms on the same held-out cases using a relevant performance measure."
+        "Compare human and algorithm forecasts on the same held-out cases with predeclared metrics and error costs.",
+        "Show calibration, uncertainty, and failure modes, and test whether a human-algorithm team improves decisions rather than demanding blind acceptance."
       ],
       "limitations": [
-        "Rejecting a tool can be justified by distribution shift, unacceptable failure modes, or deployment conditions absent from its benchmark."
+        "Rejecting an algorithm is justified when its data distribution has shifted, its errors are unacceptable, or users cannot detect and correct failures.",
+        "A single error can be informative when the system promised near-perfect performance or failed in a high-stakes way."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Algorithm-aversion effects have been observed in judgment experiments, but trust depends strongly on error visibility, task stakes, feedback, transparency, and whether the human can improve the model.",
       "tags": [
         "decision-making"
       ]
@@ -192,20 +206,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Systematic distortion or unfair disadvantage introduced or reproduced by an automated decision process.",
-      "body": "Systematic distortion or unfair disadvantage introduced or reproduced by an automated decision process. Training data, objectives, labels, and deployment conditions can each contribute to unequal errors.",
+      "body": "Algorithmic bias is systematic distortion or unequal disadvantage produced, amplified, or preserved by an automated decision pipeline. The mechanism can enter through the target chosen for prediction, historical labels, missing data, measurement proxies, optimization objectives, thresholds, or deployment conditions. It is not synonymous with any group difference: the relevant comparison requires an intended decision standard, a defined population, and an examination of how errors and benefits are distributed relative to that standard.\n\nA hiring model trained on historical selections may downrank applicants from a group that was previously excluded. The example fits if the historical label measures access to past hiring rather than job-relevant performance, allowing the model to reproduce the old gatekeeping process. A model can also produce unequal error rates because a measurement is noisier for one group without encoding an explicit group rule. Auditing therefore needs data provenance, subgroup performance, threshold effects, and a remedy matched to the source of distortion.",
       "examples": [
         {
-          "text": "A hiring model learns to downrank applicants from a group historically excluded from recruitment.",
-          "note": null
+          "text": "A hiring model learns from historical selections and downranks applicants from a group previously excluded from recruitment.",
+          "note": "The concern is the relationship between the training label and job-relevant suitability, not merely the fact that the model outputs different group rates."
         }
       ],
       "counters": [
-        "Audit labels and subgroup errors against the intended decision standard."
+        "Define the decision-relevant outcome, document label and feature provenance, and audit errors and abstentions across relevant subgroups.",
+        "Test performance under realistic deployment conditions and involve affected stakeholders when choosing thresholds or remediation."
       ],
       "limitations": [
-        "An observed group difference alone does not identify its cause or establish a particular fairness violation."
+        "Group disparities can arise from legitimate task differences, sampling, measurement error, or social conditions, so a disparity alone does not identify a particular fairness violation.",
+        "Removing a protected attribute may not remove its proxies, and optimizing one fairness criterion can worsen another when base rates differ."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Evidence for algorithmic bias is case-specific; reliable claims require a causal or measurement account of the pipeline, not a generic assumption that automation is either neutral or discriminatory.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -220,20 +236,22 @@
       ],
       "symbolName": null,
       "summary": "Preferring risks with known probabilities over alternatives whose probabilities are unclear.",
-      "body": "Preferring risks with known probabilities over alternatives whose probabilities are unclear. Uncertainty about the probability distribution can itself make an option less attractive.",
+      "body": "Ambiguity aversion is a preference against options whose outcome probabilities are unknown or disputed, beyond any dislike of the outcomes themselves. Uncertainty about the probability model can make a choice feel less controllable and harder to justify, even when the known-probability option has similar expected value. The comparison is between matched gambles that hold payoffs constant while changing whether probabilities are specified, not between a familiar safe option and an objectively worse unknown one.\n\nA person may prefer a draw from an urn known to contain half red balls over a draw from an urn whose red proportion is unknown. The example isolates ambiguity because the payoff rule is the same and only the probability description differs. Avoidance can be rational when model uncertainty conceals catastrophic tails, when information is cheap to obtain, or when accountability requires a defensible probability. It becomes a bias concern when the known distribution is treated as safe despite larger losses or when useful evidence about the unknown distribution is ignored.",
       "examples": [
         {
-          "text": "You prefer a draw from an urn known to be half red to a draw from an urn with an unknown red proportion.",
-          "note": null
+          "text": "You prefer a half-red known urn to an urn with an unknown red proportion even though the prizes and draw procedure are identical.",
+          "note": "The preference tracks uncertainty about the probability distribution rather than a difference in the stated payoff structure."
         }
       ],
       "counters": [
-        "Separate uncertainty about probabilities from the size of possible gains and losses."
+        "Separate outcome severity, expected value, and uncertainty about probabilities in a written decision table.",
+        "Seek information that narrows the unknown distribution and use sensitivity analysis to show which assumptions drive the choice."
       ],
       "limitations": [
-        "Avoiding poorly understood risks can be justified by uncertainty and the costs of being wrong."
+        "Avoiding an ambiguous option can be rational under model uncertainty, estimation cost, or asymmetric downside risk.",
+        "Laboratory preferences do not determine how a person should act in a real decision with learning opportunities and institutional duties."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Ambiguity aversion is a replicated preference in experimental choice, but its size and even direction vary with framing, experience, learning, and the decision maker's confidence in the probability model.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -248,20 +266,22 @@
       ],
       "symbolName": null,
       "summary": "Letting an initial value pull a later estimate toward it more than its evidential relevance warrants.",
-      "body": "Letting an initial value pull a later estimate toward it more than its evidential relevance warrants. An arbitrary or strategically chosen starting number can remain influential after adjustment.",
+      "body": "Anchoring bias occurs when an initial value pulls a later estimate toward it more than its evidential relevance warrants. The anchor can alter the starting point of numerical adjustment, make nearby values easier to retrieve, or frame what counts as plausible. The appropriate comparison is an independently generated estimate under the same information except for the arbitrary starting value; a relevant first observation may properly change a forecast.\n\nA buyer treats 500 as cheap because a seller first labels the item 900, even though the original price has no market evidence behind it. The example fits if independent comparable sales cluster elsewhere and the buyer's estimate moves toward 900 after exposure. An anchor is not refuted merely because the final number differs from it: the question is whether the residual pull exceeds what the anchor's information warrants. Separating research from negotiation and recording a private range before disclosure reduces both numerical and strategic anchoring.",
       "examples": [
         {
-          "text": "A buyer treats a discounted price of 500 as cheap because an unsupported original price was 900.",
-          "note": null
+          "text": "A buyer treats a 500 price as cheap because an unsupported original price was 900.",
+          "note": "The first number supplies a comparison point without evidential support, so its influence is distinct from learning that similar items really sell near 900."
         }
       ],
       "counters": [
-        "Estimate the market value independently before examining the seller's reference price."
+        "Generate an estimate and an uncertainty range from independent data before viewing a reference price or proposal.",
+        "Use multiple comparable benchmarks and ask how the estimate would change if the initial number were absent or replaced."
       ],
       "limitations": [
-        "A relevant initial observation may properly influence an estimate."
+        "An initial measurement, prior forecast, or market quote can be relevant evidence and should not be ignored merely because it came first.",
+        "Anchoring research does not imply that every negotiation opening or salient number produces a measurable distortion."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Anchoring is a robust finding in numerical judgment, but effect size varies with expertise, accountability, knowledge of the task, and the anchor's perceived relevance.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -276,20 +296,22 @@
       ],
       "symbolName": null,
       "summary": "Using human characteristics as the default model for understanding other organisms or the natural world.",
-      "body": "Using human characteristics as the default model for understanding other organisms or the natural world. Human needs and experiences may be projected onto species with different physiology or behavior.",
+      "body": "Anthropocentric thinking uses human needs, senses, social categories, or timescales as the default model for nonhuman organisms and natural systems. It can hide mechanisms that are obvious only from the organism's ecology: a nocturnal animal's sensory world, a plant's chemical signaling, or a river's response to seasonal flow. The comparison is between a human analogy and evidence from the target system's physiology, behavior, and environment.\n\nA child may assume a nocturnal animal dislikes darkness because darkness is uncomfortable for a human. The example fits because the inference imports human visual dependence instead of asking what darkness does to that species' navigation and predation. Human concepts can still be useful when shared biology or a deliberately specified analogy makes the relevant feature comparable. The error is not caring about nature in human terms; it is treating human experience as evidence about another system without checking the system's own constraints. A species' own costs and affordances are the relevant starting point.",
       "examples": [
         {
-          "text": "A child assumes a nocturnal animal must dislike darkness because the child does.",
-          "note": null
+          "text": "A child assumes a nocturnal animal dislikes darkness because darkness is uncomfortable for the child.",
+          "note": "The inference uses a human visual experience where the animal's sensory adaptations may make darkness beneficial or neutral."
         }
       ],
       "counters": [
-        "Check the species' sensory capacities and ecological conditions before generalizing from humans."
+        "Start with the target organism's sensory capacities, ecological pressures, and observable behavior before importing a human comparison.",
+        "State which biological feature is shared and which differs whenever a human analogy is used to explain a nonhuman system."
       ],
       "limitations": [
-        "Human comparisons can be useful when the relevant biological features are shared."
+        "Human-centered models can be useful for ethical communication or shared physiological processes when the analogy is explicitly bounded.",
+        "Anthropocentrism is a framing error, not proof that every human interpretation of nature is factually false."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "The label covers a broad interpretive tendency rather than one standardized experimental effect; claims should be evaluated against species-specific evidence.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -302,20 +324,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Attributing human emotions, intentions, or mental capacities without sufficient evidence.",
-      "body": "Attributing human emotions, intentions, or mental capacities without sufficient evidence. Human-like appearance or language can invite inferences about inner experience.",
+      "body": "Anthropomorphic bias attributes human-like emotions, intentions, or mental capacities to a nonhuman target without evidence sufficient for that attribution. Human language, faces, movement, and responsive behavior supply familiar cues, so observers can confuse a system's output or an animal's behavior with proof of a human-like inner state. It differs from agent detection: detecting a goal-directed source asks whether an agent exists, whereas anthropomorphism specifies what that agent feels or understands.\n\nA user may infer that a chatbot feels ashamed because it writes an apology. The wording is evidence that the system produced a socially appropriate response, not by itself evidence of felt shame, self-awareness, or moral understanding. Some animals have well-supported affective and cognitive capacities, so a good counter is calibrated attribution rather than blanket denial. Ask what behavior is observed, what mechanism could generate it, and what additional evidence would distinguish experience from simulation or learned response. Behavioral resemblance alone leaves the inner-state question open.",
       "examples": [
         {
-          "text": "A user assumes a chatbot feels ashamed because it writes an apology.",
-          "note": null
+          "text": "A user concludes that a chatbot feels ashamed because it generates an apology after an error.",
+          "note": "The apology demonstrates a linguistic behavior; it does not distinguish felt shame from a response policy that learned when apologies are expected."
         }
       ],
       "counters": [
-        "Distinguish observable behavior from evidence for the attributed mental state."
+        "Separate observed behavior, inferred function, and claimed subjective experience in notes and product decisions.",
+        "Demand converging evidence appropriate to the target, such as flexible behavior across contexts, rather than relying on human-like wording or appearance alone."
       ],
       "limitations": [
-        "Some nonhuman animals do have affective and cognitive capacities; attribution requires evidence, not blanket denial."
+        "Nonhuman animals can possess affective or cognitive capacities, and absence of human language is not evidence of absence of experience.",
+        "Attributing a practical role or intention to a designed system can be useful shorthand if it is not mistaken for a claim about consciousness."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Anthropomorphism is well documented as a social-perception tendency, but conclusions about animal experience or machine consciousness remain target-specific and cannot be settled by the label alone.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -328,20 +352,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Distorting an estimate through systematic differences in how cases are found or identified.",
-      "body": "Distorting an estimate through systematic differences in how cases are found or identified. A condition may appear more frequent where detection is more intensive.",
+      "body": "Ascertainment bias arises when the process that finds, tests, or classifies cases differs systematically across people, places, or conditions, so observed counts no longer represent the same underlying detection opportunity. More screening, more sensitive instruments, or a lower referral threshold can raise recorded prevalence without changing incidence. The comparison must therefore include the observation process, not only the resulting case count.\n\nA screened district reports more infections than an unscreened district. That difference fits ascertainment bias if the districts have comparable underlying incidence but different testing coverage and the additional cases are concentrated among people who would otherwise remain unobserved. A true incidence difference can coexist with ascertainment, and correcting for detection may require validation samples or a model of sensitivity and specificity. The bias is about inference from found cases to the target population, not about every screening program being misleading. The target population must be defined before the count is interpreted.",
       "examples": [
         {
-          "text": "A screened district reports more infections than an unscreened district despite equal underlying incidence.",
-          "note": null
+          "text": "A screened district reports more infections than an unscreened district despite similar underlying incidence.",
+          "note": "The recorded difference is partly created by unequal opportunity to detect mild or asymptomatic cases, so raw counts compare observation systems as well as disease."
         }
       ],
       "counters": [
-        "Compare detection procedures and adjust the target estimate for differences in case finding."
+        "Document who was eligible, tested, referred, and classified, then compare sensitivity and coverage across groups.",
+        "Use standardized ascertainment, capture-recapture, validation subsamples, or sensitivity analysis when equal detection cannot be achieved."
       ],
       "limitations": [
-        "A difference in recorded counts can reflect a true difference as well as ascertainment."
+        "Recorded differences can reflect genuine incidence, and adjustment models can add assumptions that are themselves uncertain.",
+        "Uniform case finding does not remove bias from inaccurate tests or an outcome definition that differs from the research question."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Ascertainment is a central concern in epidemiology and observational research; the direction and size of its effect depend on detection sensitivity, referral pathways, and disease severity.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -354,20 +380,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Assuming other people share one's own traits, values, or preferences more than the evidence supports.",
-      "body": "Assuming other people share one's own traits, values, or preferences more than the evidence supports. One's own response becomes a substitute for learning about the other person.",
+      "body": "Assumed similarity bias substitutes one's own preferences, values, or reactions for evidence about another person's. The mechanism is economical: introspection makes one's own response available immediately, while learning another person's response requires asking, observing, or tolerating uncertainty. The relevant comparison is between the decision maker's preference and independently measured preferences in the target population, not between people who merely share a demographic label.\n\nA manager who enjoys public praise may plan an award ceremony believing every employee will welcome it. The example fits if the manager has not checked employees' preferences and if some value privacy, team credit, or schedule flexibility more than public recognition. Similarity can be real, especially among people selected for a shared role, but it must be established rather than presumed. Anonymous choice, opt-outs, and direct questions are especially important when the cost of misreading another person's preference falls on that person. The cost of a wrong assumption is borne by the person being designed for.",
       "examples": [
         {
           "text": "A manager who loves public praise assumes every employee wants an award ceremony.",
-          "note": null
+          "note": "The manager's own reaction is being used as a proxy for colleagues' preferences, despite a simple opportunity to ask them."
         }
       ],
       "counters": [
-        "Ask about the individual's preferences instead of inferring them from your own."
+        "Ask the affected person or collect independent preference data before designing an experience for them.",
+        "Offer meaningful options and opt-outs when preferences are heterogeneous or the social cost of refusal is high."
       ],
       "limitations": [
-        "Similarity established by independent evidence is not merely assumed."
+        "Similarity established through representative evidence, shared incentives, or repeated observation is not merely assumed.",
+        "A quick default based on a well-supported local norm can be reasonable when asking is costly and the consequences are minor."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Projection and assumed-similarity effects are established in social judgment, but accuracy improves with interaction, feedback, and knowledge of the relevant population.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -380,20 +408,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Directing attention disproportionately toward a particular class of cues.",
-      "body": "Directing attention disproportionately toward a particular class of cues. Selective attention can affect which information becomes available for later judgment.",
+      "body": "Attentional bias is a systematic difference in which cues receive limited perceptual or cognitive resources, making one class of information more available for later judgment. Threat, reward, personal goals, and learned associations can capture attention; the resulting visibility can be mistaken for frequency or importance. The comparison is not whether a cue was noticed, but whether attention was allocated disproportionately relative to the decision's information needs and whether omitted cues would change the conclusion.\n\nAn anxious traveler repeatedly notices warning signs and overlooks routine safety information. The example fits if the attention pattern persists when the task requires estimating overall risk and if the warning signs are not actually more predictive than the missed evidence. Threat monitoring can be adaptive in a dangerous setting, and selective attention is often necessary. A structured scan helps only when it includes cues that are relevant but less salient; adding arbitrary information can dilute rather than improve judgment.",
       "examples": [
         {
-          "text": "An anxious traveler repeatedly notices signs of danger and misses signs of routine safety.",
-          "note": null
+          "text": "An anxious traveler repeatedly notices signs of danger while failing to register routine safety information.",
+          "note": "The issue is an attention allocation that overrepresents threat cues, not the mere fact that the traveler notices a genuine warning."
         }
       ],
       "counters": [
-        "Use a structured scan that includes evidence outside the salient cue category."
+        "Define the full cue set needed for the decision and use a fixed scan or checklist before interpreting the most salient item.",
+        "Review missed as well as noticed cues, using objective logs or a second observer when attention is likely to narrow under stress."
       ],
       "limitations": [
-        "Attention to a relevant threat can be adaptive and need not distort a decision."
+        "Prioritizing a relevant threat can be adaptive, and attention bias does not show that the attended cue is false or that the decision is wrong.",
+        "Laboratory attentional measures do not always predict real-world behavior, especially when people can deliberately compensate."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Attentional selection is strongly supported, while the persistence and behavioral importance of named threat biases vary by task, anxiety level, cue validity, and measurement method.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -406,20 +436,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Answering a difficult question by unconsciously answering an easier related question.",
-      "body": "Answering a difficult question by unconsciously answering an easier related question. The accessible attribute may correlate imperfectly with the attribute actually at issue.",
+      "body": "Attribute substitution occurs when a difficult target question is answered through an easier attribute that is accessible and only imperfectly related. The substituted attribute can be a feeling, image, reputation, or simple count, allowing a fluent answer before the decision maker has represented the target construct. The comparison is between the question asked and the evidence used: a proxy is legitimate only when its relationship to the target is validated for the current population and purpose.\n\nAsked whether an investment is financially sound, a person may answer according to how impressive the founder seems. That impression may contain useful information about execution, but it cannot by itself establish cash flow, valuation, solvency, or risk. Writing the target question and its decision rule exposes the substitution; then the proxy can be retained as one feature rather than allowed to stand in for the whole assessment. Expertise can reduce substitution when it makes relevant attributes readily accessible, but fluency alone is not validation.",
       "examples": [
         {
-          "text": "Asked whether an investment is financially sound, you answer according to how impressive its founder seems.",
-          "note": null
+          "text": "Asked whether an investment is financially sound, you answer mainly from how impressive its founder seems.",
+          "note": "Founder impression is easier to judge than financial soundness and may correlate only loosely with the target outcome."
         }
       ],
       "counters": [
-        "Write the target question and identify which evidence directly answers it."
+        "Write the target attribute, its operational measure, and the evidence that would directly bear on it before considering intuitive proxies.",
+        "Validate any proxy on comparable cases and combine it with direct measures rather than allowing a fluent impression to replace the target question."
       ],
       "limitations": [
-        "An explicit, validated proxy can be useful when its limits are acknowledged."
+        "A validated proxy is useful when direct measurement is costly, and a quick heuristic can be rational under time pressure with low stakes.",
+        "Not every intuitive shortcut is substitution; the diagnosis requires evidence that the easier attribute displaced the intended one."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Attribute substitution is a central account of many judgment heuristics, but identifying the substituted attribute in natural decisions requires process evidence rather than outcome error alone.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -432,20 +464,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Distorting a study's comparison because participants who leave differ systematically from those who remain.",
-      "body": "Distorting a study's comparison because participants who leave differ systematically from those who remain. Differential dropout can destroy the comparability of the groups analyzed.",
+      "body": "Attrition bias distorts a study comparison when loss to follow-up depends on treatment, prognosis, exposure, or an outcome related to the research question. The analyzed participants then differ from the randomized or enrolled population in ways that can change both the estimated effect and its uncertainty. The key comparison is between outcomes under the intended analysis population and outcomes among those who remain, not simply between the number lost in each group.\n\nA training program may look successful after struggling participants stop completing follow-up tests. The example fits if dropout is related to poor performance and the analysis treats completers as if they were an unchanged sample. Equal dropout percentages can still hide unequal reasons or outcomes, while unequal percentages do not automatically create bias if loss is unrelated to outcome after conditioning on measured factors. Retention efforts, prespecified missing-data assumptions, and sensitivity analyses should be aligned with how dropout occurred.",
       "examples": [
         {
-          "text": "A training program looks successful after most struggling participants stop completing follow-up tests.",
-          "note": null
+          "text": "A training program looks successful after participants who struggle most stop completing follow-up tests.",
+          "note": "The remaining sample is selectively enriched for people likely to improve or persist, so completer results need not describe everyone who entered the program."
         }
       ],
       "counters": [
-        "Track dropout by group and examine sensitivity to plausible missing outcomes."
+        "Report retention and reasons for loss by group, analyze according to the intended population, and model plausible missing outcomes.",
+        "Use follow-up contacts and low-burden outcome measures to reduce informative dropout before relying on statistical correction."
       ],
       "limitations": [
-        "Random loss unrelated to outcomes can reduce precision without creating the same systematic distortion."
+        "Random loss unrelated to outcome may mainly reduce precision, and statistical adjustment cannot recover information that was never measured.",
+        "Differential attrition is a warning to inspect assumptions, not proof that the intervention has no benefit or that every missing participant would have failed."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Attrition is a well-established threat to longitudinal and trial validity; the direction of distortion depends on why participants leave and how missing outcomes relate to treatment and prognosis.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -458,20 +492,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Giving a claim excessive weight because it comes from a perceived authority.",
-      "body": "Giving a claim excessive weight because it comes from a perceived authority. Status may substitute for checking whether the person has relevant expertise and evidence.",
+      "body": "Authority bias gives a claim extra weight because its source has status, prestige, institutional power, or a reputation for expertise, even when that authority is irrelevant to the subject or the evidence is weak. The mechanism can reduce scrutiny and make disagreement feel socially costly. The proper comparison is between the claim's support and the source's domain-specific competence, track record, incentives, and accountability; authority can be evidence, but it is not a substitute for relevance.\n\nA famous surgeon's opinion about currency markets may be accepted without checking exchange-rate data or monetary expertise. The example fits because medical prestige does not transfer automatically to finance. Deference to a qualified specialist can be rational when the task is within the specialist's demonstrated domain and independent review is expensive. A useful test is whether the same evidence would be judged differently after removing the speaker's title, followed by a check of whether the title actually predicts accuracy for this question.",
       "examples": [
         {
-          "text": "A famous surgeon's opinion about currency markets is accepted without scrutiny.",
-          "note": null
+          "text": "A famous surgeon's opinion about currency markets is accepted without scrutiny because of the surgeon's medical reputation.",
+          "note": "The status cue is real but domain-mismatched, so it supplies social confidence without establishing competence in currency forecasting."
         }
       ],
       "counters": [
-        "Check expertise in the specific subject and examine independent support."
+        "Separate domain expertise, institutional role, and evidential support, then seek independent checks for high-consequence claims.",
+        "Evaluate the argument before revealing prestige where practical, and record dissenting reasons without treating disagreement as disloyalty."
       ],
       "limitations": [
-        "Deference to qualified, accountable expertise can be rational."
+        "Relying on accountable expertise is rational when the authority is relevant, evidence-based, and better positioned than the decision maker to know.",
+        "A claim can be true despite authority bias; the bias concerns the weight assigned, not the claim's final truth value."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Status effects on judgment are well documented, but expertise can improve accuracy when it is domain-specific, calibrated, and linked to mechanisms of accountability.",
       "lookalikes": [],
       "related": [
         "truth-bias"
@@ -486,20 +522,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Relying too readily on automated recommendations or failing to notice errors they introduce.",
-      "body": "Relying too readily on automated recommendations or failing to notice errors they introduce. Users may stop independently monitoring a task when a system appears dependable.",
+      "body": "Automation bias is over-reliance on an automated recommendation or failure to notice an automated error because the system is treated as a default authority. The mechanism is attentional and responsibility-related: a recommendation reduces search effort, and users may monitor less when the system usually performs well. It differs from algorithm aversion, which rejects a system after an error; automation bias accepts or misses an error without sufficient independent checking.\n\nA driver follows navigation onto a visibly closed road. The example fits if the driver had current visual evidence that contradicted the route and still treated the instruction as decisive. Following a reliable recommendation is not bias when the operating conditions match validation and the user has no better information. Effective safeguards specify when to verify, expose uncertainty and known limits, and preserve a clear human override rather than merely telling users to pay attention. Reliability should calibrate reliance, not eliminate verification.",
       "examples": [
         {
-          "text": "A driver follows a navigation instruction onto a visibly closed road.",
-          "note": null
+          "text": "A driver follows a navigation instruction onto a visibly closed road instead of checking the road sign and current conditions.",
+          "note": "The automated route has become the default despite direct contradictory evidence available to the driver."
         }
       ],
       "counters": [
-        "Check automated advice against current observations and known operating limits."
+        "Define verification triggers for uncertainty, stale data, high stakes, and conflict with direct observation.",
+        "Display confidence and operating limits, train users with realistic failure cases, and make override actions visible and reversible."
       ],
       "limitations": [
-        "Following a reliable recommendation is reasonable when relevant conditions and error costs have been assessed."
+        "Reliance can be rational when the system is validated for current conditions and independent checking is less accurate or impossible.",
+        "A user following an incorrect recommendation does not establish automation bias if the error was not detectable from available information."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Automation reliance is documented in monitoring and decision tasks, but behavior depends on workload, interface design, trust calibration, training, and the system's observed reliability.",
       "lookalikes": [],
       "related": [
         "algorithm-aversion"
@@ -514,20 +552,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Estimating frequency or probability from how readily examples come to mind rather than representative evidence.",
-      "body": "Estimating frequency or probability from how readily examples come to mind rather than representative evidence. Recent, vivid, and publicized cases may be easier to recall without being more common.",
+      "body": "Availability bias estimates frequency, probability, or danger from how easily examples come to mind rather than from representative rates and denominators. Recency, vivid imagery, emotional intensity, media exposure, and personal experience can increase retrieval fluency without increasing the event's base rate. The comparison is between the recalled sample and an appropriate reference class with a defined denominator, time window, and exposure.\n\nAfter repeated coverage of aviation accidents, a traveler may judge flying more dangerous than driving. The example fits if coverage changes the ease of recall while comparable fatality or exposure-adjusted rates point elsewhere. A recalled event can be informative when memory is generated by systematic monitoring or when the event is a leading indicator of a changed risk regime. The counter is not to suppress vivid cases; it is to use them to formulate a question and then check whether the broader data support the inferred frequency. The easiest example to recall is not necessarily the most diagnostic example.",
       "examples": [
         {
           "text": "After seeing repeated aviation accident coverage, a traveler judges flying more dangerous than driving.",
-          "note": null
+          "note": "The news supplies vivid instances but not the exposure-adjusted denominator needed to compare the two modes of travel."
         }
       ],
       "counters": [
-        "Use comparable rates with meaningful denominators."
+        "State the reference class, denominator, and time period, then consult data that sample the class rather than the memorable cases.",
+        "Separate a vivid case's causal warning value from its usefulness as an estimate of how often the event occurs."
       ],
       "limitations": [
-        "Readily recalled information may be informative when memory reflects a representative sample."
+        "Ease of recall can be diagnostic when reporting is representative or when a sudden cluster signals a real change in conditions.",
+        "A statistical correction is not enough if the reference class or exposure denominator is poorly defined."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Availability effects are robust in probability judgment, while real-world magnitude depends on media selection, expertise, direct experience, and access to representative statistics.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -540,20 +580,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Adopting a belief or choice partly because many other people appear to adopt it.",
-      "body": "Adopting a belief or choice partly because many other people appear to adopt it. Popularity can become a cue that displaces independent evaluation.",
+      "body": "The bandwagon effect is a change in belief or choice caused partly by the apparent popularity of an option, rather than by an independent assessment of its merits. Popularity can provide genuine information when choices are independent and informed, but it can also create a cascade: each person treats earlier adoption as evidence, and the resulting agreement hides the weak original signal. The comparison is between judgment with and without the popularity cue, while holding substantive evidence constant.\n\nAn investor buys a stock solely because it dominates a group chat. The example fits if the investor cannot state an independent thesis, valuation, or risk limit and is responding to the number of endorsements. Consensus can be useful when participants have separate information and incentives to be accurate; counting voices is then a rough signal, not automatically a bias. Anonymous first judgments, provenance of recommendations, and a written disconfirmation test help reveal whether popularity has replaced analysis.",
       "examples": [
         {
           "text": "An investor buys a stock solely because it is the most discussed purchase in a group chat.",
-          "note": null
+          "note": "Discussion volume is being treated as evidence of value even though the messages may repeat one rumor and share one original source."
         }
       ],
       "counters": [
-        "Compare the option's evidence and expected value without the popularity cue."
+        "Form an independent assessment before viewing popularity metrics, then identify whether endorsements contain independent information.",
+        "Trace recommendations to their evidence and incentives rather than counting repeated agreement as multiple confirmations."
       ],
       "limitations": [
-        "Others' choices can carry information when they reflect independent, informed assessments."
+        "Following a consensus can be rational when choices are independent, expertise is relevant, and the group has information unavailable to the individual.",
+        "Popularity can also be a network outcome with no single person's decision being irrational, so causal evidence about the cue matters."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Social influence and informational cascades are well established, but the direction and value of imitation depend on independence, expertise, incentives, and feedback.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -566,20 +608,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Allowing perceived attractiveness to influence judgments unrelated to appearance.",
-      "body": "Allowing perceived attractiveness to influence judgments unrelated to appearance. A favorable impression can spill into assessments of competence, honesty, or suitability.",
+      "body": "Beauty bias lets perceived attractiveness influence judgments that should be based on unrelated traits such as competence, honesty, or job performance. A positive appearance response can spill over through halo-like impressions, greater attention, warmer interaction, or assumptions about social skill. The comparison is between equivalent evidence presented with appearance cues varied or controlled, not between people whose appearance is itself part of a legitimate task requirement.\n\nAn interviewer rates an attractive applicant as more competent despite equivalent work samples. The example fits if the rating difference persists after job-relevant evidence is matched and the role does not require appearance-based performance. Blinding is often difficult in live interaction, so structured rubrics, work samples, independent scoring, and a record of reasons can limit spillover. The bias concerns unwarranted inference; it does not claim that all interpersonal attraction is consciously chosen or that appearance has no social consequences. A warm first impression can alter questioning and create later rating differences.",
       "examples": [
         {
-          "text": "An interviewer rates an attractive applicant as more competent despite equivalent work samples.",
-          "note": null
+          "text": "An interviewer rates an attractive applicant as more competent despite equivalent work samples and interview answers.",
+          "note": "The work evidence is held constant, so a competence difference cannot be justified by the appearance cue alone."
         }
       ],
       "counters": [
-        "Score job-relevant evidence before seeing appearance cues where practical."
+        "Score job-relevant work samples independently before seeing photographs or meeting candidates where practical.",
+        "Use behaviorally anchored criteria and multiple independent raters, then audit whether appearance predicts residual scores after qualifications are controlled."
       ],
       "limitations": [
-        "Appearance may be relevant to a narrowly defined task, but it does not establish unrelated traits."
+        "Appearance can be relevant to a narrowly defined performance requirement, but attractiveness does not establish unrelated traits.",
+        "Observed rating differences can also reflect communication, grooming, or unequal treatment during the interaction, so mechanism needs testing."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Attractiveness effects on social evaluation are repeatedly observed, but their size varies with role, culture, exposure time, evaluator goals, and the quality of job-relevant information.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -592,20 +636,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Judging an argument's logical validity by whether its conclusion seems believable.",
-      "body": "Judging an argument's logical validity by whether its conclusion seems believable. A true or familiar conclusion does not guarantee that the stated premises entail it.",
+      "body": "Belief bias is judging whether an argument is logically valid partly from whether its conclusion is believable. A familiar conclusion can feel supported even when the premises do not entail it, while an implausible conclusion can be rejected despite valid form. The relevant comparison is truth or plausibility of premises and conclusion versus validity of the inferential link; these are separate questions.\n\nSomeone may accept “all flowers need water; roses need water; therefore roses are flowers” because the conclusion is true, although the premises do not entail it. The example fits because the conclusion's familiarity masks the invalid reversal of implication. Believability is appropriate when evaluating whether a premise is true in the world, but it should not decide a formal validity test. Translating the argument into a neutral structure or testing whether the premises could be true with a false conclusion isolates the logical relation. Logical form must be evaluated independently of the conclusion's familiarity.",
       "examples": [
         {
-          "text": "Someone accepts all flowers need water; roses need water; therefore roses are flowers because the conclusion is familiar, although the form is invalid.",
-          "note": null
+          "text": "Someone accepts “all flowers need water; roses need water; therefore roses are flowers” because the conclusion is familiar.",
+          "note": "The conclusion is believable but does not follow from the premises, so content plausibility has displaced a check of logical form."
         }
       ],
       "counters": [
-        "Test whether the premises could be true while the conclusion is false."
+        "Evaluate premise truth and inferential validity in separate passes, then try to construct a case where the premises hold and the conclusion fails.",
+        "Use abstract symbols or content-neutral examples when a familiar conclusion is likely to overpower attention to the argument's structure."
       ],
       "limitations": [
-        "Believability can matter when judging a premise's truth, which is distinct from validity."
+        "Believability is relevant to assessing factual premises, and a practical argument may require both valid support and true assumptions.",
+        "A single incorrect response does not show a stable bias; difficulty, wording, and knowledge of logic also affect performance."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Belief-bias effects are well established in reasoning experiments, especially with syllogisms, but they vary with training, working memory, and the familiarity of content.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -620,11 +666,11 @@
       ],
       "symbolName": null,
       "summary": "Retaining a belief after the evidence that originally supported it has been discredited.",
-      "body": "Retaining a belief after the evidence that originally supported it has been discredited. A conclusion can outlive its original justification because the person has already built explanations and expectations around it. Discovering that the evidence was fabricated should prompt reassessment, but the impression can persist independently of that evidence.",
+      "body": "Belief perseverance is retaining a conclusion after the evidence that originally supported it has been discredited. Once a person has integrated a conclusion into explanations, expectations, or identity, removing one premise may leave a coherent narrative and an accessible impression behind. The comparison is between the belief after correction and the belief supported by independent evidence that remains; persistence is not bias if the conclusion survives on valid grounds.\n\nA person concludes that a colleague is incompetent from a test score, then learns the scores were randomly assigned and continues making the same judgment. The example fits if no independent performance evidence supports the conclusion and the random assignment removes the original diagnostic basis. Reconstructing the judgment from the surviving evidence is stronger than merely announcing that the first evidence was wrong. The effect should not be confused with refusing to update from new evidence that actually leaves the original support intact.",
       "examples": [
         {
-          "text": "You learn that a colleague failed a skills test, conclude she is incompetent, then keep that judgment after discovering the scores were randomly assigned.",
-          "note": null
+          "text": "You judge a colleague incompetent from a skills score, then retain that judgment after learning the scores were randomly assigned.",
+          "note": "The correction removes the stated evidence, yet the social conclusion remains available as if its original justification still existed."
         }
       ],
       "lookalikes": [],
@@ -633,12 +679,14 @@
         "continued-influence-effect"
       ],
       "counters": [
-        "Reconstruct the judgment using only evidence that remains valid after the correction."
+        "Write the original inference, mark which premise failed, and rebuild the conclusion using only evidence that remains valid.",
+        "Ask an independent reviewer to assess the person without seeing the discredited result, then compare the judgments and reasons."
       ],
       "limitations": [
-        "A belief can remain justified if independent evidence still supports it."
+        "A belief remains justified when independent evidence supports it, even if one supporting source is withdrawn.",
+        "Persistence can reflect slow learning, incomplete communication, or uncertainty about the correction rather than a dedicated perseverance mechanism."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Belief persistence after debunking is documented, but effects vary with explanation quality, personal involvement, time, and whether an alternative account replaces the discredited one.",
       "tags": [
         "belief-assessment"
       ]
@@ -649,20 +697,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Attributing beneficial outcomes to oneself more readily than harmful outcomes.",
-      "body": "Attributing beneficial outcomes to oneself more readily than harmful outcomes. This less standardized term combines taking credit for success with distancing oneself from failure.",
+      "body": "Beneffectance is a less standardized label for the asymmetric attribution of favorable outcomes to oneself and unfavorable outcomes away from oneself. It combines self-enhancing credit for success with self-protective explanations for failure, so the same actor may claim agency when an outcome is good and invoke circumstances when it is bad. The comparison must be within a matched set of outcomes and causal opportunities; different outcomes can legitimately have different causes.\n\nA team leader credits a successful launch to leadership but blames a failed launch entirely on the market. The example fits if the leader uses a selective causal rule, ignores comparable team and market conditions, and would reverse the attribution for another team. It does not fit if launch records show that the leader changed the process in the success and an external shock caused the failure. A causal ledger that records predictions, actions, and external factors before outcomes reduces retrospective self-serving reconstruction.",
       "examples": [
         {
-          "text": "A team leader credits a successful launch to leadership and blames a failed launch entirely on the market.",
-          "note": null
+          "text": "A team leader credits a successful launch to leadership but blames a failed launch entirely on the market.",
+          "note": "The attribution rule changes with outcome valence, while the leader's own contribution and the market's influence should be assessed in both cases."
         }
       ],
       "counters": [
-        "Apply the same causal criteria to favorable and unfavorable outcomes."
+        "Specify causal criteria before outcomes are known and apply them to successes and failures with the same level of detail.",
+        "Compare outcomes with a baseline, counterfactual, or peer team so personal contribution is not inferred from one result alone."
       ],
       "limitations": [
-        "Different attributions can be accurate when the evidence supports different causes."
+        "Self-attribution can be accurate when actions changed the odds of success and external conditions genuinely drove failure.",
+        "Because beneffectance is a broad and variably used term, a diagnosis should identify the concrete attribution process rather than treat the label as a settled mechanism."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Self-serving attribution patterns have empirical support, but the specific term beneffectance is less standardized and should not be used as if it named one uniform effect.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -675,20 +725,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Creating or distorting an association by selecting observations on a common effect of the variables studied.",
-      "body": "Creating or distorting an association by selecting observations on a common effect of the variables studied. The classic setting is a hospital sample whose admission process depends on more than one disease.",
+      "body": "Berkson's bias is a selection distortion that appears when a sample is formed through a common effect of two conditions, such as hospital admission caused by either disease. Among selected cases, the causes can become statistically associated even if they were independent in the source population. The comparison is between the selected sample and a population or sampling frame where inclusion does not depend on the variables' shared consequence.\n\nSuppose illness A and illness B are independent in the community, but either illness can lead to hospital admission. Among admitted patients, people with A but not B and people with B but not A are overrepresented relative to people with neither, making the illnesses appear negatively associated. This is a classic collider mechanism, but Berkson's label emphasizes selection through clinical or service admission. Hospital associations can still be real; the selection process must be modeled before dismissing or accepting them.",
       "examples": [
         {
-          "text": "Two independent illnesses appear negatively associated among patients admitted when either illness can cause admission.",
-          "note": null
+          "text": "Two independent illnesses appear negatively associated among hospital patients because either illness can cause admission.",
+          "note": "Conditioning on admission changes the composition of the sample: having one illness can reduce the need for the other illness to explain why a person was selected."
         }
       ],
       "counters": [
-        "Model the selection mechanism and compare with an appropriate population sample."
+        "Draw the selection pathway and compare the selected sample with community, registry, or population data not conditioned on the shared admission process.",
+        "Model admission probability using both causes and inspect whether referral, severity, or access creates additional selection paths."
       ],
       "limitations": [
-        "Berkson's bias is a selection mechanism, not a claim that all hospital associations are false."
+        "Berkson's bias is one selection mechanism; a hospital association can reflect genuine comorbidity, referral patterns, or measurement differences instead.",
+        "The direction is not always negative and depends on how the selection probability changes with each cause and their combination."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "The mechanism follows from selection theory and causal structure; its presence in a particular clinical dataset requires evidence about admission and referral processes.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -701,20 +753,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Recognizing biases in other people's judgments more readily than in one's own.",
-      "body": "Recognizing biases in other people's judgments more readily than in one's own. Introspection may reveal sincere reasons while concealing the processes that shaped them.",
+      "body": "Bias blind spot is recognizing distortions in other people's reasoning more readily than in one's own. The mechanism is asymmetric access to evidence: one's own reasons are available through introspection, while another person's conclusion can be judged from its outcome, group identity, or visible shortcut. Introspection can therefore produce confidence without revealing how attention, memory, incentives, and prior commitments shaped the judgment.\n\nA person may call their own political judgment objective while explaining an opposing judgment entirely as partisanship. The example fits if the same standards of evidence and uncertainty are not applied to both judgments. Correctly identifying another person's bias does not disprove the diagnosis; the blind spot concerns failure to run the same audit on oneself. A precommitted checklist, outside review, and reversal test make the procedure symmetric without requiring false equivalence between all positions. Procedures expose asymmetry more reliably than claims of personal objectivity. A fair audit starts with process, not self-description.",
       "examples": [
         {
-          "text": "You explain your own political judgment as objective while attributing the opposing judgment entirely to partisanship.",
-          "note": null
+          "text": "You describe your own political judgment as objective while attributing the opposing judgment entirely to partisanship.",
+          "note": "The asymmetry lies in treating one's own reasoning as transparent and the other's as caused by bias without applying the same audit."
         }
       ],
       "counters": [
-        "Apply identical procedural checks to your own reasoning and other people's reasoning."
+        "Use the same evidence, uncertainty, and disconfirmation questions for your own view and for a view you reject.",
+        "Invite criticism before defending a conclusion, and record what evidence would count against your position rather than only diagnosing the other side."
       ],
       "limitations": [
-        "A specific criticism of another person's bias can be correct even when you also have biases."
+        "A criticism of another person's bias can be correct even when the critic also has blind spots.",
+        "Self-audit cannot reveal every unconscious process, so procedural safeguards are more reliable than confidence in introspection."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "People commonly report more bias in others than themselves, but measurement depends on the bias named, the comparison group, and whether self-knowledge is assessed by prediction or retrospective report.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -727,20 +781,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Giving a disproportionate preference to guaranteed outcomes compared with merely probable outcomes.",
-      "body": "Giving a disproportionate preference to guaranteed outcomes compared with merely probable outcomes. A small drop from certainty may matter more to choice than an equal probability drop elsewhere.",
+      "body": "The certainty effect is giving a disproportionate increase in value to a guaranteed outcome compared with a merely probable outcome, even when the probability change is numerically similar elsewhere. Certainty removes one kind of uncertainty and can make the option feel qualitatively different, so ordinary expected-value comparison may be displaced by the boundary at probability one. The relevant comparison is across matched prospects with the same payoffs and controlled probability changes, while accounting for utility and risk tolerance.\n\nA person may choose a guaranteed small prize over a larger risky prize, yet accept a comparable gamble when neither option is certain. The pattern suggests certainty effect when the preference reverses at the certainty boundary without a corresponding change in consequences. Guarantees can rationally matter because of liquidity, ruin risk, or diminishing utility; the label does not require people to be risk-neutral. Displaying full probabilities and loss consequences helps distinguish a boundary preference from a well-grounded need for security.",
       "examples": [
         {
-          "text": "A person rejects a risky alternative to keep a guaranteed small prize but accepts a comparable gamble when neither option is certain.",
-          "note": null
+          "text": "A person keeps a guaranteed small prize instead of a larger risky prize but accepts a comparable gamble when neither option is certain.",
+          "note": "The change in preference tracks the transition to certainty rather than only the size of the expected payoff."
         }
       ],
       "counters": [
-        "Compare the full probability and payoff structure across both choices."
+        "Write each prospect's probabilities, payoffs, and worst-case consequence, then compare the actual utility of security with the probability boundary.",
+        "Test the choice at several nearby probabilities instead of inferring a general preference from one guaranteed option."
       ],
       "limitations": [
-        "Risk preferences and the utility of money can justify some preferences for certainty."
+        "A strong preference for certainty can be rational when losses threaten basic needs, budgets, or irreversible harm.",
+        "Small-stakes laboratory choices may not predict high-stakes decisions where probabilities, utility, and responsibility differ."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "The certainty effect is a robust finding in risky-choice experiments, but its magnitude varies with payoff scale, framing, probability understanding, and the decision maker's wealth and risk exposure.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -753,20 +809,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Remembering a past state as more different from the present than it actually was.",
-      "body": "Remembering a past state as more different from the present than it actually was. Beliefs about improvement or decline can reconstruct earlier attitudes or performance.",
+      "body": "Change bias is reconstructing a prior state as more different from the present than records support. The current state supplies a salient endpoint, and memory may organize the past around a story of improvement, decline, or transformation rather than preserve its earlier detail. The comparison is between retrospective report and contemporaneous measures or dated records, not between memory and an assumption that people never change.\n\nAfter a course, a student may remember knowing almost nothing beforehand despite a strong pretest score. The example fits if the student uses current mastery as evidence about the starting point and ignores the earlier measurement. Actual learning can coexist with exaggerated recollection of the initial deficit. Baseline notes, versioned work, and repeated measures preserve evidence before the change occurs. Retrospective narratives remain useful for meaning and motivation, but they should not be treated as precise estimates of the prior state without corroboration. The remembered contrast may therefore be narratively useful but quantitatively wrong.",
       "examples": [
         {
           "text": "After a course, a student remembers having known almost nothing beforehand despite a strong pretest score.",
-          "note": null
+          "note": "The later competence provides a contrastive story that makes the earlier state seem more extreme than the contemporaneous test indicates."
         }
       ],
       "counters": [
-        "Compare retrospective impressions with records made before the change."
+        "Capture baseline measures, dated examples, and predictions before an intervention or transition occurs.",
+        "Compare the remembered trajectory with records while allowing for measurement error and genuine change between the recorded points."
       ],
       "limitations": [
-        "Documented change should not be dismissed merely because memory can exaggerate it."
+        "Documented change should not be dismissed because memory can exaggerate it, and records may measure only one aspect of the earlier state.",
+        "The label concerns reconstruction of magnitude or contrast, not every inaccurate memory about a past condition."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Retrospective estimates are vulnerable to reconstruction and current-state effects, but the named change-bias label is broader and less standardized than particular memory distortions.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -779,20 +837,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Rating a person's attractiveness differently when viewed within a group rather than alone.",
-      "body": "Rating a person's attractiveness differently when viewed within a group rather than alone. The label usually concerns higher attractiveness judgments in a group display; generality depends on task and stimulus conditions.",
+      "body": "The cheerleader effect is a context-dependent difference in how attractive an individual is rated when shown in a group rather than alone. A group display can change the comparison frame, allow a visual average to serve as a reference, or alter attention to an individual's distinctive features. The relevant comparison requires the same face, image quality, pose, and viewing time across solo and group conditions; a general claim about social status or objective beauty goes beyond the phenomenon.\n\nA face rated more favorably in a group photograph than when shown separately illustrates the effect if the surrounding faces and layout are controlled. The group may make an unusual feature seem less salient, but that mechanism can vary with crowd composition and observer expectations. A person should not be assumed to receive a universal advantage in every group or real-life interaction. Matched presentation and separate ratings are needed before attributing a difference to group context rather than image quality or selection.",
       "examples": [
         {
-          "text": "A face receives a higher rating in a group photograph than when the same face is shown separately.",
-          "note": null
+          "text": "A face receives a higher attractiveness rating in a group photograph than when the same face is shown separately.",
+          "note": "The individual is held constant while the visual context changes, which isolates a contextual rating shift rather than a change in appearance."
         }
       ],
       "counters": [
-        "Compare the individual under matched viewing conditions."
+        "Compare solo and group presentations with matched size, pose, image quality, and exposure time.",
+        "Predefine the rating task and analyze whether the effect changes with group composition, order, and observer familiarity."
       ],
       "limitations": [
-        "The effect does not establish an objective change in attractiveness or a universal social advantage."
+        "Evidence is task- and stimulus-dependent; a group context may lower rather than raise a rating and need not affect behavior outside the experiment.",
+        "A contextual rating difference does not establish an objective change in attractiveness or a general social advantage."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Group-context attractiveness effects have been reported, but estimates vary across replication, stimulus design, culture, and the specific rating procedure.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -805,20 +865,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Treating the lack of early autobiographical memories as evidence that a particular event could not have happened.",
-      "body": "Treating the lack of early autobiographical memories as evidence that a particular event could not have happened. This is an editorial label for a memory-based inference, rather than a distinct established psychological effect.",
+      "body": "Childhood amnesia misattribution is an inference error: treating the absence of accessible early autobiographical memory as evidence that a particular event did not happen or that a relationship lacked a particular quality. Early memories are limited by the development of autobiographical organization, language, retrieval cues, and later reconstruction, so missing recall has weak specificity. This editorial label should not be mistaken for a distinct, uniformly established syndrome.\n\nAn adult may conclude that no one cared for them at age two because they cannot remember receiving care. The example fits because the premise is lack of episodic access, while the conclusion concerns a historical pattern that memory absence cannot identify. The reverse inference is also unsafe: a vivid early image does not prove its details or source. Contemporaneous records, caregivers' accounts, medical information, and later behavioral evidence can inform the question, but each source has its own reliability and must not be used to manufacture certainty.",
       "examples": [
         {
-          "text": "An adult concludes no one cared for them at age two because they cannot remember receiving care.",
-          "note": null
+          "text": "An adult concludes that no one cared for them at age two because they cannot remember receiving care.",
+          "note": "The missing memory is expected to be common in early childhood and therefore cannot distinguish absence of care from ordinary limits on autobiographical recall."
         }
       ],
       "counters": [
-        "Use contemporaneous records and independent testimony when early memory is unavailable."
+        "Treat absent early recall as missing data, then seek dated records and independent testimony without pressuring a person to produce a memory.",
+        "Separate what is remembered, inferred, reported by others, and documented, preserving uncertainty when sources conflict."
       ],
       "limitations": [
-        "Missing early memories alone do not establish either that a particular event occurred or that it did not."
+        "Early memories can sometimes be retained, and records or consistent independent evidence can support a historical conclusion despite absent personal recall.",
+        "This label does not determine whether an event occurred, and it should not be used to validate or invalidate a trauma narrative by itself."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Childhood amnesia and memory development are well supported, but the specific misattribution label is an interpretive caution rather than a standardized effect with one measured size.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -831,20 +893,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Remembering a chosen option more favorably and rejected options less favorably after a decision.",
-      "body": "Remembering a chosen option more favorably and rejected options less favorably after a decision. Memory can shift to make the selection appear better justified than the original evidence supported.",
+      "body": "Choice-supportive bias is the post-decision tendency to remember the chosen option as more attractive and the rejected options as less attractive than the original comparison warranted. Commitment creates a motive for coherence, and later experience is selectively interpreted as confirmation of the choice. The comparison is between records made before the decision and later recollection, not between the original option and its actual subsequent performance; a choice can genuinely turn out well.\n\nAfter buying one laptop, a person may remember it as lighter than the rejected model even though the specifications show the opposite. The example fits if the physical fact was available at decision time and memory changes in the direction that justifies ownership. Keeping a dated decision matrix preserves the original tradeoffs while allowing later evidence to update the evaluation. The goal is not to regret every decision but to distinguish learning about outcomes from rewriting what was known when the decision was made.",
       "examples": [
         {
           "text": "After buying one laptop, you remember it as lighter than the rejected model even though the specifications show otherwise.",
-          "note": null
+          "note": "The later memory favors the chosen item and conflicts with a stable contemporaneous specification, indicating post-choice reconstruction rather than new product information."
         }
       ],
       "counters": [
-        "Keep the original comparison and revisit it before evaluating the decision."
+        "Save the alternatives, criteria, evidence, and uncertainty before committing, then revisit the record instead of relying on memory.",
+        "Separate outcome satisfaction from the quality of the original decision and invite a neutral review of rejected options."
       ],
       "limitations": [
-        "A choice can prove better with experience without the original comparison having been distorted."
+        "A choice can prove better with experience, and later information can legitimately change how alternatives are valued.",
+        "Memory differences alone do not identify the mechanism; selective exposure, changed preferences, and actual performance must also be considered."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Post-decision preference and memory shifts are documented, but they depend on commitment, feedback, justification pressure, and the delay between choice and recall.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -857,20 +921,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Treating clusters in random data as stronger evidence of a nonrandom process than they warrant.",
-      "body": "Treating clusters in random data as stronger evidence of a nonrandom process than they warrant. Random sequences naturally contain streaks and uneven local distributions.",
+      "body": "The clustering illusion treats local bunches, streaks, or gaps in random data as stronger evidence of a hidden cause than the generating process warrants. Human perception compresses nearby events into a meaningful pattern, while random sequences naturally contain uneven runs. The comparison is between the observed cluster and the distribution of clusters expected under a specified null process, with the observation window and search procedure fixed in advance.\n\nSeveral calls arriving within ten minutes may lead an operator to infer a coordinated campaign. That inference fits the illusion if call timing is compatible with an ordinary arrival process and the operator noticed the cluster only after scanning many possible windows. A real campaign can produce the same pattern, so the correction is not to dismiss clusters but to test predictions about caller identity, persistence, content, or geographic concentration. Predefining the window and analyzing all intervals reduces post hoc pattern selection.",
       "examples": [
         {
-          "text": "Several calls arrive within ten minutes, and an operator infers a hidden coordinated campaign from the cluster alone.",
-          "note": null
+          "text": "Several calls arrive within ten minutes, and an operator infers a coordinated campaign from the cluster alone.",
+          "note": "The cluster is salient but lacks a comparison with the amount of clustering expected across the many time windows that could have been noticed."
         }
       ],
       "counters": [
-        "Compare the observed clustering with what an appropriate random process would produce."
+        "Specify the random or baseline process, observation window, and clustering statistic before testing whether the pattern is unusual.",
+        "Use independent features such as caller overlap, content, or persistence to distinguish a common timing fluctuation from coordination."
       ],
       "limitations": [
-        "Some clusters reflect genuine causes and deserve investigation."
+        "Clusters can reflect real causes, and a null model that ignores seasonality, batching, or exposure will misclassify structured data as random.",
+        "A pattern's improbability under one model does not identify which causal explanation produced it."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "People reliably perceive patterns in random sequences, but real-world diagnosis depends on an appropriate null process and correction for searching many possible clusters.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -883,20 +949,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Inducing a misleading association by conditioning on a variable caused by two other variables.",
-      "body": "Inducing a misleading association by conditioning on a variable caused by two other variables. Restricting, stratifying, or adjusting for a common effect can open a noncausal path between its causes.",
+      "body": "Collider bias occurs when analysis conditions on a variable caused by two other variables, creating or changing an association between those causes. Selection, stratification, matching, and statistical adjustment can all condition on a collider. The causal comparison is between the relationship without conditioning and the relationship after conditioning, with the graph or data-generating process specifying which paths are opened.\n\nSuppose strength and agility independently contribute to high total athletic performance. Among people selected for high performance, a weaker athlete must usually be unusually agile to qualify, while a stronger athlete can qualify with less agility; the selected sample can therefore show a negative association that is absent in the population. The selection variable is a collider because both causes point into it. Berkson's bias is a closely related clinical selection example, but not every selection problem or adjustment for an outcome is identical to Berkson's case.\n\nDrawing the causal structure before choosing covariates prevents “control for everything” from opening a noncausal path. Conditioning can be appropriate when the variable is a confounder or when the estimand explicitly concerns a selected population, so the causal role—not the variable's predictive value—determines the decision.",
       "examples": [
         {
-          "text": "Among people selected for high total performance, strength and agility appear negatively related because either can secure selection.",
-          "note": null
+          "text": "Among athletes selected for high total performance, strength and agility appear negatively related because either ability can secure selection.",
+          "note": "Selection is caused by both abilities, so conditioning on it makes the abilities trade off within the selected group even if they are independent in the wider population."
         }
       ],
       "counters": [
-        "Draw the causal structure before selecting adjustment variables."
+        "Draw a causal diagram and state the target population before selecting adjustment, matching, or inclusion variables.",
+        "Compare selected and unselected data where possible, and run sensitivity analyses for plausible selection mechanisms rather than assuming conditioning is harmless."
       ],
       "limitations": [
-        "Conditioning on a variable is not harmful simply because it predicts the outcome; its causal role matters."
+        "Conditioning on a variable is not harmful merely because it predicts the outcome; its causal position and the estimand matter.",
+        "A graph encodes assumptions, so collider diagnosis remains uncertain when the selection process or unmeasured causes are poorly known."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Collider bias follows from causal probability theory and is empirically plausible in many selection settings; the direction and magnitude are application-specific.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -909,20 +977,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Continuing to favor an earlier position because abandoning a commitment feels inconsistent or costly to one's identity.",
-      "body": "Continuing to favor an earlier position because abandoning a commitment feels inconsistent or costly to one's identity. Prior public or personal commitments can influence judgment independently of current merits.",
+      "body": "Commitment bias is continuing to favor an earlier position because abandoning it threatens consistency, reputation, identity, or sunk social investment. A prior commitment can alter the cost of admitting error and direct attention toward defending the old plan rather than comparing current alternatives. The comparison is between the option's present expected value and the influence of the fact that the decision maker previously endorsed it; legitimate obligations and switching costs belong in the evaluation rather than being dismissed as bias.\n\nA manager defends an obsolete procurement plan because she publicly endorsed it. The example fits if current costs, performance, or requirements make another plan better and the manager's stated reasons change mainly to protect the earlier endorsement. A public promise to deliver a contracted result is different: it creates a real obligation that must be counted. Decision checkpoints, named exit criteria, and independent review make changing course a normal response to evidence rather than a personal defeat.",
       "examples": [
         {
-          "text": "A manager defends an obsolete procurement plan because she publicly endorsed it.",
-          "note": null
+          "text": "A manager defends an obsolete procurement plan because she publicly endorsed it even after current requirements changed.",
+          "note": "The endorsement creates reputational pressure, but the relevant decision should be based on current performance and the cost of switching."
         }
       ],
       "counters": [
-        "Evaluate the options as a fresh decision using current evidence."
+        "Set review dates and kill criteria before implementation, and ask a person who did not make the original decision to evaluate continuation.",
+        "Evaluate the current options from a blank slate, then separately account for contractual, ethical, and transition obligations."
       ],
       "limitations": [
-        "Commitments can create legitimate obligations that should be included in the decision."
+        "Commitments can create legitimate duties, coordination benefits, or switching costs that rationally favor continuation.",
+        "Persistence is not bias merely because the plan remains unchanged; the diagnosis requires evidence that commitment displaced current merits."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Escalation and consistency pressures are well studied, but commitment effects vary with accountability, sunk costs, identity, public visibility, and the quality of new evidence.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -935,20 +1005,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Preferring an option more strongly when it becomes the intermediate option among alternatives.",
-      "body": "Preferring an option more strongly when it becomes the intermediate option among alternatives. Its relative position can change choice even when its own attributes remain unchanged.",
+      "body": "The compromise effect is a context-dependent increase in preference for an option when it becomes intermediate among the available alternatives. The option's own attributes remain unchanged, but its relative position can make it appear safer, more balanced, or easier to justify. The comparison requires testing the same option in different choice sets while holding price, quality, and decision goals constant; an intermediate option may also genuinely be best for the person's needs.\n\nA midpriced camera becomes more popular after an expensive premium camera is added. The example fits if the new premium option changes the midpriced camera's choice share without changing its features or the buyer's requirements. A cheap camera added at the other boundary can also alter the reference frame. Countering the effect means returning to absolute constraints—budget, required capability, durability, and acceptable tradeoffs—rather than treating the menu's middle as evidence of optimality. Menu position is a relational cue, not a measurement of fit.",
       "examples": [
         {
           "text": "A midpriced camera becomes more popular after an expensive premium model is added to the display.",
-          "note": null
+          "note": "The midpriced camera has not improved; its relative position now offers a psychologically comfortable middle between two extremes."
         }
       ],
       "counters": [
-        "Evaluate the camera against actual needs and budget rather than its middle position."
+        "Define must-have requirements and budget limits before viewing the available set, then score each option against those criteria.",
+        "Ask whether removing or adding an irrelevant alternative would change the choice and compare the option's absolute tradeoffs."
       ],
       "limitations": [
-        "An intermediate option can genuinely offer the best tradeoff."
+        "An intermediate option can genuinely offer the best balance, and choice-set context can contain useful information about quality or service.",
+        "Observed share changes can reflect menu prominence, price anchoring, or demand segmentation rather than compromise alone."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Context effects in multi-option choice are repeatedly observed, but compromise magnitudes vary with attribute ranges, decision difficulty, expertise, and the construction of the choice set.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -961,20 +1033,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Seeking, interpreting, or remembering evidence in ways that favor an existing belief.",
-      "body": "Seeking, interpreting, or remembering evidence in ways that favor an existing belief. Favored and disfavored claims may receive unequal searches or standards of scrutiny.",
+      "body": "Confirmation bias is seeking, interpreting, or remembering information in ways that favor an existing belief. It can operate through selective search, unequal standards for evidence, biased interpretation of ambiguous results, or better memory for supporting examples. The comparison is between how a favored and disfavored hypothesis are tested under the same rules, not between accepting strong evidence and accepting weak evidence.\n\nAfter deciding that a supplement works, a buyer may read positive reviews closely while dismissing negative reviews as unreliable without applying the same criteria. The example fits when the evaluation rule changes with the review's direction and when the buyer avoids evidence that could distinguish the hypotheses. A fair test may still produce an asymmetric conclusion if evidence quality is genuinely asymmetric. Precommitting disconfirming observations, using blinded coding, and recording search endpoints make the standard visible before motivated interpretation begins. The search process matters even when the favored conclusion happens to be true.",
       "examples": [
         {
-          "text": "After deciding a supplement works, a buyer reads positive reviews and dismisses negative reviews without applying the same criteria.",
-          "note": null
+          "text": "After deciding a supplement works, a buyer accepts positive reviews and dismisses negative reviews without applying the same quality criteria.",
+          "note": "The direction of the evidence changes the rule used to judge it, which is the relevant distortion rather than the buyer's final belief alone."
         }
       ],
       "counters": [
-        "State what evidence would change your mind and actively seek it."
+        "State what result would change the conclusion, search for it deliberately, and apply a preregistered quality rule to both directions of evidence.",
+        "Use blinded analysis or independent reviewers when coding ambiguous observations that could support either hypothesis."
       ],
       "limitations": [
-        "Giving little weight to weak contrary evidence can be appropriate when quality is assessed consistently."
+        "Rejecting weak contrary evidence is appropriate when the same quality standard is applied consistently and stronger evidence supports the favored claim.",
+        "A belief can be correct despite confirmation-biased reasoning, so outcome agreement does not remove the process concern."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Selective information search and interpretation are robust findings, but observed effects depend on motivation, accountability, evidence quality, and whether the task permits a clear disconfirmation.",
       "lookalikes": [],
       "related": [
         "belief-perseverance"
@@ -989,20 +1063,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Testing a preferred hypothesis without seeking observations that distinguish it from alternatives.",
-      "body": "Testing a preferred hypothesis without seeking observations that distinguish it from alternatives. A result consistent with a hypothesis may also be predicted by competing explanations.",
+      "body": "Congruence bias is testing a preferred hypothesis only with observations that it predicts, without seeking results that would distinguish it from alternatives. A confirming observation can feel decisive even when competing explanations predict the same observation. The comparison is between a merely compatible test and a discriminating test whose possible outcomes have different implications for the hypotheses.\n\nTo test whether a plant needs sunlight, a person moves it into sunlight without comparing water, temperature, or a control plant. Growth supports the sunlight hypothesis only weakly because many explanations predict growth after the move. A test that varies sunlight while holding water and temperature stable, with a shaded comparison, creates more informative contrasts. Congruence is not a flaw in every positive test: if alternatives make different predictions under the observed condition, confirmation can be discriminating. Compatibility is weaker evidence than a result that an alternative could not predict. A shared prediction is not a unique prediction.",
       "examples": [
         {
-          "text": "To test whether a plant needs sunlight, you move it into sunlight without comparing water, temperature, or another plant.",
-          "note": null
+          "text": "To test whether a plant needs sunlight, you move it into sunlight without controlling water, temperature, or another plant.",
+          "note": "The observed improvement is compatible with several explanations, so the test cannot tell sunlight apart from the uncontrolled changes."
         }
       ],
       "counters": [
-        "Choose a test whose possible results separate the leading explanations."
+        "List the leading alternatives and choose an observation for which they make different predictions.",
+        "Use controls, counterexamples, or interventions that vary the suspected cause while holding plausible co-causes stable."
       ],
       "limitations": [
-        "A positive test can be informative when alternatives make different predictions."
+        "A congruent test is informative when competing hypotheses genuinely predict different outcomes under that test.",
+        "Perfect discrimination is often impossible, so evidence can accumulate through several partially informative tests rather than one decisive experiment."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "The preference for confirmatory tests is a recurring reasoning error, but its practical impact depends on whether the alternatives were represented and whether tests are chosen adaptively.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1015,20 +1091,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Revising a belief too little in response to informative new evidence.",
-      "body": "Revising a belief too little in response to informative new evidence. An initial estimate can retain excessive influence after likelihoods justify a larger change.",
+      "body": "Conservatism bias in belief revision is changing a belief too little after receiving evidence that should materially alter the odds. An initial estimate remains overly influential because the new evidence is discounted, treated as redundant without justification, or translated into an insufficient probability change. The comparison is between the actual revision and an update based on the evidence's reliability and dependence, not between a large update and any cautious attitude.\n\nA forecaster barely lowers demand after several independent indicators show a major contraction. The example fits if the indicators are genuinely informative, measured well, and not simply repeated versions of one source. A small update is appropriate when evidence is weak, dependent, noisy, or generated by a process known to change. Recording a prior, likelihood assumptions, and dependence between signals makes under-updating visible and prevents a vague preference for stability from masquerading as calibration. The update should reflect information, not merely preserve continuity.",
       "examples": [
         {
-          "text": "A forecaster barely lowers a demand estimate after several strong independent indicators show a major contraction.",
-          "note": null
+          "text": "A forecaster barely lowers a demand estimate after several independent indicators show a major contraction.",
+          "note": "If the indicators are independent and predictive, retaining the old estimate reflects excessive inertia rather than justified caution about one weak signal."
         }
       ],
       "counters": [
-        "Compare the revision with an explicit likelihood-based update."
+        "State the prior, expected reliability, and dependence of each signal, then calculate or narrate the direction and size of a reasonable update.",
+        "Review forecasts against later outcomes and distinguish poor updating from evidence that was genuinely uninformative at the time."
       ],
       "limitations": [
-        "A cautious update is appropriate when evidence is weak, dependent, or unreliable."
+        "Caution is rational when evidence is correlated, noisy, selected after the fact, or generated by a changed measurement process.",
+        "Formal Bayesian updating still depends on a model; numerical precision can conceal rather than solve uncertainty about likelihoods."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Under-revision is a common finding in belief-updating tasks, but robustness varies with feedback, incentives, domain expertise, probability format, and evidence dependence.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1041,20 +1119,22 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Reconstructing past attitudes or beliefs as more similar to current ones than they actually were.",
-      "body": "Reconstructing past attitudes or beliefs as more similar to current ones than they actually were. A sense of personal continuity can obscure genuine changes of mind.",
+      "body": "Consistency bias reconstructs past attitudes, beliefs, or preferences as more similar to current ones than they actually were. The present self provides an organizing narrative of continuity, while changes of mind are harder to retrieve unless dated records preserve them. The comparison is between current recollection and contemporaneous statements or behavior, not between memory and a presumption that people should have changed.\n\nA person remembers always supporting a policy despite an old letter opposing it. The example fits if the letter is contemporaneous evidence and the later memory assimilates the earlier position to the current one. This differs from choice-supportive bias, which favors the option chosen after a decision, and from change bias, which exaggerates the amount of difference between states. Stable attitudes can be real; the existence of agreement across time is not itself proof of reconstruction. Dated notes make genuine continuity and genuine change equally discoverable. Continuity is a hypothesis about the past, not a privilege of present identity.",
       "examples": [
         {
-          "text": "You remember always supporting a policy despite an old letter opposing it.",
-          "note": null
+          "text": "You remember always supporting a policy despite an old dated letter opposing it.",
+          "note": "The record supplies direct evidence of an earlier attitude, while current recollection has been smoothed into a story of personal continuity."
         }
       ],
       "counters": [
-        "Compare recollection with dated statements and records."
+        "Use dated statements, versions, and contemporaneous decisions when reconstructing how a view developed.",
+        "Ask separately what the person believed then, what changed, and what evidence supports the current account rather than forcing a single continuous narrative."
       ],
       "limitations": [
-        "Stable attitudes are possible; similarity across time does not by itself demonstrate bias."
+        "People can maintain stable attitudes, and a discrepancy with one record may reflect context, wording, or a temporary exception.",
+        "Recollection and records can both be incomplete, so the diagnosis should preserve uncertainty about the earlier state."
       ],
-      "evidenceNote": null,
+      "evidenceNote": "Consistency in autobiographical recall is a documented reconstruction tendency, but its magnitude depends on identity, delay, importance of the attitude, and availability of dated records.",
       "lookalikes": [],
       "related": [],
       "tags": [

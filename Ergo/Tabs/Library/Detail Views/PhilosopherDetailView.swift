@@ -65,10 +65,10 @@ struct PhilosopherDetailView: View {
 							.lineLimit(2)
 
 						HStack {
-							Text(philosopher.birthYear.description)
+							Text("\(abs(philosopher.birthYear).description)\(philosopher.birthYear < 0 ? " BC" : "")")
 							Text(philosopher.deathYear == nil ? "-" : "to")
 							if let deathYear = philosopher.deathYear {
-								Text(deathYear.description)
+								Text("\(abs(deathYear).description)\(deathYear < 0 ? " BC" : "")")
 							} else {
 								Text("present")
 							}
@@ -90,7 +90,7 @@ struct PhilosopherDetailView: View {
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
 
-						related
+						RelatedSection(list: philosopher.related)
 							.padding(.top)
 
 						Spacer()
@@ -140,57 +140,6 @@ struct PhilosopherDetailView: View {
 				} label: {
 					Text("Go Back")
 				}
-			}
-		}
-	}
-
-	@ContentBuilder
-	var related: some View {
-		if let philosopher = catalog.philosophers.philosophers.first(where: { $0.id == id }) {
-			if !philosopher.related.isEmpty {
-				VStack(alignment: .leading, spacing: 13) {
-					Text("Related")
-						.textCase(.uppercase)
-						.foregroundStyle(.accent)
-
-					VStack(alignment: .leading, spacing: 4) {
-						ForEach(philosopher.related, id: \.id) { target in
-							let isBookmarked = bookmarks.contains(target)
-
-							NavigationLink(value: target.route) {
-								HStack {
-									Text(target.name)
-									Spacer()
-									Image(systemName: "chevron.right")
-								}
-								.contextMenu {
-									Button {
-										withAnimation(.easeInOut) {
-											if isBookmarked {
-												bookmarks.remove(target)
-											} else {
-												bookmarks.insert(target)
-											}
-										}
-									} label: {
-										if isBookmarked {
-											Label("Remove Bookmark", systemImage: "bookmark.fill")
-										} else {
-											Label("Bookmark", systemImage: "bookmark")
-										}
-									}
-								} preview: {
-									LibraryDetailView(category: target.category, id: target.id)
-										.environment(catalog)
-										.environment(navigation)
-								}
-							}
-						}
-					}
-				}
-				.padding(12)
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 			}
 		}
 	}
