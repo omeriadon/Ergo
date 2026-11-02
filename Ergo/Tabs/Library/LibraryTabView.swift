@@ -79,7 +79,7 @@ struct LibraryTabView: View {
 						}
 
 						NavigationLink(value: LibraryRoute.category(.symbols)) {
-							CardView(title: "Symbols", color: .brown)
+							CardView(title: "Symbols", color: .orange)
 						}
 					}
 

@@ -85,6 +85,13 @@ struct SymbolsView: View {
 			}
 
 			results
+
+			if !searchPresented {
+				Text("\(catalog.logicSymbols.symbols.count) symbols")
+					.font(.caption)
+					.foregroundStyle(.secondary)
+					.listRowBackground(Color.clear)
+			}
 		}
 		.animation(.easeInOut(duration: 0.2), value: searchPresented)
 		.scrollEdgeEffectStyle(.soft, for: .all)

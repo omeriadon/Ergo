@@ -67,6 +67,13 @@ struct BiasesView: View {
 			}
 
 			results
+
+			if !searchPresented {
+				Text("\(catalog.biases.biases.count) biases")
+					.font(.caption)
+					.foregroundStyle(.secondary)
+					.listRowBackground(Color.clear)
+			}
 		}
 		.animation(.easeInOut(duration: 0.2), value: searchPresented)
 		.listSectionIndexVisibility(.visible)

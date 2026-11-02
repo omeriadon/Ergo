@@ -17651,6 +17651,38 @@
       ]
     },
     {
+      "id": "nocebo-effect",
+      "name": "Nocebo effect",
+      "aliases": [
+        "Nocebo"
+      ],
+      "symbolName": null,
+      "summary": "The nocebo effect is the development or worsening of symptoms through negative expectations about a treatment rather than its direct pharmacological action.",
+      "body": "Expecting a treatment to cause harm can contribute to symptoms or make them worse. For example, a person may experience a headache after taking an inert pill described as likely to cause headaches. The symptoms can be real even when they are not caused by an active ingredient.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "A participant given an inert pill experiences nausea after being told that the treatment may cause nausea.",
+          "note": "Negative expectations can contribute to symptoms even without an active drug."
+        }
+      ],
+      "commonMisreadings": [
+        "It does not mean the symptoms are imaginary or deliberately produced.",
+        "Symptoms after treatment are not automatically nocebo effects; the treatment itself or an underlying condition may be responsible."
+      ],
+      "criticisms": [
+        "Symptoms in a placebo group alone do not establish a nocebo effect; background symptoms and changes in the underlying condition must also be considered."
+      ],
+      "lookalikes": [],
+      "related": [
+        "placebo-effect"
+      ],
+      "tags": [
+        "memory-learning-and-reported-psychological-effects"
+      ]
+    },
+    {
       "id": "nominalism",
       "name": "Nominalism",
       "aliases": [],
@@ -19476,7 +19508,9 @@
       ],
       "criticisms": [],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "nocebo-effect"
+      ],
       "tags": [
         "memory-learning-and-reported-psychological-effects"
       ]
