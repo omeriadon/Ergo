@@ -13,10 +13,30 @@ private struct CardView: View {
 
 	var body: some View {
 		HStack(alignment: .center) {
-			VStack(alignment: .leading) {
+			VStack(alignment: .leading, spacing: 8) {
+				let image = switch title {
+					case "Biases":
+						"distribute.vertical.center"
+					case "Razors":
+						"scissors"
+					case "Symbols":
+						"f.cursive"
+					case "Concepts":
+						"book.closed"
+					case "Paradoxes":
+						"infinity"
+					case "Philosophers":
+						"brain.head.profile"
+					case "Fallacies":
+						"repeat.badge.xmark"
+					default:
+						""
+				}
+
+				Image(systemName: image)
+
 				Text(title)
 					.font(.title2)
-					.padding(.bottom)
 			}
 
 			Spacer()

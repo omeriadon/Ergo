@@ -80,12 +80,31 @@ nonisolated enum FallacyTag: String, Codable, CaseIterable, Hashable, Sendable {
 	case relevanceAndDebate = "relevance-and-debate"
 }
 
-nonisolated enum RazorTag: String, Codable, CaseIterable, Hashable, Sendable {
+nonisolated enum RazorTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
 	case attribution
 	case decisionMaking = "decision-making"
 	case evidence
 	case interpretation
 	case parsimony
+
+	var title: String {
+		switch self {
+			case .attribution:
+				"Attribution"
+			case .decisionMaking:
+				"Decision Making"
+			case .evidence:
+				"Evidence"
+			case .interpretation:
+				"Interpretation"
+			case .parsimony:
+				"Parsimony"
+		}
+	}
+
+	var id: Self {
+		self
+	}
 }
 
 nonisolated enum ConceptTag: String, Codable, CaseIterable, Hashable, Sendable {

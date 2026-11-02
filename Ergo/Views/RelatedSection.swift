@@ -23,7 +23,7 @@ struct RelatedSection: View {
 			VStack(alignment: .leading, spacing: 13) {
 				Text("Related")
 					.textCase(.uppercase)
-					.foregroundStyle(.accent.secondary)
+					.foregroundStyle(.secondary)
 
 				VStack(alignment: .leading, spacing: 10) {
 					ForEach(list, id: \.id) { target in

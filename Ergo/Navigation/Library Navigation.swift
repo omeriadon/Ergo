@@ -28,6 +28,7 @@ enum LibraryRoute: Hashable {
 
 	case symbols(filter: SymbolSearchToken)
 	case biases(filter: BiasTag)
+	case razors(filter: RazorTag)
 }
 
 nonisolated struct CatalogReference: Hashable, Identifiable, Codable, Sendable, Defaults.Serializable {

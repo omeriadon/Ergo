@@ -77,19 +77,24 @@
         "Braggers' razor"
       ],
       "symbolName": "scissors",
-      "summary": "Discount self-promotional claims until independently supported.",
-      "body": "Self-presentation is often selected for persuasive effect. Modesty and confidence are both compatible with genuine achievement or deception. Popular numerical prescriptions such as halving claims have no general justification.",
-      "lensQuestion": "What independent evidence supports this person's self-description?",
+      "summary": "Check self-promotional claims before relying on them.",
+      "body": "When someone praises their own skills or results, check what supports the claim before relying on it. They may describe their best result while leaving out failures, help from others, or a longer run of ordinary results. Even an accurate success story can give an incomplete picture.\n\nLook for evidence that someone else can check, such as a complete record, work samples, or confirmation from people involved. Give more weight to evidence that supports the specific claim than to confidence, status, or an impressive story.",
+      "lensQuestion": "How could someone else check this claim?",
       "examples": [
         {
-          "text": "A seller repeatedly advertises extraordinary trading returns but refuses to show an audited record.",
-          "note": "The promotional claim supplies a reason to request evidence, not a numerical estimate of the true return."
+          "text": "A consultant says they doubled a client's sales. The only support is a glowing testimonial with no figures or dates.",
+          "note": "The testimonial shows customer approval, but it does not establish how much sales changed or what caused the change."
         }
       ],
       "limitations": [
-        "Popular numerical prescriptions such as halving claims have no general justification."
+        "A person may be unable to disclose private records; other evidence can still support the claim.",
+        "An unverified claim can be true. Missing support leaves uncertainty rather than establishing falsehood."
       ],
-      "related": [],
+      "related": [
+        "evidence",
+        "testimony",
+        "burden-of-proof"
+      ],
       "tags": [
         "evidence"
       ]

@@ -25,8 +25,8 @@ struct PhilosopherDetailView: View {
 			DitherView(configuration: {
 				var conf = detailViewConf
 				conf.palette = [
-					Color.red.toSIMD3,
-					Color.red.toSIMD3,
+					Color.purple.toSIMD3,
+					Color.purple.toSIMD3,
 				]
 				return conf
 			}())

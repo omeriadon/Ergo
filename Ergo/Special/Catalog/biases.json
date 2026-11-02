@@ -49,7 +49,7 @@
         "Immediate intervention is justified when delay raises expected harm, loses a scarce opportunity, or prevents a reversible safeguard.",
         "A later bad outcome does not prove that the original inaction was biased; decisions must be judged with the information available at the time."
       ],
-      "evidenceNote": "Evidence for action preferences is strongest in repeated decision tasks and situations with visible accountability; its magnitude varies with stakes, feedback, and perceived control.",
+      "evidenceNote": "Action preferences have been observed in particular decision settings. Whether intervention is excessive requires comparing the likely outcomes of acting, waiting, and gathering information, rather than treating action itself as a mistake.",
       "lookalikes": [],
       "related": [
         "we-have-to-do-something"
@@ -63,12 +63,12 @@
       "name": "Actor–observer asymmetry",
       "aliases": [],
       "symbolName": null,
-      "summary": "Explaining one's own conduct through circumstances while explaining others' conduct through dispositions.",
-      "body": "Actor–observer asymmetry describes a tendency to use situational explanations for one's own behavior while using person-centered explanations for another person's comparable behavior. The proposed mechanism is an uneven information set: an actor sees private constraints, intentions, and changing circumstances, whereas an observer sees the person against a stable background. Attention to the person and the situation also changes with perspective and with whether the outcome is favorable or unfavorable. The relevant comparison is matched behavior under comparable information, not any single difference in explanation.\n\nCalling one's lateness traffic-related while calling a colleague's lateness laziness illustrates the asymmetry only if the traffic evidence and scheduling conditions are similarly unknown. If the colleague repeatedly arrives late after receiving the same travel information, a dispositional explanation gains legitimate support. The effect is therefore an empirical tendency with important qualifications, not a rule that self-explanations are situational or other-explanations dispositional. Asking what evidence would discriminate between constraint, intention, and stable habit makes the comparison explicit.",
+      "summary": "Explaining your own behavior through circumstances while treating someone else's similar behavior as a sign of character.",
+      "body": "People may explain their own behavior by referring to circumstances while explaining someone else's comparable behavior by referring to character. The actor has information about intentions, pressures, and alternatives that an observer often lacks. Observers may instead focus on the person and infer a stable trait from one visible act. This difference in attention and information is one proposed explanation of actor–observer asymmetry.\n\nDifferent explanations are not automatically biased: different evidence or histories can justify them. To assess a possible error, compare how the available evidence is used for yourself and the other person. Research does not support a simple, universal actor–observer rule; results depend on the outcome, familiarity, and how explanations are measured. The practical check is whether relevant circumstances were considered for both people before a character judgment was made.",
       "examples": [
         {
           "text": "You explain your own lateness with an unexpected road closure but explain a colleague's similar lateness as laziness without checking their circumstances.",
-          "note": "The contrast concerns unequal access to situational information; it is not established if the colleague had a documented recurring scheduling problem."
+          "note": "The unequal explanations suggest a bias if the colleague's circumstances were dismissed without justification."
         }
       ],
       "counters": [
@@ -79,7 +79,7 @@
         "People may have genuinely different circumstances, and observers can sometimes possess better records than actors about repeated behavior.",
         "Research findings vary with culture, relationship, outcome valence, and whether the actor or observer has access to relevant contextual information."
       ],
-      "evidenceNote": "The asymmetry is a qualified social-psychological pattern rather than a universal law; evidence is sensitive to perspective, valence, and the information structure of the task.",
+      "evidenceNote": "Meta-analytic evidence does not support a broad, reliable actor–observer asymmetry across situations. Some differences depend on outcome valence, familiarity, and how causal explanations are measured.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -163,7 +163,7 @@
         "Repeated goal-directed responses, tool use, or evidence of coordination can make an agency explanation more probable than a purely mechanical account.",
         "Detecting agency can be adaptive under asymmetric danger costs, so a precautionary alert is not identical to a settled causal belief."
       ],
-      "evidenceNote": "Agency-detection findings are robust in perception and social inference tasks, but the threshold shifts with threat, cultural learning, base rates, and the cost of missed detection.",
+      "evidenceNote": "Experiments show that ambiguous motion or patterns can elicit perceived agency. This does not establish one universally overactive mechanism; a bias claim also depends on the actual frequency of agents and the costs of false alarms and missed detections.",
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -696,12 +696,12 @@
       "name": "Beneffectance",
       "aliases": [],
       "symbolName": null,
-      "summary": "Attributing beneficial outcomes to oneself more readily than harmful outcomes.",
-      "body": "Beneffectance is a less standardized label for the asymmetric attribution of favorable outcomes to oneself and unfavorable outcomes away from oneself. It combines self-enhancing credit for success with self-protective explanations for failure, so the same actor may claim agency when an outcome is good and invoke circumstances when it is bad. The comparison must be within a matched set of outcomes and causal opportunities; different outcomes can legitimately have different causes.\n\nA team leader credits a successful launch to leadership but blames a failed launch entirely on the market. The example fits if the leader uses a selective causal rule, ignores comparable team and market conditions, and would reverse the attribution for another team. It does not fit if launch records show that the leader changed the process in the success and an external shock caused the failure. A causal ledger that records predictions, actions, and external factors before outcomes reduces retrospective self-serving reconstruction.",
+      "summary": "Taking credit for good outcomes while explaining bad outcomes through outside causes.",
+      "body": "Beneffectance is the tendency to take credit for good outcomes while explaining bad outcomes through outside causes. It combines self-enhancing credit for success with self-protective explanations for failure, so the same actor may claim agency when an outcome is good and invoke circumstances when it is bad. To assess this pattern, compare cases in which the person's influence and the surrounding conditions were similar. Different outcomes can genuinely have different causes.\n\nA team leader credits a successful launch to leadership but blames a failed launch entirely on the market. The example fits if the leader uses a selective causal rule, ignores comparable team and market conditions, and would reverse the attribution for another team. It does not fit if launch records show that the leader changed the process in the success and an external shock caused the failure. A causal ledger that records predictions, actions, and external factors before outcomes reduces retrospective self-serving reconstruction.",
       "examples": [
         {
           "text": "A team leader credits a successful launch to leadership but blames a failed launch entirely on the market.",
-          "note": "The attribution rule changes with outcome valence, while the leader's own contribution and the market's influence should be assessed in both cases."
+          "note": "The person's explanation changes with whether the result is good or bad, while both personal actions and outside influences should be assessed in each case."
         }
       ],
       "counters": [
@@ -716,7 +716,7 @@
       "lookalikes": [],
       "related": [],
       "tags": [
-        "memory"
+        "attribution"
       ]
     },
     {
@@ -865,7 +865,7 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Treating the lack of early autobiographical memories as evidence that a particular event could not have happened.",
-      "body": "Childhood amnesia misattribution is an inference error: treating the absence of accessible early autobiographical memory as evidence that a particular event did not happen or that a relationship lacked a particular quality. Early memories are limited by the development of autobiographical organization, language, retrieval cues, and later reconstruction, so missing recall has weak specificity. This editorial label should not be mistaken for a distinct, uniformly established syndrome.\n\nAn adult may conclude that no one cared for them at age two because they cannot remember receiving care. The example fits because the premise is lack of episodic access, while the conclusion concerns a historical pattern that memory absence cannot identify. The reverse inference is also unsafe: a vivid early image does not prove its details or source. Contemporaneous records, caregivers' accounts, medical information, and later behavioral evidence can inform the question, but each source has its own reliability and must not be used to manufacture certainty.",
+      "body": "Childhood amnesia misattribution is an inference error: treating the absence of accessible early autobiographical memory as evidence that a particular event did not happen or that a relationship lacked a particular quality. Early memories are limited by the development of autobiographical organization, language, retrieval cues, and later reconstruction, so missing recall has weak specificity. This is a reasoning mistake about memory, rather than a separate memory disorder.\n\nAn adult may conclude that no one cared for them at age two because they cannot remember receiving care. The example fits because the premise is lack of episodic access, while the conclusion concerns a historical pattern that memory absence cannot identify. The reverse inference is also unsafe: a vivid early image does not prove its details or source. Dated records and independent accounts can inform the question, but each source has its own reliability. A later symptom or feeling does not by itself establish a specific early event.",
       "examples": [
         {
           "text": "An adult concludes that no one cared for them at age two because they cannot remember receiving care.",
@@ -949,7 +949,7 @@
       "aliases": [],
       "symbolName": null,
       "summary": "Inducing a misleading association by conditioning on a variable caused by two other variables.",
-      "body": "Collider bias occurs when analysis conditions on a variable caused by two other variables, creating or changing an association between those causes. Selection, stratification, matching, and statistical adjustment can all condition on a collider. The causal comparison is between the relationship without conditioning and the relationship after conditioning, with the graph or data-generating process specifying which paths are opened.\n\nSuppose strength and agility independently contribute to high total athletic performance. Among people selected for high performance, a weaker athlete must usually be unusually agile to qualify, while a stronger athlete can qualify with less agility; the selected sample can therefore show a negative association that is absent in the population. The selection variable is a collider because both causes point into it. Berkson's bias is a closely related clinical selection example, but not every selection problem or adjustment for an outcome is identical to Berkson's case.\n\nDrawing the causal structure before choosing covariates prevents “control for everything” from opening a noncausal path. Conditioning can be appropriate when the variable is a confounder or when the estimand explicitly concerns a selected population, so the causal role—not the variable's predictive value—determines the decision.",
+      "body": "Collider bias occurs when analysis conditions on a variable caused by two other variables, creating or changing an association between those causes. Selection, stratification, matching, and statistical adjustment can all condition on a collider. The causal comparison is between the relationship without conditioning and the relationship after conditioning, with the graph or data-generating process specifying which paths are opened.\n\nDrawing the causal structure before choosing variables to adjust for prevents “control for everything” from opening a noncausal path. Conditioning can be appropriate when the variable is a confounder or when the quantity being estimated explicitly concerns a selected population, so the causal role—not the variable's predictive value—determines the decision.",
       "examples": [
         {
           "text": "Among athletes selected for high total performance, strength and agility appear negatively related because either ability can secure selection.",

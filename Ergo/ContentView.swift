@@ -52,6 +52,9 @@ struct ContentView: View {
 
 								case let .biases(filter):
 									BiasesView(initialFilter: filter)
+
+								case let .razors(filter):
+									RazorsView(initialFilter: filter)
 							}
 						}
 						.toolbarTitleItem()
@@ -94,7 +97,7 @@ struct ContentView: View {
 		.environment(catalog)
 		.onAppear {
 			thing.selectedTab = .library
-			thing.libraryPath = [.category(.philosophers), .detail(category: .philosophers, id: "david-hume")]
+			thing.libraryPath = [.category(.razors), .detail(category: .razors, id: "bragging-razor")]
 			Task {
 				try? await catalog.load()
 			}
