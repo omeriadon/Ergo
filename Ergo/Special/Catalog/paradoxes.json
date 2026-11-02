@@ -101,7 +101,8 @@
       "related": [
         "credence",
         "belief",
-        "epistemic-closure"
+        "epistemic-closure",
+        "preface-paradox"
       ],
       "tags": [
         "knowledge-and-meaning"
@@ -130,7 +131,8 @@
       "related": [
         "socratic-questioning",
         "epistemology",
-        "plato"
+        "plato",
+        "socrates"
       ],
       "tags": [
         "knowledge-and-meaning"
@@ -212,7 +214,8 @@
       "lookalikes": [],
       "related": [
         "conceptual-analysis",
-        "sense-and-reference"
+        "sense-and-reference",
+        "g-e-moore"
       ],
       "tags": [
         "knowledge-and-meaning"
@@ -263,7 +266,9 @@
       ],
       "criticisms": [],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "john-stuart-mill"
+      ],
       "tags": [
         "ethics-and-value"
       ]
@@ -288,7 +293,9 @@
       ],
       "criticisms": [],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "karl-popper"
+      ],
       "tags": [
         "ethics-and-value"
       ]
@@ -370,7 +377,9 @@
       ],
       "criticisms": [],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "bertrand-russell"
+      ],
       "tags": [
         "logic-and-language"
       ]

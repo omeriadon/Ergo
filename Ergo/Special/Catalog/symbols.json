@@ -13,7 +13,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "World v is accessible from world w in a Kripke frame.",
-      "body": "World v is accessible from world w in a Kripke frame. Properties of R determine which modal principles hold. Together these facts witness ◇P at w in ordinary Kripke semantics. Its truth depends on a model with worlds and an accessibility relation, not only on the valuation at one world. Necessity quantifies over accessible worlds and possibility requires an accessible witness; frame conditions determine which principles are valid. Do not treat metaphysical, epistemic, deontic, and temporal readings as interchangeable. In the example wRv and v satisfies P., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "World v is accessible from world w in a Kripke frame. Properties of R determine which modal principles hold. Together these facts witness ◇P at w in ordinary Kripke semantics.",
       "examples": [
         {
           "text": "wRv and v satisfies P.",
@@ -21,7 +21,7 @@
         }
       ],
       "limitations": [
-        "Properties of R determine which modal principles hold. Its exact reading depends on the formal system and notation conventions in use."
+        "Properties of R determine which modal principles hold."
       ],
       "lookalikes": [],
       "related": [],
@@ -44,7 +44,7 @@
         "always in the relevant future"
       ],
       "summary": "φ holds at all relevant future times.",
-      "body": "φ holds at all relevant future times. Whether the present is included depends on the temporal semantics. No relevant future state contains an error under the selected temporal semantics. Its truth depends on a model with worlds and an accessibility relation, not only on the valuation at one world. Necessity quantifies over accessible worlds and possibility requires an accessible witness; frame conditions determine which principles are valid. Do not treat metaphysical, epistemic, deontic, and temporal readings as interchangeable. In the example G¬Error., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "φ holds at all relevant future times. Whether the present is included depends on the temporal semantics. No relevant future state contains an error under the selected temporal semantics.",
       "examples": [
         {
           "text": "G¬Error.",
@@ -52,7 +52,7 @@
         }
       ],
       "limitations": [
-        "Whether the present is included depends on the temporal semantics. Its exact reading depends on the formal system and notation conventions in use."
+        "Whether the present is included depends on the temporal semantics."
       ],
       "lookalikes": [],
       "related": [],
@@ -73,7 +73,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Introduces a stated reason.",
-      "body": "Introduces a stated reason. An argument-layout convention, not normally an object-language connective. The marker introduces the stated supporting reasons. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example Q, ∵ P and P → Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Introduces a stated reason. An argument-layout convention, not normally an object-language connective. The marker introduces the stated supporting reasons.",
       "examples": [
         {
           "text": "Q, ∵ P and P → Q.",
@@ -81,7 +81,7 @@
         }
       ],
       "limitations": [
-        "An argument-layout convention, not normally an object-language connective. Its exact reading depends on the formal system and notation conventions in use."
+        "An argument-layout convention, not normally an object-language connective."
       ],
       "lookalikes": [],
       "related": [],
@@ -104,7 +104,7 @@
         "believes that"
       ],
       "summary": "Agent a believes φ.",
-      "body": "Agent a believes φ. Belief does not normally entail truth. A model can represent agent a believing P while P is false. Its truth depends on a model with worlds and an accessibility relation, not only on the valuation at one world. Necessity quantifies over accessible worlds and possibility requires an accessible witness; frame conditions determine which principles are valid. Do not treat metaphysical, epistemic, deontic, and temporal readings as interchangeable. In the example BₐP ∧ ¬P., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Agent a believes φ. Belief does not normally entail truth. A model can represent agent a believing P while P is false.",
       "examples": [
         {
           "text": "BₐP ∧ ¬P.",
@@ -112,7 +112,7 @@
         }
       ],
       "limitations": [
-        "Belief does not normally entail truth. Its exact reading depends on the formal system and notation conventions in use."
+        "Belief does not normally entail truth."
       ],
       "lookalikes": [],
       "related": [],
@@ -133,7 +133,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Some member of A satisfies P.",
-      "body": "Some member of A satisfies P. Notice conjunction here, compared with the conditional in bounded universal quantification. Expand as ∃x(x ∈ Students ∧ Passed(x)); the witness must actually be a student. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example ∃x ∈ Students Passed(x)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Some member of A satisfies P. Notice conjunction here, compared with the conditional in bounded universal quantification. Expand as ∃x(x ∈ Students ∧ Passed(x)); the witness must actually be a student.",
       "examples": [
         {
           "text": "∃x ∈ Students Passed(x).",
@@ -141,7 +141,7 @@
         }
       ],
       "limitations": [
-        "Notice conjunction here, compared with the conditional in bounded universal quantification. Its exact reading depends on the formal system and notation conventions in use."
+        "Notice conjunction here, compared with the conditional in bounded universal quantification."
       ],
       "lookalikes": [],
       "related": [],
@@ -162,7 +162,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Every member of A satisfies P.",
-      "body": "Every member of A satisfies P. A set-theoretic abbreviation rather than an additional core FOL quantifier. Expand as ∀x(x ∈ Students → Passed(x)); nonstudents need not pass. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example ∀x ∈ Students Passed(x)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Every member of A satisfies P. A set-theoretic abbreviation rather than an additional core FOL quantifier. Expand as ∀x(x ∈ Students → Passed(x)); nonstudents need not pass.",
       "examples": [
         {
           "text": "∀x ∈ Students Passed(x).",
@@ -170,7 +170,7 @@
         }
       ],
       "limitations": [
-        "A set-theoretic abbreviation rather than an additional core FOL quantifier. Its exact reading depends on the formal system and notation conventions in use."
+        "A set-theoretic abbreviation rather than an additional core FOL quantifier."
       ],
       "lookalikes": [],
       "related": [],
@@ -205,7 +205,7 @@
         "although"
       ],
       "summary": "Both p and q are true.",
-      "body": "Both p and q are true. Juxtaposition and multiplication signs are also used in Boolean algebra. Both the open door and the illuminated light are required. Its scope is propositional: letters stand for complete propositions, not arbitrary terms or predicates. Parentheses determine grouping, and the displayed connective should not be read as a causal, temporal, or epistemic relation unless a separate semantics adds that interpretation. Check valuations truth-functionally before importing ordinary-language implications. In the example P means the door is open; Q means the light is on. P ∧ Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Both p and q are true. Juxtaposition and multiplication signs are also used in Boolean algebra. Both the open door and the illuminated light are required.",
       "examples": [
         {
           "text": "P means the door is open; Q means the light is on. P ∧ Q.",
@@ -213,7 +213,7 @@
         }
       ],
       "limitations": [
-        "Juxtaposition and multiplication signs are also used in Boolean algebra. Its exact reading depends on the formal system and notation conventions in use."
+        "Juxtaposition and multiplication signs are also used in Boolean algebra."
       ],
       "lookalikes": [
         {
@@ -222,7 +222,8 @@
         }
       ],
       "related": [
-        "disjunction"
+        "disjunction",
+        "negation"
       ],
       "tags": [
         "propositional-logic"
@@ -241,7 +242,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "The individual satisfying P, when the governing description theory permits it.",
-      "body": "The individual satisfying P, when the governing description theory permits it. Existence and uniqueness conditions vary by formal system. Whether a nonexisting or nonunique king yields a denotation depends on the adopted description theory. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example ιx KingOfFrance(x)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "The individual satisfying P, when the governing description theory permits it. Existence and uniqueness conditions vary by formal system. Whether a nonexisting or nonunique king yields a denotation depends on the adopted description theory.",
       "examples": [
         {
           "text": "ιx KingOfFrance(x).",
@@ -249,10 +250,12 @@
         }
       ],
       "limitations": [
-        "Existence and uniqueness conditions vary by formal system. Its exact reading depends on the formal system and notation conventions in use."
+        "Existence and uniqueness conditions vary by formal system."
       ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "bertrand-russell"
+      ],
       "tags": [
         "predicate-logic"
       ]
@@ -277,7 +280,7 @@
       ],
       "englishReadings": [],
       "summary": "Introduces a definition or stipulated abbreviation.",
-      "body": "Introduces a definition or stipulated abbreviation. A definition marker is not a claim of empirical identity. The right side stipulates the meaning of the abbreviation on the left. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example P ⊕ Q ≔ (P ∨ Q) ∧ ¬(P ∧ Q)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Introduces a definition or stipulated abbreviation. A definition marker is not a claim of empirical identity. The right side stipulates the meaning of the abbreviation on the left.",
       "examples": [
         {
           "text": "P ⊕ Q ≔ (P ∨ Q) ∧ ¬(P ∧ Q).",
@@ -285,7 +288,7 @@
         }
       ],
       "limitations": [
-        "A definition marker is not a claim of empirical identity. Its exact reading depends on the formal system and notation conventions in use."
+        "A definition marker is not a claim of empirical identity."
       ],
       "lookalikes": [],
       "related": [],
@@ -308,7 +311,7 @@
       ],
       "englishReadings": [],
       "summary": "The set with no elements.",
-      "body": "The set with no elements. Not interchangeable with the falsity constant ⊥. There is no member of ∅ that could violate the subset condition. The symbol is interpreted relative to a universe of sets and the membership relation. Distinguish an object being an element from a set being a subset, and keep the direction of inclusion visible. Familiar glyphs can be overloaded across mathematical traditions, so the surrounding type and arity control the reading. In the example ∅ ⊆ {1, 2}., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "The set with no elements. Not interchangeable with the falsity constant ⊥. There is no member of ∅ that could violate the subset condition.",
       "examples": [
         {
           "text": "∅ ⊆ {1, 2}.",
@@ -316,10 +319,12 @@
         }
       ],
       "limitations": [
-        "Not interchangeable with the falsity constant ⊥. Its exact reading depends on the formal system and notation conventions in use."
+        "Not interchangeable with the falsity constant ⊥."
       ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "falsity-constant"
+      ],
       "tags": [
         "set-notation"
       ]
@@ -340,7 +345,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Marks the completion of a proof.",
-      "body": "Marks the completion of a proof. □ also means necessity in modal logic. This is a document convention and adds no premise or inference. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example After deriving the required conclusion, write ∎., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Marks the completion of a proof. □ also means necessity in modal logic. This is a document convention and adds no premise or inference.",
       "examples": [
         {
           "text": "After deriving the required conclusion, write ∎.",
@@ -348,7 +353,7 @@
         }
       ],
       "limitations": [
-        "□ also means necessity in modal logic. Its exact reading depends on the formal system and notation conventions in use."
+        "□ also means necessity in modal logic."
       ],
       "lookalikes": [],
       "related": [],
@@ -371,7 +376,7 @@
         "eventually"
       ],
       "summary": "φ holds at some relevant future time.",
-      "body": "φ holds at some relevant future time. F can also denote prohibition or falsity in other contexts. At some relevant future state Delivered holds; no particular deadline is specified. Its truth depends on a model with worlds and an accessibility relation, not only on the valuation at one world. Necessity quantifies over accessible worlds and possibility requires an accessible witness; frame conditions determine which principles are valid. Do not treat metaphysical, epistemic, deontic, and temporal readings as interchangeable. In the example F Delivered., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "φ holds at some relevant future time. F can also denote prohibition or falsity in other contexts. At some relevant future state Delivered holds; no particular deadline is specified.",
       "examples": [
         {
           "text": "F Delivered.",
@@ -379,7 +384,7 @@
         }
       ],
       "limitations": [
-        "F can also denote prohibition or falsity in other contexts. Its exact reading depends on the formal system and notation conventions in use."
+        "F can also denote prohibition or falsity in other contexts."
       ],
       "lookalikes": [],
       "related": [],
@@ -408,7 +413,7 @@
         "exactly one"
       ],
       "summary": "Exactly one of p and q is true.",
-      "body": "Exactly one of p and q is true. Definable as (p ∨ q) ∧ ¬(p ∧ q). Exactly one alternative is allowed; both true and both false are excluded. Its scope is propositional: letters stand for complete propositions, not arbitrary terms or predicates. Parentheses determine grouping, and the displayed connective should not be read as a causal, temporal, or epistemic relation unless a separate semantics adds that interpretation. Check valuations truth-functionally before importing ordinary-language implications. In the example P means the coin lands heads; Q means it lands tails. P ⊕ Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Exactly one of p and q is true. Definable as (p ∨ q) ∧ ¬(p ∧ q). Exactly one alternative is allowed; both true and both false are excluded.",
       "examples": [
         {
           "text": "P means the coin lands heads; Q means it lands tails. P ⊕ Q.",
@@ -416,10 +421,12 @@
         }
       ],
       "limitations": [
-        "Definable as (p ∨ q) ∧ ¬(p ∧ q). Its exact reading depends on the formal system and notation conventions in use."
+        "Definable as (p ∨ q) ∧ ¬(p ∧ q)."
       ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "disjunction"
+      ],
       "tags": [
         "propositional-logic"
       ]
@@ -443,7 +450,7 @@
         "some"
       ],
       "summary": "There is at least one individual x for which P(x) holds.",
-      "body": "There is at least one individual x for which P(x) holds. ∃ does not mean exactly one. At least one object is both a cat and black; other cats can have other colors. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example ∃x (Cat(x) ∧ Black(x))., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "There is at least one individual x for which P(x) holds. ∃ does not mean exactly one. At least one object is both a cat and black; other cats can have other colors.",
       "examples": [
         {
           "text": "∃x (Cat(x) ∧ Black(x)).",
@@ -451,7 +458,7 @@
         }
       ],
       "limitations": [
-        "∃ does not mean exactly one. Its exact reading depends on the formal system and notation conventions in use."
+        "∃ does not mean exactly one."
       ],
       "lookalikes": [
         {
@@ -460,7 +467,9 @@
         }
       ],
       "related": [
-        "unique-existential-quantifier"
+        "unique-existential-quantifier",
+        "universal-quantifier",
+        "gottlob-frege"
       ],
       "tags": [
         "predicate-logic"
@@ -481,7 +490,7 @@
       ],
       "englishReadings": [],
       "summary": "At least one relevant interpretation satisfies Γ while falsifying φ.",
-      "body": "At least one relevant interpretation satisfies Γ while falsifying φ. Does not entail Γ ⊨ ¬φ. P false and Q true provides a countermodel; the premise does not entail ¬P either. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example {P ∨ Q} ⊭ P., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "At least one relevant interpretation satisfies Γ while falsifying φ. Does not entail Γ ⊨ ¬φ. P false and Q true provides a countermodel; the premise does not entail ¬P either.",
       "examples": [
         {
           "text": "{P ∨ Q} ⊭ P.",
@@ -489,7 +498,7 @@
         }
       ],
       "limitations": [
-        "Does not entail Γ ⊨ ¬φ. Its exact reading depends on the formal system and notation conventions in use."
+        "Does not entail Γ ⊨ ¬φ."
       ],
       "lookalikes": [],
       "related": [],
@@ -515,7 +524,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "A formula that is always false.",
-      "body": "A formula that is always false. Also used as the contradiction marker in natural deduction. The proof derives contradiction from a statement together with its negation. Its scope is propositional: letters stand for complete propositions, not arbitrary terms or predicates. Parentheses determine grouping, and the displayed connective should not be read as a causal, temporal, or epistemic relation unless a separate semantics adds that interpretation. Check valuations truth-functionally before importing ordinary-language implications. In the example P ∧ ¬P ⊢ ⊥., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "A formula that is always false. Also used as the contradiction marker in natural deduction. The proof derives contradiction from a statement together with its negation.",
       "examples": [
         {
           "text": "P ∧ ¬P ⊢ ⊥.",
@@ -523,7 +532,8 @@
         }
       ],
       "limitations": [
-        "Also used as the contradiction marker in natural deduction. Its exact reading depends on the formal system and notation conventions in use."
+        "Also used as the contradiction marker in natural deduction.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
       ],
       "lookalikes": [
         {
@@ -557,7 +567,7 @@
         "is provable from"
       ],
       "summary": "φ has a formal derivation from Γ in the specified calculus.",
-      "body": "φ has a formal derivation from Γ in the specified calculus. Always relative to a proof system. Modus ponens supplies a derivation in a proof system containing that rule. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example P → Q, P ⊢ Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "φ has a formal derivation from Γ in the specified calculus. Always relative to a proof system. Modus ponens supplies a derivation in a proof system containing that rule.",
       "examples": [
         {
           "text": "P → Q, P ⊢ Q.",
@@ -565,7 +575,7 @@
         }
       ],
       "limitations": [
-        "Always relative to a proof system. Its exact reading depends on the formal system and notation conventions in use."
+        "Always relative to a proof system."
       ],
       "lookalikes": [
         {
@@ -595,7 +605,7 @@
       ],
       "englishReadings": [],
       "summary": "No derivation of φ from Γ exists in the specified calculus.",
-      "body": "No derivation of φ from Γ exists in the specified calculus. Not synonymous with φ being false. Since a countermodel exists, soundness prevents such a derivation. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example P ∨ Q ⊬ P, in a sound classical proof system., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "No derivation of φ from Γ exists in the specified calculus. Not synonymous with φ being false. Since a countermodel exists, soundness prevents such a derivation.",
       "examples": [
         {
           "text": "P ∨ Q ⊬ P, in a sound classical proof system.",
@@ -603,7 +613,7 @@
         }
       ],
       "limitations": [
-        "Not synonymous with φ being false. Its exact reading depends on the formal system and notation conventions in use."
+        "Not synonymous with φ being false."
       ],
       "lookalikes": [],
       "related": [],
@@ -627,7 +637,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Ranges over formulas in a metalinguistic statement.",
-      "body": "Ranges over formulas in a metalinguistic statement. Do not read φ as an individual variable unless the language explicitly assigns that role. φ is a placeholder for a formula, not a quantified individual inside the object language. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example For every formula φ, φ → φ is valid in classical logic., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Ranges over formulas in a metalinguistic statement. Do not read φ as an individual variable unless the language explicitly assigns that role. φ is a placeholder for a formula, not a quantified individual inside the object language.",
       "examples": [
         {
           "text": "For every formula φ, φ → φ is valid in classical logic.",
@@ -635,7 +645,8 @@
         }
       ],
       "limitations": [
-        "Do not read φ as an individual variable unless the language explicitly assigns that role. Its exact reading depends on the formal system and notation conventions in use."
+        "Do not read φ as an individual variable unless the language explicitly assigns that role.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
       ],
       "lookalikes": [],
       "related": [],
@@ -656,7 +667,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "A term denoting the function's output on the arguments.",
-      "body": "A term denoting the function's output on the arguments. Terms denote objects; formulas express claims. MotherOf(a) is an object-denoting term; identity combines it with b to form a formula. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example MotherOf(a) = b., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "A term denoting the function's output on the arguments. Terms denote objects; formulas express claims. MotherOf(a) is an object-denoting term; identity combines it with b to form a formula.",
       "examples": [
         {
           "text": "MotherOf(a) = b.",
@@ -664,7 +675,8 @@
         }
       ],
       "limitations": [
-        "Terms denote objects; formulas express claims. Its exact reading depends on the formal system and notation conventions in use."
+        "Terms denote objects; formulas express claims.",
+        "A predicate or function's actual arity is supplied by its signature. The integer here describes the displayed example, not every use of this notation."
       ],
       "lookalikes": [],
       "related": [],
@@ -686,7 +698,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Mark formula structure and operator scope.",
-      "body": "Mark formula structure and operator scope. Braces often denote sets instead; punctuation depends on the language. The first denies their conjunction; the second requires Q and denies P. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example ¬(P ∧ Q), compared with (¬P ∧ Q)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Mark formula structure and operator scope. Braces often denote sets instead; punctuation depends on the language. The first denies their conjunction; the second requires Q and denies P.",
       "examples": [
         {
           "text": "¬(P ∧ Q), compared with (¬P ∧ Q).",
@@ -694,7 +706,8 @@
         }
       ],
       "limitations": [
-        "Braces often denote sets instead; punctuation depends on the language. Its exact reading depends on the formal system and notation conventions in use."
+        "Braces often denote sets instead; punctuation depends on the language.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
       ],
       "lookalikes": [],
       "related": [],
@@ -715,7 +728,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Selects an object satisfying P when one exists, under an epsilon calculus.",
-      "body": "Selects an object satisfying P when one exists, under an epsilon calculus. Not part of baseline first-order logic notation. The selected object supplies a witness when a witness exists. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example If ∃x P(x), then P(εx P(x)) in a suitable epsilon calculus., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Selects an object satisfying P when one exists, under an epsilon calculus. Not part of baseline first-order logic notation. The selected object supplies a witness when a witness exists.",
       "examples": [
         {
           "text": "If ∃x P(x), then P(εx P(x)) in a suitable epsilon calculus.",
@@ -723,7 +736,7 @@
         }
       ],
       "limitations": [
-        "Not part of baseline first-order logic notation. Its exact reading depends on the formal system and notation conventions in use."
+        "Not part of baseline first-order logic notation."
       ],
       "lookalikes": [],
       "related": [],
@@ -747,7 +760,7 @@
         "is the same object as"
       ],
       "summary": "The two terms denote the same individual.",
-      "body": "The two terms denote the same individual. Identity is distinct from similarity, co-reference claims in opaque contexts, or logical equivalence. The two names denote one object, so the property transfers in this context. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example a = b; P(a). Therefore P(b), in an ordinary extensional first-order context., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "The two terms denote the same individual. Identity is distinct from similarity, co-reference claims in opaque contexts, or logical equivalence. The two names denote one object, so the property transfers in this context.",
       "examples": [
         {
           "text": "a = b; P(a). Therefore P(b), in an ordinary extensional first-order context.",
@@ -755,10 +768,12 @@
         }
       ],
       "limitations": [
-        "Identity is distinct from similarity, co-reference claims in opaque contexts, or logical equivalence. Its exact reading depends on the formal system and notation conventions in use."
+        "Identity is distinct from similarity, co-reference claims in opaque contexts, or logical equivalence."
       ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "ruth-barcan-marcus"
+      ],
       "tags": [
         "predicate-logic"
       ]
@@ -782,7 +797,7 @@
         "at least one"
       ],
       "summary": "At least one of p and q is true, possibly both.",
-      "body": "At least one of p and q is true, possibly both. Computing uses | or || in some languages; | also denotes NAND elsewhere. The formula is true if Ada attends, Ben attends, or both attend. Its scope is propositional: letters stand for complete propositions, not arbitrary terms or predicates. Parentheses determine grouping, and the displayed connective should not be read as a causal, temporal, or epistemic relation unless a separate semantics adds that interpretation. Check valuations truth-functionally before importing ordinary-language implications. In the example P means Ada attends; Q means Ben attends. P ∨ Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "At least one of p and q is true, possibly both. Computing uses | or || in some languages; | also denotes NAND elsewhere. The formula is true if Ada attends, Ben attends, or both attend.",
       "examples": [
         {
           "text": "P means Ada attends; Q means Ben attends. P ∨ Q.",
@@ -790,7 +805,7 @@
         }
       ],
       "limitations": [
-        "Computing uses | or || in some languages; | also denotes NAND elsewhere. Its exact reading depends on the formal system and notation conventions in use."
+        "Computing uses | or || in some languages; | also denotes NAND elsewhere."
       ],
       "lookalikes": [
         {
@@ -799,7 +814,8 @@
         }
       ],
       "related": [
-        "exclusive-disjunction"
+        "exclusive-disjunction",
+        "conjunction"
       ],
       "tags": [
         "propositional-logic"
@@ -822,7 +838,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Denotes an individual under an interpretation.",
-      "body": "Denotes an individual under an interpretation. A constant's interpretation can differ between structures. The name a denotes an individual; the formula applies Human to that individual. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example Human(a)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Denotes an individual under an interpretation. A constant's interpretation can differ between structures. The name a denotes an individual; the formula applies Human to that individual.",
       "examples": [
         {
           "text": "Human(a).",
@@ -830,7 +846,8 @@
         }
       ],
       "limitations": [
-        "A constant's interpretation can differ between structures. Its exact reading depends on the formal system and notation conventions in use."
+        "A constant's interpretation can differ between structures.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
       ],
       "lookalikes": [],
       "related": [],
@@ -854,7 +871,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Ranges over individuals in the domain.",
-      "body": "Ranges over individuals in the domain. These are variables, not quantifiers. x ranges over the domain and is bound by ∀; a remains an individual constant. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example ∀x Loves(x, a)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Ranges over individuals in the domain. These are variables, not quantifiers. x ranges over the domain and is bound by ∀; a remains an individual constant.",
       "examples": [
         {
           "text": "∀x Loves(x, a).",
@@ -862,7 +879,8 @@
         }
       ],
       "limitations": [
-        "These are variables, not quantifiers. Its exact reading depends on the formal system and notation conventions in use."
+        "These are variables, not quantifiers.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
       ],
       "lookalikes": [],
       "related": [],
@@ -883,7 +901,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Denotes a semantic value under a stated interpretation.",
-      "body": "Denotes a semantic value under a stated interpretation. The value can be a truth value, extension, intension, or other semantic object. The brackets refer to the formula's semantic value rather than merely its written form. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example ⟦P ∧ Q⟧ᵥ = true when valuation v makes both P and Q true., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Denotes a semantic value under a stated interpretation. The value can be a truth value, extension, intension, or other semantic object. The brackets refer to the formula's semantic value rather than merely its written form.",
       "examples": [
         {
           "text": "⟦P ∧ Q⟧ᵥ = true when valuation v makes both P and Q true.",
@@ -891,7 +909,7 @@
         }
       ],
       "limitations": [
-        "The value can be a truth value, extension, intension, or other semantic object. Its exact reading depends on the formal system and notation conventions in use."
+        "The value can be a truth value, extension, intension, or other semantic object."
       ],
       "lookalikes": [],
       "related": [],
@@ -914,7 +932,7 @@
         "knows that"
       ],
       "summary": "Agent a knows φ in the specified epistemic system.",
-      "body": "Agent a knows φ in the specified epistemic system. The adopted axioms determine the modeled idealizations about knowledge. In a standard epistemic model, P holds throughout the worlds compatible with agent a's knowledge. Its truth depends on a model with worlds and an accessibility relation, not only on the valuation at one world. Necessity quantifies over accessible worlds and possibility requires an accessible witness; frame conditions determine which principles are valid. Do not treat metaphysical, epistemic, deontic, and temporal readings as interchangeable. In the example KₐP., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Agent a knows φ in the specified epistemic system. The adopted axioms determine the modeled idealizations about knowledge. In a standard epistemic model, P holds throughout the worlds compatible with agent a's knowledge.",
       "examples": [
         {
           "text": "KₐP.",
@@ -922,7 +940,7 @@
         }
       ],
       "limitations": [
-        "The adopted axioms determine the modeled idealizations about knowledge. Its exact reading depends on the formal system and notation conventions in use."
+        "The adopted axioms determine the modeled idealizations about knowledge."
       ],
       "lookalikes": [],
       "related": [],
@@ -943,7 +961,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Forms a function or abstraction from a variable and an expression.",
-      "body": "Forms a function or abstraction from a variable and an expression. Not a connective of ordinary first-order logic. The bound variable is replaced by the argument according to the calculus's reduction rules. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example (λx.x)(a) reduces to a., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Forms a function or abstraction from a variable and an expression. Not a connective of ordinary first-order logic. The bound variable is replaced by the argument according to the calculus's reduction rules.",
       "examples": [
         {
           "text": "(λx.x)(a) reduces to a.",
@@ -951,7 +969,7 @@
         }
       ],
       "limitations": [
-        "Not a connective of ordinary first-order logic. Its exact reading depends on the formal system and notation conventions in use."
+        "Not a connective of ordinary first-order logic."
       ],
       "lookalikes": [],
       "related": [],
@@ -972,7 +990,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "The formulas agree in truth across the relevant interpretations.",
-      "body": "The formulas agree in truth across the relevant interpretations. Notation varies; some authors use these signs inside the object language instead. De Morgan's law states that both formulas agree on every valuation. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example ¬(P ∧ Q) ⇔ (¬P ∨ ¬Q), in classical logic., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "The formulas agree in truth across the relevant interpretations. Notation varies; some authors use these signs inside the object language instead. De Morgan's law states that both formulas agree on every valuation.",
       "examples": [
         {
           "text": "¬(P ∧ Q) ⇔ (¬P ∨ ¬Q), in classical logic.",
@@ -980,7 +998,7 @@
         }
       ],
       "limitations": [
-        "Notation varies; some authors use these signs inside the object language instead. Its exact reading depends on the formal system and notation conventions in use."
+        "Notation varies; some authors use these signs inside the object language instead."
       ],
       "lookalikes": [],
       "related": [],
@@ -1001,7 +1019,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "φ holds in every relevant interpretation.",
-      "body": "φ holds in every relevant interpretation. For propositional logic, a tautology; semantic classes can differ in other logics. Every classical valuation makes this formula true; other logics require separate assessment. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example ⊨ P ∨ ¬P, in classical logic., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "φ holds in every relevant interpretation. For propositional logic, a tautology; semantic classes can differ in other logics. Every classical valuation makes this formula true; other logics require separate assessment.",
       "examples": [
         {
           "text": "⊨ P ∨ ¬P, in classical logic.",
@@ -1009,10 +1027,12 @@
         }
       ],
       "limitations": [
-        "For propositional logic, a tautology; semantic classes can differ in other logics. Its exact reading depends on the formal system and notation conventions in use."
+        "For propositional logic, a tautology; semantic classes can differ in other logics."
       ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "truth-constant"
+      ],
       "tags": [
         "proof-notation"
       ]
@@ -1038,7 +1058,7 @@
         "exactly when"
       ],
       "summary": "p if and only if q: they have the same truth value.",
-      "body": "p if and only if q: they have the same truth value. ≡ and ⇔ may instead denote metalinguistic equivalence; check the convention. Both directions are asserted, so either truth-value mismatch makes the formula false. Its scope is propositional: letters stand for complete propositions, not arbitrary terms or predicates. Parentheses determine grouping, and the displayed connective should not be read as a causal, temporal, or epistemic relation unless a separate semantics adds that interpretation. Check valuations truth-functionally before importing ordinary-language implications. In the example P means the number is even; Q means it is divisible by two. P ↔ Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "p if and only if q: they have the same truth value. ≡ and ⇔ may instead denote metalinguistic equivalence; check the convention. Both directions are asserted, so either truth-value mismatch makes the formula false.",
       "examples": [
         {
           "text": "P means the number is even; Q means it is divisible by two. P ↔ Q.",
@@ -1046,7 +1066,7 @@
         }
       ],
       "limitations": [
-        "≡ and ⇔ may instead denote metalinguistic equivalence; check the convention. Its exact reading depends on the formal system and notation conventions in use."
+        "≡ and ⇔ may instead denote metalinguistic equivalence; check the convention."
       ],
       "lookalikes": [
         {
@@ -1083,7 +1103,7 @@
         "provided that"
       ],
       "summary": "If p then q; false exactly when p is true and q is false.",
-      "body": "If p then q; false exactly when p is true and q is false. Does not by itself assert causation or relevance. ⇒ is also used by some authors. A counterexample is an on switch with an unlit lamp. The formula alone gives no causal mechanism. Its scope is propositional: letters stand for complete propositions, not arbitrary terms or predicates. Parentheses determine grouping, and the displayed connective should not be read as a causal, temporal, or epistemic relation unless a separate semantics adds that interpretation. Check valuations truth-functionally before importing ordinary-language implications. In the example P means the switch is on; Q means the lamp is lit. P → Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "If p then q; false exactly when p is true and q is false. Does not by itself assert causation or relevance. ⇒ is also used by some authors. A counterexample is an on switch with an unlit lamp. The formula alone gives no causal mechanism.",
       "examples": [
         {
           "text": "P means the switch is on; Q means the lamp is lit. P → Q.",
@@ -1091,7 +1111,8 @@
         }
       ],
       "limitations": [
-        "Does not by itself assert causation or relevance. ⇒ is also used by some authors. Its exact reading depends on the formal system and notation conventions in use."
+        "Does not by itself assert causation or relevance. ⇒ is also used by some authors.",
+        "In English, 'P only if Q' places P in the antecedent and Q in the consequent; 'P if Q' reverses those roles."
       ],
       "lookalikes": [
         {
@@ -1105,7 +1126,8 @@
       ],
       "related": [
         "semantic-consequence",
-        "affirming-the-consequent"
+        "affirming-the-consequent",
+        "material-biconditional"
       ],
       "tags": [
         "propositional-logic"
@@ -1124,7 +1146,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "φ is satisfied in structure M under assignment s.",
-      "body": "φ is satisfied in structure M under assignment s. The same glyph is used in related but distinct semantic roles. In the particular structure M, a denotes an object in the extension of Cat. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example M ⊨ Cat(a)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "φ is satisfied in structure M under assignment s. The same glyph is used in related but distinct semantic roles. In the particular structure M, a denotes an object in the extension of Cat.",
       "examples": [
         {
           "text": "M ⊨ Cat(a).",
@@ -1132,7 +1154,7 @@
         }
       ],
       "limitations": [
-        "The same glyph is used in related but distinct semantic roles. Its exact reading depends on the formal system and notation conventions in use."
+        "The same glyph is used in related but distinct semantic roles."
       ],
       "lookalikes": [],
       "related": [],
@@ -1156,7 +1178,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Not both p and q.",
-      "body": "Not both p and q. The stroke | has unrelated uses in other systems. The formula fails only when both alarms are active. Its scope is propositional: letters stand for complete propositions, not arbitrary terms or predicates. Parentheses determine grouping, and the displayed connective should not be read as a causal, temporal, or epistemic relation unless a separate semantics adds that interpretation. Check valuations truth-functionally before importing ordinary-language implications. In the example P means alarm A is active; Q means alarm B is active. P ↑ Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Not both p and q. The stroke | has unrelated uses in other systems. The formula fails only when both alarms are active.",
       "examples": [
         {
           "text": "P means alarm A is active; Q means alarm B is active. P ↑ Q.",
@@ -1164,10 +1186,12 @@
         }
       ],
       "limitations": [
-        "The stroke | has unrelated uses in other systems. Its exact reading depends on the formal system and notation conventions in use."
+        "The stroke | has unrelated uses in other systems."
       ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "c-s-peirce"
+      ],
       "tags": [
         "propositional-logic"
       ]
@@ -1189,7 +1213,7 @@
         "necessarily"
       ],
       "summary": "φ is necessary under the chosen modal semantics.",
-      "body": "φ is necessary under the chosen modal semantics. An extension beyond ordinary propositional and first-order logic. P holds at every world accessible from the current world in the chosen modal model. Its truth depends on a model with worlds and an accessibility relation, not only on the valuation at one world. Necessity quantifies over accessible worlds and possibility requires an accessible witness; frame conditions determine which principles are valid. Do not treat metaphysical, epistemic, deontic, and temporal readings as interchangeable. In the example □P., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "φ is necessary under the chosen modal semantics. An extension beyond ordinary propositional and first-order logic. P holds at every world accessible from the current world in the chosen modal model.",
       "examples": [
         {
           "text": "□P.",
@@ -1197,7 +1221,7 @@
         }
       ],
       "limitations": [
-        "An extension beyond ordinary propositional and first-order logic. Its exact reading depends on the formal system and notation conventions in use."
+        "An extension beyond ordinary propositional and first-order logic."
       ],
       "lookalikes": [
         {
@@ -1228,7 +1252,7 @@
         "none"
       ],
       "summary": "No individual in the domain satisfies P.",
-      "body": "No individual in the domain satisfies P. An abbreviation for a negated existential formula. Nothing in the domain is both a cat and a reptile. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example ∄x (Cat(x) ∧ Reptile(x))., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "No individual in the domain satisfies P. An abbreviation for a negated existential formula. Nothing in the domain is both a cat and a reptile.",
       "examples": [
         {
           "text": "∄x (Cat(x) ∧ Reptile(x)).",
@@ -1236,7 +1260,7 @@
         }
       ],
       "limitations": [
-        "An abbreviation for a negated existential formula. Its exact reading depends on the formal system and notation conventions in use."
+        "An abbreviation for a negated existential formula."
       ],
       "lookalikes": [],
       "related": [],
@@ -1269,7 +1293,7 @@
         "it is not the case that"
       ],
       "summary": "Not p: reverses its truth value.",
-      "body": "Not p: reverses its truth value. ! is common in computing; N is Polish prefix notation. The formula says the door is not open; it does not say the door is locked. Its scope is propositional: letters stand for complete propositions, not arbitrary terms or predicates. Parentheses determine grouping, and the displayed connective should not be read as a causal, temporal, or epistemic relation unless a separate semantics adds that interpretation. Check valuations truth-functionally before importing ordinary-language implications. In the example P means the door is open. ¬P., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Not p: reverses its truth value. ! is common in computing; N is Polish prefix notation. The formula says the door is not open; it does not say the door is locked.",
       "examples": [
         {
           "text": "P means the door is open. ¬P.",
@@ -1277,7 +1301,7 @@
         }
       ],
       "limitations": [
-        "! is common in computing; N is Polish prefix notation. Its exact reading depends on the formal system and notation conventions in use."
+        "! is common in computing; N is Polish prefix notation."
       ],
       "lookalikes": [
         {
@@ -1314,7 +1338,7 @@
         "at the next state"
       ],
       "summary": "φ holds at the next state.",
-      "body": "φ holds at the next state. Typically used with a discrete successor-time semantics. Ready must hold at the next state, rather than merely at some later state. Its truth depends on a model with worlds and an accessibility relation, not only on the valuation at one world. Necessity quantifies over accessible worlds and possibility requires an accessible witness; frame conditions determine which principles are valid. Do not treat metaphysical, epistemic, deontic, and temporal readings as interchangeable. In the example X Ready., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "φ holds at the next state. Typically used with a discrete successor-time semantics. Ready must hold at the next state, rather than merely at some later state.",
       "examples": [
         {
           "text": "X Ready.",
@@ -1322,7 +1346,7 @@
         }
       ],
       "limitations": [
-        "Typically used with a discrete successor-time semantics. Its exact reading depends on the formal system and notation conventions in use."
+        "Typically used with a discrete successor-time semantics."
       ],
       "lookalikes": [],
       "related": [],
@@ -1347,7 +1371,7 @@
         "is distinct from"
       ],
       "summary": "The terms denote different individuals.",
-      "body": "The terms denote different individuals. Usually defined using negation and identity. The interpretation must assign the two terms different objects. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example a ≠ b., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "The terms denote different individuals. Usually defined using negation and identity. The interpretation must assign the two terms different objects.",
       "examples": [
         {
           "text": "a ≠ b.",
@@ -1355,7 +1379,7 @@
         }
       ],
       "limitations": [
-        "Usually defined using negation and identity. Its exact reading depends on the formal system and notation conventions in use."
+        "Usually defined using negation and identity."
       ],
       "lookalikes": [],
       "related": [],
@@ -1377,7 +1401,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Neither p nor q.",
-      "body": "Neither p nor q. Definable as ¬(p ∨ q). The formula holds only when neither person is present. Its scope is propositional: letters stand for complete propositions, not arbitrary terms or predicates. Parentheses determine grouping, and the displayed connective should not be read as a causal, temporal, or epistemic relation unless a separate semantics adds that interpretation. Check valuations truth-functionally before importing ordinary-language implications. In the example P means Ada is present; Q means Ben is present. P ↓ Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Neither p nor q. Definable as ¬(p ∨ q). The formula holds only when neither person is present.",
       "examples": [
         {
           "text": "P means Ada is present; Q means Ben is present. P ↓ Q.",
@@ -1385,10 +1409,12 @@
         }
       ],
       "limitations": [
-        "Definable as ¬(p ∨ q). Its exact reading depends on the formal system and notation conventions in use."
+        "Definable as ¬(p ∨ q)."
       ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "c-s-peirce"
+      ],
       "tags": [
         "propositional-logic"
       ]
@@ -1408,7 +1434,7 @@
         "it is obligatory that"
       ],
       "summary": "φ is obligatory under the chosen deontic interpretation.",
-      "body": "φ is obligatory under the chosen deontic interpretation. Conditional obligations need richer notation or semantics. The formula represents an obligation; it does not assert that the book is actually returned. Its truth depends on a model with worlds and an accessibility relation, not only on the valuation at one world. Necessity quantifies over accessible worlds and possibility requires an accessible witness; frame conditions determine which principles are valid. Do not treat metaphysical, epistemic, deontic, and temporal readings as interchangeable. In the example O(ReturnBorrowedBook)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "φ is obligatory under the chosen deontic interpretation. Conditional obligations need richer notation or semantics. The formula represents an obligation; it does not assert that the book is actually returned.",
       "examples": [
         {
           "text": "O(ReturnBorrowedBook).",
@@ -1416,7 +1442,7 @@
         }
       ],
       "limitations": [
-        "Conditional obligations need richer notation or semantics. Its exact reading depends on the formal system and notation conventions in use."
+        "Conditional obligations need richer notation or semantics."
       ],
       "lookalikes": [],
       "related": [],
@@ -1439,7 +1465,7 @@
         "it is permitted that"
       ],
       "summary": "φ is permitted under the chosen deontic interpretation.",
-      "body": "φ is permitted under the chosen deontic interpretation. P is also a predicate letter elsewhere; context is essential. The action is permitted in the modeled normative system, without being required. Its truth depends on a model with worlds and an accessibility relation, not only on the valuation at one world. Necessity quantifies over accessible worlds and possibility requires an accessible witness; frame conditions determine which principles are valid. Do not treat metaphysical, epistemic, deontic, and temporal readings as interchangeable. In the example P(EnterPark)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "φ is permitted under the chosen deontic interpretation. P is also a predicate letter elsewhere; context is essential. The action is permitted in the modeled normative system, without being required.",
       "examples": [
         {
           "text": "P(EnterPark).",
@@ -1447,7 +1473,7 @@
         }
       ],
       "limitations": [
-        "P is also a predicate letter elsewhere; context is essential. Its exact reading depends on the formal system and notation conventions in use."
+        "P is also a predicate letter elsewhere; context is essential."
       ],
       "lookalikes": [],
       "related": [],
@@ -1472,7 +1498,7 @@
         "possibly"
       ],
       "summary": "φ is possible under the chosen modal semantics.",
-      "body": "φ is possible under the chosen modal semantics. In standard normal modal logics, ◇φ abbreviates ¬□¬φ. At least one accessible world satisfies P in the standard Kripke interpretation. Its truth depends on a model with worlds and an accessibility relation, not only on the valuation at one world. Necessity quantifies over accessible worlds and possibility requires an accessible witness; frame conditions determine which principles are valid. Do not treat metaphysical, epistemic, deontic, and temporal readings as interchangeable. In the example ◇P., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "φ is possible under the chosen modal semantics. In standard normal modal logics, ◇φ abbreviates ¬□¬φ. At least one accessible world satisfies P in the standard Kripke interpretation.",
       "examples": [
         {
           "text": "◇P.",
@@ -1480,10 +1506,12 @@
         }
       ],
       "limitations": [
-        "In standard normal modal logics, ◇φ abbreviates ¬□¬φ. Its exact reading depends on the formal system and notation conventions in use."
+        "In standard normal modal logics, ◇φ abbreviates ¬□¬φ."
       ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "necessity-operator"
+      ],
       "tags": [
         "modal-logic"
       ]
@@ -1501,7 +1529,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Asserts that the object denoted by a satisfies P.",
-      "body": "Asserts that the object denoted by a satisfies P. Some notations omit parentheses. The formula says that the individual denoted by ada belongs to the extension of Tall. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example Tall(ada)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Asserts that the object denoted by a satisfies P. Some notations omit parentheses. The formula says that the individual denoted by ada belongs to the extension of Tall.",
       "examples": [
         {
           "text": "Tall(ada).",
@@ -1509,7 +1537,7 @@
         }
       ],
       "limitations": [
-        "Some notations omit parentheses. Its exact reading depends on the formal system and notation conventions in use."
+        "Some notations omit parentheses."
       ],
       "lookalikes": [],
       "related": [],
@@ -1533,7 +1561,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Denotes a property or relation of a specified arity.",
-      "body": "Denotes a property or relation of a specified arity. Arity must be declared; a unary predicate and binary relation are different uses. P applies to one term and R to two; the symbolization key supplies their intended meanings. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example P is unary; R is binary. P(a) ∧ R(a, b)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Denotes a property or relation of a specified arity. Arity must be declared; a unary predicate and binary relation are different uses. P applies to one term and R to two; the symbolization key supplies their intended meanings.",
       "examples": [
         {
           "text": "P is unary; R is binary. P(a) ∧ R(a, b).",
@@ -1541,7 +1569,9 @@
         }
       ],
       "limitations": [
-        "Arity must be declared; a unary predicate and binary relation are different uses. Its exact reading depends on the formal system and notation conventions in use."
+        "Arity must be declared; a unary predicate and binary relation are different uses.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role.",
+        "A predicate or function's actual arity is supplied by its signature. The integer here describes the displayed example, not every use of this notation."
       ],
       "lookalikes": [],
       "related": [],
@@ -1564,7 +1594,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Represents a set, list, or multiset of premises, depending on the calculus.",
-      "body": "Represents a set, list, or multiset of premises, depending on the calculus. Structural rules depend on whether order and multiplicity matter. Γ abbreviates the premises and is not an additional premise letter. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example Γ = {P → Q, P}; Γ ⊢ Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Represents a set, list, or multiset of premises, depending on the calculus. Structural rules depend on whether order and multiplicity matter. Γ abbreviates the premises and is not an additional premise letter.",
       "examples": [
         {
           "text": "Γ = {P → Q, P}; Γ ⊢ Q.",
@@ -1572,7 +1602,8 @@
         }
       ],
       "limitations": [
-        "Structural rules depend on whether order and multiplicity matter. Its exact reading depends on the formal system and notation conventions in use."
+        "Structural rules depend on whether order and multiplicity matter.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
       ],
       "lookalikes": [],
       "related": [],
@@ -1595,7 +1626,7 @@
         "it is forbidden that"
       ],
       "summary": "φ is forbidden under the chosen deontic interpretation.",
-      "body": "φ is forbidden under the chosen deontic interpretation. Commonly defined as O¬φ; F also means eventually in temporal logic. Under the common definition O¬φ, refraining from indoor smoking is obligatory. Its truth depends on a model with worlds and an accessibility relation, not only on the valuation at one world. Necessity quantifies over accessible worlds and possibility requires an accessible witness; frame conditions determine which principles are valid. Do not treat metaphysical, epistemic, deontic, and temporal readings as interchangeable. In the example F(SmokeInside)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "φ is forbidden under the chosen deontic interpretation. Commonly defined as O¬φ; F also means eventually in temporal logic. Under the common definition O¬φ, refraining from indoor smoking is obligatory.",
       "examples": [
         {
           "text": "F(SmokeInside).",
@@ -1603,7 +1634,7 @@
         }
       ],
       "limitations": [
-        "Commonly defined as O¬φ; F also means eventually in temporal logic. Its exact reading depends on the formal system and notation conventions in use."
+        "Commonly defined as O¬φ; F also means eventually in temporal logic."
       ],
       "lookalikes": [],
       "related": [],
@@ -1628,7 +1659,7 @@
         "is a proper subset of"
       ],
       "summary": "A is a subset of B and A differs from B.",
-      "body": "A is a subset of B and A differs from B. Some authors use ⊂ for this meaning. Inclusion holds and the larger set has an element, 3, absent from the smaller one. The symbol is interpreted relative to a universe of sets and the membership relation. Distinguish an object being an element from a set being a subset, and keep the direction of inclusion visible. Familiar glyphs can be overloaded across mathematical traditions, so the surrounding type and arity control the reading. In the example {1, 2} ⊊ {1, 2, 3}., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "A is a subset of B and A differs from B. Some authors use ⊂ for this meaning. Inclusion holds and the larger set has an element, 3, absent from the smaller one.",
       "examples": [
         {
           "text": "{1, 2} ⊊ {1, 2, 3}.",
@@ -1636,7 +1667,7 @@
         }
       ],
       "limitations": [
-        "Some authors use ⊂ for this meaning. Its exact reading depends on the formal system and notation conventions in use."
+        "Some authors use ⊂ for this meaning."
       ],
       "lookalikes": [],
       "related": [],
@@ -1657,7 +1688,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Asserts that a and b stand in relation R in that order.",
-      "body": "Asserts that a and b stand in relation R in that order. A relation need not be symmetric. The order matters: Ada being taller than Ben does not imply the reverse. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example Taller(ada, ben)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Asserts that a and b stand in relation R in that order. A relation need not be symmetric. The order matters: Ada being taller than Ben does not imply the reverse.",
       "examples": [
         {
           "text": "Taller(ada, ben).",
@@ -1665,7 +1696,7 @@
         }
       ],
       "limitations": [
-        "A relation need not be symmetric. Its exact reading depends on the formal system and notation conventions in use."
+        "A relation need not be symmetric."
       ],
       "lookalikes": [],
       "related": [],
@@ -1691,7 +1722,7 @@
         "is a semantic consequence of"
       ],
       "summary": "Every relevant interpretation satisfying Γ also satisfies φ.",
-      "body": "Every relevant interpretation satisfying Γ also satisfies φ. Semantic consequence is not the material conditional → or syntactic derivability ⊢. No valuation makes both premises true while making Q false. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example {P → Q, P} ⊨ Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Every relevant interpretation satisfying Γ also satisfies φ. Semantic consequence is not the material conditional → or syntactic derivability ⊢. No valuation makes both premises true while making Q false.",
       "examples": [
         {
           "text": "{P → Q, P} ⊨ Q.",
@@ -1699,7 +1730,7 @@
         }
       ],
       "limitations": [
-        "Semantic consequence is not the material conditional → or syntactic derivability ⊢. Its exact reading depends on the formal system and notation conventions in use."
+        "Semantic consequence is not the material conditional → or syntactic derivability ⊢."
       ],
       "lookalikes": [
         {
@@ -1708,7 +1739,8 @@
         }
       ],
       "related": [
-        "formal-derivability"
+        "formal-derivability",
+        "material-conditional"
       ],
       "tags": [
         "proof-notation"
@@ -1730,7 +1762,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Represents an atomic proposition under a chosen valuation.",
-      "body": "Represents an atomic proposition under a chosen valuation. Letters have no fixed subject matter and are distinct from formula metavariables. p names the proposition for this formalization; it is not a variable ranging over trains. Its scope is propositional: letters stand for complete propositions, not arbitrary terms or predicates. Parentheses determine grouping, and the displayed connective should not be read as a causal, temporal, or epistemic relation unless a separate semantics adds that interpretation. Check valuations truth-functionally before importing ordinary-language implications. In the example Assign p the sentence 'the train is late'., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Represents an atomic proposition under a chosen valuation. Letters have no fixed subject matter and are distinct from formula metavariables. p names the proposition for this formalization; it is not a variable ranging over trains.",
       "examples": [
         {
           "text": "Assign p the sentence 'the train is late'.",
@@ -1738,7 +1770,8 @@
         }
       ],
       "limitations": [
-        "Letters have no fixed subject matter and are distinct from formula metavariables. Its exact reading depends on the formal system and notation conventions in use."
+        "Letters have no fixed subject matter and are distinct from formula metavariables.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
       ],
       "lookalikes": [],
       "related": [],
@@ -1759,7 +1792,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Separates antecedent and succedent in a sequent calculus.",
-      "body": "Separates antecedent and succedent in a sequent calculus. May have different interpretations in classical, intuitionistic, and substructural calculi. The antecedent contains the two premises and the succedent contains the conclusion. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example P, P → Q ⇒ Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Separates antecedent and succedent in a sequent calculus. May have different interpretations in classical, intuitionistic, and substructural calculi. The antecedent contains the two premises and the succedent contains the conclusion.",
       "examples": [
         {
           "text": "P, P → Q ⇒ Q.",
@@ -1767,7 +1800,7 @@
         }
       ],
       "limitations": [
-        "May have different interpretations in classical, intuitionistic, and substructural calculi. Its exact reading depends on the formal system and notation conventions in use."
+        "May have different interpretations in classical, intuitionistic, and substructural calculi."
       ],
       "lookalikes": [],
       "related": [],
@@ -1788,7 +1821,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "The set containing objects in both A and B.",
-      "body": "The set containing objects in both A and B. Related to conjunction but is a set operation, not a propositional connective. Only 2 belongs to both input sets. The symbol is interpreted relative to a universe of sets and the membership relation. Distinguish an object being an element from a set being a subset, and keep the direction of inclusion visible. Familiar glyphs can be overloaded across mathematical traditions, so the surrounding type and arity control the reading. In the example {1, 2} ∩ {2, 3} = {2}., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "The set containing objects in both A and B. Related to conjunction but is a set operation, not a propositional connective. Only 2 belongs to both input sets.",
       "examples": [
         {
           "text": "{1, 2} ∩ {2, 3} = {2}.",
@@ -1796,7 +1829,7 @@
         }
       ],
       "limitations": [
-        "Related to conjunction but is a set operation, not a propositional connective. Its exact reading depends on the formal system and notation conventions in use."
+        "Related to conjunction but is a set operation, not a propositional connective."
       ],
       "lookalikes": [],
       "related": [],
@@ -1819,7 +1852,7 @@
         "is an element of"
       ],
       "summary": "Object x belongs to set A.",
-      "body": "Object x belongs to set A. This is a nonlogical predicate of ordinary set-theoretic languages, not a universal FOL primitive. The numeral 2 denotes an element of the displayed set. The symbol is interpreted relative to a universe of sets and the membership relation. Distinguish an object being an element from a set being a subset, and keep the direction of inclusion visible. Familiar glyphs can be overloaded across mathematical traditions, so the surrounding type and arity control the reading. In the example 2 ∈ {1, 2, 3}., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Object x belongs to set A. This is a nonlogical predicate of ordinary set-theoretic languages, not a universal FOL primitive. The numeral 2 denotes an element of the displayed set.",
       "examples": [
         {
           "text": "2 ∈ {1, 2, 3}.",
@@ -1827,7 +1860,7 @@
         }
       ],
       "limitations": [
-        "This is a nonlogical predicate of ordinary set-theoretic languages, not a universal FOL primitive. Its exact reading depends on the formal system and notation conventions in use."
+        "This is a nonlogical predicate of ordinary set-theoretic languages, not a universal FOL primitive."
       ],
       "lookalikes": [
         {
@@ -1857,7 +1890,7 @@
         "is not an element of"
       ],
       "summary": "Object x does not belong to set A.",
-      "body": "Object x does not belong to set A. Abbreviates negated membership. The displayed set contains no element equal to 4. The symbol is interpreted relative to a universe of sets and the membership relation. Distinguish an object being an element from a set being a subset, and keep the direction of inclusion visible. Familiar glyphs can be overloaded across mathematical traditions, so the surrounding type and arity control the reading. In the example 4 ∉ {1, 2, 3}., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Object x does not belong to set A. Abbreviates negated membership. The displayed set contains no element equal to 4.",
       "examples": [
         {
           "text": "4 ∉ {1, 2, 3}.",
@@ -1865,7 +1898,7 @@
         }
       ],
       "limitations": [
-        "Abbreviates negated membership. Its exact reading depends on the formal system and notation conventions in use."
+        "Abbreviates negated membership."
       ],
       "lookalikes": [],
       "related": [],
@@ -1886,7 +1919,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "The set containing objects in A or B.",
-      "body": "The set containing objects in A or B. Related to disjunction but is a set operation, not a propositional connective. An object from either input belongs to the union; repetitions do not create additional elements. The symbol is interpreted relative to a universe of sets and the membership relation. Distinguish an object being an element from a set being a subset, and keep the direction of inclusion visible. Familiar glyphs can be overloaded across mathematical traditions, so the surrounding type and arity control the reading. In the example {1, 2} ∪ {2, 3} = {1, 2, 3}., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "The set containing objects in A or B. Related to disjunction but is a set operation, not a propositional connective. An object from either input belongs to the union; repetitions do not create additional elements.",
       "examples": [
         {
           "text": "{1, 2} ∪ {2, 3} = {1, 2, 3}.",
@@ -1894,7 +1927,7 @@
         }
       ],
       "limitations": [
-        "Related to disjunction but is a set operation, not a propositional connective. Its exact reading depends on the formal system and notation conventions in use."
+        "Related to disjunction but is a set operation, not a propositional connective."
       ],
       "lookalikes": [],
       "related": [],
@@ -1917,7 +1950,7 @@
         "is a subset of"
       ],
       "summary": "Every member of A is a member of B.",
-      "body": "Every member of A is a member of B. ⊂ is ambiguous between strict and non-strict inclusion across authors. Every element of the first set belongs to the second. The symbol is interpreted relative to a universe of sets and the membership relation. Distinguish an object being an element from a set being a subset, and keep the direction of inclusion visible. Familiar glyphs can be overloaded across mathematical traditions, so the surrounding type and arity control the reading. In the example {1, 2} ⊆ {1, 2, 3}., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Every member of A is a member of B. ⊂ is ambiguous between strict and non-strict inclusion across authors. Every element of the first set belongs to the second.",
       "examples": [
         {
           "text": "{1, 2} ⊆ {1, 2, 3}.",
@@ -1925,10 +1958,12 @@
         }
       ],
       "limitations": [
-        "⊂ is ambiguous between strict and non-strict inclusion across authors. Its exact reading depends on the formal system and notation conventions in use."
+        "⊂ is ambiguous between strict and non-strict inclusion across authors."
       ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "set-membership"
+      ],
       "tags": [
         "set-notation"
       ]
@@ -1946,7 +1981,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Replace free occurrences of x in φ by t subject to capture restrictions.",
-      "body": "Replace free occurrences of x in φ by t subject to capture restrictions. Some authors reverse the order inside the brackets; declare the convention. Replace the free x by a. Substituting a variable may require renaming binders to avoid capture. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example P(x)[a/x] = P(a)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Replace free occurrences of x in φ by t subject to capture restrictions. Some authors reverse the order inside the brackets; declare the convention. Replace the free x by a. Substituting a variable may require renaming binders to avoid capture.",
       "examples": [
         {
           "text": "P(x)[a/x] = P(a).",
@@ -1954,7 +1989,7 @@
         }
       ],
       "limitations": [
-        "Some authors reverse the order inside the brackets; declare the convention. Its exact reading depends on the formal system and notation conventions in use."
+        "Some authors reverse the order inside the brackets; declare the convention."
       ],
       "lookalikes": [],
       "related": [],
@@ -1975,7 +2010,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "φ can be derived with no undischarged premises.",
-      "body": "φ can be derived with no undischarged premises. A theorem of the specified calculus. The conditional can be proved without any undischarged assumption. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example ⊢ P → P., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "φ can be derived with no undischarged premises. A theorem of the specified calculus. The conditional can be proved without any undischarged assumption.",
       "examples": [
         {
           "text": "⊢ P → P.",
@@ -1983,7 +2018,7 @@
         }
       ],
       "limitations": [
-        "A theorem of the specified calculus. Its exact reading depends on the formal system and notation conventions in use."
+        "A theorem of the specified calculus."
       ],
       "lookalikes": [],
       "related": [],
@@ -2004,7 +2039,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Introduces an argument's conclusion.",
-      "body": "Introduces an argument's conclusion. The mark does not certify that the argument is valid. The marker identifies the conclusion; validity still depends on the premises and inference. This notation records a proof-theoretic or metatheoretic relation, not necessarily a truth-functional connective inside the object language. Distinguish derivability from semantic consequence and theoremhood from truth in one model. A line may be syntactically licensed while its intended interpretation still depends on the chosen formal system. In the example P; P → Q; ∴ Q., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Introduces an argument's conclusion. The mark does not certify that the argument is valid. The marker identifies the conclusion; validity still depends on the premises and inference.",
       "examples": [
         {
           "text": "P; P → Q; ∴ Q.",
@@ -2012,7 +2047,7 @@
         }
       ],
       "limitations": [
-        "The mark does not certify that the argument is valid. Its exact reading depends on the formal system and notation conventions in use."
+        "The mark does not certify that the argument is valid."
       ],
       "lookalikes": [],
       "related": [],
@@ -2038,7 +2073,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "A formula that is always true.",
-      "body": "A formula that is always true. T can also be a sentence letter; 1 is a Boolean-algebra convention. This has the same truth value as P because the right conjunct is always true. Its scope is propositional: letters stand for complete propositions, not arbitrary terms or predicates. Parentheses determine grouping, and the displayed connective should not be read as a causal, temporal, or epistemic relation unless a separate semantics adds that interpretation. Check valuations truth-functionally before importing ordinary-language implications. In the example P ∧ ⊤., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "A formula that is always true. T can also be a sentence letter; 1 is a Boolean-algebra convention. This has the same truth value as P because the right conjunct is always true.",
       "examples": [
         {
           "text": "P ∧ ⊤.",
@@ -2046,7 +2081,8 @@
         }
       ],
       "limitations": [
-        "T can also be a sentence letter; 1 is a Boolean-algebra convention. Its exact reading depends on the formal system and notation conventions in use."
+        "T can also be a sentence letter; 1 is a Boolean-algebra convention.",
+        "Here arity 0 marks an atomic or schematic sign, not a truth-functional connective; its interpretation depends on its stated role."
       ],
       "lookalikes": [
         {
@@ -2074,7 +2110,7 @@
       "shortcodes": [],
       "englishReadings": [],
       "summary": "Term t has type τ in the relevant context.",
-      "body": "Term t has type τ in the relevant context. A colon also has ordinary punctuation and set-builder uses. The context assigns x the Boolean type, restricting its admissible use in typed expressions. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example x : Bool., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Term t has type τ in the relevant context. A colon also has ordinary punctuation and set-builder uses. The context assigns x the Boolean type, restricting its admissible use in typed expressions.",
       "examples": [
         {
           "text": "x : Bool.",
@@ -2082,7 +2118,7 @@
         }
       ],
       "limitations": [
-        "A colon also has ordinary punctuation and set-builder uses. Its exact reading depends on the formal system and notation conventions in use."
+        "A colon also has ordinary punctuation and set-builder uses."
       ],
       "lookalikes": [],
       "related": [],
@@ -2108,7 +2144,7 @@
         "there exists a unique"
       ],
       "summary": "Exactly one individual satisfies P.",
-      "body": "Exactly one individual satisfies P. Usually a defined abbreviation, not a primitive of first-order logic. There is a captain, and any two objects satisfying Captain must be identical. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example ∃!x Captain(x)., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "Exactly one individual satisfies P. Usually a defined abbreviation, not a primitive of first-order logic. There is a captain, and any two objects satisfying Captain must be identical.",
       "examples": [
         {
           "text": "∃!x Captain(x).",
@@ -2116,10 +2152,12 @@
         }
       ],
       "limitations": [
-        "Usually a defined abbreviation, not a primitive of first-order logic. Its exact reading depends on the formal system and notation conventions in use."
+        "Usually a defined abbreviation, not a primitive of first-order logic."
       ],
       "lookalikes": [],
-      "related": [],
+      "related": [
+        "existential-quantifier"
+      ],
       "tags": [
         "predicate-logic"
       ]
@@ -2143,7 +2181,7 @@
         "each"
       ],
       "summary": "For every individual x in the domain, P(x) holds.",
-      "body": "For every individual x in the domain, P(x) holds. Universal quantification does not imply that P has an instance in every logic or domain convention. Every object that is a cat is a mammal. The formula does not assert that cats exist. Its interpretation depends on a domain, assignments to variables, and the scope of each quantifier. Free variables leave an open formula, while bound variables do not refer to one fixed object outside their binder. Avoid replacing implication with conjunction or moving a quantifier across a connective without checking variable occurrence and non-vacuity conditions. In the example ∀x (Cat(x) → Mammal(x))., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "For every individual x in the domain, P(x) holds. Universal quantification does not imply that P has an instance in every logic or domain convention. Every object that is a cat is a mammal. The formula does not assert that cats exist.",
       "examples": [
         {
           "text": "∀x (Cat(x) → Mammal(x)).",
@@ -2151,7 +2189,9 @@
         }
       ],
       "limitations": [
-        "Classical first-order semantics normally assumes a nonempty domain. In systems permitting empty domains, universal formulas are vacuously true there. Its exact reading depends on the formal system and notation conventions in use."
+        "Classical first-order semantics normally assumes a nonempty domain. In systems permitting empty domains, universal formulas are vacuously true there.",
+        "Even in a nonempty domain, ∀x(Unicorn(x) → Blue(x)) does not assert that any unicorn exists.",
+        "The bound variable need not occur in the body: ∀x P is syntactically permitted in many systems and is vacuous quantification."
       ],
       "lookalikes": [
         {
@@ -2160,7 +2200,8 @@
         }
       ],
       "related": [
-        "existential-quantifier"
+        "existential-quantifier",
+        "gottlob-frege"
       ],
       "tags": [
         "predicate-logic"
@@ -2181,7 +2222,7 @@
         "until"
       ],
       "summary": "ψ eventually holds and φ holds at preceding relevant times.",
-      "body": "ψ eventually holds and φ holds at preceding relevant times. Weak until is a distinct operator and need not guarantee ψ. Service eventually occurs, and Waiting holds at each preceding relevant state. Its truth depends on a model with worlds and an accessibility relation, not only on the valuation at one world. Necessity quantifies over accessible worlds and possibility requires an accessible witness; frame conditions determine which principles are valid. Do not treat metaphysical, epistemic, deontic, and temporal readings as interchangeable. In the example Waiting U Served., the displayed glyph has no extra force beyond the stated formal interpretation.",
+      "body": "ψ eventually holds and φ holds at preceding relevant times. Weak until is a distinct operator and need not guarantee ψ. Service eventually occurs, and Waiting holds at each preceding relevant state.",
       "examples": [
         {
           "text": "Waiting U Served.",
@@ -2189,7 +2230,7 @@
         }
       ],
       "limitations": [
-        "Weak until is a distinct operator and need not guarantee ψ. Its exact reading depends on the formal system and notation conventions in use."
+        "Weak until is a distinct operator and need not guarantee ψ."
       ],
       "lookalikes": [],
       "related": [],

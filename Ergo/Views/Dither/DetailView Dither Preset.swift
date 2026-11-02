@@ -51,8 +51,7 @@ public var detailViewConf: DitherConfiguration {
 	c.opacity = 0.7
 	c.topBlur = false
 
-	// Requires additional pointer/touch handling to have an effect.
-	c.cursorInteractionEnabled = true
+	c.cursorInteractionEnabled = false
 	c.cursorRadius = 0.3
 	c.cursorStrength = 0.7
 	c.cursorResponse = 0

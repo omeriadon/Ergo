@@ -77,7 +77,33 @@ struct PhilosophersView: View {
 						)
 					) {
 						HStack {
+							ZStack {
+								Image(philosopher.id)
+									.resizable()
+									.aspectRatio(contentMode: .fill)
+									.frame(width: 40, height: 40)
+									.clipShape(Circle())
+
+								Color.white.opacity(0)
+									.contentShape(Circle())
+									.background {
+										LiquidLens(
+											isLifted: true,
+											animated: true,
+											configuration: .init(
+												style: 1,
+												warpsContentBelow: true,
+												restingBackgroundColor: .white.withAlphaComponent(0),
+												liftedDisplacement: 0
+											)
+										)
+//										.allowsHitTesting(false)
+									}
+							}
+							.frame(width: 40, height: 40)
+
 							Text(philosopher.name)
+
 							Spacer()
 						}
 					}

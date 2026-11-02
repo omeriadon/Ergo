@@ -353,6 +353,7 @@ nonisolated struct Philosopher: Codable, Identifiable, Sendable {
 	let birthYear: Int
 	let deathYear: Int?
 	let summary: String
+	let body: String
 	let related: [CatalogReference]
 
 	private enum CodingKeys: String, CodingKey {
@@ -362,6 +363,7 @@ nonisolated struct Philosopher: Codable, Identifiable, Sendable {
 		case birthYear
 		case deathYear
 		case summary
+		case body
 		case related
 	}
 }

@@ -8,12 +8,12 @@ import Metal
 import MetalKit
 import MetalPerformanceShaders
 import QuartzCore
-import SwiftUI
 import simd
+import SwiftUI
 #if os(iOS)
-import UIKit
+	import UIKit
 #elseif os(macOS)
-import AppKit
+	import AppKit
 #endif
 
 public nonisolated struct DitherConfiguration: Equatable, Sendable {
@@ -35,7 +35,7 @@ public nonisolated struct DitherConfiguration: Equatable, Sendable {
 		SIMD3<Float>(0.12, 0.85, 1),
 		SIMD3<Float>(0.55, 0.18, 1),
 		SIMD3<Float>(1, 0.2, 0.55),
-		SIMD3<Float>(1, 0.72, 0.18)
+		SIMD3<Float>(1, 0.72, 0.18),
 	]
 	public var scale: Float = 1
 	public var contrast: Float = 1
@@ -140,7 +140,6 @@ public nonisolated struct DitherConfiguration: Equatable, Sendable {
 	}
 }
 
-
 struct DitherAnimationTiming {
 	private var lastTime: TimeInterval?
 
@@ -166,8 +165,6 @@ struct DitherAnimationTiming {
 		lastTime = nil
 	}
 }
-
-
 
 struct DitherRenderInputs: Equatable, Sendable {
 	var themePositions: [SIMD2<Float>] = []
@@ -281,16 +278,16 @@ private final class SharedMetalResources: @unchecked Sendable {
 			throw NSError(domain: "DitherMetal", code: 3, userInfo: [NSLocalizedDescriptionKey: "default.metallib could not be loaded; include OptimizedDither.metal in this target"])
 		}
 		guard let vertex = library.makeFunction(name: "ditherVertex"),
-			  let field = library.makeFunction(name: "ditherField"),
-			  let cell = library.makeFunction(name: "ditherCell"),
-			  let fusedCellCompute = library.makeFunction(name: "ditherFusedCellCompute"),
-			  let referenceDither = library.makeFunction(name: "ditherUpscale"),
-			  let optimizedDither = library.makeFunction(name: "ditherUpscaleOptimized"),
-			  let blurComposite = library.makeFunction(name: "ditherTopBlurComposite"),
-			  let cellBlurHorizontal = library.makeFunction(name: "ditherCellBlurHorizontal"),
-			  let cellBlurComposite = library.makeFunction(name: "ditherCellBlurComposite"),
-			  let gradientFunction = library.makeFunction(name: "ditherGradient")
-				else {
+		      let field = library.makeFunction(name: "ditherField"),
+		      let cell = library.makeFunction(name: "ditherCell"),
+		      let fusedCellCompute = library.makeFunction(name: "ditherFusedCellCompute"),
+		      let referenceDither = library.makeFunction(name: "ditherUpscale"),
+		      let optimizedDither = library.makeFunction(name: "ditherUpscaleOptimized"),
+		      let blurComposite = library.makeFunction(name: "ditherTopBlurComposite"),
+		      let cellBlurHorizontal = library.makeFunction(name: "ditherCellBlurHorizontal"),
+		      let cellBlurComposite = library.makeFunction(name: "ditherCellBlurComposite"),
+		      let gradientFunction = library.makeFunction(name: "ditherGradient")
+		else {
 			throw NSError(domain: "DitherMetal", code: 4, userInfo: [NSLocalizedDescriptionKey: "Dither shader functions are missing"])
 		}
 
@@ -316,9 +313,9 @@ private final class SharedMetalResources: @unchecked Sendable {
 		}
 
 		guard let atlasFunction = library.makeFunction(name: "ditherUpscaleAtlas"),
-			  let coverageComputeFunction = library.makeFunction(name: "ditherCoverageCompute"),
-			  let joinMaskComputeFunction = library.makeFunction(name: "ditherJoinMaskCompute")
-				else {
+		      let coverageComputeFunction = library.makeFunction(name: "ditherCoverageCompute"),
+		      let joinMaskComputeFunction = library.makeFunction(name: "ditherJoinMaskCompute")
+		else {
 			throw NSError(domain: "DitherMetal", code: 4)
 		}
 		atlasDitherPipeline = try makePipeline(fragment: atlasFunction, pixelFormat: .bgra8Unorm)
@@ -333,9 +330,9 @@ private final class SharedMetalResources: @unchecked Sendable {
 		gradientDescriptor.storageMode = .private
 		gradientDescriptor.usage = [.renderTarget, .shaderRead]
 		guard let gradients = device.makeTexture(descriptor: gradientDescriptor),
-			  let queue = device.makeCommandQueue(),
-			  let initialization = queue.makeCommandBuffer()
-				else {
+		      let queue = device.makeCommandQueue(),
+		      let initialization = queue.makeCommandBuffer()
+		else {
 			throw NSError(domain: "DitherMetal", code: 13)
 		}
 		let gradientPipeline = try makePipeline(fragment: gradientFunction, pixelFormat: .rgba32Float)
@@ -456,8 +453,8 @@ private final class DitherMetalRenderer {
 		self.usesTwoDimensionalThreadgroups = usesTwoDimensionalThreadgroups
 		self.usesCellBlurFastPath = usesCellBlurFastPath
 		guard MemoryLayout<FieldUniforms>.stride == 224,
-			  MemoryLayout<DitherUniforms>.stride == 128
-				else {
+		      MemoryLayout<DitherUniforms>.stride == 128
+		else {
 			throw NSError(domain: "DitherMetal", code: 12, userInfo: [NSLocalizedDescriptionKey: "Swift and Metal uniform layouts do not match"])
 		}
 		let resources = try Self.sharedResources.get()
@@ -575,7 +572,7 @@ private final class DitherMetalRenderer {
 		}
 		let trail = (0 ..< 8).map { index -> SIMD3<Float> in
 			guard configuration.cursorInteractionEnabled, !configuration.disableAnimation,
-				  index < inputs.cursorTrail.count else { return .zero }
+			      index < inputs.cursorTrail.count else { return .zero }
 			let sample = inputs.cursorTrail[index]
 			return SIMD3<Float>(sample.x * scale, sample.y * scale, sample.z)
 		}
@@ -614,8 +611,8 @@ private final class DitherMetalRenderer {
 			default: configuration.backgroundColor
 		}
 		let effectiveWave: SIMD3<Float> = configuration.colorPlacement == "background"
-		? (configuration.squareStyle == "black" ? .zero : SIMD3<Float>(repeating: 1))
-		: configuration.waveColor
+			? (configuration.squareStyle == "black" ? .zero : SIMD3<Float>(repeating: 1))
+			: configuration.waveColor
 		var dither = DitherUniforms(
 			fieldSize: SIMD2<Int32>(Int32(columns), Int32(rows)),
 			cellDevice: Float(cell),
@@ -625,8 +622,8 @@ private final class DitherMetalRenderer {
 			wave: effectiveWave,
 			background: configuration.colorPlacement == "background" ? configuration.waveColor : effectiveBackground,
 			paletteCount: configuration.colorPlacement == "background"
-			? 0
-			: Int32(min(DitherConfiguration.supportedPaletteCount, configuration.useThemeColors ? inputs.themeColors.count : configuration.palette.count)),
+				? 0
+				: Int32(min(DitherConfiguration.supportedPaletteCount, configuration.useThemeColors ? inputs.themeColors.count : configuration.palette.count)),
 			transparent: configuration.transparent ? 1 : 0,
 			gap: min(0.45, max(0, configuration.gap)),
 			cornerRadius: min(0.5, max(0, configuration.cornerRadius)),
@@ -871,8 +868,8 @@ private final class DitherMetalRenderer {
 				throw error
 			}
 			let gpuElapsed = commandBuffer.gpuStartTime > 0 && commandBuffer.gpuEndTime > commandBuffer.gpuStartTime
-			? commandBuffer.gpuEndTime - commandBuffer.gpuStartTime
-			: nil
+				? commandBuffer.gpuEndTime - commandBuffer.gpuStartTime
+				: nil
 			lastRenderMetrics = RenderMetrics(
 				cpuElapsed: submissionElapsed,
 				gpuElapsed: gpuElapsed,
@@ -1005,14 +1002,14 @@ private final class DitherMetalRenderer {
 		scale: Float
 	) -> Bool {
 		guard usesFusedFieldAndCellPass,
-			  cell >= 4,
-			  cell <= 128,
-			  scale == 1 || scale == 2,
-			  configuration.gap == 0,
-			  configuration.cornerRadius == 0,
-			  width.isMultiple(of: cell),
-			  height.isMultiple(of: cell)
-				else {
+		      cell >= 4,
+		      cell <= 128,
+		      scale == 1 || scale == 2,
+		      configuration.gap == 0,
+		      configuration.cornerRadius == 0,
+		      width.isMultiple(of: cell),
+		      height.isMultiple(of: cell)
+		else {
 			return false
 		}
 		let stripHeight = Self.topBlurStripPixels(scale: scale)
@@ -1033,11 +1030,11 @@ private final class DitherMetalRenderer {
 		let radii = sigmas.map { Int(ceil($0 * 3)) }
 		let rowCount = min(height / cell, Int(ceil(Double(stripHeight + radii[2]) / Double(cell))) + 1)
 		let keyChanged = cellBlurResources == nil
-		|| cellBlurResources?.width != width
-		|| cellBlurResources?.cell != cell
-		|| cellBlurResources?.scale != scale
-		|| cellBlurResources?.stripHeight != stripHeight
-		|| cellBlurResources?.rowCount != rowCount
+			|| cellBlurResources?.width != width
+			|| cellBlurResources?.cell != cell
+			|| cellBlurResources?.scale != scale
+			|| cellBlurResources?.stripHeight != stripHeight
+			|| cellBlurResources?.rowCount != rowCount
 		if keyChanged {
 			var levels: [MTLTexture] = []
 			var horizontalWeights: [MTLBuffer] = []
@@ -1114,8 +1111,8 @@ private final class DitherMetalRenderer {
 			)
 		}
 		guard let resources = cellBlurResources,
-			  let encoder = commandBuffer.makeComputeCommandEncoder()
-				else {
+		      let encoder = commandBuffer.makeComputeCommandEncoder()
+		else {
 			throw NSError(domain: "DitherMetal", code: 18, userInfo: [NSLocalizedDescriptionKey: "Could not create cell blur encoder"])
 		}
 		var uniforms = CellBlurUniforms(
@@ -1194,9 +1191,9 @@ private final class DitherMetalRenderer {
 			descriptor.storageMode = .shared
 			descriptor.usage = [.shaderRead, .shaderWrite]
 			guard let source = device.makeTexture(descriptor: descriptor),
-				  let destination = device.makeTexture(descriptor: descriptor),
-				  let command = queue.makeCommandBuffer()
-					else {
+			      let destination = device.makeTexture(descriptor: descriptor),
+			      let command = queue.makeCommandBuffer()
+			else {
 				throw NSError(domain: "DitherMetal", code: 18)
 			}
 			var pixels = [Float](repeating: 0, count: side * 4)
@@ -1262,7 +1259,6 @@ private final class DitherMetalRenderer {
 		encoder.setFragmentBytes(&uniforms, length: MemoryLayout<TopBlurUniforms>.stride, index: 0)
 		encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
 	}
-
 }
 
 /// An interactive Metal background. Size it with SwiftUI layout modifiers.
@@ -1292,7 +1288,7 @@ public struct DitherView: View {
 		.contentShape(Rectangle())
 		.onContinuousHover { phase in
 			switch phase {
-				case .active(let location):
+				case let .active(location):
 					hoverLocation = location
 				case .ended:
 					hoverLocation = nil
@@ -1341,39 +1337,39 @@ private struct DitherPlatformView {
 }
 
 #if os(iOS)
-extension DitherPlatformView: UIViewRepresentable {
-	func makeUIView(context: Context) -> DitherHostView {
-		let view = DitherHostView(frame: .zero, device: MTLCreateSystemDefaultDevice())
-		update(view)
-		return view
-	}
+	extension DitherPlatformView: UIViewRepresentable {
+		func makeUIView(context _: Context) -> DitherHostView {
+			let view = DitherHostView(frame: .zero, device: MTLCreateSystemDefaultDevice())
+			update(view)
+			return view
+		}
 
-	func updateUIView(_ uiView: DitherHostView, context: Context) {
-		update(uiView)
-	}
+		func updateUIView(_ uiView: DitherHostView, context _: Context) {
+			update(uiView)
+		}
 
-	static func dismantleUIView(_ uiView: DitherHostView, coordinator: ()) {
-		uiView.isPaused = true
-		uiView.delegate = nil
+		static func dismantleUIView(_ uiView: DitherHostView, coordinator _: ()) {
+			uiView.isPaused = true
+			uiView.delegate = nil
+		}
 	}
-}
 #elseif os(macOS)
-extension DitherPlatformView: NSViewRepresentable {
-	func makeNSView(context: Context) -> DitherHostView {
-		let view = DitherHostView(frame: .zero, device: MTLCreateSystemDefaultDevice())
-		update(view)
-		return view
-	}
+	extension DitherPlatformView: NSViewRepresentable {
+		func makeNSView(context _: Context) -> DitherHostView {
+			let view = DitherHostView(frame: .zero, device: MTLCreateSystemDefaultDevice())
+			update(view)
+			return view
+		}
 
-	func updateNSView(_ nsView: DitherHostView, context: Context) {
-		update(nsView)
-	}
+		func updateNSView(_ nsView: DitherHostView, context _: Context) {
+			update(nsView)
+		}
 
-	static func dismantleNSView(_ nsView: DitherHostView, coordinator: ()) {
-		nsView.isPaused = true
-		nsView.delegate = nil
+		static func dismantleNSView(_ nsView: DitherHostView, coordinator _: ()) {
+			nsView.isPaused = true
+			nsView.delegate = nil
+		}
 	}
-}
 #endif
 
 @MainActor
@@ -1394,12 +1390,12 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 		autoResizeDrawable = true
 		isPaused = true
 		enableSetNeedsDisplay = true
-#if os(iOS)
-		isOpaque = false
-		backgroundColor = .clear
-#else
-		wantsLayer = true
-#endif
+		#if os(iOS)
+			isOpaque = false
+			backgroundColor = .clear
+		#else
+			wantsLayer = true
+		#endif
 		if let metalLayer = layer as? CAMetalLayer {
 			metalLayer.isOpaque = false
 			metalLayer.colorspace = CGColorSpace(name: CGColorSpace.sRGB)
@@ -1407,7 +1403,8 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 		delegate = self
 	}
 
-	required init(coder: NSCoder) {
+	@available(*, unavailable)
+	required init(coder _: NSCoder) {
 		fatalError("Use DitherView()")
 	}
 
@@ -1432,55 +1429,55 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 		requestFrame()
 	}
 
-#if os(iOS)
-	override func didMoveToWindow() {
-		super.didMoveToWindow()
-		updateScheduling()
-		requestFrame()
-	}
-#else
-	override func viewDidMoveToWindow() {
-		super.viewDidMoveToWindow()
-		updateScheduling()
-		requestFrame()
-	}
+	#if os(iOS)
+		override func didMoveToWindow() {
+			super.didMoveToWindow()
+			updateScheduling()
+			requestFrame()
+		}
+	#else
+		override func viewDidMoveToWindow() {
+			super.viewDidMoveToWindow()
+			updateScheduling()
+			requestFrame()
+		}
 
-	override func viewDidChangeBackingProperties() {
-		super.viewDidChangeBackingProperties()
-		updateScheduling()
-		requestFrame()
-	}
+		override func viewDidChangeBackingProperties() {
+			super.viewDidChangeBackingProperties()
+			updateScheduling()
+			requestFrame()
+		}
 
-	override func viewDidHide() {
-		super.viewDidHide()
-		updateScheduling()
-	}
+		override func viewDidHide() {
+			super.viewDidHide()
+			updateScheduling()
+		}
 
-	override func viewDidUnhide() {
-		super.viewDidUnhide()
-		updateScheduling()
-		requestFrame()
-	}
-#endif
+		override func viewDidUnhide() {
+			super.viewDidUnhide()
+			updateScheduling()
+			requestFrame()
+		}
+	#endif
 
 	private var canRender: Bool {
 		guard window != nil, active else {
 			return false
 		}
-#if os(iOS)
-		return !isHidden
-#else
-		return !isHiddenOrHasHiddenAncestor && window?.occlusionState.contains(.visible) == true
-#endif
+		#if os(iOS)
+			return !isHidden
+		#else
+			return !isHiddenOrHasHiddenAncestor && window?.occlusionState.contains(.visible) == true
+		#endif
 	}
 
 	private func updateScheduling() {
 		// Request this display's maximum; the system controls actual delivery cadence.
-#if os(iOS)
-		preferredFramesPerSecond = window?.screen.maximumFramesPerSecond ?? 60
-#else
-		preferredFramesPerSecond = window?.screen?.maximumFramesPerSecond ?? 60
-#endif
+		#if os(iOS)
+			preferredFramesPerSecond = window?.screen.maximumFramesPerSecond ?? 60
+		#else
+			preferredFramesPerSecond = window?.screen?.maximumFramesPerSecond ?? 60
+		#endif
 		if !canRender || reduceMotion || configuration.disableAnimation || !configuration.cursorInteractionEnabled {
 			interaction = DitherInteraction()
 		}
@@ -1493,21 +1490,22 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 	}
 
 	private func requestFrame() {
-#if os(iOS)
-		setNeedsDisplay()
-#else
-		needsDisplay = true
-#endif
+		#if os(iOS)
+			setNeedsDisplay()
+		#else
+			needsDisplay = true
+		#endif
 	}
 
-	func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+	func mtkView(_: MTKView, drawableSizeWillChange _: CGSize) {
 		renderer?.seedAnimationTiming()
 		requestFrame()
 	}
 
-	func draw(in view: MTKView) {
+	func draw(in _: MTKView) {
 		guard canRender, bounds.width > 0, bounds.height > 0,
-			  let drawable = currentDrawable else {
+		      let drawable = currentDrawable
+		else {
 			return
 		}
 		do {
@@ -1543,7 +1541,8 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 
 	private func renderFallback(to drawable: CAMetalDrawable) {
 		guard let queue = device?.makeCommandQueue(),
-			  let buffer = queue.makeCommandBuffer() else {
+		      let buffer = queue.makeCommandBuffer()
+		else {
 			return
 		}
 		let pass = MTLRenderPassDescriptor()
@@ -1562,7 +1561,6 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 		buffer.commit()
 	}
 }
-
 
 /// Input coordinates stay in points; the renderer converts them to drawable pixels.
 private struct DitherInteraction {
@@ -1605,7 +1603,7 @@ private struct DitherInteraction {
 			history.removeFirst()
 		}
 		var trail: [SIMD3<Float>] = []
-		for index in 0..<8 {
+		for index in 0 ..< 8 {
 			let fraction = Double(index) / 7
 			let time = now - configuration.cursorTrailDuration * fraction
 			let sample = interpolatedPosition(at: time)

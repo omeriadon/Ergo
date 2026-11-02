@@ -8,8 +8,8 @@
       ],
       "symbolName": "scissors",
       "summary": "Avoid dismissing unfamiliar technologies solely because younger people value them.",
-      "body": "Unfamiliarity can masquerade as informed criticism. The age label is rhetorical and does not identify a scientifically established threshold. The age cutoff is arbitrary advice, not a scientific threshold. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For 25-plus razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Am I evaluating this unfamiliar trend by its actual merits or by discomfort with a younger audience? What evidence would make the opposite action more reasonable?",
+      "body": "Unfamiliarity can masquerade as informed criticism. The age label is rhetorical and does not identify a scientifically established threshold. The age cutoff is arbitrary advice, not a scientific threshold.",
+      "lensQuestion": "Am I evaluating this unfamiliar trend by its actual merits or by discomfort with a younger audience?",
       "examples": [
         {
           "text": "An older manager rejects a new communication format before examining how clients use it.",
@@ -17,7 +17,7 @@
         }
       ],
       "limitations": [
-        "The age cutoff is arbitrary advice, not a scientific threshold. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "The age cutoff is arbitrary advice, not a scientific threshold."
       ],
       "related": [],
       "tags": [
@@ -32,8 +32,8 @@
       ],
       "symbolName": "scissors",
       "summary": "Restrict debate to questions that observation or experiment can settle.",
-      "body": "The rule narrows a method of inquiry rather than settling every worthwhile question. Ethics, mathematics, and conceptual analysis cannot simply be dismissed because they are not experiments. A contestable methodological stance; not a theorem about meaning or value. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Alder's razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Which observation could distinguish the competing claims? What evidence would make the opposite action more reasonable?",
+      "body": "The rule narrows a method of inquiry rather than settling every worthwhile question. Ethics, mathematics, and conceptual analysis cannot simply be dismissed because they are not experiments. A contestable methodological stance; not a theorem about meaning or value.",
+      "lensQuestion": "Which observation could distinguish the competing claims?",
       "examples": [
         {
           "text": "Two accounts say the world has different invisible causes, but stipulate identical observable consequences forever.",
@@ -41,7 +41,7 @@
         }
       ],
       "limitations": [
-        "A contestable methodological stance; not a theorem about meaning or value. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "A contestable methodological stance; not a theorem about meaning or value."
       ],
       "related": [],
       "tags": [
@@ -54,8 +54,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Stepping away from stimulation can provide space to reconsider a problem.",
-      "body": "Periods without new stimulation can give room for reflection. Restlessness does not guarantee insight, and some problems require new information rather than incubation. Context-dependent advice. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For Boredom razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Would stepping away from constant input help me reconsider the problem? What evidence would make the opposite action more reasonable?",
+      "body": "Periods without new stimulation can give room for reflection. Restlessness does not guarantee insight, and some problems require new information rather than incubation. Context-dependent advice.",
+      "lensQuestion": "Would stepping away from constant input help me reconsider the problem?",
       "examples": [
         {
           "text": "After repeatedly rereading an unproductive draft, a writer takes a quiet walk before revising.",
@@ -63,7 +63,7 @@
         }
       ],
       "limitations": [
-        "Context-dependent advice. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Context-dependent advice."
       ],
       "related": [],
       "tags": [
@@ -78,8 +78,8 @@
       ],
       "symbolName": "scissors",
       "summary": "Discount self-promotional claims until independently supported.",
-      "body": "Self-presentation is often selected for persuasive effect. Modesty and confidence are both compatible with genuine achievement or deception. Popular numerical prescriptions such as halving claims have no general justification. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Bragging razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "What independent evidence supports this person's self-description? What evidence would make the opposite action more reasonable?",
+      "body": "Self-presentation is often selected for persuasive effect. Modesty and confidence are both compatible with genuine achievement or deception. Popular numerical prescriptions such as halving claims have no general justification.",
+      "lensQuestion": "What independent evidence supports this person's self-description?",
       "examples": [
         {
           "text": "A seller repeatedly advertises extraordinary trading returns but refuses to show an audited record.",
@@ -87,7 +87,7 @@
         }
       ],
       "limitations": [
-        "Popular numerical prescriptions such as halving claims have no general justification. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Popular numerical prescriptions such as halving claims have no general justification."
       ],
       "related": [],
       "tags": [
@@ -100,8 +100,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Evaluate the argument separately from the speaker's charm.",
-      "body": "Delivery can change perceived credibility independently of evidence. The opposite appearance, awkwardness, is also not a reliable signal of truth. Lack of charisma also does not establish credibility. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Charisma razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Would I accept the same argument in writing without this speaker's delivery? What evidence would make the opposite action more reasonable?",
+      "body": "Delivery can change perceived credibility independently of evidence. The opposite appearance, awkwardness, is also not a reliable signal of truth. Lack of charisma also does not establish credibility.",
+      "lensQuestion": "Would I accept the same argument in writing without this speaker's delivery?",
       "examples": [
         {
           "text": "A polished presenter offers an investment claim with no supporting data.",
@@ -109,7 +109,7 @@
         }
       ],
       "limitations": [
-        "Lack of charisma also does not establish credibility. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Lack of charisma also does not establish credibility."
       ],
       "related": [
         "halo-effect"
@@ -124,8 +124,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Add explanatory resources when fewer resources cannot account for what must be explained.",
-      "body": "Necessary complexity is not an offense against parsimony. The additional entity or mechanism still needs justification rather than being introduced merely to save a favored theory. A counterweight to excessive parsimony. Parsimony compares explanations only after they cover the same relevant observations. A shorter story can omit a necessary mechanism, while a more complex theory can be preferable when its extra structure earns predictive or explanatory work. Count assumptions and consequences, not merely words or entities. For Chatton's anti-razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Have explanatory resources been removed even though the remaining account cannot explain the facts? What evidence would make the opposite action more reasonable?",
+      "body": "Necessary complexity is not an offense against parsimony. The additional entity or mechanism still needs justification rather than being introduced merely to save a favored theory. A counterweight to excessive parsimony.",
+      "lensQuestion": "Have explanatory resources been removed even though the remaining account cannot explain the facts?",
       "examples": [
         {
           "text": "One mechanism explains a machine's overheating, but a separate electrical fault explains its intermittent shutdowns.",
@@ -133,10 +133,11 @@
         }
       ],
       "limitations": [
-        "A counterweight to excessive parsimony. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "A counterweight to excessive parsimony."
       ],
       "related": [
-        "occams-razor"
+        "occams-razor",
+        "mengers-anti-razor"
       ],
       "tags": [
         "parsimony"
@@ -148,8 +149,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Do not automatically reject opportunities because they involve discomfort.",
-      "body": "Some useful activities are initially uncomfortable because they are unfamiliar. Discomfort alone does not distinguish development from injury or exploitation. Discomfort does not by itself establish growth or benefit. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For Discomfort razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Is this discomfort a manageable cost of learning or a signal of genuine harm? What evidence would make the opposite action more reasonable?",
+      "body": "Some useful activities are initially uncomfortable because they are unfamiliar. Discomfort alone does not distinguish development from injury or exploitation. Discomfort does not by itself establish growth or benefit.",
+      "lensQuestion": "Is this discomfort a manageable cost of learning or a signal of genuine harm?",
       "examples": [
         {
           "text": "A novice avoids asking any questions because speaking in a study group feels awkward.",
@@ -157,7 +158,7 @@
         }
       ],
       "limitations": [
-        "Discomfort does not by itself establish growth or benefit. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Discomfort does not by itself establish growth or benefit."
       ],
       "related": [],
       "tags": [
@@ -170,8 +171,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Different communities may reflect different adoption stages.",
-      "body": "Different communities can encounter innovations at different times. Platform stereotypes and timing rules can become obsolete quickly. Platform-specific timing claims are unstable generalizations. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For Early–late razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Does this community provide evidence about adoption timing relevant to my actual audience? What evidence would make the opposite action more reasonable?",
+      "body": "Different communities can encounter innovations at different times. Platform stereotypes and timing rules can become obsolete quickly. Platform-specific timing claims are unstable generalizations.",
+      "lensQuestion": "Does this community provide evidence about adoption timing relevant to my actual audience?",
       "examples": [
         {
           "text": "A niche forum discusses a product long before it appears in a mainstream trade publication.",
@@ -179,7 +180,7 @@
         }
       ],
       "limitations": [
-        "Platform-specific timing claims are unstable generalizations. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Platform-specific timing claims are unstable generalizations."
       ],
       "related": [],
       "tags": [
@@ -192,8 +193,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Simplify an account as far as possible while preserving necessary adequacy.",
-      "body": "Simplicity is constrained by what an account must explain. Removing complexity that carries necessary information defeats the purpose of simplification. The familiar slogan is a paraphrase with uncertain exact attribution. Parsimony compares explanations only after they cover the same relevant observations. A shorter story can omit a necessary mechanism, while a more complex theory can be preferable when its extra structure earns predictive or explanatory work. Count assumptions and consequences, not merely words or entities. For Einstein's razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "What can be removed without losing explanatory or predictive adequacy? What evidence would make the opposite action more reasonable?",
+      "body": "Simplicity is constrained by what an account must explain. Removing complexity that carries necessary information defeats the purpose of simplification. The familiar slogan is a paraphrase with uncertain exact attribution.",
+      "lensQuestion": "What can be removed without losing explanatory or predictive adequacy?",
       "examples": [
         {
           "text": "A useful model needs temperature and pressure, but a shorter model discards pressure and misses known outcomes.",
@@ -201,7 +202,7 @@
         }
       ],
       "limitations": [
-        "The familiar slogan is a paraphrase with uncertain exact attribution. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "The familiar slogan is a paraphrase with uncertain exact attribution."
       ],
       "related": [
         "occams-razor"
@@ -216,8 +217,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "The most entertaining outcome is supposedly the most likely.",
-      "body": "The saying treats entertainment as if it predicted outcomes. It is best understood as playful speculation rather than a reliable guide to belief. A playful conjecture; no established probability principle supports it. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For Elon's razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Am I confusing an entertaining story with a well-supported forecast? What evidence would make the opposite action more reasonable?",
+      "body": "The saying treats entertainment as if it predicted outcomes. It is best understood as playful speculation rather than a reliable guide to belief. A playful conjecture; no established probability principle supports it.",
+      "lensQuestion": "Am I confusing an entertaining story with a well-supported forecast?",
       "examples": [
         {
           "text": "A dramatic corporate reversal is judged likely because it would make a compelling film.",
@@ -225,7 +226,7 @@
         }
       ],
       "limitations": [
-        "A playful conjecture; no established probability principle supports it. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "A playful conjecture; no established probability principle supports it."
       ],
       "related": [],
       "tags": [
@@ -238,8 +239,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Frequent repetition can accumulate substantial output.",
-      "body": "Frequency can support habit and repeated feedback. Recovery, quality, and diminishing returns prevent a simple equation between repetition and improvement. Arithmetic about days of practice is not evidence of guaranteed compounded skill growth. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For Everyday razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Would a sustainable increase in practice frequency improve cumulative progress? What evidence would make the opposite action more reasonable?",
+      "body": "Frequency can support habit and repeated feedback. Recovery, quality, and diminishing returns prevent a simple equation between repetition and improvement. Arithmetic about days of practice is not evidence of guaranteed compounded skill growth.",
+      "lensQuestion": "Would a sustainable increase in practice frequency improve cumulative progress?",
       "examples": [
         {
           "text": "A learner replaces one irregular monthly session with brief, attentive daily practice.",
@@ -247,7 +248,7 @@
         }
       ],
       "limitations": [
-        "Arithmetic about days of practice is not evidence of guaranteed compounded skill growth. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Arithmetic about days of practice is not evidence of guaranteed compounded skill growth."
       ],
       "related": [],
       "tags": [
@@ -260,8 +261,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Clear explanation can expose gaps in understanding.",
-      "body": "A request for clarity can diagnose gaps in understanding. Some subjects still require prerequisites, notation, or substantial time even when the expert understands them well. Modern label; not a verified quotation or a test that every expert topic must be explainable to a child. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Feynman razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Can I explain the mechanism clearly without using jargon to hide a gap? What evidence would make the opposite action more reasonable?",
+      "body": "A request for clarity can diagnose gaps in understanding. Some subjects still require prerequisites, notation, or substantial time even when the expert understands them well. Modern label; not a verified quotation or a test that every expert topic must be explainable to a child.",
+      "lensQuestion": "Can I explain the mechanism clearly without using jargon to hide a gap?",
       "examples": [
         {
           "text": "A student repeats the word 'optimization' but cannot describe what is optimized or what changes.",
@@ -269,7 +270,7 @@
         }
       ],
       "limitations": [
-        "Modern label; not a verified quotation or a test that every expert topic must be explainable to a child. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Modern label; not a verified quotation or a test that every expert topic must be explainable to a child."
       ],
       "related": [],
       "tags": [
@@ -282,8 +283,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Retain skepticism about media reporting beyond your own expertise.",
-      "body": "Expertise makes some errors easier to detect, while unfamiliarity can conceal others. The response is source checking, not a presumption that every report is false. Related to Gell-Mann amnesia; not a quantified estimate of journalistic error. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Gell-Mann razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Would I scrutinize this report as closely as a report about my own expertise? What evidence would make the opposite action more reasonable?",
+      "body": "Expertise makes some errors easier to detect, while unfamiliarity can conceal others. The response is source checking, not a presumption that every report is false. Related to Gell-Mann amnesia; not a quantified estimate of journalistic error.",
+      "lensQuestion": "Would I scrutinize this report as closely as a report about my own expertise?",
       "examples": [
         {
           "text": "An engineer notices serious errors in a report about her field but assumes the adjacent economics report must be accurate.",
@@ -291,7 +292,7 @@
         }
       ],
       "limitations": [
-        "Related to Gell-Mann amnesia; not a quantified estimate of journalistic error. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Related to Gell-Mann amnesia; not a quantified estimate of journalistic error."
       ],
       "related": [],
       "tags": [
@@ -306,8 +307,8 @@
       ],
       "symbolName": "scissors",
       "summary": "Avoid multiplying semantic meanings when pragmatic inference adequately explains the difference.",
-      "body": "An inferred conversational suggestion need not be part of a word's conventional meaning. Genuine lexical ambiguity still needs evidence and cannot be eliminated by stipulation. Do not conflate with the general principle of charity. Apply it to the interpretive choice actually at issue and say what evidence would distinguish the readings. The maxim can discipline projection, but it cannot remove ambiguity where the text, behavior, or data genuinely underdetermine meaning. Record the residual uncertainty instead of converting a preference into a law. For Grice's razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Can context and conversational inference explain the wording without adding another dictionary meaning? What evidence would make the opposite action more reasonable?",
+      "body": "An inferred conversational suggestion need not be part of a word's conventional meaning. Genuine lexical ambiguity still needs evidence and cannot be eliminated by stipulation. Do not conflate with the general principle of charity.",
+      "lensQuestion": "Can context and conversational inference explain the wording without adding another dictionary meaning?",
       "examples": [
         {
           "text": "'Some students passed' is taken to suggest that not all passed.",
@@ -315,7 +316,7 @@
         }
       ],
       "limitations": [
-        "Do not conflate with the general principle of charity. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Do not conflate with the general principle of charity."
       ],
       "related": [
         "implicature"
@@ -330,8 +331,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "A linguistic parsimony principle associated with minimizing unnecessary semantic distinctions.",
-      "body": "This name circulates with varying linguistic formulations. It should not be treated as a universally standardized rule or as an exact synonym for every account of Gricean pragmatics. Sometimes identified with Grice's razor; attribution and formulation vary. Apply it to the interpretive choice actually at issue and say what evidence would distinguish the readings. The maxim can discipline projection, but it cannot remove ambiguity where the text, behavior, or data genuinely underdetermine meaning. Record the residual uncertainty instead of converting a preference into a law. For Guillaume's razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Is the apparent semantic distinction better explained by an independently motivated contextual process? What evidence would make the opposite action more reasonable?",
+      "body": "This name circulates with varying linguistic formulations. It should not be treated as a universally standardized rule or as an exact synonym for every account of Gricean pragmatics. Sometimes identified with Grice's razor; attribution and formulation vary.",
+      "lensQuestion": "Is the apparent semantic distinction better explained by an independently motivated contextual process?",
       "examples": [
         {
           "text": "A familiar word appears to convey a special implication only in one conversational setting.",
@@ -339,7 +340,7 @@
         }
       ],
       "limitations": [
-        "Sometimes identified with Grice's razor; attribution and formulation vary. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Sometimes identified with Grice's razor; attribution and formulation vary."
       ],
       "related": [],
       "tags": [
@@ -352,8 +353,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Avoid inferring malice when error or incompetence adequately explains the behavior.",
-      "body": "Intent is an additional claim requiring support. The practical response to harm can remain firm even while the motive is uncertain. A defeasible heuristic, not evidence that malice never occurs. Use it to separate a speaker’s presentation from the proposition being evaluated. Independent support can confirm an impressive or modest claim alike, and a suspicious source can still utter a true sentence. The practical test is whether the conclusion survives removal of the person’s status or style. For Hanlon's razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Could error, missing information, or neglect explain this outcome without hostile intent? What evidence would make the opposite action more reasonable?",
+      "body": "Intent is an additional claim requiring support. The practical response to harm can remain firm even while the motive is uncertain. A defeasible heuristic, not evidence that malice never occurs.",
+      "lensQuestion": "Could error, missing information, or neglect explain this outcome without hostile intent?",
       "examples": [
         {
           "text": "A colleague omits your name from an announcement, and you infer deliberate sabotage.",
@@ -361,10 +362,11 @@
         }
       ],
       "limitations": [
-        "A defeasible heuristic, not evidence that malice never occurs. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "A defeasible heuristic, not evidence that malice never occurs."
       ],
       "related": [
-        "hostile-attribution-bias"
+        "hostile-attribution-bias",
+        "occams-razor"
       ],
       "tags": [
         "attribution"
@@ -378,8 +380,8 @@
       ],
       "symbolName": "scissors",
       "summary": "An unsupported assertion may be dismissed without proving its negation.",
-      "body": "The razor concerns the burden of supporting a claim. Rejecting the offered justification does not prove that the claim's negation is true. Withholding acceptance is distinct from establishing falsity. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Hitchens's razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "What evidence has been offered for the assertion being made? What evidence would make the opposite action more reasonable?",
+      "body": "The razor concerns the burden of supporting a claim. Rejecting the offered justification does not prove that the claim's negation is true. Withholding acceptance is distinct from establishing falsity.",
+      "lensQuestion": "What evidence has been offered for the assertion being made?",
       "examples": [
         {
           "text": "Someone claims an invisible device controls your dreams but offers no observation that distinguishes this from ordinary dreaming.",
@@ -387,7 +389,7 @@
         }
       ],
       "limitations": [
-        "Withholding acceptance is distinct from establishing falsity. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Withholding acceptance is distinct from establishing falsity."
       ],
       "related": [
         "shifting-the-burden-of-proof"
@@ -404,8 +406,8 @@
       ],
       "symbolName": "scissors",
       "summary": "A normative conclusion cannot follow from exclusively descriptive premises without a normative bridge.",
-      "body": "Facts can be indispensable to moral reasoning without supplying its entire normative basis. Adding an explicit value premise makes the missing commitment available for assessment. Listed with razors by convention; it is a constraint on inference rather than a parsimony heuristic. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Hume's guillotine, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Which normative premise connects the descriptive facts to the proposed obligation? What evidence would make the opposite action more reasonable?",
+      "body": "Facts can be indispensable to moral reasoning without supplying its entire normative basis. Adding an explicit value premise makes the missing commitment available for assessment. Listed with razors by convention; it is a constraint on inference rather than a parsimony heuristic.",
+      "lensQuestion": "Which normative premise connects the descriptive facts to the proposed obligation?",
       "examples": [
         {
           "text": "Most employees work late; therefore every employee ought to work late.",
@@ -413,10 +415,11 @@
         }
       ],
       "limitations": [
-        "Listed with razors by convention; it is a constraint on inference rather than a parsimony heuristic. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Listed with razors by convention; it is a constraint on inference rather than a parsimony heuristic."
       ],
       "related": [
-        "is-ought-fallacy"
+        "is-ought-fallacy",
+        "david-hume"
       ],
       "tags": [
         "evidence"
@@ -430,8 +433,8 @@
       ],
       "symbolName": "scissors",
       "summary": "A proposed cause must have enough explanatory capacity to produce its assigned effect.",
-      "body": "The apparent size of a cause does not settle its causal capacity: a small trigger can release stored energy. Assess the whole mechanism rather than comparing appearances. Distinct from Hume's guillotine. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Hume's razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Does the proposed cause have the demonstrated capacity to produce this effect? What evidence would make the opposite action more reasonable?",
+      "body": "The apparent size of a cause does not settle its causal capacity: a small trigger can release stored energy. Assess the whole mechanism rather than comparing appearances. Distinct from Hume's guillotine.",
+      "lensQuestion": "Does the proposed cause have the demonstrated capacity to produce this effect?",
       "examples": [
         {
           "text": "A small desk fan is offered as the sole explanation for structural damage across a city.",
@@ -439,9 +442,11 @@
         }
       ],
       "limitations": [
-        "Distinct from Hume's guillotine. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Distinct from Hume's guillotine."
       ],
-      "related": [],
+      "related": [
+        "david-hume"
+      ],
       "tags": [
         "evidence"
       ]
@@ -452,8 +457,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Published images often reflect selection from many alternatives.",
-      "body": "A published image is a selected observation rather than a random sample of life. Selection can distort impressions without making the depicted moment entirely fabricated. The name does not imply a known number of rejected images. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Instagram razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "What selection process produced this image or success story? What evidence would make the opposite action more reasonable?",
+      "body": "A published image is a selected observation rather than a random sample of life. Selection can distort impressions without making the depicted moment entirely fabricated. The name does not imply a known number of rejected images.",
+      "lensQuestion": "What selection process produced this image or success story?",
       "examples": [
         {
           "text": "A flawless travel photograph is presented as an ordinary moment of a trip.",
@@ -461,7 +466,7 @@
         }
       ],
       "limitations": [
-        "The name does not imply a known number of rejected images. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "The name does not imply a known number of rejected images."
       ],
       "related": [
         "selection-bias"
@@ -478,8 +483,8 @@
       ],
       "symbolName": "scissors",
       "summary": "Do not prematurely reduce the genuine variety of things.",
-      "body": "Economy should not eliminate real variety merely for convenience. The rule is a counterweight, not a demand to treat every superficial difference as fundamental. A restraint on unjustified simplification. Parsimony compares explanations only after they cover the same relevant observations. A shorter story can omit a necessary mechanism, while a more complex theory can be preferable when its extra structure earns predictive or explanatory work. Count assumptions and consequences, not merely words or entities. For Kant's counter-razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Am I erasing a genuine distinction before establishing that it is unnecessary? What evidence would make the opposite action more reasonable?",
+      "body": "Economy should not eliminate real variety merely for convenience. The rule is a counterweight, not a demand to treat every superficial difference as fundamental. A restraint on unjustified simplification.",
+      "lensQuestion": "Am I erasing a genuine distinction before establishing that it is unnecessary?",
       "examples": [
         {
           "text": "Two different measurement processes are assumed identical because merging them gives a shorter report.",
@@ -487,9 +492,11 @@
         }
       ],
       "limitations": [
-        "A restraint on unjustified simplification. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "A restraint on unjustified simplification."
       ],
-      "related": [],
+      "related": [
+        "immanuel-kant"
+      ],
       "tags": [
         "parsimony"
       ]
@@ -500,8 +507,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Consider options that increase exposure to useful opportunities.",
-      "body": "Some actions create more opportunities for beneficial encounters than others. Exposure also brings costs and risks, so more contact is not always better. Outcomes remain uncertain. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For Luck razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Which feasible choice exposes me to more useful, diverse opportunities? What evidence would make the opposite action more reasonable?",
+      "body": "Some actions create more opportunities for beneficial encounters than others. Exposure also brings costs and risks, so more contact is not always better. Outcomes remain uncertain.",
+      "lensQuestion": "Which feasible choice exposes me to more useful, diverse opportunities?",
       "examples": [
         {
           "text": "A researcher chooses between isolated browsing and an affordable interdisciplinary workshop relevant to her work.",
@@ -509,7 +516,7 @@
         }
       ],
       "limitations": [
-        "Outcomes remain uncertain. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Outcomes remain uncertain."
       ],
       "related": [],
       "tags": [
@@ -524,8 +531,8 @@
       ],
       "symbolName": "scissors",
       "summary": "Do not use fewer explanatory resources than are necessary.",
-      "body": "Too little structure can mislead as much as too much structure. An adequate model can require several assumptions, variables, or mechanisms. A counterweight to excessive parsimony. Parsimony compares explanations only after they cover the same relevant observations. A shorter story can omit a necessary mechanism, while a more complex theory can be preferable when its extra structure earns predictive or explanatory work. Count assumptions and consequences, not merely words or entities. For Menger's anti-razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Is the simplest proposed account missing a resource required to explain the observations? What evidence would make the opposite action more reasonable?",
+      "body": "Too little structure can mislead as much as too much structure. An adequate model can require several assumptions, variables, or mechanisms. A counterweight to excessive parsimony.",
+      "lensQuestion": "Is the simplest proposed account missing a resource required to explain the observations?",
       "examples": [
         {
           "text": "A forecast drops all seasonal terms and consequently misses a repeated annual cycle.",
@@ -533,7 +540,7 @@
         }
       ],
       "limitations": [
-        "A counterweight to excessive parsimony. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "A counterweight to excessive parsimony."
       ],
       "related": [
         "chattons-anti-razor"
@@ -548,8 +555,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "People may be less focused on you than you assume.",
-      "body": "People's attention is limited and often directed toward their own concerns. Some actions nevertheless receive sustained attention, so the advice must remain contextual. Not a diagnosis of narcissism. Use it to separate a speaker’s presentation from the proposition being evaluated. Independent support can confirm an impressive or modest claim alike, and a suspicious source can still utter a true sentence. The practical test is whether the conclusion survives removal of the person’s status or style. For Narcissism razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "What evidence shows that others are attending to this detail as intensely as I am? What evidence would make the opposite action more reasonable?",
+      "body": "People's attention is limited and often directed toward their own concerns. Some actions nevertheless receive sustained attention, so the advice must remain contextual. Not a diagnosis of narcissism.",
+      "lensQuestion": "What evidence shows that others are attending to this detail as intensely as I am?",
       "examples": [
         {
           "text": "You assume everyone at a conference noticed a small stumble in your introduction.",
@@ -557,7 +564,7 @@
         }
       ],
       "limitations": [
-        "Not a diagnosis of narcissism. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Not a diagnosis of narcissism."
       ],
       "related": [],
       "tags": [
@@ -570,8 +577,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "For otherwise comparable options, consider the one with short-term difficulty and long-term benefits.",
-      "body": "This advice counters short-term avoidance in otherwise comparable choices. Pain can also signal a bad plan, and feasibility and downside risk still matter. Context-dependent decision advice, not a general rule to maximize pain. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For Naval's razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Am I rejecting a durable benefit solely because its immediate cost is uncomfortable? What evidence would make the opposite action more reasonable?",
+      "body": "This advice counters short-term avoidance in otherwise comparable choices. Pain can also signal a bad plan, and feasibility and downside risk still matter. Context-dependent decision advice, not a general rule to maximize pain.",
+      "lensQuestion": "Am I rejecting a durable benefit solely because its immediate cost is uncomfortable?",
       "examples": [
         {
           "text": "Two training options have similar prospects, but one demands difficult foundational study before later benefits.",
@@ -579,7 +586,7 @@
         }
       ],
       "limitations": [
-        "Context-dependent decision advice, not a general rule to maximize pain. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Context-dependent decision advice, not a general rule to maximize pain."
       ],
       "related": [],
       "tags": [
@@ -592,8 +599,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Connect people when the introduction is likely to benefit both.",
-      "body": "Connecting people can reduce search costs and open collaboration. Relevance, consent, and others' attention constrain when an introduction helps. General social advice rather than a rule of inference. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For Network razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Would both people plausibly benefit from an introduction they are comfortable receiving? What evidence would make the opposite action more reasonable?",
+      "body": "Connecting people can reduce search costs and open collaboration. Relevance, consent, and others' attention constrain when an introduction helps. General social advice rather than a rule of inference.",
+      "lensQuestion": "Would both people plausibly benefit from an introduction they are comfortable receiving?",
       "examples": [
         {
           "text": "Two researchers separately mention complementary projects and welcome an introduction.",
@@ -601,7 +608,7 @@
         }
       ],
       "limitations": [
-        "General social advice rather than a rule of inference. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "General social advice rather than a rule of inference."
       ],
       "related": [],
       "tags": [
@@ -614,8 +621,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Evaluate both the desired outcome and the work needed to reach it.",
-      "body": "An opportunity contains a process as well as an imagined reward. Assessing both can prevent commitment based only on a flattering outcome scenario. General decision advice, included because it circulates explicitly as a razor. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For New-opportunity razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Do I value the likely outcome and accept the recurring work and downside needed to pursue it? What evidence would make the opposite action more reasonable?",
+      "body": "An opportunity contains a process as well as an imagined reward. Assessing both can prevent commitment based only on a flattering outcome scenario. General decision advice, included because it circulates explicitly as a razor.",
+      "lensQuestion": "Do I value the likely outcome and accept the recurring work and downside needed to pursue it?",
       "examples": [
         {
           "text": "A prospective founder likes the idea of owning a company but dislikes selling, hiring, and handling uncertainty.",
@@ -623,7 +630,7 @@
         }
       ],
       "limitations": [
-        "General decision advice, included because it circulates explicitly as a razor. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "General decision advice, included because it circulates explicitly as a razor."
       ],
       "related": [],
       "tags": [
@@ -639,8 +646,8 @@
       ],
       "symbolName": "scissors",
       "summary": "Prefer fewer unnecessary assumptions between otherwise adequately supported explanations.",
-      "body": "Parsimony compares explanatory adequacy as well as assumption costs. A more complicated explanation can be preferable when it explains evidence the simpler one cannot. Does not establish that the simplest imaginable explanation is true. Parsimony compares explanations only after they cover the same relevant observations. A shorter story can omit a necessary mechanism, while a more complex theory can be preferable when its extra structure earns predictive or explanatory work. Count assumptions and consequences, not merely words or entities. For Occam's razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Which account fits the evidence with the fewest unsupported assumptions? What evidence would make the opposite action more reasonable?",
+      "body": "Parsimony compares explanatory adequacy as well as assumption costs. A more complicated explanation can be preferable when it explains evidence the simpler one cannot. Does not establish that the simplest imaginable explanation is true.",
+      "lensQuestion": "Which account fits the evidence with the fewest unsupported assumptions?",
       "examples": [
         {
           "text": "The printer stopped after its paper tray emptied. A second account proposes a hidden remote attack.",
@@ -648,11 +655,13 @@
         }
       ],
       "limitations": [
-        "Does not establish that the simplest imaginable explanation is true. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Does not establish that the simplest imaginable explanation is true."
       ],
       "related": [
         "hanlons-razor",
-        "chattons-anti-razor"
+        "chattons-anti-razor",
+        "einsteins-razor",
+        "william-of-ockham"
       ],
       "tags": [
         "parsimony"
@@ -664,8 +673,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Withhold firm opinions until sufficiently informed about the question and objections.",
-      "body": "Confidence should reflect the work and evidence behind a judgment. Practical decisions can still require provisional views under uncertainty. A popular epistemic maxim. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Opinion razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Do I understand enough of the evidence and objections to hold this view confidently? What evidence would make the opposite action more reasonable?",
+      "body": "Confidence should reflect the work and evidence behind a judgment. Practical decisions can still require provisional views under uncertainty. A popular epistemic maxim.",
+      "lensQuestion": "Do I understand enough of the evidence and objections to hold this view confidently?",
       "examples": [
         {
           "text": "Someone asks for a firm position on a technical dispute you have only seen in a headline.",
@@ -673,7 +682,7 @@
         }
       ],
       "limitations": [
-        "A popular epistemic maxim. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "A popular epistemic maxim."
       ],
       "related": [
         "epistemic-humility"
@@ -688,8 +697,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Consider the benefits of constructive, possibility-oriented collaborators.",
-      "body": "Possibility-oriented collaborators can make action and learning easier. Pessimistic warnings can also be accurate and should be judged on their reasons. Optimism does not guarantee accuracy or success. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For Optimist razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Does this collaborator pair constructive possibilities with honest attention to constraints? What evidence would make the opposite action more reasonable?",
+      "body": "Possibility-oriented collaborators can make action and learning easier. Pessimistic warnings can also be accurate and should be judged on their reasons. Optimism does not guarantee accuracy or success.",
+      "lensQuestion": "Does this collaborator pair constructive possibilities with honest attention to constraints?",
       "examples": [
         {
           "text": "One team member proposes testable ways forward while another dismisses every experiment without examining it.",
@@ -697,7 +706,7 @@
         }
       ],
       "limitations": [
-        "Optimism does not guarantee accuracy or success. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Optimism does not guarantee accuracy or success."
       ],
       "related": [],
       "tags": [
@@ -712,8 +721,8 @@
       ],
       "symbolName": "scissors",
       "summary": "A scientific theory should rule out possible observations and thus risk refutation.",
-      "body": "Falsifiability concerns a theory's exposure to potential counterevidence. Actual testing also depends on measurement, auxiliary assumptions, and the possibility of experimental error. A summary of Popper's contested demarcation proposal; falsifiability does not establish truth. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Popper's razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "What possible observation would count against this theory? What evidence would make the opposite action more reasonable?",
+      "body": "Falsifiability concerns a theory's exposure to potential counterevidence. Actual testing also depends on measurement, auxiliary assumptions, and the possibility of experimental error. A summary of Popper's contested demarcation proposal; falsifiability does not establish truth.",
+      "lensQuestion": "What possible observation would count against this theory?",
       "examples": [
         {
           "text": "A prediction is revised after every outcome so that the theory always claims success.",
@@ -721,10 +730,11 @@
         }
       ],
       "limitations": [
-        "A summary of Popper's contested demarcation proposal; falsifiability does not establish truth. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "A summary of Popper's contested demarcation proposal; falsifiability does not establish truth."
       ],
       "related": [
-        "falsifiability"
+        "falsifiability",
+        "karl-popper"
       ],
       "tags": [
         "evidence"
@@ -736,8 +746,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Consider environments with constructive expectations for your development.",
-      "body": "Expectations can influence interaction, opportunities, and persistence. Their effects depend on context and should not be mistaken for control over another person's achievement. Not a guarantee that expectations determine achievement. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For Pygmalion razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Does this environment combine constructive expectations with realistic support? What evidence would make the opposite action more reasonable?",
+      "body": "Expectations can influence interaction, opportunities, and persistence. Their effects depend on context and should not be mistaken for control over another person's achievement. Not a guarantee that expectations determine achievement.",
+      "lensQuestion": "Does this environment combine constructive expectations with realistic support?",
       "examples": [
         {
           "text": "A tutor expects a student to improve and supplies specific feedback and practice.",
@@ -745,7 +755,7 @@
         }
       ],
       "limitations": [
-        "Not a guarantee that expectations determine achievement. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Not a guarantee that expectations determine achievement."
       ],
       "related": [],
       "tags": [
@@ -760,8 +770,8 @@
       ],
       "symbolName": "scissors",
       "summary": "Do not create or merge concepts without a justified cognitive need.",
-      "body": "Conceptual economy concerns the justification of distinctions and integrations. It does not prohibit technical terms that capture a useful, previously unmarked difference. One of two different formulations circulated under Rand's razor. Parsimony compares explanations only after they cover the same relevant observations. A shorter story can omit a necessary mechanism, while a more complex theory can be preferable when its extra structure earns predictive or explanatory work. Count assumptions and consequences, not merely words or entities. For Rand's conceptual razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Does this new category identify a distinction the inquiry genuinely needs? What evidence would make the opposite action more reasonable?",
+      "body": "Conceptual economy concerns the justification of distinctions and integrations. It does not prohibit technical terms that capture a useful, previously unmarked difference. One of two different formulations circulated under Rand's razor.",
+      "lensQuestion": "Does this new category identify a distinction the inquiry genuinely needs?",
       "examples": [
         {
           "text": "A database invents a separate basic kind for red, left-handed, Tuesday-born customers without a relevant purpose.",
@@ -769,7 +779,7 @@
         }
       ],
       "limitations": [
-        "One of two different formulations circulated under Rand's razor. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "One of two different formulations circulated under Rand's razor."
       ],
       "related": [],
       "tags": [
@@ -784,8 +794,8 @@
       ],
       "symbolName": "scissors",
       "summary": "Identify the fundamental premises on which the argument depends.",
-      "body": "Tracing an argument to its foundations exposes commitments that may otherwise remain hidden. It does not itself establish that the selected foundations are correct. Distinct from the conceptual-economy formulation. Apply it to the interpretive choice actually at issue and say what evidence would distinguish the readings. The maxim can discipline projection, but it cannot remove ambiguity where the text, behavior, or data genuinely underdetermine meaning. Record the residual uncertainty instead of converting a preference into a law. For Rand's primaries razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Which basic premises must be accepted for this argument to work? What evidence would make the opposite action more reasonable?",
+      "body": "Tracing an argument to its foundations exposes commitments that may otherwise remain hidden. It does not itself establish that the selected foundations are correct. Distinct from the conceptual-economy formulation.",
+      "lensQuestion": "Which basic premises must be accepted for this argument to work?",
       "examples": [
         {
           "text": "A policy argument assumes, without stating it, that only aggregate income matters.",
@@ -793,7 +803,7 @@
         }
       ],
       "limitations": [
-        "Distinct from the conceptual-economy formulation. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Distinct from the conceptual-economy formulation."
       ],
       "related": [],
       "tags": [
@@ -806,8 +816,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Seek environments where other people can teach you.",
-      "body": "Learning often benefits from contact with people who know things one does not. An intimidating setting without support or relevance may be unhelpful. Advice about learning, not a measure of intelligence. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For Room razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Will this setting expose me to useful knowledge and permit constructive participation? What evidence would make the opposite action more reasonable?",
+      "body": "Learning often benefits from contact with people who know things one does not. An intimidating setting without support or relevance may be unhelpful. Advice about learning, not a measure of intelligence.",
+      "lensQuestion": "Will this setting expose me to useful knowledge and permit constructive participation?",
       "examples": [
         {
           "text": "An experienced designer joins a workshop where others have deeper accessibility expertise.",
@@ -815,7 +825,7 @@
         }
       ],
       "limitations": [
-        "Advice about learning, not a measure of intelligence. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Advice about learning, not a measure of intelligence."
       ],
       "related": [],
       "tags": [
@@ -830,8 +840,8 @@
       ],
       "symbolName": "scissors",
       "summary": "Claims with very low prior plausibility require particularly strong evidential support.",
-      "body": "A surprising claim can be established by ordinary methods when the evidence is sufficiently discriminating. Prior improbability is a reason to demand strength, not a license to ignore evidence. Extraordinary evidence means evidential strength, not necessarily an exotic kind of evidence. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Sagan standard, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "How strongly does this evidence favor the claim over plausible alternatives? What evidence would make the opposite action more reasonable?",
+      "body": "A surprising claim can be established by ordinary methods when the evidence is sufficiently discriminating. Prior improbability is a reason to demand strength, not a license to ignore evidence. Extraordinary evidence means evidential strength, not necessarily an exotic kind of evidence.",
+      "lensQuestion": "How strongly does this evidence favor the claim over plausible alternatives?",
       "examples": [
         {
           "text": "A blurry photograph is offered as proof of a previously unknown spacecraft.",
@@ -839,7 +849,7 @@
         }
       ],
       "limitations": [
-        "Extraordinary evidence means evidential strength, not necessarily an exotic kind of evidence. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Extraordinary evidence means evidential strength, not necessarily an exotic kind of evidence."
       ],
       "related": [
         "base-rate-fallacy"
@@ -854,8 +864,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Treat informed peers' unusual interests as leads for investigation.",
-      "body": "An informed peer can provide a valuable lead for investigation. Shared incentives and common sources can also generate correlated mistakes. Social agreement is not proof and can propagate shared error. Use it as a prompt for the next decision, not as a substitute for comparing expected outcomes. State the competing options, the evidence that would reverse the default, and the cost of delaying action. The maxim is useful when it exposes an unexamined preference; it is weak when it hides a value judgment behind a catchy rule. For Smart-friends razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "What do these informed people know, and are their reasons independent? What evidence would make the opposite action more reasonable?",
+      "body": "An informed peer can provide a valuable lead for investigation. Shared incentives and common sources can also generate correlated mistakes. Social agreement is not proof and can propagate shared error.",
+      "lensQuestion": "What do these informed people know, and are their reasons independent?",
       "examples": [
         {
           "text": "Several colleagues investigate the same new tool, but all learned about it from one sponsored post.",
@@ -863,7 +873,7 @@
         }
       ],
       "limitations": [
-        "Social agreement is not proof and can propagate shared error. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Social agreement is not proof and can propagate shared error."
       ],
       "related": [],
       "tags": [
@@ -876,8 +886,8 @@
       "aliases": [],
       "symbolName": "scissors",
       "summary": "Treat strong emotion as a reason to reassess confidence in judgment.",
-      "body": "Emotion can draw attention to real concerns while also changing confidence and interpretation. Calmness is not proof of correctness either. Popular attribution and formulation; not an independently verified empirical law. Treat it as an evidential hygiene rule: identify the claim, the source’s incentive, and the independent check available. It does not imply that an unverified claim is false, only that confidence should remain provisional. The appropriate result is calibrated belief and a search plan, not reflexive dismissal. For Tarzwell's razor, apply the lens to the concrete choice in the example and state what information would justify departing from the maxim.",
-      "lensQuestion": "Should I reassess this judgment after the immediate emotional surge subsides? What evidence would make the opposite action more reasonable?",
+      "body": "Emotion can draw attention to real concerns while also changing confidence and interpretation. Calmness is not proof of correctness either. Popular attribution and formulation; not an independently verified empirical law.",
+      "lensQuestion": "Should I reassess this judgment after the immediate emotional surge subsides?",
       "examples": [
         {
           "text": "After an angry meeting, you conclude a colleague's entire career is fraudulent.",
@@ -885,7 +895,7 @@
         }
       ],
       "limitations": [
-        "Popular attribution and formulation; not an independently verified empirical law. It is a heuristic for attention and judgment, not a deductive rule or guarantee."
+        "Popular attribution and formulation; not an independently verified empirical law."
       ],
       "related": [],
       "tags": [

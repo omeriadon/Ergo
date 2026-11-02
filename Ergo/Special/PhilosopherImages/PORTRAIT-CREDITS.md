@@ -1,8 +1,24 @@
 # Philosopher portrait credits
 
-These images are historical depictions, sculptures, illustrations, or photographs as identified by their source pages. Ancient depictions are not authenticated likenesses. Each filename matches its philosopher catalog ID.
+Images are historical depictions, sculptures, illustrations, or photographs as identified by their source pages. Ancient depictions are not authenticated likenesses. Each filename matches its philosopher catalog ID.
 
-Images were proportionally resized to at most 768 pixels and encoded as JPEG XL; they were not cropped or retouched. Each image retains the license listed below; Creative Commons share-alike terms apply to the corresponding converted image. No license is asserted over third-party images beyond those terms.
+Images were proportionally resized to at most 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; they were not cropped or retouched.
+
+## Agnes Heller
+
+- File: `agnes-heller.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:%C3%81gnes_Heller_G%C3%B6teborg_Book_Fair_2015.jpg
+- Creator: Arild Vågen
+- License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
+- Credit: Own work
+
+## Al-Farabi
+
+- File: `al-farabi.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Alpharabius_in_Liber_Chronicarum_1493_AD.png
+- Creator: Mr.Nostalgic
+- License: Public domain
+- Credit: File:Al-Farabi_Alpharabius_philosophus_(titel_op_object)_Liber_Chronicarum_(serietitel),_RP-P-2016-49-86-16.jpg
 
 ## Al-Ghazali
 
@@ -12,6 +28,14 @@ Images were proportionally resized to at most 768 pixels and encoded as JPEG XL;
 - License: Public domain
 - Credit: Scanned Photo from a book entitled Sayr mulhimah : min al-Sharq wa-al-Gharb, first translated into Arabic and published in Egypt in 1381 AH = 1961 CE. Check OCLC
 
+## Alain Badiou
+
+- File: `alain-badiou.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Alain_Badiou-2.jpg
+- Creator: Keffieh67
+- License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0
+- Credit: Own work
+
 ## Albert Camus
 
 - File: `albert-camus.jxl`
@@ -19,6 +43,48 @@ Images were proportionally resized to at most 768 pixels and encoded as JPEG XL;
 - Creator: Photograph by United Press International
 - License: Public domain
 - Credit: This image  is available from the United States Library of Congress's Prints and Photographs division under the digital ID cph.3c08028.This tag does not indicate the copyright status of the attached work. A normal copyright tag is still required. See Commons:Licensing.
+
+## Alfred North Whitehead
+
+- File: `alfred-north-whitehead.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:ANWhitehead.jpg
+- Creator: unknown
+- License: Public domain
+- Credit: Splendour Of  The Heavens by Hutchinsons, 1923, p. 675
+
+## Amartya Sen
+
+- File: `amartya-sen.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Amartya_Sen_20071128_cologne_cropped.jpg
+- Creator: Amartya_Sen_20071128_cologne.jpg: Elke Wetzig (Elya)
+derivative work: ChaudhryAzan (talk)
+- License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0
+- Credit: Amartya_Sen_20071128_cologne.jpg
+
+## Angela Davis
+
+- File: `angela-davis.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Angela_Davis,_1974_(cropped).jpg
+- Creator: Philippe Halsman
+- License: Public domain
+- Credit: eBay
+
+## Anselm of Canterbury
+
+- File: `anselm-of-canterbury.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Anselm_of_Canterbury,_seal.svg
+- Creator: Anselm_of_Canterbury,_seal.jpg: The original uploader was Srnec at English Wikipedia.
+derivative work: MLWatts
+- License: Public domain
+- Credit: This file was derived from:  Anselm of Canterbury, seal.jpg:
+
+## Antonio Gramsci
+
+- File: `antonio-gramsci.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Gramsci.png
+- Creator: Unknown authorUnknown author
+- License: Public domain
+- Credit: http://eserver.org/
 
 ## Aristotle
 
@@ -60,6 +126,14 @@ Images were proportionally resized to at most 768 pixels and encoded as JPEG XL;
 - License: Public domain
 - Credit: https://library.si.edu/image-gallery/72987
 
+## B. R. Ambedkar
+
+- File: `b-r-ambedkar.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Dr._Bhimrao_Ambedkar.jpg
+- Creator: Unknown authorUnknown author
+- License: Public domain
+- Credit: http://anithawnp.webnode.com/indian-heroes/dr-b-r-ambedkar/[dead link] (read on archive.org)
+
 ## Baruch Spinoza
 
 - File: `baruch-spinoza.jxl`
@@ -67,6 +141,14 @@ Images were proportionally resized to at most 768 pixels and encoded as JPEG XL;
 - Creator: anonymous
 - License: Public domain
 - Credit: This image has been extracted from another file
+
+## bell hooks
+
+- File: `bell-hooks.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Bell_hooks,_October_2014.jpg
+- Creator: Alex Lozupone (Tduk)
+- License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
+- Credit: Own work
 
 ## Bertrand Russell
 
@@ -76,6 +158,39 @@ Images were proportionally resized to at most 768 pixels and encoded as JPEG XL;
 - License: Public domain
 - Credit: one or more third parties have made copyright claims against Wikimedia Commons in relation to the work from which this is sourced or a purely mechanical reproduction thereof. This may be due to recognition of the "sweat of the brow" doctrine, allowing works to be eligible for protection through skill and labour, and not purely by originality as is the case in the United States (where this website is hosted). These claims may or may not be valid in all jurisdictions.
 As such, use of this image in the jurisdiction of the claimant or other countries may be regarded as copyright infringement. Please see Commons:When to use the PD-Art tag for more information.
+
+## Blaise Pascal
+
+- File: `blaise-pascal.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Blaise_Pascal_Versailles,_circa_1690.JPG
+- Creator: unknown; a copy of the painting of François II Quesnel, which was made for Gérard Edelinck en 1691[réf. nécessaire].
+- License: Public domain
+- Credit: Own work
+
+## Buddhaghosa
+
+- File: `buddhaghosa.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Buddhaghosa.jpg
+- Creator: Solias Mendis
+- License: Public domain
+- Credit: Self-scanned
+
+## C. L. R. James
+
+- File: `c-l-r-james.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:CLR_James_Cropped.png
+- Creator: By Hill123 (Own work) [CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons
+- License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0
+- Credit: https://commons.wikimedia.org/wiki/File%3ACLRJamesandthe_BarbadosCricketBuckle.jpg
+
+## Charles Sanders Peirce
+
+- File: `c-s-peirce.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Charles_Sanders_Peirce.png
+- Creator: Charles_Sanders_Peirce_theb3558.jpg: NOAA Office of NOAA Corps Operations
+derivative work: Ori.livneh (talk)
+- License: Public domain
+- Credit: Charles_Sanders_Peirce_theb3558.jpg
 
 ## Confucius
 
@@ -93,6 +208,15 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - License: CC BY-SA 2.0 — https://creativecommons.org/licenses/by-sa/2.0
 - Credit: Cornel West
 
+## Cornelius Castoriadis
+
+- File: `cornelius-castoriadis.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Cornelius_Castoriadis.jpg
+- Creator: David Ames Curtis
+- License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0
+- Credit: This image has been extracted from another file
+- Attribution: Davidamescurtis
+
 ## David Hume
 
 - File: `david-hume.jxl`
@@ -100,6 +224,14 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - Creator: Allan Ramsay
 - License: Public domain
 - Credit: National Galleries Scotland
+
+## Democritus
+
+- File: `democritus.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Unknown_greek_pushkin.jpg
+- Creator: user:shakko
+- License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0
+- Credit: Own work
 
 ## Derek Parfit
 
@@ -109,13 +241,45 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
 - Credit: Own work
 
-## Desiderius Erasmus
+## Jacques Derrida
 
-- File: `erasmus.jxl`
-- Source: https://commons.wikimedia.org/wiki/File:Holbein-erasmus.jpg
-- Creator: Hans Holbein the Younger
+- File: `derrida-jacques.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Derrida_EHESS_(cropped).png
+- Creator: Auto-épreuve
+- License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0
+- Credit: File:Derrida_EHESS.jpg
+
+## Dharmakirti
+
+- File: `dharmakirti.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Tibet,_c._15th-16th_century_-_Portrait_of_Dharmakirti_-_2010.474_-_Cleveland_Museum_of_Art.tif
+- Creator: See source page
+- License: CC0 — http://creativecommons.org/publicdomain/zero/1.0/deed.en
+- Credit: https://clevelandart.org/art/2010.474
+
+## Diogenes of Sinope
+
+- File: `diogenes-of-sinope.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Diogenes_Mosaic_R%C3%B6misch-Germanisches_Museum.jpg
+- Creator: Unknown authorUnknown author
 - License: Public domain
-- Credit: Web Gallery of Art:   Image  Info about artworkwga QS:P11807,"h/holbein/hans_y/1525/08erasmu"
+- Credit: Römisch-Germanisches Museum
+
+## Dogen
+
+- File: `dogen.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Soto-Zen-Master-Dogen-Zenji-Portrait.png
+- Creator: Unknown authorUnknown author
+- License: Public domain
+- Credit: http://kousin242.sakura.ne.jp/wordpress015/宗教/禅宗/道元/ , https://web.archive.org/web/20200125164535/http://kousin242.sakura.ne.jp/wordpress015/宗教/禅宗/道元/
+
+## John Duns Scotus
+
+- File: `duns-scotus.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Scoto_(Duns_Scoto).jpg
+- Creator: Justus van Gent / Pedro Berruguete
+- License: Public domain
+- Credit: Own work
 
 ## Edmund Husserl
 
@@ -125,6 +289,23 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - License: Public domain
 - Credit: http://www.gettyimages.co.uk/detail/news-photo/portrait-of-the-austrian-naturalized-german-philosopher-and-news-photo/141555173
 
+## G. E. M. Anscombe
+
+- File: `elizabeth-anscombe.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Elisabeth_Anscombe.jpg
+- Creator: Albarluque
+- License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0
+- Credit: Own work
+
+## Emmanuel Levinas
+
+- File: `emmanuel-levinas.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Emmanuel_Levinas.jpg
+- Creator: Bracha L. Ettinger
+- License: CC BY-SA 2.5 — https://creativecommons.org/licenses/by-sa/2.5
+- Credit: Bracha L. Ettinger
+- Attribution: Bracha L. Ettinger
+
 ## Epictetus
 
 - File: `epictetus.jxl`
@@ -132,6 +313,22 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - Creator: William Sonmans / Michael Burghers
 - License: Public domain
 - Credit: File:Epicteti Enchiridion Latinis versibus adumbratum (Oxford 1715) frontispiece.jpg
+
+## Epicurus
+
+- File: `epicurus.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Epikouros_BM_1843.jpg
+- Creator: Unknown artistUnknown artist
+- License: Public domain
+- Credit: Marie-Lan Nguyen (2011)
+
+## Desiderius Erasmus
+
+- File: `erasmus.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Holbein-erasmus.jpg
+- Creator: Hans Holbein the Younger
+- License: Public domain
+- Credit: Web Gallery of Art:   Image  Info about artworkwga QS:P11807,"h/holbein/hans_y/1525/08erasmu"
 
 ## Francis Bacon
 
@@ -141,6 +338,16 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - License: Public domain
 - Credit: pl.pinterest.com
 
+## Frantz Fanon
+
+- File: `frantz-fanon.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Photograph_of_Frantz_Fanon_from_Black_Skin_White_Masks_(1967)_dust_jacket.webp
+- Creator: Unknown authorUnknown author
+- License: Public domain
+- Credit: Original publication: Dust jacket of Fanon, Frantz (1967)       Black Skin White Masks (1st American ed.), New York City:  Grove Press  
+
+Immediate: https://africainside.net/16-01-25993-Le-film-Frantz-Fanon-dAbdenour-Zahzah-remporte-le-Prix-Special-du-Jury-au-Festival-de-Louxor6461787908.html
+
 ## Friedrich Nietzsche
 
 - File: `friedrich-nietzsche.jxl`
@@ -148,14 +355,6 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - Creator: Friedrich Hermann Hartmann
 - License: Public domain
 - Credit: https://s-media-cache-ak0.pinimg.com/originals/04/10/0b/04100baec90c105729b47f33c371476b.jpg
-
-## G. E. M. Anscombe
-
-- File: `elizabeth-anscombe.jxl`
-- Source: https://commons.wikimedia.org/wiki/File:Elisabeth_Anscombe.jpg
-- Creator: Albarluque
-- License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0
-- Credit: Own work
 
 ## G. E. Moore
 
@@ -181,6 +380,14 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - License: Public domain
 - Credit: 1wEMkObfE2BRpQ at Google Cultural Institute maximum zoom level
 
+## Gilles Deleuze
+
+- File: `gilles-deleuze.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:AVT_Gilles-Deleuze_6342.webp
+- Creator: Tintinades
+- License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
+- Credit: Own work
+
 ## Gottfried Wilhelm Leibniz
 
 - File: `gottfried-leibniz.jxl`
@@ -188,6 +395,13 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - Creator: Christoph Bernhard Francke
 - License: Public domain
 - Credit: Herzog Anton Ulrich-Museum, online
+
+## Gottlob Frege
+
+- File: `gottlob-frege.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Young_frege.jpg
+- Creator: Unknown authorUnknown author
+- License: Public domain
 
 ## Hannah Arendt
 
@@ -197,6 +411,14 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
 - Credit: sammlungonline.muenchner-stadtmuseum.de
 
+## Harriet Taylor Mill
+
+- File: `harriet-taylor-mill.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Harriet_Mill_from_NPG.jpg
+- Creator: anonymous
+- License: Public domain
+- Credit: Public domain works must be out of copyright in both the United States and in the source country of the work in order to be hosted on the Commons. If the work is not a U.S. work, the file must have an additional copyright tag indicating the copyright status in the source country.Note: This tag should not be used for sound recordings.PD-1923Public domain in the United States//commons.wikimedia.org/wiki/File:Harriet_Mill_from_NPG.jpg
+
 ## Henry David Thoreau
 
 - File: `henry-david-thoreau.jxl`
@@ -205,6 +427,38 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - License: Public domain
 - Credit: National Portrait Gallery
 
+## Heraclitus
+
+- File: `heraclitus.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Heraclitus_b_4_compressed.jpg
+- Creator: RoyFokker
+- License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
+- Credit: Own work
+
+## Max Horkheimer
+
+- File: `horkheimer-max.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Max_Horkheimer.jpg
+- Creator: Jeremy J. Shapiro
+- License: CC BY-SA 3.0 — http://creativecommons.org/licenses/by-sa/3.0/
+- Credit: Cropped from File:AdornoHorkheimerHabermasbyJeremyJShapiro2.png (photograph taken in April 1964 at the Max Weber-Soziologentag).
+
+## Hypatia
+
+- File: `hypatia.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Hypatia.png
+- Creator: Raphael, The School of Athens, 1510, Hypatia
+- License: Public domain
+- Credit: https://arthive.com/res/media/img/orig/work/5dc/366018.png
+
+## Ibn Khaldun
+
+- File: `ibn-khaldun.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Bust_of_Ibn_Khaldun_(Casbah_of_Bejaia,_Algeria).jpg
+- Creator: Reda Kerbush
+- License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
+- Credit: Own work
+
 ## Immanuel Kant
 
 - File: `immanuel-kant.jxl`
@@ -212,6 +466,14 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - Creator: Johann Gottlieb Becker (1720-1782)
 - License: Public domain
 - Credit: https://web.archive.org/web/20220308160432/https://andreasvieth.de/kant/das-bildmaterial
+
+## J. L. Austin
+
+- File: `j-l-austin.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Postcard_%22On_the_Putting_Course,_St._Andrews%22_(1925).png
+- Creator: Unknown authorUnknown author
+- License: Public domain
+- Credit: Rowe, M. W. (2023)       J. L. Austin: philosopher and D-Day intelligence officer, Oxford, United Kingdom:  Oxford University Press  ISBN:  978-0-19-870758-5.  (there crediting "Reproduced courtesy of Francis Sandison")
 
 ## Jean-Jacques Rousseau
 
@@ -224,6 +486,23 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - Credit: Original publication: Musée d'art et d'histoire de Genève
 
 Immediate source: https://commons.wikimedia.org/wiki/File:Maurice_Quentin_de_La_Tour_-_Portrait_of_Jean-Jacques_Rousseau_-_WGA12360.jpg
+
+## Jeremy Bentham
+
+- File: `jeremy-bentham.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Jeremy_Bentham_by_Henry_William_Pickersgill.jpg
+- Creator: Henry William Pickersgill
+- License: Public domain
+- Credit: one or more third parties have made copyright claims against Wikimedia Commons in relation to the work from which this is sourced or a purely mechanical reproduction thereof. This may be due to recognition of the "sweat of the brow" doctrine, allowing works to be eligible for protection through skill and labour, and not purely by originality as is the case in the United States (where this website is hosted). These claims may or may not be valid in all jurisdictions.
+As such, use of this image in the jurisdiction of the claimant or other countries may be regarded as copyright infringement. Please see Commons:When to use the PD-Art tag for more information.
+
+## John Dewey
+
+- File: `john-dewey.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:John_Dewey_cph.3a51565.jpg
+- Creator: Underwood & Underwood
+- License: Public domain
+- Credit: This image  is available from the United States Library of Congress's Prints and Photographs division under the digital ID cph.3a51565.This tag does not indicate the copyright status of the attached work. A normal copyright tag is still required. See Commons:Licensing.
 
 ## John Locke
 
@@ -249,6 +528,22 @@ Immediate source: https://commons.wikimedia.org/wiki/File:Maurice_Quentin_de_La_
 - License: Public domain
 - Credit: Hulton Archive
 
+## Joseph Raz
+
+- File: `joseph-raz.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Joseph_Raz_-_20090224.jpg
+- Creator: LawSociety98.
+- License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0
+- Credit: Own work.
+
+## Judith Butler
+
+- File: `judith-butler.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:JudithButler2013.jpg
+- Creator: University of California, Berkeley
+- License: CC0 — http://creativecommons.org/publicdomain/zero/1.0/deed.en
+- Credit: The photo was sent to me personally by Judith Butler
+
 ## Karl Marx
 
 - File: `karl-marx.jxl`
@@ -257,6 +552,22 @@ Immediate source: https://commons.wikimedia.org/wiki/File:Maurice_Quentin_de_La_
 - License: Public domain
 - Credit: https://sammlung.staedelmuseum.de/de/werk/portraet-karl-marx
 
+## Karl Popper
+
+- File: `karl-popper.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Photo_of_Karl_Popper.jpg
+- Creator: DorianKBandy
+- License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
+- Credit: Own work
+
+## Laozi
+
+- File: `laozi.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Laozi_(Chinese_characters).svg
+- Creator: White whirlwind
+- License: Public domain
+- Credit: Own work
+
 ## Ludwig Wittgenstein
 
 - File: `ludwig-wittgenstein.jxl`
@@ -264,6 +575,30 @@ Immediate source: https://commons.wikimedia.org/wiki/File:Maurice_Quentin_de_La_
 - Creator: Moritz Nähr
 - License: Public domain
 - Credit: https://www.leopoldmuseum.org/en/exhibitions/122/ludwig-wittgenstein
+
+## Niccolò Machiavelli
+
+- File: `machiavelli.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Portrait_of_Niccol%C3%B2_Machiavelli_by_Santi_di_Tito.jpg
+- Creator: Santi di Tito
+- License: Public domain
+- Credit: Cropped and enhanced from a book cover found on Google Images.
+
+## Moses Maimonides
+
+- File: `maimonides.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Portrait_of_Moses_Maimonides_in_Thesaurus_antiquitatum_sacrarum.tif
+- Creator: Blaisio Ugolino
+- License: Public domain
+- Credit: https://collections.library.yale.edu/catalog/2008140
+
+## Mao Zedong
+
+- File: `mao-zedong.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Mao_Zedong_1950_Portrait_(3x4_cropped)(2).jpg
+- Creator: Chen Zhengqing (1917–1966)
+- License: Public domain
+- Credit: https://newsroom.ap.org/editorial-photos-videos/detail?itemid=dfab0b3b1ce5da11af9f0014c2589dfb&mediatype=photo
 
 ## Marcus Aurelius
 
@@ -290,6 +625,14 @@ Immediate source: https://commons.wikimedia.org/wiki/File:Maurice_Quentin_de_La_
 - Credit: This image was catalogued by Staatsarchiv Freiburg of the Landesarchiv Baden-Württemberg under ID: W 134 Nr. 023740f.
 - Attribution: Landesarchiv Baden-Württemberg, Staatsarchiv Freiburg W 134 Nr. 023740f / Fotograf: Willy Pragher
 
+## Mary Astell
+
+- File: `mary-astell.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:AstellProposal.jpg
+- Creator: Mary Astell
+- License: Public domain
+- Credit: http://ots.utoronto.ca/users/kirsch/Mastell.jpg
+
 ## Mary Wollstonecraft
 
 - File: `mary-wollstonecraft.jxl`
@@ -298,6 +641,14 @@ Immediate source: https://commons.wikimedia.org/wiki/File:Maurice_Quentin_de_La_
 - License: Public domain
 - Credit: https://www.amrevmuseum.org/virtualexhibits/cost-of-revolution/pages/british-response-to-the-french-revolution-mary-wollstonecraft
 
+## Maurice Merleau-Ponty
+
+- File: `maurice-merleau-ponty.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Maurice_Merleau-Ponty.jpg
+- Creator: http://www.philosophical-investigations.org/Users/PerigGouanvic
+- License: CC BY 3.0 — https://creativecommons.org/licenses/by/3.0
+- Credit: http://www.philosophical-investigations.org/Users/PerigGouanvic/Merleau-Ponty_and_the_Post-Modern_Non-Self
+
 ## Mencius
 
 - File: `mencius.jxl`
@@ -305,14 +656,6 @@ Immediate source: https://commons.wikimedia.org/wiki/File:Maurice_Quentin_de_La_
 - Creator: anonymous
 - License: Public domain
 - Credit: Portraits of the Sage. Teacher Exemplar for a Myriad Generations: Confucius in Painting, Calligraphy, and Print Through the Ages (exhibit). Taipei: National Palace Museum.
-
-## Michel de Montaigne
-
-- File: `montaigne.jxl`
-- Source: https://commons.wikimedia.org/wiki/File:Portrait_of_Michel_de_Montaigne,_circa_unknown.jpg
-- Creator: Unknown authorUnknown author
-- License: Public domain
-- Credit: http://www.archivio.formazione.unimib.it/DATA/Insegnamenti/11_2349/materiale/2.pdf
 
 ## Michel Foucault
 
@@ -324,6 +667,14 @@ Immediate source: https://commons.wikimedia.org/wiki/File:Maurice_Quentin_de_La_
 Foucault, Michel (1970)    (in English)   The Order of Things: An Archaeology of the Human Sciences (1st American ed.), Pantheon Books  ISBN:  978-0-394-43952-5. 
 
 Immediate source: https://progressivegeographies.com/foucault-books/the-archaeology-of-foucault-research-and-writing-updates/
+
+## Michel de Montaigne
+
+- File: `montaigne.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Portrait_of_Michel_de_Montaigne,_circa_unknown.jpg
+- Creator: Unknown authorUnknown author
+- License: Public domain
+- Credit: http://www.archivio.formazione.unimib.it/DATA/Insegnamenti/11_2349/materiale/2.pdf
 
 ## Mozi
 
@@ -341,13 +692,21 @@ Immediate source: https://progressivegeographies.com/foucault-books/the-archaeol
 - License: Public domain
 - Credit: Cropped from File:Nagarjuna with 84 mahasiddha.jpg
 
-## Niccolò Machiavelli
+## Parmenides
 
-- File: `machiavelli.jxl`
-- Source: https://commons.wikimedia.org/wiki/File:Portrait_of_Niccol%C3%B2_Machiavelli_by_Santi_di_Tito.jpg
-- Creator: Santi di Tito
+- File: `parmenides.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Busto_di_Parmenide_(cropped).jpg
+- Creator: Sergio Spolti
+- License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
+- Credit: Own work
+
+## Paul Feyerabend
+
+- File: `paul-feyerabend.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Paul_Feyerabend,_Wider_den_Methodenzwang_1976.jpg
+- Creator: Unknown authorUnknown author
 - License: Public domain
-- Credit: Cropped and enhanced from a book cover found on Google Images.
+- Credit: Internet Archive
 
 ## Peter Singer
 
@@ -356,6 +715,14 @@ Immediate source: https://progressivegeographies.com/foucault-books/the-archaeol
 - Creator: Ula Zarosa
 - License: CC BY 2.0 — https://creativecommons.org/licenses/by/2.0
 - Credit: IMG_5658
+
+## Philip Pettit
+
+- File: `philip-pettit.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Philip_Pettit.jpg
+- Creator: LF.Chile
+- License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
+- Credit: Own work
 
 ## Plato
 
@@ -374,6 +741,22 @@ Immediate source: https://progressivegeographies.com/foucault-books/the-archaeol
 - License: Public domain
 - Credit: Ostiense Museum, Ostia Antica - ROME, Italy
 
+## Pyrrho of Elis
+
+- File: `pyrrho.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Pyrrho_Heliensis_-_Illustrium_philosophorum_et_sapientum_effigies_ab_eorum_numistatibus_extractae.png
+- Creator: Girolamo Olgiati
+- License: Public domain
+- Credit: https://books.google.co.uk/books?id=1urLxOK8pzkC
+
+## Ramanuja
+
+- File: `ramanuja.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Shri_Ramanujar_pics_2.jpg
+- Creator: Todayindian
+- License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0
+- Credit: Own work
+
 ## René Descartes
 
 - File: `rene-descartes.jxl`
@@ -381,6 +764,40 @@ Immediate source: https://progressivegeographies.com/foucault-books/the-archaeol
 - Creator: After Frans Hals
 - License: Public domain
 - Credit: André Hatala [e.a.] (1997) De eeuw van Rembrandt, Bruxelles: Crédit communal de Belgique, ISBN 2-908388-32-4.
+
+## Robert Nozick
+
+- File: `robert-nozick.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Robert_Nozick_1977_Libertarian_Review_cover_(4x5_cropped).jpg
+- Creator: Libertarian Review
+- License: Public domain
+- Credit: Immediate source: https://img.yumpu.com/52226151/1/3974x5000/the-libertarian-review-december-1977-libertarianismorg.jpg
+
+Full issue: https://www.yumpu.com/en/document/read/52226151/the-libertarian-review-december-1977-libertarianismorg
+
+## Rudolf Carnap
+
+- File: `rudolf-carnap.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Rudolf_Carnap_1895.jpeg
+- Creator: Unknown
+- License: Public domain
+- Credit: Virtual Archive of Logical Empiricism (VALEP)
+
+## Ruth Barcan Marcus
+
+- File: `ruth-barcan-marcus.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Ruth_Barcan_Marcus.jpg
+- Creator: Michael Marsland / Yale University
+- License: CC BY 3.0 — https://creativecommons.org/licenses/by/3.0
+- Credit: Send to me by author
+
+## Jean-Paul Sartre
+
+- File: `sartre-jean-paul.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Jean_Paul_Sartre_1965.jpg
+- Creator: Unknown authorUnknown author
+- License: CC BY-SA 3.0 nl — https://creativecommons.org/licenses/by-sa/3.0/nl/deed.en
+- Credit: [1] Dutch National Archives, The Hague, Fotocollectie Algemeen Nederlands Persbureau (ANEFO), 1945-1989 bekijk toegang 2.24.01.04 Bestanddeelnummer 917-9600
 
 ## Seneca
 
@@ -391,6 +808,21 @@ Immediate source: https://progressivegeographies.com/foucault-books/the-archaeol
 - Credit: Own work
 - Attribution: I, Calidius
 
+## Sextus Empiricus
+
+- File: `sextus-empiricus.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Sexti_Empirici_Adversus_mathematicos.djvu
+- Creator: Adversus mathematicos
+- License: Public domain
+
+## Adi Shankara
+
+- File: `shankara.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Raja_Ravi_Varma_-_Sankaracharya.jpg
+- Creator: Raja Ravi Varma
+- License: Public domain
+- Credit: Google Arts & Culture  — adi-shankaracharya/WgFvX3x6i0ckfQ
+
 ## Simone de Beauvoir
 
 - File: `simone-de-beauvoir.jxl`
@@ -399,6 +831,16 @@ Immediate source: https://progressivegeographies.com/foucault-books/the-archaeol
 - License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0
 - Credit: This is available from National Photo Collection of Israel, Photography dept. Government Press Office (link), under the digital ID D804-110.This tag does not indicate the copyright status of the attached work. A normal copyright tag is still required. See Commons:Licensing for more information.
 - Attribution: Government Press Office (Israel)
+
+## Simone Weil
+
+- File: `simone-weil.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Simone_Weil_1943.jpg
+- Creator: Unknown
+- License: Public domain
+- Credit: Original publication: France Combattante ID
+
+Immediate source: Rozelle-Stone, A. Rebecca (23 January 2024)    (in English)   Simone Weil: A Very Short Introduction, Oxford University Press, pp. 18  ISBN:  978-0-19-266257-6.
 
 ## Socrates
 
@@ -415,6 +857,30 @@ Immediate source: https://progressivegeographies.com/foucault-books/the-archaeol
 - Creator: La Biblioteca Real de Dinamarca
 - License: Public domain
 - Credit: https://www.flickr.com/photos/45270502@N06/9645352916/
+
+## Sri Aurobindo
+
+- File: `sri-aurobindo.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Sri_aurobindo.jpg
+- Creator: Rudolf 1922
+- License: Public domain
+- Credit: http://www.aurobindo.ru/workings/other/peter_heehs-the_lives_of_sri_aurobindo_e.htm
+
+## Susan Neiman
+
+- File: `susan-neiman.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Susan_Neiman.jpg
+- Creator: Dominic Bonfiglio
+- License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
+- Credit: Own work
+
+## Theodor W. Adorno
+
+- File: `theodor-adorno.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Theodor_W._Adorno.jpg
+- Creator: Jeremy J. Shapiro
+- License: CC BY-SA 3.0 — http://creativecommons.org/licenses/by-sa/3.0/
+- Credit: Cropped from File:AdornoHorkheimerHabermasbyJeremyJShapiro2.png
 
 ## Thomas Aquinas
 
@@ -433,6 +899,46 @@ Immediate source: https://progressivegeographies.com/foucault-books/the-archaeol
 - Credit: one or more third parties have made copyright claims against Wikimedia Commons in relation to the work from which this is sourced or a purely mechanical reproduction thereof. This may be due to recognition of the "sweat of the brow" doctrine, allowing works to be eligible for protection through skill and labour, and not purely by originality as is the case in the United States (where this website is hosted). These claims may or may not be valid in all jurisdictions.
 As such, use of this image in the jurisdiction of the claimant or other countries may be regarded as copyright infringement. Please see Commons:When to use the PD-Art tag for more information.
 
+## Thomas Kuhn
+
+- File: `thomas-kuhn.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Thomas_Kuhn_(1977)_(cropped).jpg
+- Creator: Bob Bielk
+- License: Public domain
+- Credit: Princeton University Weekly Bulletin Newspaper Archives May 9, 1977 Page 1
+
+## Vasubandhu
+
+- File: `vasubandhu.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Vasubandhu.png
+- Creator: Shouyi 首一
+- License: Public domain
+- Credit: Fozu zhengtong daoying 佛祖正宗道影
+
+## W. E. B. Du Bois
+
+- File: `w-e-b-du-bois.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:W.E.B._Du_Bois_by_James_E._Purdy,_1907_(3x4).jpg
+- Creator: James E. Purdy / Adam Cuerden
+- License: Public domain
+- Credit: National Portrait Gallery
+
+## W. V. O. Quine
+
+- File: `w-v-o-quine.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Willard_Van_Orman_Quine_on_Bluenose_II_in_Halifax_NS_harbor_1980.jpg
+- Creator: Maryclaire Quine
+- License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0
+- Credit: Maryclaire Quine
+
+## Watsuji Tetsuro
+
+- File: `watsuji-tetsuro.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Tetsuro_Watsuji_01.jpg
+- Creator: Unknown authorUnknown author
+- License: Public domain
+- Credit: Japanese magazine "The Mainichi Graphic, 2 November 1955 issue" published by The Mainichi Newspapers Co.,Ltd.
+
 ## William James
 
 - File: `william-james.jxl`
@@ -442,6 +948,38 @@ As such, use of this image in the jurisdiction of the claimant or other countrie
 - Credit: [1]
 
 MS Am 1092 (1185), Series II, 23, Houghton Library, Harvard University
+
+## William of Ockham
+
+- File: `william-of-ockham.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:William_of_Ockham.png
+- Creator: self-created (Moscarlop)
+- License: CC BY-SA 3.0 — https://creativecommons.org/licenses/by-sa/3.0
+- Credit: Own work
+
+## Xunzi
+
+- File: `xunzi.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Xunzi_published_in_Edo_period_Japan.jpg
+- Creator: 国立国会図書館
+- License: Public Domain — https://web.archive.org/web/20230926203737/https://creativecommons.org/licenses/publicdomain/
+- Credit: 国立国会図書館 https://dl.ndl.go.jp/pid/2546260/1/2
+
+## Yukichi Fukuzawa
+
+- File: `yukichi-fukuzawa.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:Fukuzawa_Yukichi_1891_(cropped).jpg
+- Creator: Fukuzawa Research Center
+- License: Public domain
+- Credit: [1]
+
+## Zhu Xi
+
+- File: `zhu-xi.jxl`
+- Source: https://commons.wikimedia.org/wiki/File:%E5%94%AF%E4%B8%80%E5%8F%AF%E9%9D%A0%E7%9A%84%E6%9C%B1%E7%86%B9%E7%94%BB%E5%83%8F.jpg
+- Creator: 向史公哲曰
+- License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0
+- Credit: ​图片由本人摄制来源佐证：朱杰人《朱子伪像考》、方彦寿《朱熹画像考略与伪贴揭秘》、中国朱子网（武夷山朱熹研究中心主办网站）《关于网络朱子画像的真伪之辨》
 
 ## Zhuangzi
 

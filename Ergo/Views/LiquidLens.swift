@@ -415,8 +415,15 @@ public struct LiquidLens: View {
 			init(lens: UIView) {
 				self.lens = lens
 				super.init(frame: .zero)
+
 				isUserInteractionEnabled = true
 				addSubview(lens)
+
+				let selector = NSSelectorFromString("setLiftedContainerView:")
+
+				if lens.responds(to: selector) {
+					_ = lens.perform(selector, with: self)
+				}
 			}
 
 			@available(*, unavailable)

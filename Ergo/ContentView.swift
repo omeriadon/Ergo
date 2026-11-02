@@ -94,7 +94,7 @@ struct ContentView: View {
 		.environment(catalog)
 		.onAppear {
 			thing.selectedTab = .library
-			thing.libraryPath = [.category(.biases), .detail(category: .biases, id: "empathy-gap")]
+			thing.libraryPath = [.category(.philosophers), .detail(category: .philosophers, id: "david-hume")]
 			Task {
 				try? await catalog.load()
 			}
