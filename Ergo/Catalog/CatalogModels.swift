@@ -53,7 +53,7 @@ nonisolated enum BiasTag: String, Codable, CaseIterable, Identifiable, Hashable,
 			case .beliefAssessment:
 				"Belief Assessment"
 			case .decisionMaking:
-				"Decisionmaking"
+				"Decision Making"
 			case .memory:
 				"Memory"
 			case .researchAndMeasurement:

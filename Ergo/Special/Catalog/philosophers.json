@@ -1,16 +1,63 @@
 {
   "philosophers": [
     {
+      "id": "shankara",
+      "name": "Adi Shankara",
+      "image": "shankara.jxl",
+      "birthYear": 700,
+      "deathYear": 750,
+      "summary": "Adi Shankara is associated with Advaita Vedanta, which interprets Brahman as non-dual reality and multiplicity as shaped by ignorance and superimposition. Liberation comes through discriminating knowledge of the self’s identity with Brahman, not by producing a new object. Dates are debated; these approximate dates refer to the commentator traditionally identified with the name. The catalog links this work to advaita-vedanta, maya, non-dualism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "advaita-vedanta"
+      ]
+    },
+    {
+      "id": "agnes-heller",
+      "name": "Agnes Heller",
+      "image": "agnes-heller.jxl",
+      "birthYear": 1929,
+      "deathYear": 2019,
+      "summary": "Agnes Heller developed a moral and political philosophy attentive to everyday life, needs, historical experience, and the plurality of modern values. She rejected the idea that emancipation can be reduced to one total blueprint, arguing instead for judgment among competing forms of life. Her work connects Marxist critique with pluralist democratic ethics. The catalog links this work to everyday-life, marxism, pluralism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "marxism",
+        "ethics"
+      ]
+    },
+    {
+      "id": "al-farabi",
+      "name": "Al-Farabi",
+      "image": "al-farabi.jxl",
+      "birthYear": 872,
+      "deathYear": 950,
+      "summary": "Al-Farabi developed a wide-ranging synthesis of Aristotelian and Platonic philosophy with Islamic political and theological concerns. His accounts of intellect, language, music, and the virtuous city ask how knowledge is organized and how political education shapes the citizens a community can produce. His dates are conventional medieval datings, and some biographical details remain uncertain.",
+      "related": [
+        "aristotelianism",
+        "platonism"
+      ]
+    },
+    {
       "id": "al-ghazali",
       "name": "Al-Ghazali",
       "image": "al-ghazali.jxl",
       "birthYear": 1058,
       "deathYear": 1111,
-      "summary": "Al-Ghazali examined the grounds of religious knowledge and criticized particular metaphysical doctrines of the philosophers. His work combines theology, philosophical argument, and Sufi practice, with influential discussions of causation, certainty, and the limits of demonstration.",
+      "summary": "Al-Ghazali examined the grounds of religious knowledge and criticized particular metaphysical doctrines of the philosophers. His work combines theology, philosophical argument, and Sufi practice, with influential discussions of causation, certainty, and the limits of demonstration. The catalog links this work to causation, occasionalism, sufism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "causation",
         "occasionalism",
         "sufism"
+      ]
+    },
+    {
+      "id": "alain-badiou",
+      "name": "Alain Badiou",
+      "image": "alain-badiou.jxl",
+      "birthYear": 1937,
+      "deathYear": null,
+      "summary": "Badiou treats mathematics as a model for ontology and describes events as ruptures that cannot be derived from an existing situation’s ordinary classifications. A subject emerges through fidelity to the consequences of such an event in politics, art, science, or love. His framework is ambitious but depends on controversial claims about universality and revolutionary commitment. The catalog links this work to ontology, event, universalism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "ontology",
+        "event"
       ]
     },
     {
@@ -19,11 +66,63 @@
       "image": "albert-camus.jxl",
       "birthYear": 1913,
       "deathYear": 1960,
-      "summary": "Albert Camus explored the absurd tension between the human demand for meaning and a world that offers no guaranteed answer. His essays and fiction examine revolt, solidarity, and limits on violence, seeking ways to resist injustice without turning rebellion into justification for unlimited killing.",
+      "summary": "Albert Camus explored the absurd tension between the human demand for meaning and a world that offers no guaranteed answer. His essays and fiction examine revolt, solidarity, and limits on violence, seeking ways to resist injustice without turning rebellion into justification for unlimited killing. The catalog links this work to absurdism, solidarity, violence so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "absurdism",
         "solidarity",
         "violence"
+      ]
+    },
+    {
+      "id": "amartya-sen",
+      "name": "Amartya Sen",
+      "image": "amartya-sen.jxl",
+      "birthYear": 1933,
+      "deathYear": null,
+      "summary": "Sen evaluates justice through people’s substantive capabilities to achieve valuable ways of living, not only resources or formal rights. His work on famine shows that food scarcity alone does not explain starvation when entitlements and political accountability fail. The capability approach remains comparative and open-ended, emphasizing public reasoning over one complete ranking of every social state. The catalog links this work to capability-approach, social-justice, welfare so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "social-justice",
+        "democracy"
+      ]
+    },
+    {
+      "id": "angela-davis",
+      "name": "Angela Davis",
+      "image": "angela-davis.jxl",
+      "birthYear": 1944,
+      "deathYear": null,
+      "summary": "Angela Davis combines Marxist, feminist, abolitionist, and Black radical traditions in analyses of prisons, racial capitalism, gender, and political repression. She treats punishment as an institution with historical functions rather than a neutral response to crime, and links scholarship to collective organizing and the material conditions of freedom. The catalog links this work to abolitionism, anti-racism, feminism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "abolitionism",
+        "anti-racism",
+        "feminism",
+        "marxism"
+      ]
+    },
+    {
+      "id": "anselm-of-canterbury",
+      "name": "Anselm of Canterbury",
+      "image": "anselm-of-canterbury.jxl",
+      "birthYear": 1033,
+      "deathYear": 1109,
+      "summary": "Anselm developed a form of Christian philosophy centered on faith seeking understanding. His ontological argument tests whether a definition of the greatest conceivable being can entail existence, while his account of atonement analyzes justice, obligation, and restoration. His work shaped medieval debates about reason, language, and necessity. The catalog links this work to ontological-argument, natural-theology, medieval-philosophy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "ontological-argument",
+        "natural-theology"
+      ]
+    },
+    {
+      "id": "antonio-gramsci",
+      "name": "Antonio Gramsci",
+      "image": "antonio-gramsci.jxl",
+      "birthYear": 1891,
+      "deathYear": 1937,
+      "summary": "Gramsci explained how ruling groups maintain power through both coercion and consent. Cultural hegemony names the way institutions, education, journalism, and common sense can reproduce an order without direct force. His accounts of civil society and intellectuals made ideology a lived social practice rather than merely a set of explicit slogans. The catalog links this work to hegemony, marxism, ideology so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "hegemony",
+        "marxism",
+        "ideology",
+        "civil-society"
       ]
     },
     {
@@ -32,7 +131,7 @@
       "image": "aristotle.jxl",
       "birthYear": -384,
       "deathYear": -322,
-      "summary": "Aristotle developed systematic investigations of logic, nature, ethics, politics, and art after studying in Plato's Academy. His ethics connects flourishing with cultivated virtues and practical judgment, while his explanations of change distinguish matter, form, and different kinds of cause.",
+      "summary": "Aristotle developed systematic investigations of logic, nature, ethics, politics, and art after studying in Plato's Academy. His ethics connects flourishing with cultivated virtues and practical judgment, while his explanations of change distinguish matter, form, and different kinds of cause. The catalog links this work to aristotelianism, virtue-ethics, final-cause so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "aristotelianism",
         "virtue-ethics",
@@ -46,7 +145,7 @@
       "image": "arthur-schopenhauer.jxl",
       "birthYear": 1788,
       "deathYear": 1860,
-      "summary": "Arthur Schopenhauer described the experienced world as representation and its underlying character as will. His account of restless striving gives suffering a central place, while aesthetic contemplation, compassion, and ascetic practices offer different ways to loosen its hold.",
+      "summary": "Arthur Schopenhauer described the experienced world as representation and its underlying character as will. His account of restless striving gives suffering a central place, while aesthetic contemplation, compassion, and ascetic practices offer different ways to loosen its hold. The catalog links this work to altruism, asceticism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "altruism",
         "asceticism"
@@ -58,7 +157,7 @@
       "image": "augustine-of-hippo.jxl",
       "birthYear": 354,
       "deathYear": 430,
-      "summary": "Augustine of Hippo brought classical philosophical questions into sustained engagement with Christian theology. His works examine time, memory, will, evil, and political life, while his account of inward reflection influenced later approaches to self-knowledge and religious experience.",
+      "summary": "Augustine of Hippo brought classical philosophical questions into sustained engagement with Christian theology. His works examine time, memory, will, evil, and political life, while his account of inward reflection influenced later approaches to self-knowledge and religious experience. The catalog links this work to problem-of-evil, free-will, time so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "problem-of-evil",
         "free-will",
@@ -71,7 +170,7 @@
       "image": "averroes.jxl",
       "birthYear": 1126,
       "deathYear": 1198,
-      "summary": "Averroes was an Andalusian philosopher, jurist, and physician known for his commentaries on Aristotle. He defended philosophical demonstration and examined how reason and revealed texts could be understood together, influencing debates about intellect and interpretation across religious traditions.",
+      "summary": "Averroes was an Andalusian philosopher, jurist, and physician known for his commentaries on Aristotle. He defended philosophical demonstration and examined how reason and revealed texts could be understood together, influencing debates about intellect and interpretation across religious traditions. The catalog links this work to averroism, aristotelianism, hermeneutics so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "averroism",
         "aristotelianism",
@@ -84,11 +183,24 @@
       "image": "avicenna.jxl",
       "birthYear": 980,
       "deathYear": 1037,
-      "summary": "Avicenna was a Persian philosopher and physician whose synthesis of Aristotelian philosophy profoundly shaped Islamic and Latin thought. He distinguished essence from existence and argued for a necessary existent, while his discussions of self-awareness and intellect opened lasting debates about mind.",
+      "summary": "Avicenna was a Persian philosopher and physician whose synthesis of Aristotelian philosophy profoundly shaped Islamic and Latin thought. He distinguished essence from existence and argued for a necessary existent, while his discussions of self-awareness and intellect opened lasting debates about mind. The catalog links this work to avicennism, essence, necessary-being so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "avicennism",
         "essence",
         "necessary-being"
+      ]
+    },
+    {
+      "id": "b-r-ambedkar",
+      "name": "B. R. Ambedkar",
+      "image": "b-r-ambedkar.jxl",
+      "birthYear": 1891,
+      "deathYear": 1956,
+      "summary": "Ambedkar combined social philosophy, constitutionalism, economics, and Buddhist thought in a sustained critique of caste. He argued that political democracy cannot survive without social equality and fraternity because inherited status governs work, marriage, and public standing. His constitutional work remains central to debates about rights, institutional reform, and Dalit liberation. The catalog links this work to caste, social-justice, constitutionalism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "social-justice",
+        "constitutionalism",
+        "equality"
       ]
     },
     {
@@ -97,11 +209,24 @@
       "image": "baruch-spinoza.jxl",
       "birthYear": 1632,
       "deathYear": 1677,
-      "summary": "Baruch Spinoza argued that reality is one substance, understood as God or Nature, with thought and extension among its attributes. His Ethics connects necessity and the causal understanding of emotions with a conception of freedom through adequate understanding.",
+      "summary": "Baruch Spinoza argued that reality is one substance, understood as God or Nature, with thought and extension among its attributes. His Ethics connects necessity and the causal understanding of emotions with a conception of freedom through adequate understanding. The catalog links this work to spinozism, monism, pantheism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "spinozism",
         "monism",
         "pantheism"
+      ]
+    },
+    {
+      "id": "bell-hooks",
+      "name": "bell hooks",
+      "image": "bell-hooks.jxl",
+      "birthYear": 1952,
+      "deathYear": 2021,
+      "summary": "bell hooks examined how race, gender, class, and imperial power shape everyday experience and cultural representation. Her account of intersectional domination treats education, love, and language as sites where hierarchy can be reproduced or challenged. Engaged pedagogy joins intellectual rigor to liberation instead of separating theory from lived struggle. The catalog links this work to intersectionality, feminism, critical-pedagogy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "intersectionality",
+        "feminism",
+        "anti-racism"
       ]
     },
     {
@@ -110,11 +235,62 @@
       "image": "bertrand-russell.jxl",
       "birthYear": 1872,
       "deathYear": 1970,
-      "summary": "Bertrand Russell helped establish analytic philosophy through work on logic, descriptions, and the foundations of mathematics. His discovery of a contradiction in unrestricted set formation prompted major revisions to logical foundations, while his public writings applied philosophical criticism to politics and religion.",
+      "summary": "Bertrand Russell helped establish analytic philosophy through work on logic, descriptions, and the foundations of mathematics. His discovery of a contradiction in unrestricted set formation prompted major revisions to logical foundations, while his public writings applied philosophical criticism to politics and religion. The catalog links this work to analytic-philosophy, definite-description-concept, russell-s-paradox so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "analytic-philosophy",
         "definite-description-concept",
         "russell-s-paradox"
+      ]
+    },
+    {
+      "id": "blaise-pascal",
+      "name": "Blaise Pascal",
+      "image": "blaise-pascal.jxl",
+      "birthYear": 1623,
+      "deathYear": 1662,
+      "summary": "Pascal combined mathematical invention, probability, religious reflection, and analysis of human self-deception. His writings portray people as suspended between grandeur and misery, using distraction to avoid finitude. The wager is not a proof of God but a decision-theoretic challenge about practical commitment under uncertainty, and its assumptions remain controversial. The catalog links this work to probability, existentialism, natural-theology so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "existentialism",
+        "natural-theology"
+      ]
+    },
+    {
+      "id": "buddhaghosa",
+      "name": "Buddhaghosa",
+      "image": "buddhaghosa.jxl",
+      "birthYear": 390,
+      "deathYear": 450,
+      "summary": "Buddhaghosa systematized important Theravada Buddhist analyses of ethical discipline, concentration, and insight. His account presents liberation as coordinated training rather than a single intellectual conclusion, distinguishing impermanence, unsatisfactoriness, and non-self while mapping the meditative conditions that support clear seeing. Dates are approximate and the attributed biography is partly traditional. The catalog links this work to theravada-buddhism, meditation, anatta so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "theravada-buddhism",
+        "anatta",
+        "anicca"
+      ]
+    },
+    {
+      "id": "c-l-r-james",
+      "name": "C. L. R. James",
+      "image": "c-l-r-james.jxl",
+      "birthYear": 1901,
+      "deathYear": 1989,
+      "summary": "C. L. R. James connected Caribbean history, Black internationalism, Marxist analysis, and anti-colonial politics. His study of the Haitian Revolution treated enslaved people as historical agents who transformed universal claims about freedom into revolutionary practice. He also criticized bureaucratic socialism and emphasized workers’ self-activity and democratic radicalism. The catalog links this work to anti-colonialism, marxism, black-political-thought so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "anti-colonialism",
+        "marxism"
+      ]
+    },
+    {
+      "id": "c-s-peirce",
+      "name": "Charles Sanders Peirce",
+      "image": "c-s-peirce.jxl",
+      "birthYear": 1839,
+      "deathYear": 1914,
+      "summary": "Peirce founded pragmatism as a theory of meaning and inquiry grounded in conceivable practical consequences. His semiotics distinguishes sign, object, and interpretant, while abduction explains how hypotheses arise in response to surprising observations. He treated inquiry as communal and fallible, with rational belief stabilized by long-run self-correction. The catalog links this work to pragmatism, abductive-reasoning, semiotics so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "pragmatism",
+        "abductive-reasoning",
+        "semiotics",
+        "fallibilism"
       ]
     },
     {
@@ -123,7 +299,7 @@
       "image": "confucius.jxl",
       "birthYear": -551,
       "deathYear": -479,
-      "summary": "Confucius taught that ethical cultivation takes place through learning, ritual, and humane relationships. The Analects presents a demanding practice of self-improvement and exemplary government rather than a detached system of abstract rules; his teachings became foundational to several East Asian traditions.",
+      "summary": "Confucius taught that ethical cultivation takes place through learning, ritual, and humane relationships. The Analects presents a demanding practice of self-improvement and exemplary government rather than a detached system of abstract rules; his teachings became foundational to several East Asian traditions. The catalog links this work to confucianism, confucian-ren, confucian-li so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "confucianism",
         "confucian-ren",
@@ -136,11 +312,24 @@
       "image": "cornel-west.jxl",
       "birthYear": 1953,
       "deathYear": null,
-      "summary": "Cornel West draws on pragmatism, Christianity, and Black intellectual traditions to examine racism, democracy, and social suffering. His public philosophy connects criticism of domination with solidarity and a demanding account of democratic participation and moral witness.",
+      "summary": "Cornel West draws on pragmatism, Christianity, and Black intellectual traditions to examine racism, democracy, and social suffering. His public philosophy connects criticism of domination with solidarity and a demanding account of democratic participation and moral witness. The catalog links this work to classical-pragmatism, anti-racism, democracy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "classical-pragmatism",
         "anti-racism",
         "democracy"
+      ]
+    },
+    {
+      "id": "cornelius-castoriadis",
+      "name": "Cornelius Castoriadis",
+      "image": "cornelius-castoriadis.jxl",
+      "birthYear": 1922,
+      "deathYear": 1997,
+      "summary": "Castoriadis argued that societies create institutions through a collective imaginary rather than simply reflecting economic laws or fixed human nature. Autonomy means that a society can recognize its own instituting activity and deliberate about it, while heteronomy disguises contingent arrangements as sacred or natural. His thought links democracy, psychoanalysis, and radical social critique. The catalog links this work to autonomy, social-imaginary, democracy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "autonomy",
+        "democracy",
+        "anti-authoritarianism"
       ]
     },
     {
@@ -149,11 +338,24 @@
       "image": "david-hume.jxl",
       "birthYear": 1711,
       "deathYear": 1776,
-      "summary": "David Hume examined how experience, habit, and sentiment shape human belief and action. His arguments about induction, causation, and the self challenge claims to rational certainty, while his moral philosophy gives feeling a central role in evaluation.",
+      "summary": "David Hume examined how experience, habit, and sentiment shape human belief and action. His arguments about induction, causation, and the self challenge claims to rational certainty, while his moral philosophy gives feeling a central role in evaluation. The catalog links this work to induction-problem, causation, bundle-theory so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "induction-problem",
         "causation",
         "bundle-theory"
+      ]
+    },
+    {
+      "id": "democritus",
+      "name": "Democritus",
+      "image": "democritus.jxl",
+      "birthYear": -460,
+      "deathYear": -370,
+      "summary": "Democritus defended atomism: indivisible bodies move through void and generate macroscopic qualities through their arrangements. He distinguished what exists by convention, such as color, from underlying structures of atoms and void. His fragments also connect physical explanation with a measured ethics that values composure over unlimited acquisition. The catalog links this work to atomism, naturalism, eudaimonia so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "atomism",
+        "naturalism",
+        "eudaimonia"
       ]
     },
     {
@@ -162,7 +364,7 @@
       "image": "derek-parfit.jxl",
       "birthYear": 1942,
       "deathYear": 2017,
-      "summary": "Derek Parfit used carefully constructed cases to investigate personal identity, rationality, and ethics. His accounts of psychological continuity challenge the moral importance assigned to strict identity, while his work on future populations exposes tensions among plausible principles of aggregation.",
+      "summary": "Derek Parfit used carefully constructed cases to investigate personal identity, rationality, and ethics. His accounts of psychological continuity challenge the moral importance assigned to strict identity, while his work on future populations exposes tensions among plausible principles of aggregation. The catalog links this work to personal-identity, teletransportation-paradox, parfit-s-repugnant-conclusion so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "personal-identity",
         "teletransportation-paradox",
@@ -175,10 +377,46 @@
       "image": "erasmus.jxl",
       "birthYear": 1466,
       "deathYear": 1536,
-      "summary": "Desiderius Erasmus was a Renaissance humanist who used classical learning, satire, and textual scholarship to criticize religious and social abuses. He defended education and moral reform while disputing claims that left no room for human freedom. His birth year is disputed; 1466 is one scholarly dating.",
+      "summary": "Desiderius Erasmus was a Renaissance humanist who used classical learning, satire, and textual scholarship to criticize religious and social abuses. He defended education and moral reform while disputing claims that left no room for human freedom. His birth year is disputed; 1466 is one scholarly dating. The catalog links this work to humanism, free-will so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "humanism",
         "free-will"
+      ]
+    },
+    {
+      "id": "dharmakirti",
+      "name": "Dharmakirti",
+      "image": "dharmakirti.jxl",
+      "birthYear": 600,
+      "deathYear": 660,
+      "summary": "Dharmakirti developed Buddhist theories of inference, perception, and epistemic justification. He distinguishes direct awareness from conceptual construction and treats reliable cognition as successful guidance for action while analyzing error and defeaters. His logic serves soteriology: clarifying knowledge is part of loosening attachment to mistaken views. Dates are approximate. The catalog links this work to buddhist-logic, epistemology, inference so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "epistemology",
+        "inference",
+        "perception"
+      ]
+    },
+    {
+      "id": "diogenes-of-sinope",
+      "name": "Diogenes of Sinope",
+      "image": "diogenes-of-sinope.jxl",
+      "birthYear": -412,
+      "deathYear": -323,
+      "summary": "Diogenes used Cynic practice, public provocation, and radical independence to expose the artificiality of status, wealth, and convention. His philosophy is an embodied method: reduce dependence, speak frankly, and test values through conduct. Ancient reports are anecdotal, but they preserve a serious challenge to polite ideology and inherited social ranking. The catalog links this work to cynicism, asceticism, autarkeia so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "cynicism",
+        "asceticism"
+      ]
+    },
+    {
+      "id": "dogen",
+      "name": "Dogen",
+      "image": "dogen.jxl",
+      "birthYear": 1200,
+      "deathYear": 1253,
+      "summary": "Dogen gave Japanese Soto Zen a rigorous account of zazen, impermanence, and awakening. His writings challenge the separation of practice from realization: disciplined activity is not merely a means toward a later state but a way realization is enacted in time. His language unsettles fixed distinctions between being, becoming, self, and practice. The catalog links this work to zen-buddhism, soto-zen, impermanence so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "zen-buddhism"
       ]
     },
     {
@@ -187,11 +425,22 @@
       "image": "edmund-husserl.jxl",
       "birthYear": 1859,
       "deathYear": 1938,
-      "summary": "Edmund Husserl founded phenomenology as a disciplined examination of conscious experience and its structures. His analyses of intentionality and the suspension of ordinary assumptions seek to clarify how objects have meaning for us and how knowledge can be grounded.",
+      "summary": "Edmund Husserl founded phenomenology as a disciplined examination of conscious experience and its structures. His analyses of intentionality and the suspension of ordinary assumptions seek to clarify how objects have meaning for us and how knowledge can be grounded. The catalog links this work to phenomenology, intentionality, phenomenological-description so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "phenomenology",
         "intentionality",
         "phenomenological-description"
+      ]
+    },
+    {
+      "id": "emmanuel-levinas",
+      "name": "Emmanuel Levinas",
+      "image": "emmanuel-levinas.jxl",
+      "birthYear": 1906,
+      "deathYear": 1995,
+      "summary": "Levinas made ethical responsibility to another person prior to theoretical totalization. The face is not merely an appearance but an address that places a demand on the subject before calculation or reciprocity. His work does not eliminate politics; it asks how an asymmetrical obligation to one person becomes justice among many. The catalog links this work to alterity, responsibility, phenomenology so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "phenomenology"
       ]
     },
     {
@@ -200,11 +449,24 @@
       "image": "epictetus.jxl",
       "birthYear": 50,
       "deathYear": 135,
-      "summary": "Epictetus was a Stoic teacher whose teachings survive principally through his student Arrian. He distinguished what depends on our judgment and choice from external events, treating freedom as disciplined use of impressions and action rather than control over circumstances. His dates are approximate.",
+      "summary": "Epictetus was a Stoic teacher whose teachings survive principally through his student Arrian. He distinguished what depends on our judgment and choice from external events, treating freedom as disciplined use of impressions and action rather than control over circumstances. His dates are approximate. The catalog links this work to stoicism, agency, virtue so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "stoicism",
         "agency",
         "virtue"
+      ]
+    },
+    {
+      "id": "epicurus",
+      "name": "Epicurus",
+      "image": "epicurus.jxl",
+      "birthYear": -341,
+      "deathYear": -270,
+      "summary": "Epicurus defined a good life through stable pleasure, chiefly freedom from bodily pain and disturbance of mind rather than endless stimulation. He defended atomism to dissolve fear of gods and death, and treated friendship, modest desires, and prudent calculation as conditions of tranquility. His ethics is therapeutic because it revises false beliefs before choices. The catalog links this work to epicureanism, ataraxia, hedonism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "epicureanism",
+        "hedonism",
+        "atomism"
       ]
     },
     {
@@ -213,11 +475,24 @@
       "image": "francis-bacon.jxl",
       "birthYear": 1561,
       "deathYear": 1626,
-      "summary": "Francis Bacon advocated a reform of inquiry based on organized observation, experiment, and careful generalization. His account of the idols describes recurrent obstacles to understanding, connecting intellectual discipline with institutions for producing useful knowledge.",
+      "summary": "Francis Bacon advocated a reform of inquiry based on organized observation, experiment, and careful generalization. His account of the idols describes recurrent obstacles to understanding, connecting intellectual discipline with institutions for producing useful knowledge. The catalog links this work to inductive-reasoning, scientific-method, empiricism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "inductive-reasoning",
         "scientific-method",
         "empiricism"
+      ]
+    },
+    {
+      "id": "frantz-fanon",
+      "name": "Frantz Fanon",
+      "image": "frantz-fanon.jxl",
+      "birthYear": 1925,
+      "deathYear": 1961,
+      "summary": "Fanon analyzed colonialism as a political and psychological order organizing labor, violence, language, and self-understanding. His work shows how racial categories are imposed through institutions and internalized through experience, while also examining the risks and possibilities of anti-colonial struggle. Liberation is material and collective, not a private change of attitude. The catalog links this work to anti-colonialism, anti-racism, racialization so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "anti-colonialism",
+        "anti-racism",
+        "violence"
       ]
     },
     {
@@ -226,7 +501,7 @@
       "image": "friedrich-nietzsche.jxl",
       "birthYear": 1844,
       "deathYear": 1900,
-      "summary": "Friedrich Nietzsche investigated how moral values arise and how they can serve different forms of life. His genealogical critiques of morality, discussions of nihilism, and experiments in perspective challenge inherited ideals while asking what affirmative value creation could involve.",
+      "summary": "Friedrich Nietzsche investigated how moral values arise and how they can serve different forms of life. His genealogical critiques of morality, discussions of nihilism, and experiments in perspective challenge inherited ideals while asking what affirmative value creation could involve. The catalog links this work to genealogical-critique, perspectivism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "genealogical-critique",
         "perspectivism"
@@ -238,7 +513,7 @@
       "image": "elizabeth-anscombe.jxl",
       "birthYear": 1919,
       "deathYear": 2001,
-      "summary": "G. E. M. Anscombe transformed discussions of action by examining intention and the reasons that make conduct intelligible. Her criticism of modern moral philosophy helped renew interest in virtue ethics, while her ethical work defended the importance of what an agent deliberately chooses to do.",
+      "summary": "G. E. M. Anscombe transformed discussions of action by examining intention and the reasons that make conduct intelligible. Her criticism of modern moral philosophy helped renew interest in virtue ethics, while her ethical work defended the importance of what an agent deliberately chooses to do. The catalog links this work to agency, virtue-ethics, doctrine-of-double-effect so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "agency",
         "virtue-ethics",
@@ -251,11 +526,23 @@
       "image": "g-e-moore.jxl",
       "birthYear": 1873,
       "deathYear": 1958,
-      "summary": "G. E. Moore argued for careful analysis and defended common-sense judgments against skeptical and idealist theories. His ethics questioned attempts to define goodness in natural terms, and his puzzle about assertion and belief continues to shape philosophical discussions of rationality.",
+      "summary": "G. E. Moore argued for careful analysis and defended common-sense judgments against skeptical and idealist theories. His ethics questioned attempts to define goodness in natural terms, and his puzzle about assertion and belief continues to shape philosophical discussions of rationality. The catalog links this work to ethical-non-naturalism, moore-s-paradox, epistemology so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "ethical-non-naturalism",
         "moore-s-paradox",
         "epistemology"
+      ]
+    },
+    {
+      "id": "g-w-f-hegel",
+      "name": "G. W. F. Hegel",
+      "image": "g-w-f-hegel.jxl",
+      "birthYear": 1770,
+      "deathYear": 1831,
+      "summary": "Hegel described concepts and institutions as developing through determinate conflicts rather than remaining fixed abstractions. His dialectical method examines how a position generates tensions requiring a more adequate form, while his philosophy of history and recognition links self-consciousness to social relations. His system remains contested over teleology and the status of history. The catalog links this work to hegelianism, dialectic, recognition so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "hegelianism",
+        "dialectic"
       ]
     },
     {
@@ -264,7 +551,7 @@
       "image": "georg-hegel.jxl",
       "birthYear": 1770,
       "deathYear": 1831,
-      "summary": "Georg Wilhelm Friedrich Hegel developed an account of thought, history, and social life through changing forms of understanding and their internal tensions. His discussions of recognition and ethical institutions connect freedom with relations through which people become able to act as self-conscious agents.",
+      "summary": "Georg Wilhelm Friedrich Hegel developed an account of thought, history, and social life through changing forms of understanding and their internal tensions. His discussions of recognition and ethical institutions connect freedom with relations through which people become able to act as self-conscious agents. The catalog links this work to german-idealism, dialectic so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "german-idealism",
         "dialectic"
@@ -276,11 +563,34 @@
       "image": "george-berkeley.jxl",
       "birthYear": 1685,
       "deathYear": 1753,
-      "summary": "George Berkeley argued against material substance understood as existing independently of perception. His immaterialism treats sensible objects as ideas perceived by minds, while appealing to God to explain their order and continuity; the view aims to defend common experience rather than dismiss it.",
+      "summary": "George Berkeley argued against material substance understood as existing independently of perception. His immaterialism treats sensible objects as ideas perceived by minds, while appealing to God to explain their order and continuity; the view aims to defend common experience rather than dismiss it. The catalog links this work to idealism, immaterialism, perception so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "idealism",
         "immaterialism",
         "perception"
+      ]
+    },
+    {
+      "id": "gilbert-ryle",
+      "name": "Gilbert Ryle",
+      "image": "gilbert-ryle.jxl",
+      "birthYear": 1900,
+      "deathYear": 1976,
+      "summary": "Gilbert Ryle criticized the Cartesian picture of a mental substance hidden inside a mechanical body. His category-error diagnosis shows how grammar can tempt us to posit an entity of the wrong logical type. Ryle’s account of dispositions and intelligent action emphasizes abilities and patterns of conduct rather than private episodes treated as inner objects. The catalog links this work to ordinary-language-philosophy, category-error, philosophy-of-mind so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "ordinary-language-philosophy",
+        "behaviorism"
+      ]
+    },
+    {
+      "id": "gilles-deleuze",
+      "name": "Gilles Deleuze",
+      "image": "gilles-deleuze.jxl",
+      "birthYear": 1925,
+      "deathYear": 1995,
+      "summary": "Deleuze treated difference, repetition, becoming, and multiplicity as more fundamental than static identity. With Guattari, he analyzed desire as productive and social rather than lack seeking a missing object, and described institutions through assemblage and deterritorialization. The resulting philosophy resists fixed hierarchies while remaining attentive to material and political constraints. The catalog links this work to post-structuralism, becoming, desire so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "becoming"
       ]
     },
     {
@@ -289,10 +599,23 @@
       "image": "gottfried-leibniz.jxl",
       "birthYear": 1646,
       "deathYear": 1716,
-      "summary": "Gottfried Wilhelm Leibniz developed a metaphysics of simple substances called monads and defended principles of sufficient reason and the identity of indiscernibles. His work connects logic, possibility, and divine choice with an account of a world whose order is intelligible.",
+      "summary": "Gottfried Wilhelm Leibniz developed a metaphysics of simple substances called monads and defended principles of sufficient reason and the identity of indiscernibles. His work connects logic, possibility, and divine choice with an account of a world whose order is intelligible. The catalog links this work to principle-of-sufficient-reason, possible-world so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "principle-of-sufficient-reason",
         "possible-world"
+      ]
+    },
+    {
+      "id": "gottlob-frege",
+      "name": "Gottlob Frege",
+      "image": "gottlob-frege.jxl",
+      "birthYear": 1848,
+      "deathYear": 1925,
+      "summary": "Frege transformed philosophy of language and logic by distinguishing sense from reference and analyzing propositions through quantification rather than subject-predicate grammar alone. His logicism sought to derive arithmetic from logic, but foundational contradiction exposed limits in the original system. His demand for compositional precision shaped analytic philosophy. The catalog links this work to analytic-philosophy, philosophy-of-language, logicism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "analytic-philosophy",
+        "logicism",
+        "sense-and-reference"
       ]
     },
     {
@@ -301,10 +624,24 @@
       "image": "hannah-arendt.jxl",
       "birthYear": 1906,
       "deathYear": 1975,
-      "summary": "Hannah Arendt examined political action, plurality, totalitarianism, and the conditions of public freedom. Her accounts of judgment and responsibility ask how people think and act within institutions, including circumstances in which ordinary participation helps sustain grave wrongdoing.",
+      "summary": "Hannah Arendt examined political action, plurality, totalitarianism, and the conditions of public freedom. Her accounts of judgment and responsibility ask how people think and act within institutions, including circumstances in which ordinary participation helps sustain grave wrongdoing. The catalog links this work to totalitarianism, agency so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "totalitarianism",
         "agency"
+      ]
+    },
+    {
+      "id": "harriet-taylor-mill",
+      "name": "Harriet Taylor Mill",
+      "image": "harriet-taylor-mill.jxl",
+      "birthYear": 1807,
+      "deathYear": 1858,
+      "summary": "Harriet Taylor Mill argued for women’s civil, educational, and economic independence and criticized arrangements that made subordination appear natural. Her essays connect liberty with individuality and treat marriage as a political institution rather than merely private relation. The authorship of some collaborative works remains debated, but her intellectual influence is substantial. The catalog links this work to feminism, liberalism, equality so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "feminism",
+        "liberalism",
+        "equality",
+        "harm-principle"
       ]
     },
     {
@@ -313,11 +650,48 @@
       "image": "henry-david-thoreau.jxl",
       "birthYear": 1817,
       "deathYear": 1862,
-      "summary": "Henry David Thoreau examined deliberate living, nature, and the moral limits of obedience to the state. His reflections on simplicity connect personal practice with criticism of social conformity, while his defense of resisting injustice helped shape later accounts of civil disobedience.",
+      "summary": "Henry David Thoreau examined deliberate living, nature, and the moral limits of obedience to the state. His reflections on simplicity connect personal practice with criticism of social conformity, while his defense of resisting injustice helped shape later accounts of civil disobedience. The catalog links this work to civil-disobedience, transcendentalism, environmental-ethics so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "civil-disobedience",
         "transcendentalism",
         "environmental-ethics"
+      ]
+    },
+    {
+      "id": "heraclitus",
+      "name": "Heraclitus",
+      "image": "heraclitus.jxl",
+      "birthYear": -540,
+      "deathYear": -480,
+      "summary": "Heraclitus used compressed sayings to describe a world structured by change, tension, and an intelligible logos. His river image is not simply a claim that everything is chaotic; it suggests that identity and order can persist through transformation and opposition. The surviving fragments are difficult, so cosmic order should not be reduced to a slogan about flux. The catalog links this work to logos, process-philosophy, dialectic so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "process-philosophy",
+        "dialectic",
+        "naturalism"
+      ]
+    },
+    {
+      "id": "hypatia",
+      "name": "Hypatia",
+      "image": "hypatia.jxl",
+      "birthYear": 350,
+      "deathYear": 415,
+      "summary": "Hypatia of Alexandria was a mathematician, astronomer, and philosophical teacher associated with Neoplatonism. Surviving evidence is limited, so claims about her doctrines must be modest. Her importance also lies in the visibility of women’s intellectual authority in late antique education; her murder became a later symbol in disputes about religion, science, civic violence, and memory. The catalog links this work to neoplatonism, mathematics, philosophy-of-science so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "neoplatonism",
+        "philosophy-of-science"
+      ]
+    },
+    {
+      "id": "ibn-khaldun",
+      "name": "Ibn Khaldun",
+      "image": "ibn-khaldun.jxl",
+      "birthYear": 1332,
+      "deathYear": 1406,
+      "summary": "Ibn Khaldun developed a theory of historical change centered on group solidarity, political power, taxation, and movement from nomadic to settled rule. His method insists that reports be tested against social possibility and institutional incentives rather than accepted because they are old or prestigious. He offered an early comparative account of state formation. The catalog links this work to social-philosophy, political-philosophy, historicism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "historicism",
+        "causation"
       ]
     },
     {
@@ -326,11 +700,36 @@
       "image": "immanuel-kant.jxl",
       "birthYear": 1724,
       "deathYear": 1804,
-      "summary": "Immanuel Kant argued that experience depends on structures supplied by human cognition, while limiting theoretical knowledge to possible experience. In ethics he grounded obligation in rational autonomy and the categorical imperative, joining questions about knowledge, freedom, and universal moral law.",
+      "summary": "Immanuel Kant argued that experience depends on structures supplied by human cognition, while limiting theoretical knowledge to possible experience. In ethics he grounded obligation in rational autonomy and the categorical imperative, joining questions about knowledge, freedom, and universal moral law. The catalog links this work to transcendental-idealism, categorical-imperative, autonomy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "transcendental-idealism",
         "categorical-imperative",
         "autonomy"
+      ]
+    },
+    {
+      "id": "j-l-austin",
+      "name": "J. L. Austin",
+      "image": "j-l-austin.jxl",
+      "birthYear": 1911,
+      "deathYear": 1960,
+      "summary": "Austin showed that utterances do more than describe states of affairs: in suitable contexts they promise, name, warn, authorize, or perform other actions. His distinctions among locutionary, illocutionary, and perlocutionary dimensions explain why meaning depends on conventions, circumstances, uptake, and felicity conditions. Ordinary-language analysis exposes confusion without treating usage as infallible. The catalog links this work to ordinary-language-philosophy, speech-acts, pragmatics so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "ordinary-language-philosophy",
+        "pragmatics",
+        "analytic-philosophy"
+      ]
+    },
+    {
+      "id": "derrida-jacques",
+      "name": "Jacques Derrida",
+      "image": "derrida-jacques.jxl",
+      "birthYear": 1930,
+      "deathYear": 2004,
+      "summary": "Derrida developed deconstruction as a close reading of how texts depend on distinctions they cannot fully stabilize. His analyses of writing, presence, supplement, and différance show how meanings arise through relations, exclusions, and deferred contrasts. His later work applies this sensitivity to law, hospitality, responsibility, and justice. The catalog links this work to deconstruction, post-structuralism, differance so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "deconstruction",
+        "justice"
       ]
     },
     {
@@ -339,10 +738,62 @@
       "image": "jean-jacques-rousseau.jxl",
       "birthYear": 1712,
       "deathYear": 1778,
-      "summary": "Jean-Jacques Rousseau investigated how social institutions transform freedom, dependence, and inequality. His social-contract theory connects legitimate political authority with collective self-government, while his writings on education examine how development can be protected from corrupting forms of social comparison.",
+      "summary": "Jean-Jacques Rousseau investigated how social institutions transform freedom, dependence, and inequality. His social-contract theory connects legitimate political authority with collective self-government, while his writings on education examine how development can be protected from corrupting forms of social comparison. The catalog links this work to social-contract, equality so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "social-contract",
         "equality"
+      ]
+    },
+    {
+      "id": "sartre-jean-paul",
+      "name": "Jean-Paul Sartre",
+      "image": "sartre-jean-paul.jxl",
+      "birthYear": 1905,
+      "deathYear": 1980,
+      "summary": "Sartre described consciousness as a project not identical with any fixed thing and argued that freedom persists within facticity. Bad faith occurs when a person treats a role or circumstance as an excuse that removes responsibility, or pretends to be pure freedom without constraints. His existentialism links ontology to social conflict and political commitment. The catalog links this work to existentialism, bad-faith, freedom so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "existentialism",
+        "freedom",
+        "phenomenology"
+      ]
+    },
+    {
+      "id": "jeremy-bentham",
+      "name": "Jeremy Bentham",
+      "image": "jeremy-bentham.jxl",
+      "birthYear": 1748,
+      "deathYear": 1832,
+      "summary": "Jeremy Bentham formulated a quantitative utilitarianism that evaluates actions and institutions by their effects on overall happiness. His felicific calculus is a decision aid rather than a literal instrument, and his legal and political writings apply utility to punishment, codification, prison design, animal concern, and democratic accountability. The theory remains disputed over measurement and minority protection. The catalog links this work to utilitarianism, consequentialism, legal-philosophy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "utilitarianism",
+        "consequentialism",
+        "animal-ethics"
+      ]
+    },
+    {
+      "id": "john-dewey",
+      "name": "John Dewey",
+      "image": "john-dewey.jxl",
+      "birthYear": 1859,
+      "deathYear": 1952,
+      "summary": "Dewey treated inquiry as a practical response to unsettled situations rather than a detached search for timeless representations. His pragmatism connects knowledge with experimental action, education with democratic participation, and ethics with reconstructing conditions that frustrate shared flourishing. He emphasized habits, consequences, and the social environments in which intelligence operates. The catalog links this work to pragmatism, instrumentalism, democracy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "pragmatism",
+        "instrumentalism",
+        "democracy"
+      ]
+    },
+    {
+      "id": "duns-scotus",
+      "name": "John Duns Scotus",
+      "image": "duns-scotus.jxl",
+      "birthYear": 1265,
+      "deathYear": 1308,
+      "summary": "Duns Scotus developed influential accounts of individuation, univocal predication, divine freedom, and the formal distinction. His claim that being can be spoken of univocally across finite and infinite cases aimed to make metaphysical reasoning intelligible without collapsing creaturely and divine difference. His account of contingency shaped later theories of freedom. The catalog links this work to scholasticism, haecceity, univocity so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "scholasticism",
+        "haecceity",
+        "free-will"
       ]
     },
     {
@@ -351,7 +802,7 @@
       "image": "john-locke.jxl",
       "birthYear": 1632,
       "deathYear": 1704,
-      "summary": "John Locke examined the origins and limits of human understanding while defending natural rights and government by consent. His accounts of personal identity and political legitimacy became central points of reference for later debates about memory, property, toleration, and authority.",
+      "summary": "John Locke examined the origins and limits of human understanding while defending natural rights and government by consent. His accounts of personal identity and political legitimacy became central points of reference for later debates about memory, property, toleration, and authority. The catalog links this work to empiricism, personal-identity, social-contract so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "empiricism",
         "personal-identity",
@@ -364,7 +815,7 @@
       "image": "john-rawls.jxl",
       "birthYear": 1921,
       "deathYear": 2002,
-      "summary": "John Rawls developed justice as fairness through a hypothetical choice situation that excludes knowledge of one's social advantages. His principles of justice and method of reflective equilibrium connect institutional design with judgments about equal citizenship and fair cooperation.",
+      "summary": "John Rawls developed justice as fairness through a hypothetical choice situation that excludes knowledge of one's social advantages. His principles of justice and method of reflective equilibrium connect institutional design with judgments about equal citizenship and fair cooperation. The catalog links this work to original-position, veil-of-ignorance, reflective-equilibrium so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "original-position",
         "veil-of-ignorance",
@@ -377,11 +828,35 @@
       "image": "john-stuart-mill.jxl",
       "birthYear": 1806,
       "deathYear": 1873,
-      "summary": "John Stuart Mill defended utilitarian ethics while emphasizing liberty, individuality, and the value of open discussion. He distinguished kinds of pleasure and examined when social or legal interference with a person's conduct can be justified, influencing liberal and feminist political thought.",
+      "summary": "John Stuart Mill defended utilitarian ethics while emphasizing liberty, individuality, and the value of open discussion. He distinguished kinds of pleasure and examined when social or legal interference with a person's conduct can be justified, influencing liberal and feminist political thought. The catalog links this work to utilitarianism, harm-principle, freedom-of-expression so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "utilitarianism",
         "harm-principle",
         "freedom-of-expression"
+      ]
+    },
+    {
+      "id": "joseph-raz",
+      "name": "Joseph Raz",
+      "image": "joseph-raz.jxl",
+      "birthYear": 1939,
+      "deathYear": 2022,
+      "summary": "Joseph Raz developed influential accounts of authority, practical reasons, and the rule of law. A legitimate authority can help subjects comply with reasons that already apply to them, but authority is not justified merely by claimed expertise. His perfectionist liberalism treats autonomy as access to valuable options, creating tensions between choice, welfare, and neutrality. The catalog links this work to legal-philosophy, authority, autonomy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "authority",
+        "autonomy",
+        "liberalism"
+      ]
+    },
+    {
+      "id": "judith-butler",
+      "name": "Judith Butler",
+      "image": "judith-butler.jxl",
+      "birthYear": 1956,
+      "deathYear": null,
+      "summary": "Butler analyzes gender and identity as effects of repeated social practices rather than expressions of a fixed inner essence. Performativity describes how norms are cited, enforced, and displaced through embodied action; it does not mean individuals invent identities at will. Her later work extends this analysis to vulnerability, assembly, war, and unequal grievability. The catalog links this work to gender-performativity, feminism, queer-theory so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "feminism"
       ]
     },
     {
@@ -390,11 +865,61 @@
       "image": "karl-marx.jxl",
       "birthYear": 1818,
       "deathYear": 1883,
-      "summary": "Karl Marx analyzed capitalism through labor, class relations, and the historical organization of production. His critique connects economic institutions with alienation and domination, treating philosophy as part of an effort to understand and transform social conditions rather than interpret them in isolation.",
+      "summary": "Karl Marx analyzed capitalism through labor, class relations, and the historical organization of production. His critique connects economic institutions with alienation and domination, treating philosophy as part of an effort to understand and transform social conditions rather than interpret them in isolation. The catalog links this work to marxism, alienation, class-struggle so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "marxism",
         "alienation",
         "class-struggle"
+      ]
+    },
+    {
+      "id": "karl-popper",
+      "name": "Karl Popper",
+      "image": "karl-popper.jxl",
+      "birthYear": 1902,
+      "deathYear": 1994,
+      "summary": "Karl Popper argued that scientific theories are distinguished by their exposure to possible refutation rather than by accumulation of confirming instances. Falsifiability is a methodological ideal, not a claim that one failed test automatically settles a theory; tests depend on auxiliary assumptions and design. His social philosophy extends critical rationalism to institutions that permit peaceful correction. The catalog links this work to critical-rationalism, falsifiability, philosophy-of-science so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "critical-rationalism",
+        "falsifiability",
+        "philosophy-of-science"
+      ]
+    },
+    {
+      "id": "kwame-gyekye",
+      "name": "Kwame Gyekye",
+      "image": "kwame-gyekye.jxl",
+      "birthYear": 1939,
+      "deathYear": null,
+      "summary": "Gyekye critically reconstructed Akan philosophical ideas while engaging debates about personhood, community, tradition, and political authority. He resisted both the demand that African philosophy imitate European categories and the claim that inherited practice is beyond criticism. His work presents communal responsibility and individual moral agency as compatible rather than mutually exclusive. The catalog links this work to african-philosophy, communitarianism, personhood so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "communitarianism",
+        "personhood"
+      ]
+    },
+    {
+      "id": "kwasi-wiredu",
+      "name": "Kwasi Wiredu",
+      "image": "kwasi-wiredu.jxl",
+      "birthYear": 1931,
+      "deathYear": 2004,
+      "summary": "Kwasi Wiredu pursued conceptual decolonization by asking how inherited languages and imported categories shape African thought. He used Akan resources to examine consensus, personhood, truth, and democracy while rejecting uncritical traditionalism and the assumption that philosophy has one cultural vocabulary. His method distinguishes useful translation from false equivalence. The catalog links this work to african-philosophy, decolonization, democracy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "decolonization",
+        "democracy",
+        "conceptual-analysis"
+      ]
+    },
+    {
+      "id": "laozi",
+      "name": "Laozi",
+      "image": "laozi.jxl",
+      "birthYear": -571,
+      "deathYear": -471,
+      "summary": "Laozi is the traditional author associated with the Daodejing, which presents the Dao as the generative way of things and praises non-coercive action, simplicity, and restraint. Historical authorship and dating are uncertain; these conventional dates are traditional rather than secure biography. Its political counsel treats overregulation and forced ambition as sources of disorder. The catalog links this work to daoism, wu-wei, naturalism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "daoism",
+        "naturalism"
       ]
     },
     {
@@ -403,11 +928,23 @@
       "image": "ludwig-wittgenstein.jxl",
       "birthYear": 1889,
       "deathYear": 1951,
-      "summary": "Ludwig Wittgenstein's early work examined the relation between language, logic, and the world. His later philosophy shifted toward the varied uses of language in human practices, using cases about rules, meaning, and understanding to loosen the grip of misleading philosophical pictures.",
+      "summary": "Ludwig Wittgenstein's early work examined the relation between language, logic, and the world. His later philosophy shifted toward the varied uses of language in human practices, using cases about rules, meaning, and understanding to loosen the grip of misleading philosophical pictures. The catalog links this work to language-game, rule-following-problem, family-resemblance so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "language-game",
         "rule-following-problem",
         "family-resemblance"
+      ]
+    },
+    {
+      "id": "mao-zedong",
+      "name": "Mao Zedong",
+      "image": "mao-zedong.jxl",
+      "birthYear": 1893,
+      "deathYear": 1976,
+      "summary": "Mao adapted Marxist political theory to an agrarian society and emphasized contradiction, mass mobilization, and peasant organization. His philosophical essays treat practice as a test and source of knowledge, but his political legacy includes coercion, famine, and catastrophic campaigns. Analytical concepts must be separated from the human consequences of their application. The catalog links this work to marxism, dialectical-materialism, revolution so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "marxism",
+        "dialectical-materialism"
       ]
     },
     {
@@ -416,7 +953,7 @@
       "image": "marcus-aurelius.jxl",
       "birthYear": 121,
       "deathYear": 180,
-      "summary": "Marcus Aurelius was a Roman emperor whose private reflections are now known as the Meditations. Drawing on Stoicism, he examined duty, impermanence, and the distinction between events and our judgments about them while reflecting on life within a larger human community.",
+      "summary": "Marcus Aurelius was a Roman emperor whose private reflections are now known as the Meditations. Drawing on Stoicism, he examined duty, impermanence, and the distinction between events and our judgments about them while reflecting on life within a larger human community. The catalog links this work to stoicism, duty, cosmopolitanism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "stoicism",
         "duty",
@@ -429,7 +966,7 @@
       "image": "martha-nussbaum.jxl",
       "birthYear": 1947,
       "deathYear": null,
-      "summary": "Martha Nussbaum connects ancient philosophy with contemporary questions about justice, emotion, and human development. Her capabilities approach evaluates social arrangements by what people are actually able to do and be, emphasizing dignity and the conditions needed for a fully human life.",
+      "summary": "Martha Nussbaum connects ancient philosophy with contemporary questions about justice, emotion, and human development. Her capabilities approach evaluates social arrangements by what people are actually able to do and be, emphasizing dignity and the conditions needed for a fully human life. The catalog links this work to capabilities-approach so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "capabilities-approach"
       ]
@@ -440,11 +977,23 @@
       "image": "martin-heidegger.jxl",
       "birthYear": 1889,
       "deathYear": 1976,
-      "summary": "Martin Heidegger investigated the question of being through an analysis of human existence as situated, practical, and temporal. His discussions of being-in-the-world, anxiety, and mortality influenced phenomenology and existentialism; his commitment to Nazism remains essential context for assessing his life and thought.",
+      "summary": "Martin Heidegger investigated the question of being through an analysis of human existence as situated, practical, and temporal. His discussions of being-in-the-world, anxiety, and mortality influenced phenomenology and existentialism; his commitment to Nazism remains essential context for assessing his life and thought. The catalog links this work to being, phenomenology, authenticity so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "being",
         "phenomenology",
         "authenticity"
+      ]
+    },
+    {
+      "id": "mary-astell",
+      "name": "Mary Astell",
+      "image": "mary-astell.jxl",
+      "birthYear": 1666,
+      "deathYear": 1731,
+      "summary": "Mary Astell used rationalist arguments to defend women’s education and challenge theological and social assumptions of female subordination. Her proposal for a women’s educational community treats dependence as a political condition reproduced through ignorance. She also analyzed marriage contracts and authority, making her an important early critic of patriarchal hierarchy. The catalog links this work to feminism, rationalism, education so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "feminism",
+        "rationalism"
       ]
     },
     {
@@ -453,11 +1002,35 @@
       "image": "mary-wollstonecraft.jxl",
       "birthYear": 1759,
       "deathYear": 1797,
-      "summary": "Mary Wollstonecraft defended women's equal rational and moral standing and criticized education that cultivated dependence rather than judgment. Her political philosophy links freedom and virtue with social conditions, challenging inherited hierarchies within both domestic and public life.",
+      "summary": "Mary Wollstonecraft defended women's equal rational and moral standing and criticized education that cultivated dependence rather than judgment. Her political philosophy links freedom and virtue with social conditions, challenging inherited hierarchies within both domestic and public life. The catalog links this work to feminism, equality, autonomy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "feminism",
         "equality",
         "autonomy"
+      ]
+    },
+    {
+      "id": "maurice-merleau-ponty",
+      "name": "Maurice Merleau-Ponty",
+      "image": "maurice-merleau-ponty.jxl",
+      "birthYear": 1908,
+      "deathYear": 1961,
+      "summary": "Merleau-Ponty argued that perception is embodied engagement with a structured world, not reception of private inner images. The body is neither a machine directed by a detached mind nor an object fully available to inspection; it is the medium through which possibilities become meaningful. His phenomenology links embodiment, ambiguity, language, and social visibility. The catalog links this work to phenomenology, embodiment, perception so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "phenomenology",
+        "perception"
+      ]
+    },
+    {
+      "id": "horkheimer-max",
+      "name": "Max Horkheimer",
+      "image": "horkheimer-max.jxl",
+      "birthYear": 1895,
+      "deathYear": 1973,
+      "summary": "Horkheimer helped establish critical theory as an inquiry into how knowledge, economy, culture, and domination interact. He criticized instrumental reason when rationality is reduced to efficient means without asking which ends are justified. His work also tracks mass culture and authoritarian tendencies while retaining the possibility of emancipatory criticism. The catalog links this work to critical-theory, instrumental-reason, marxism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "critical-theory",
+        "marxism"
       ]
     },
     {
@@ -466,7 +1039,7 @@
       "image": "mencius.jxl",
       "birthYear": -372,
       "deathYear": -289,
-      "summary": "Mencius developed the Confucian claim that human beings possess beginnings of moral concern that require cultivation. He connected humane government with people's material security and argued that a ruler who abandons ethical responsibilities can lose legitimate authority. His dates follow a traditional, approximate chronology.",
+      "summary": "Mencius developed the Confucian claim that human beings possess beginnings of moral concern that require cultivation. He connected humane government with people's material security and argued that a ruler who abandons ethical responsibilities can lose legitimate authority. His dates follow a traditional, approximate chronology. The catalog links this work to confucianism, virtue-ethics, ethics so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "confucianism",
         "virtue-ethics",
@@ -479,7 +1052,7 @@
       "image": "montaigne.jxl",
       "birthYear": 1533,
       "deathYear": 1592,
-      "summary": "Michel de Montaigne made the essay a vehicle for examining judgment, custom, friendship, and mortality through his own experience. His skeptical comparisons of cultures and opinions challenge overconfidence while seeking practical ways to live with uncertainty.",
+      "summary": "Michel de Montaigne made the essay a vehicle for examining judgment, custom, friendship, and mortality through his own experience. His skeptical comparisons of cultures and opinions challenge overconfidence while seeking practical ways to live with uncertainty. The catalog links this work to skepticism, cultural-relativism, friendship so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "skepticism",
         "cultural-relativism",
@@ -492,11 +1065,23 @@
       "image": "michel-foucault.jxl",
       "birthYear": 1926,
       "deathYear": 1984,
-      "summary": "Michel Foucault investigated how institutions and practices produce forms of knowledge, authority, and subjectivity. His histories of punishment, medicine, and sexuality examine the interaction of power and truth, while later work explores ethical practices through which people shape their lives.",
+      "summary": "Michel Foucault investigated how institutions and practices produce forms of knowledge, authority, and subjectivity. His histories of punishment, medicine, and sexuality examine the interaction of power and truth, while later work explores ethical practices through which people shape their lives. The catalog links this work to genealogical-critique, domination, self so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "genealogical-critique",
         "domination",
         "self"
+      ]
+    },
+    {
+      "id": "maimonides",
+      "name": "Moses Maimonides",
+      "image": "maimonides.jxl",
+      "birthYear": 1138,
+      "deathYear": 1204,
+      "summary": "Maimonides joined Jewish law, Aristotelian philosophy, medicine, and negative theology. He argued that claims about God must avoid treating divine attributes as ordinary properties, while his legal work treats disciplined practice as a route to intellectual and ethical formation. His writing addresses the tension between inherited revelation and philosophical demonstration. The catalog links this work to jewish-philosophy, negative-theology, aristotelianism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "jewish-philosophy",
+        "aristotelianism"
       ]
     },
     {
@@ -505,7 +1090,7 @@
       "image": "mozi.jxl",
       "birthYear": -470,
       "deathYear": -391,
-      "summary": "Mozi challenged inherited privilege and costly ritual while defending impartial concern and policies judged by their benefit to people. The Mohist tradition also developed arguments about language, knowledge, and standards of reasoning. His birth and death years are approximate.",
+      "summary": "Mozi challenged inherited privilege and costly ritual while defending impartial concern and policies judged by their benefit to people. The Mohist tradition also developed arguments about language, knowledge, and standards of reasoning. His birth and death years are approximate. The catalog links this work to mohism, impartiality, consequentialism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "mohism",
         "impartiality",
@@ -518,11 +1103,23 @@
       "image": "nagarjuna.jxl",
       "birthYear": 150,
       "deathYear": 250,
-      "summary": "Nagarjuna was a Buddhist philosopher whose arguments against intrinsic nature helped establish the Madhyamaka tradition. He connected emptiness with dependent origination, challenging attempts to treat ordinary things or emptiness itself as independently existing foundations. His life dates are approximate.",
+      "summary": "Nagarjuna was a Buddhist philosopher whose arguments against intrinsic nature helped establish the Madhyamaka tradition. He connected emptiness with dependent origination, challenging attempts to treat ordinary things or emptiness itself as independently existing foundations. His life dates are approximate. The catalog links this work to madhyamaka, buddhist-emptiness, buddhist-dependent-origination so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "madhyamaka",
         "buddhist-emptiness",
         "buddhist-dependent-origination"
+      ]
+    },
+    {
+      "id": "niccolo-machiavelli",
+      "name": "Niccolo Machiavelli",
+      "image": "niccolo-machiavelli.jxl",
+      "birthYear": 1469,
+      "deathYear": 1527,
+      "summary": "Machiavelli analyzed political power through conflict, institutions, military organization, fortune, and civic capacity rather than idealized portraits of rulers. His advice asks what preserves a polity under unstable conditions, making it descriptive and strategic as well as morally contentious. He also defended republican conflict when institutions convert disagreement into public liberty. The catalog links this work to republicanism, realism, political-power so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "republicanism",
+        "realism"
       ]
     },
     {
@@ -531,10 +1128,46 @@
       "image": "machiavelli.jxl",
       "birthYear": 1469,
       "deathYear": 1527,
-      "summary": "Niccolò Machiavelli examined political power through historical examples and the conditions of effective rule. The Prince and the Discourses explore leadership, conflict, fortune, and republican institutions, leaving a contested legacy about the relationship between political success and moral judgment.",
+      "summary": "Niccolò Machiavelli examined political power through historical examples and the conditions of effective rule. The Prince and the Discourses explore leadership, conflict, fortune, and republican institutions, leaving a contested legacy about the relationship between political success and moral judgment. The catalog links this work to republicanism, state so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "republicanism",
         "state"
+      ]
+    },
+    {
+      "id": "parmenides",
+      "name": "Parmenides",
+      "image": "parmenides.jxl",
+      "birthYear": -515,
+      "deathYear": -450,
+      "summary": "Parmenides argued that thought and speech cannot successfully refer to what is not, and drew from this a challenge to ordinary accounts of coming-to-be, destruction, and change. His poem contrasts a way of truth with a way of opinion, though their relation is disputed. Later philosophy had to explain how appearance and intelligibility coexist. The catalog links this work to eleaticism, being, appearance-and-reality so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "being",
+        "appearance-and-reality",
+        "metaphysics"
+      ]
+    },
+    {
+      "id": "paul-feyerabend",
+      "name": "Paul Feyerabend",
+      "image": "paul-feyerabend.jxl",
+      "birthYear": 1924,
+      "deathYear": 1994,
+      "summary": "Feyerabend criticized rigid accounts of scientific method and argued that historical advances often depended on practices that violated official rules. His methodological pluralism is not a claim that every belief is equally reliable; it warns that uniform standards can suppress productive alternatives. The political implication concerns authority, expertise, and institutional freedom of inquiry. The catalog links this work to philosophy-of-science, methodological-pluralism, epistemic-anarchy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "philosophy-of-science",
+        "scientific-realism"
+      ]
+    },
+    {
+      "id": "paulin-hountondji",
+      "name": "Paulin Hountondji",
+      "image": "paulin-hountondji.jxl",
+      "birthYear": 1942,
+      "deathYear": null,
+      "summary": "Hountondji criticized ethnophilosophy when it presented an undifferentiated collective worldview as the philosophy of an entire people. He defended philosophy as explicit, argumentative, and historically situated work while insisting that African thinkers be recognized as producers of concepts rather than sources of cultural data. His critique sharpened debates about universality and intellectual autonomy. The catalog links this work to african-philosophy, ethnophilosophy, decolonization so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "decolonization"
       ]
     },
     {
@@ -543,11 +1176,23 @@
       "image": "peter-singer.jxl",
       "birthYear": 1946,
       "deathYear": null,
-      "summary": "Peter Singer applies consequentialist reasoning to animal ethics, global poverty, and personal responsibility. His arguments challenge species-based exclusions from moral concern and ask how the ability to prevent serious suffering changes what relatively affluent people ought to do.",
+      "summary": "Peter Singer applies consequentialist reasoning to animal ethics, global poverty, and personal responsibility. His arguments challenge species-based exclusions from moral concern and ask how the ability to prevent serious suffering changes what relatively affluent people ought to do. The catalog links this work to animal-ethics, utilitarianism, drowning-child so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "animal-ethics",
         "utilitarianism",
         "drowning-child"
+      ]
+    },
+    {
+      "id": "philip-pettit",
+      "name": "Philip Pettit",
+      "image": "philip-pettit.jxl",
+      "birthYear": 1945,
+      "deathYear": null,
+      "summary": "Pettit’s republican political philosophy defines freedom as non-domination: a person is unfree when exposed to arbitrary power even if interference does not currently occur. This shifts attention from the amount of interference to whether institutions make power contestable and non-arbitrary. His work connects civic freedom with collective agency and institutional design. The catalog links this work to republicanism, freedom, non-domination so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "republicanism",
+        "freedom"
       ]
     },
     {
@@ -556,7 +1201,7 @@
       "image": "plato.jxl",
       "birthYear": -428,
       "deathYear": -348,
-      "summary": "Plato founded the Academy in Athens and wrote dialogues examining knowledge, justice, love, and the good life. His accounts of Forms and the education of the soul connect metaphysics with ethics and politics, while the dialogue form often leaves readers to assess competing arguments. Both catalog dates are approximate.",
+      "summary": "Plato founded the Academy in Athens and wrote dialogues examining knowledge, justice, love, and the good life. His accounts of Forms and the education of the soul connect metaphysics with ethics and politics, while the dialogue form often leaves readers to assess competing arguments. Both catalog dates are approximate. The catalog links this work to platonism, ring-of-gyges, socrates so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "platonism",
         "ring-of-gyges",
@@ -570,10 +1215,35 @@
       "image": "plotinus.jxl",
       "birthYear": 204,
       "deathYear": 270,
-      "summary": "Plotinus developed a form of Platonism in which reality proceeds from the One through Intellect and Soul. His writings connect metaphysical explanation with the soul's effort to understand itself and turn toward its source. His birth year is approximate.",
+      "summary": "Plotinus developed a form of Platonism in which reality proceeds from the One through Intellect and Soul. His writings connect metaphysical explanation with the soul's effort to understand itself and turn toward its source. His birth year is approximate. The catalog links this work to neoplatonism, platonism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "neoplatonism",
         "platonism"
+      ]
+    },
+    {
+      "id": "pyrrho",
+      "name": "Pyrrho of Elis",
+      "image": "pyrrho.jxl",
+      "birthYear": -360,
+      "deathYear": -270,
+      "summary": "Pyrrho of Elis is associated with a skeptical practice that withholds assent when competing appearances and arguments cannot be decisively ranked. The aim is not merely to collect doubts but to reduce agitation produced by insisting that provisional judgment is final. Evidence about Pyrrho is indirect, and later skeptical schools systematized the position. The catalog links this work to pyrrhonism, skepticism, ataraxia so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "pyrrhonism",
+        "skepticism",
+        "epistemic-humility"
+      ]
+    },
+    {
+      "id": "ramanuja",
+      "name": "Ramanuja",
+      "image": "ramanuja.jxl",
+      "birthYear": 1017,
+      "deathYear": 1137,
+      "summary": "Ramanuja developed Vishishtadvaita, or qualified non-dualism, in which Brahman is ultimate while individual selves and the world are real modes or body of the divine. Liberation emphasizes devotion, knowledge, and surrender rather than erasure of all difference. The system answers Advaita by arguing that unity can include genuine plurality. The catalog links this work to vishishtadvaita, bhakti, vedanta so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "vedanta",
+        "theism"
       ]
     },
     {
@@ -582,11 +1252,49 @@
       "image": "rene-descartes.jxl",
       "birthYear": 1596,
       "deathYear": 1650,
-      "summary": "René Descartes used systematic doubt to seek secure foundations for knowledge and argued that thinking reveals the thinker's existence. His distinction between mind and body shaped modern philosophy, while his work in mathematics and natural philosophy connected metaphysical foundations with scientific explanation.",
+      "summary": "René Descartes used systematic doubt to seek secure foundations for knowledge and argued that thinking reveals the thinker's existence. His distinction between mind and body shaped modern philosophy, while his work in mathematics and natural philosophy connected metaphysical foundations with scientific explanation. The catalog links this work to methodological-skepticism, cartesian-dualism, rationalism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "methodological-skepticism",
         "cartesian-dualism",
         "rationalism"
+      ]
+    },
+    {
+      "id": "robert-nozick",
+      "name": "Robert Nozick",
+      "image": "robert-nozick.jxl",
+      "birthYear": 1938,
+      "deathYear": 2002,
+      "summary": "Nozick defended strong individual rights and argued that a just distribution can arise from legitimate acquisition, transfer, and rectification rather than from a preferred end-state pattern. His entitlement theory challenges redistributive taxation, while his experience machine tests whether value consists only in pleasant mental states. The arguments remain tied to disputed assumptions about property and history. The catalog links this work to libertarianism, entitlement-theory, rights so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "rights"
+      ]
+    },
+    {
+      "id": "rudolf-carnap",
+      "name": "Rudolf Carnap",
+      "image": "rudolf-carnap.jxl",
+      "birthYear": 1891,
+      "deathYear": 1970,
+      "summary": "Rudolf Carnap developed logical empiricism through analyses of language, confirmation, probability, and the structure of scientific theories. His distinction between internal and external questions separates disputes within a framework from disputes about adopting a framework. Carnap sought clarity through formal reconstruction while acknowledging that useful linguistic choices need not be forced by metaphysical facts. The catalog links this work to logical-positivism, analytic-philosophy, philosophy-of-science so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "logical-positivism",
+        "analytic-philosophy",
+        "philosophy-of-science",
+        "verificationism"
+      ]
+    },
+    {
+      "id": "ruth-barcan-marcus",
+      "name": "Ruth Barcan Marcus",
+      "image": "ruth-barcan-marcus.jxl",
+      "birthYear": 1921,
+      "deathYear": 2012,
+      "summary": "Ruth Barcan Marcus made major contributions to modal logic, quantified modal logic, essentialist semantics, and moral philosophy. Her formal work clarified how quantification interacts with necessity and possibility, while her ethical writing defended moral objectivity without reducing agents to simple rule-followers. She challenged the assumption that modal reasoning requires possible-world metaphysics. The catalog links this work to modal-logic, essentialism, moral-realism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "essentialism",
+        "moral-realism",
+        "analytic-philosophy"
       ]
     },
     {
@@ -595,10 +1303,23 @@
       "image": "seneca.jxl",
       "birthYear": -4,
       "deathYear": 65,
-      "summary": "Seneca was a Roman Stoic writer, statesman, and adviser to Nero. His essays and letters examine anger, mortality, friendship, and the use of wealth, connecting philosophical reflection with daily exercises in judgment and self-command.",
+      "summary": "Seneca was a Roman Stoic writer, statesman, and adviser to Nero. His essays and letters examine anger, mortality, friendship, and the use of wealth, connecting philosophical reflection with daily exercises in judgment and self-command. The catalog links this work to stoicism, friendship so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "stoicism",
         "friendship"
+      ]
+    },
+    {
+      "id": "sextus-empiricus",
+      "name": "Sextus Empiricus",
+      "image": "sextus-empiricus.jxl",
+      "birthYear": 160,
+      "deathYear": 210,
+      "summary": "Sextus presents Pyrrhonian skepticism as a practice of opposing arguments of comparable force and suspending assent when no resolution is available. Suspension is not a hidden dogma that nothing is true; the skeptic reports appearances and follows ordinary life without claiming ultimate nature. His modes remain tools for detecting premature certainty. Dates are approximate. The catalog links this work to pyrrhonism, skepticism, epoche so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "pyrrhonism",
+        "skepticism",
+        "epistemic-humility"
       ]
     },
     {
@@ -607,7 +1328,7 @@
       "image": "simone-de-beauvoir.jxl",
       "birthYear": 1908,
       "deathYear": 1986,
-      "summary": "Simone de Beauvoir connected existential freedom with the social conditions that constrain concrete lives. The Second Sex analyzes the production of women's subordinate status, while her ethics examines ambiguity, mutual freedom, and responsibility toward other people.",
+      "summary": "Simone de Beauvoir connected existential freedom with the social conditions that constrain concrete lives. The Second Sex analyzes the production of women's subordinate status, while her ethics examines ambiguity, mutual freedom, and responsibility toward other people. The catalog links this work to existentialism, feminism, freedom so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "existentialism",
         "feminism",
@@ -620,11 +1341,35 @@
       "image": "socrates.jxl",
       "birthYear": -470,
       "deathYear": -399,
-      "summary": "Socrates was an Athenian philosopher known through the writings of others, especially Plato and Xenophon. His questioning of definitions and demands for reasons made ethical self-examination central to philosophy; his trial and execution became enduring cases for thinking about justice and civic obligation. His birth year is approximate.",
+      "summary": "Socrates was an Athenian philosopher known through the writings of others, especially Plato and Xenophon. His questioning of definitions and demands for reasons made ethical self-examination central to philosophy; his trial and execution became enduring cases for thinking about justice and civic obligation. His birth year is approximate. The catalog links this work to socratic-questioning, virtue-ethics, plato so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "socratic-questioning",
         "virtue-ethics",
         "plato"
+      ]
+    },
+    {
+      "id": "sri-aurobindo",
+      "name": "Sri Aurobindo",
+      "image": "sri-aurobindo.jxl",
+      "birthYear": 1872,
+      "deathYear": 1950,
+      "summary": "Sri Aurobindo combined Vedanta, evolutionary thought, yoga, and anti-colonial politics in an account of spiritual development. He interpreted consciousness as capable of transformation rather than withdrawal from the world, and treated collective life as part of that transformation. His synthesis is distinctive but should not be confused with standard Advaita or secular evolutionism. The catalog links this work to vedanta, evolution, spirituality so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "vedanta",
+        "anti-colonialism"
+      ]
+    },
+    {
+      "id": "susan-neiman",
+      "name": "Susan Neiman",
+      "image": "susan-neiman.jxl",
+      "birthYear": 1955,
+      "deathYear": null,
+      "summary": "Susan Neiman treats the problem of evil as a philosophical test of whether the world can be made intelligible and morally inhabitable. Her work on Enlightenment reason defends the need to criticize reality without assuming that history automatically delivers progress. She links moral disappointment, political judgment, and the demand for a world that does not normalize cruelty. The catalog links this work to problem-of-evil, enlightenment, moral-realism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "problem-of-evil",
+        "moral-realism"
       ]
     },
     {
@@ -633,11 +1378,23 @@
       "image": "soren-kierkegaard.jxl",
       "birthYear": 1813,
       "deathYear": 1855,
-      "summary": "Søren Kierkegaard used pseudonymous and religious writings to examine choice, anxiety, despair, and commitment. His focus on how an individual lives a truth challenges attempts to resolve existence through detached systems, making him an important precursor of existentialism.",
+      "summary": "Søren Kierkegaard used pseudonymous and religious writings to examine choice, anxiety, despair, and commitment. His focus on how an individual lives a truth challenges attempts to resolve existence through detached systems, making him an important precursor of existentialism. The catalog links this work to existentialism, christian-existentialism, authenticity so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "existentialism",
         "christian-existentialism",
         "authenticity"
+      ]
+    },
+    {
+      "id": "theodor-adorno",
+      "name": "Theodor W. Adorno",
+      "image": "theodor-adorno.jxl",
+      "birthYear": 1903,
+      "deathYear": 1969,
+      "summary": "Theodor Adorno developed negative dialectics that resists turning particular suffering into a harmonious philosophical system. His analyses of culture, authoritarianism, and administered society examine how standardized commodities shape desire and thought while appearing to offer choice. Adorno’s criticism preserves contradiction as evidence that concepts fail to exhaust what they classify. The catalog links this work to critical-theory, negative-dialectics, culture-industry so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "critical-theory",
+        "aesthetics"
       ]
     },
     {
@@ -646,7 +1403,7 @@
       "image": "thomas-aquinas.jxl",
       "birthYear": 1225,
       "deathYear": 1274,
-      "summary": "Thomas Aquinas brought Aristotelian philosophy into dialogue with Christian theology through systematic argument and engagement with objections. His accounts of natural law, virtue, and being connect human practical reasoning with a broader metaphysics of creation. His birth year is approximate.",
+      "summary": "Thomas Aquinas brought Aristotelian philosophy into dialogue with Christian theology through systematic argument and engagement with objections. His accounts of natural law, virtue, and being connect human practical reasoning with a broader metaphysics of creation. His birth year is approximate. The catalog links this work to thomism, virtue-ethics so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "thomism",
         "virtue-ethics"
@@ -658,11 +1415,71 @@
       "image": "thomas-hobbes.jxl",
       "birthYear": 1588,
       "deathYear": 1679,
-      "summary": "Thomas Hobbes explained political authority through the need to escape insecurity and conflict. His social-contract argument gives a sovereign broad powers to maintain peace, connecting an account of human motivation with a materialist approach to nature and mind.",
+      "summary": "Thomas Hobbes explained political authority through the need to escape insecurity and conflict. His social-contract argument gives a sovereign broad powers to maintain peace, connecting an account of human motivation with a materialist approach to nature and mind. The catalog links this work to social-contract, state-of-nature, materialism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "social-contract",
         "state-of-nature",
         "materialism"
+      ]
+    },
+    {
+      "id": "thomas-kuhn",
+      "name": "Thomas Kuhn",
+      "image": "thomas-kuhn.jxl",
+      "birthYear": 1922,
+      "deathYear": 1996,
+      "summary": "Kuhn argued that mature sciences work within paradigms guiding problem selection, standards, and interpretation. Normal science can accumulate anomalies until a crisis enables a shift to a new framework, but this is not a simple march from error to truth. His account highlights training, exemplars, and changes in what counts as a fact. The catalog links this work to philosophy-of-science, paradigm, scientific-revolutions so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "philosophy-of-science",
+        "paradigm"
+      ]
+    },
+    {
+      "id": "vasubandhu",
+      "name": "Vasubandhu",
+      "image": "vasubandhu.jxl",
+      "birthYear": 320,
+      "deathYear": 400,
+      "summary": "Vasubandhu’s Abhidharma and Yogacara works analyze mind, perception, karmic continuity, and the constructed character of subject-object duality. His thought does not simply replace an external world with a private mind; it examines how cognition organizes experience and how liberation changes that organization. Dates are approximate, and the attributed corpus developed across traditions. The catalog links this work to yogacara, buddhism, consciousness so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "yogacara",
+        "buddhism",
+        "consciousness"
+      ]
+    },
+    {
+      "id": "w-e-b-du-bois",
+      "name": "W. E. B. Du Bois",
+      "image": "w-e-b-du-bois.jxl",
+      "birthYear": 1868,
+      "deathYear": 1963,
+      "summary": "Du Bois combined sociology, history, political theory, and literary expression to analyze race as a modern social structure. Double consciousness describes the strain of seeing oneself through lived experience and a society that imposes hostile racial meanings. He linked empirical investigation to Pan-Africanism, civil rights, economic justice, and democratic reconstruction. The catalog links this work to double-consciousness, anti-racism, pan-africanism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "anti-racism",
+        "pan-africanism",
+        "social-justice"
+      ]
+    },
+    {
+      "id": "w-v-o-quine",
+      "name": "W. V. O. Quine",
+      "image": "w-v-o-quine.jxl",
+      "birthYear": 1908,
+      "deathYear": 2000,
+      "summary": "Quine challenged a strict analytic-synthetic distinction and argued that statements face experience as a web rather than one by one. His indeterminacy arguments question whether translation and reference have uniquely fixed facts beyond patterns of use. Quine retained naturalized epistemology, shifting attention toward empirical study of language and belief formation. The catalog links this work to analytic-philosophy, naturalized-epistemology, indeterminacy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "analytic-philosophy"
+      ]
+    },
+    {
+      "id": "watsuji-tetsuro",
+      "name": "Watsuji Tetsuro",
+      "image": "watsuji-tetsuro.jxl",
+      "birthYear": 1889,
+      "deathYear": 1960,
+      "summary": "Watsuji developed an ethics of relational existence in which human beings are formed through concrete bonds, practices, and shared environments. His concept of aidagara resists treating the individual as an isolated atom, but also raises questions about when communal belonging suppresses autonomy. His analyses connect embodiment, geography, and historical forms of life. The catalog links this work to japanese-philosophy, relationality, ethics so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "ethics"
       ]
     },
     {
@@ -671,10 +1488,55 @@
       "image": "william-james.jxl",
       "birthYear": 1842,
       "deathYear": 1910,
-      "summary": "William James helped develop pragmatism and investigated consciousness, religious experience, and the practical significance of belief. He emphasized the plurality of human experience and assessed ideas through their consequences for inquiry and life, without reducing truth to whatever is convenient.",
+      "summary": "William James helped develop pragmatism and investigated consciousness, religious experience, and the practical significance of belief. He emphasized the plurality of human experience and assessed ideas through their consequences for inquiry and life, without reducing truth to whatever is convenient. The catalog links this work to classical-pragmatism, philosophy-of-religion so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "classical-pragmatism",
         "philosophy-of-religion"
+      ]
+    },
+    {
+      "id": "william-of-ockham",
+      "name": "William of Ockham",
+      "image": "william-of-ockham.jxl",
+      "birthYear": 1287,
+      "deathYear": 1347,
+      "summary": "Ockham defended a rigorous nominalism about universals and a methodological preference for avoiding unnecessary explanatory entities. His distinction between intuitive and abstractive cognition, together with his work on logic and divine power, complicates the caricature that parsimony alone defines his philosophy. His arguments shifted debates about language, modality, and natural theology. The catalog links this work to nominalism, ockhams-razor, medieval-philosophy so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "nominalism"
+      ]
+    },
+    {
+      "id": "xunzi",
+      "name": "Xunzi",
+      "image": "xunzi.jxl",
+      "birthYear": -310,
+      "deathYear": -235,
+      "summary": "Xunzi argued that human spontaneous tendencies require reshaping through ritual, education, and institutions. Saying human nature is bad does not mean improvement is impossible; it explains why cultivated norms and skilled teachers are needed. He treated language and social order as practices that coordinate desire, making political stability depend on learning rather than natural harmony. The catalog links this work to confucianism, ritual, human-nature so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "confucianism"
+      ]
+    },
+    {
+      "id": "yukichi-fukuzawa",
+      "name": "Yukichi Fukuzawa",
+      "image": "yukichi-fukuzawa.jxl",
+      "birthYear": 1835,
+      "deathYear": 1901,
+      "summary": "Fukuzawa argued for educational reform, civic independence, and institutional modernization in nineteenth-century Japan. He treated autonomy as a social achievement supported by learning and public institutions rather than a private virtue. His legacy is complex because national independence and civilization could coexist with hierarchical and imperial assumptions that require critical examination. The catalog links this work to modernization, education, liberalism so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "liberalism"
+      ]
+    },
+    {
+      "id": "zhu-xi",
+      "name": "Zhu Xi",
+      "image": "zhu-xi.jxl",
+      "birthYear": 1130,
+      "deathYear": 1200,
+      "summary": "Zhu Xi systematized Neo-Confucian metaphysics around li, the pattern of things, and qi, the material force through which patterns are embodied. Moral cultivation requires investigating things, correcting attention, and extending knowledge into conduct. His synthesis shaped East Asian education while raising questions about whether universal order can be separated from historical institutions. The catalog links this work to neo-confucianism, li-and-qi, moral-cultivation so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
+      "related": [
+        "neo-confucianism",
+        "confucianism"
       ]
     },
     {
@@ -683,7 +1545,7 @@
       "image": "zhuangzi.jxl",
       "birthYear": -369,
       "deathYear": -286,
-      "summary": "Zhuangzi is associated with a Daoist text that uses stories, dialogue, and humor to unsettle rigid distinctions and claims to privileged perspective. Its discussions of skill, transformation, and spontaneous action question how fixed judgments can constrain a life. The text has multiple authors, and the catalog dates for its namesake are approximate.",
+      "summary": "Zhuangzi is associated with a Daoist text that uses stories, dialogue, and humor to unsettle rigid distinctions and claims to privileged perspective. Its discussions of skill, transformation, and spontaneous action question how fixed judgments can constrain a life. The text has multiple authors, and the catalog dates for its namesake are approximate. The catalog links this work to daoism, perspectivism, virtue-of-wu-wei so that the entry can be read alongside the relevant concepts rather than as an isolated label.",
       "related": [
         "daoism",
         "perspectivism",
