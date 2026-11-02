@@ -580,6 +580,38 @@
       ]
     },
     {
+      "id": "administered-society",
+      "name": "Administered society",
+      "aliases": [],
+      "symbolName": null,
+      "origin": null,
+      "summary": "A critical-theory diagnosis of social life increasingly organized by bureaucratic, economic, and technological administration that narrows individual autonomy.",
+      "body": "The administered society names a condition in which institutions manage needs, choices, communication, and conflict through standardized procedures while presenting administration as neutral necessity. In Adorno's critical theory, domination is not only a visible command; it also appears when individuals are fitted into systems whose categories and incentives leave little room for nonidentical experience. Administration can provide real coordination and welfare, so the critique is not a rejection of all organization. It asks when efficient management becomes a substitute for democratic judgment and suppresses alternatives.",
+      "examples": [
+        {
+          "text": "A benefits system assigns a person's life to rigid eligibility codes and automated risk scores, leaving no meaningful route to explain circumstances outside the categories.",
+          "note": "The example shows administration becoming domination when the person must fit the system rather than the system answer to the person."
+        }
+      ],
+      "commonMisreadings": [
+        "Administered society is not simply any society with public administration or technology.",
+        "The concept does not claim that every rule or service is oppressive; its target is totalizing management that narrows autonomy and dissent."
+      ],
+      "criticisms": [
+        "Critics argue that the diagnosis can idealize unadministered freedom and understate how public administration protects people from arbitrary private power."
+      ],
+      "lookalikes": [],
+      "related": [
+        "culture-industry",
+        "negative-dialectics",
+        "disciplinary-power"
+      ],
+      "tags": [
+        "political-philosophy-and-institutions"
+      ],
+      "keyFigures": []
+    },
+    {
       "id": "advaita-vedanta",
       "name": "Advaita Vedanta",
       "aliases": [],
@@ -1240,6 +1272,40 @@
       ]
     },
     {
+      "id": "aidagara",
+      "name": "Aidagara",
+      "aliases": [
+        "Betweenness"
+      ],
+      "symbolName": null,
+      "summary": "Watsuji Tetsurō's account of human existence as structured by the between-space of relational, historical, and ethical life.",
+      "body": "Aidagara names the \"betweenness\" in which persons exist: neither isolated atoms nor merely interchangeable parts of a group. Watsuji argues that human practices, obligations, language, climate, and institutions arise in relations that make individual agency possible while also limiting it. The term is not a theory that physical space alone determines identity. It concerns lived relationality and the ethical movement between individual independence and communal belonging. Its political force is double-edged: relations sustain people, but appeals to community can also demand conformity.",
+      "origin": null,
+      "keyFigures": [
+        "watsuji-tetsuro"
+      ],
+      "examples": [
+        {
+          "text": "A person's responsibility for a neighborhood flood response depends on shared infrastructure, local history, and roles that neither an isolated individual nor an abstract state fully describes.",
+          "note": "The example treats agency as situated in relationships without reducing the person to those relationships."
+        }
+      ],
+      "commonMisreadings": [
+        "Aidagara is not relationalism about geometric space or a claim that people have no individuality.",
+        "It does not make every communal expectation ethically legitimate; relationships can sustain domination as well as care."
+      ],
+      "criticisms": [
+        "Critics argue that Watsuji's emphasis on communal ethics can romanticize national or cultural unity and understate dissenting or marginalized standpoints."
+      ],
+      "lookalikes": [],
+      "related": [
+        "communitarianism"
+      ],
+      "tags": [
+        "religion-asian-african-and-indigenous-philosophy"
+      ]
+    },
+    {
       "id": "akan-personhood",
       "name": "Akan personhood",
       "aliases": [],
@@ -1655,20 +1721,23 @@
       "name": "Anarcho-communism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A form of anarchism advocating common ownership, decentralized self-management, and distribution according to need.",
-      "body": "A form of anarchism advocating common ownership, decentralized self-management, and distribution according to need. Anarcho-communists aim to replace both state authority and capitalist property relations with voluntary federations and mutual aid.",
+      "summary": "An anarchist communist proposal for abolishing the state and private ownership of productive resources through voluntary common provision.",
+      "body": "Anarcho-communism joins two claims: political authority should not command social life, and productive resources should not be owned as assets from which others must buy access. Its positive alternative is a federation of self-governing communes, workplaces, and mutual-aid associations that coordinate production and distribution without a central sovereign. Distribution according to need is meant to make survival a social guarantee rather than a reward for market power. The model therefore depends on practical institutions for conflict resolution, information sharing, and protection against informal domination.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A network of communes could share food stores freely while members contribute according to ability.",
-          "note": "Access is organized around common provision rather than wages or private ownership of productive assets."
+          "text": "Several food-producing communes pool harvests and let residents request supplies while delegates coordinate transport between them.",
+          "note": "The example separates common ownership and need-based access from both wage exchange and centralized state rationing."
         }
       ],
       "commonMisreadings": [
-        "Anarcho-communism does not mean a centralized one-party state."
+        "Anarcho-communism is not a proposal for a one-party communist state; abolishing state command is part of its definition.",
+        "Common ownership does not require identical consumption or the disappearance of every local decision."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics question whether decentralized federations can allocate scarce or technically complex goods reliably without recreating coercive administration."
+      ],
       "lookalikes": [],
       "related": [
         "anarchism",
@@ -1683,20 +1752,23 @@
       "name": "Anarcho-feminism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A synthesis of anarchist and feminist analysis opposing both state domination and patriarchal power.",
-      "body": "A synthesis of anarchist and feminist analysis opposing both state domination and patriarchal power. Anarcho-feminists examine how authority operates in households, sexuality, workplaces, movements, and institutions.",
+      "summary": "An anarchist-feminist analysis of how patriarchy and other hierarchies operate in intimate life, work, and political organization.",
+      "body": "Anarcho-feminism treats domination as broader than laws issued by a state. Gendered expectations, economic dependence, sexual coercion, unpaid care, and movement leadership can reproduce authority even inside an anti-state organization. Its political practice therefore links liberation from government with changing the household, workplace, and habits of collective decision-making. Rotating roles, shared care, bodily autonomy, and resistance to compulsory gender roles are not merely private reforms; they are tests of whether a movement has removed hierarchy from everyday relations.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An anarcho-feminist collective may use rotating facilitation and shared childcare to challenge gendered hierarchy.",
-          "note": "Its organization addresses social reproduction and decision-making as well as formal politics."
+          "text": "A housing collective budgets for communal childcare, rotates facilitation, and establishes a process for responding to sexual harassment.",
+          "note": "The arrangement addresses care work, authority, and safety together rather than treating formal equality as sufficient."
         }
       ],
       "commonMisreadings": [
-        "Anarcho-feminism is not simply feminism without government; it also critiques informal and intimate domination."
+        "Anarcho-feminism is not simply feminism with an anti-government slogan; it also examines informal and intimate power.",
+        "It does not assume that abolishing the state automatically abolishes patriarchy."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that some anarchist groups have relied on women's unpaid labor while rhetorically opposing hierarchy, exposing a gap between doctrine and practice."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1708,20 +1780,23 @@
       "name": "Anarcho-pacifism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A form of anarchism that combines opposition to coercive hierarchy with principled nonviolence.",
-      "body": "A form of anarchism that combines opposition to coercive hierarchy with principled nonviolence. Anarcho-pacifists seek social transformation through nonviolent resistance, mutual aid, and refusal of militarism.",
+      "summary": "A synthesis of anarchist opposition to coercive hierarchy and principled rejection of violence as a political method.",
+      "body": "Anarcho-pacifism holds that means and ends are connected: a movement that trains people to command, injure, or obey may reproduce the domination it claims to overcome. It favors nonviolent resistance, mutual aid, strikes, refusal, and the creation of cooperative institutions over armed seizure of power. The position is stronger than tactical caution because it treats violence as morally deforming and politically centralizing. It still requires strategies for confronting violent states and protecting vulnerable people without turning protection into a new authority.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A pacifist anarchist group organizes a strike and community food network instead of armed retaliation.",
-          "note": "The group contests authority while making nonviolence part of its political method."
+          "text": "Workers occupy a factory, keep production transparent, and refuse military contracts while organizing food distribution for the surrounding neighborhood.",
+          "note": "The action combines nonviolent resistance with constructive institution-building instead of relying on passive withdrawal."
         }
       ],
       "commonMisreadings": [
-        "Anarcho-pacifism is not merely personal pacifism because it also presents a social theory of domination."
+        "Anarcho-pacifism is not mere personal gentleness; it is a political theory about coercion and collective resistance.",
+        "It does not claim that nonviolence makes conflict disappear or guarantees quick success."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics ask whether strict nonviolence can protect people facing immediate assault or stop regimes willing to use overwhelming force."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1733,20 +1808,23 @@
       "name": "Anarcho-primitivism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A radical critique of civilization that favors dismantling industrial technological systems and returning to small-scale, nonhierarchical lifeways.",
-      "body": "A radical critique of civilization that favors dismantling industrial technological systems and returning to small-scale, nonhierarchical lifeways. Anarcho-primitivists argue that agriculture, complex technology, and large institutions can intensify domination and ecological destruction.",
+      "summary": "A radical critique of civilization that links large-scale technological systems, agriculture, and hierarchy to alienation and ecological destruction.",
+      "body": "Anarcho-primitivism argues that domination is embedded in the scale and structure of civilization, not only in the state or market. Some versions identify settled agriculture, specialization, permanent storage, and industrial technology as processes that enable surveillance, class formation, and ecological overshoot. Its ideal is not a romantic return to one historical past but a reduction of imposed complexity and a recovery of self-directed, ecologically bounded life. The argument is deliberately civilizational: reforming ownership may leave the infrastructures that generate dependence intact.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An advocate may support rewilding and the abandonment of industrial infrastructure in favor of localized subsistence.",
-          "note": "The proposal targets civilization's technological and organizational scale, not only the state."
+          "text": "A community rejects a labor-saving system that requires centralized extraction and instead chooses lower-scale, locally repairable tools.",
+          "note": "The choice tests whether efficiency is being evaluated against autonomy and ecological cost rather than treated as an unconditional good."
         }
       ],
       "commonMisreadings": [
-        "Anarcho-primitivism is more specific than general environmentalism or anti-authoritarianism."
+        "Anarcho-primitivism is not a claim that every preindustrial society was peaceful or morally pure.",
+        "It criticizes civilization as a form of organized domination, not simply modern consumer gadgets."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that the position understates the benefits of medicine, literacy, and accessible technology and offers no credible transition for billions of people."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1758,20 +1836,23 @@
       "name": "Anarcho-syndicalism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A revolutionary anarchist strategy centered on worker unions as instruments of struggle and self-management.",
-      "body": "A revolutionary anarchist strategy centered on worker unions as instruments of struggle and self-management. Syndicalists seek to replace capitalist and state control with federated workplaces governed by workers.",
+      "summary": "An anarchist strategy centered on worker unions as both instruments of struggle and foundations for self-managed social organization.",
+      "body": "Anarcho-syndicalism makes the workplace a decisive site of political transformation. Workers organize directly through unions, assemblies, strikes, boycotts, and mutual aid rather than delegating emancipation to parties or state representatives. A successful movement would use federated workplaces to coordinate production under workers' control, making the union a prefigurative institution rather than only a bargaining agency. Direct action matters because it develops collective capacity and interrupts the dependence created by ownership and managerial command.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A dockworkers' union coordinates a general strike and plans to run the port cooperatively after victory.",
-          "note": "The union is both a means of resistance and a model for post-capitalist organization."
+          "text": "A federation of transit workers runs a city service through elected shop committees during a general strike.",
+          "note": "The example shows how a labor organization can contest authority while demonstrating an alternative mode of coordination."
         }
       ],
       "commonMisreadings": [
-        "Anarcho-syndicalism is not ordinary trade unionism because it seeks structural transformation."
+        "Anarcho-syndicalism is not ordinary trade unionism with more militant rhetoric; it treats unions as organs of social reconstruction.",
+        "Direct action does not mean refusing all coordination or expertise."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics doubt whether workplace organization alone can represent people outside formal employment or manage conflicts between sectors and communities."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1786,20 +1867,23 @@
         "No-self"
       ],
       "symbolName": null,
-      "summary": "The Buddhist teaching that no permanent, independent self or soul can be found among the changing components of experience.",
-      "body": "The Buddhist teaching that no permanent, independent self or soul can be found among the changing components of experience. Anatta analyzes personal identity as dependently arisen processes rather than an unchanging essence.",
+      "summary": "The Buddhist teaching that no permanent, independent self can be found among changing bodily and mental processes.",
+      "body": "Anatta is an analysis of what is taken to be a self, not a denial that persons function in ordinary life. Buddhist investigation treats body, feeling, perception, dispositions, and consciousness as conditioned processes: each changes, depends on causes, and fails to provide an unchanging owner. Seeing this is intended to loosen clinging, because suffering grows when contingent processes are defended as an essence. Continuity and responsibility remain intelligible through causal succession without requiring an eternal soul.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "When a meditator observes sensations, memories, and intentions changing without a fixed owner, they investigate anatta.",
-          "note": "The practice examines impermanence and dependence in what is taken to be the self."
+          "text": "During meditation, a practitioner notices that an intention, the feeling accompanying it, and the remembered story about it arise and pass under different conditions.",
+          "note": "The observation tests whether any component can serve as a permanent owner rather than merely naming an abstract doctrine."
         }
       ],
       "commonMisreadings": [
-        "Anatta does not mean that people do not exist conventionally or that nothing has consequences."
+        "Anatta is not nihilism, and it does not deny conventional persons, karma, or ethical consequences.",
+        "It is not the claim that a hidden true self exists somewhere behind experience."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics question whether responsibility and personal identity can be fully explained by causal continuity without a persisting subject."
+      ],
       "lookalikes": [],
       "related": [
         "advaita-vedanta",
@@ -1817,20 +1901,23 @@
         "Impermanence"
       ],
       "symbolName": null,
-      "summary": "The Buddhist teaching that conditioned phenomena are impermanent and subject to change.",
-      "body": "The Buddhist teaching that conditioned phenomena are impermanent and subject to change. Recognizing anicca is intended to loosen attachment to experiences that cannot remain fixed.",
+      "summary": "The Buddhist claim that conditioned phenomena arise, change, and pass away rather than remaining stable under our control.",
+      "body": "Anicca names impermanence as a structural feature of conditioned existence. Bodies age, emotions shift, institutions decay, and even stable-seeming habits depend on conditions that can change. The point is not that every event changes at the same speed, but that no conditioned thing supplies a secure, self-maintaining basis for attachment. Insight into anicca supports a practical shift: attend carefully to change, reduce demands for permanence, and recognize how clinging turns ordinary transition into suffering.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A person notices that pleasure from a meal fades even while they wish it would continue.",
-          "note": "The changing pleasure exemplifies the instability of conditioned experience."
+          "text": "A person watches grief change across days instead of treating one intense emotional state as a permanent identity.",
+          "note": "The example distinguishes acknowledging a feeling's reality from assuming that its present form will endure unchanged."
         }
       ],
       "commonMisreadings": [
-        "Anicca is not the claim that every change is equally rapid or that continuity is impossible."
+        "Anicca does not mean that nothing persists for any practical purpose; temporary patterns can be reliable.",
+        "It is not merely a pessimistic observation that bad things end, since pleasant and neutral conditions are impermanent too."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics ask whether impermanence by itself establishes the broader Buddhist conclusions about suffering, non-self, and liberation."
+      ],
       "lookalikes": [],
       "related": [
         "buddhaghosa",
@@ -1845,20 +1932,23 @@
       "name": "Animal ethics",
       "aliases": [],
       "symbolName": null,
-      "summary": "The area of ethics that examines the moral status, treatment, and interests of nonhuman animals.",
-      "body": "The area of ethics that examines the moral status, treatment, and interests of nonhuman animals. Animal ethics asks whether sentience, welfare, rights, species membership, or ecological relationships should guide human conduct.",
+      "summary": "The ethical study of how humans should treat nonhuman animals and what moral status their interests, welfare, or lives have.",
+      "body": "Animal ethics asks whether species membership is a morally relevant boundary and how to compare human interests with animal suffering, flourishing, or continued life. Utilitarian approaches emphasize sentience and the reduction of suffering; rights-based views protect animals from being used as means; virtue and care approaches examine character, relationships, and practices of dependence. The field therefore contains distinct arguments about food, experimentation, habitat, captivity, and political representation rather than one single vegetarian conclusion.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Debating whether industrial farming is permissible is a question in animal ethics.",
-          "note": "The issue concerns how human practices affect animals and what obligations follow."
+          "text": "A laboratory replaces a painful animal experiment with a validated organ-on-chip model even if the substitute costs more.",
+          "note": "The decision gives weight to avoidable animal suffering while making the institutional trade-off explicit."
         }
       ],
       "commonMisreadings": [
-        "Animal ethics is broader than animal welfare policy because it also questions underlying moral theories."
+        "Animal ethics is not identical to animal welfare regulation; some theories reject using animals even when conditions are improved.",
+        "It does not assume that all animals have identical needs or identical moral claims."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics dispute how to compare animal and human interests and whether rights theories can guide decisions involving unavoidable harm."
+      ],
       "lookalikes": [],
       "related": [
         "jeremy-bentham",
@@ -1874,20 +1964,23 @@
       "name": "Animalism",
       "aliases": [],
       "symbolName": null,
-      "summary": "The metaphysical view that a human person is fundamentally an animal organism.",
-      "body": "The metaphysical view that a human person is fundamentally an animal organism. Animalism identifies personal persistence with the continued existence of a living human animal rather than with memory or a psychological pattern alone.",
+      "summary": "A metaphysical view that a human person is fundamentally a living animal rather than a separately existing mind or psychological pattern.",
+      "body": "Animalism identifies the bearer of a person's persistence with the biological organism. On this view, the same person continues because the same living animal continues through metabolic and developmental change, not because a memory chain or immaterial soul remains intact. The position handles infancy and periods of unconsciousness naturally, since the organism persists when sophisticated psychological capacities are absent. It also creates pressure for theories that treat psychological continuity as sufficient for survival or personal identity.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "If a human body remains alive through complete memory loss, an animalist normally says the same person continues to exist.",
-          "note": "Biological continuity carries the identity of the person."
+          "text": "A sleeping infant remains the same person despite lacking memories or current self-awareness.",
+          "note": "The case favors an organism-based account because biological continuity is present when the psychological links are undeveloped."
         }
       ],
       "commonMisreadings": [
-        "Animalism differs from psychological-continuity theories of personal identity."
+        "Animalism does not say that mental life is unimportant; it says mental properties belong to an animal.",
+        "It is not the everyday claim that humans are animals without a theory of identity."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that animalism struggles with fission, brain-transplant cases, and the intuition that psychological continuity matters most to survival."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1899,20 +1992,23 @@
       "name": "Animism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A worldview or family of traditions that attributes agency, vitality, or person-like presence to animals, plants, places, or other-than-human beings.",
-      "body": "A worldview or family of traditions that attributes agency, vitality, or person-like presence to animals, plants, places, or other-than-human beings. Animist practices often treat relationships with nonhuman entities as morally and ritually significant.",
+      "summary": "A family of views and practices that treat animals, plants, places, objects, or forces as participants in a world of agency and relation.",
+      "body": "Animism is not one doctrine that all nonhuman beings possess human-like minds. In many traditions it is a way of organizing obligations and perception: rivers, animals, ancestors, tools, and landscapes can enter reciprocal relationships, demand respect, or exercise forms of agency that modern categories separate. Contemporary anthropological use often describes a relational ontology rather than a primitive mistake. The concept must therefore remain attentive to local vocabulary and practice instead of translating every nonhuman presence into a single Western idea of spirit.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A community may ask permission from a forest before harvesting medicinal plants.",
-          "note": "The forest is approached as a relational participant rather than inert material."
+          "text": "A community treats a river as a relative in decisions about fishing, pollution, and seasonal access.",
+          "note": "The example shows how person-like status can structure duties without requiring the river to be imagined as a human ghost."
         }
       ],
       "commonMisreadings": [
-        "Animism is not simply the childish belief that every object has a human mind."
+        "Animism is not simply the belief that everything has a human personality.",
+        "Calling a tradition animist does not erase differences among its accounts of ancestors, animals, places, and material forces."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics warn that the category can flatten diverse traditions and reproduce colonial contrasts between supposedly modern and supposedly enchanted thought."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1924,20 +2020,23 @@
       "name": "Anomalous monism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Davidson's theory that every mental event is identical with some physical event while no strict psychophysical laws connect mental and physical descriptions.",
-      "body": "Davidson's theory that every mental event is identical with some physical event while no strict psychophysical laws connect mental and physical descriptions. The view combines event identity with the claim that mental predicates are governed by holistic and normative principles.",
+      "summary": "Davidson's view that each event has a physical description, mental events can causally interact, and there are no strict psychophysical laws.",
+      "body": "Anomalous monism combines event identity with the irreducibility of mental explanation. Mental events are physical events, so a particular belief or decision is not an extra substance outside the physical world. Yet the vocabulary of reasons, interpretation, and rationality is governed by holistic standards that do not yield exceptionless bridge laws from mental predicates to physical predicates. Davidson therefore accepts mental causation while denying that psychology can be reduced to a strict nomological science like physics.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A particular pain event can be identical with a neural event even though pain vocabulary is not reducible to a precise neural law.",
-          "note": "Identity explains token physical realization while anomalous description blocks simple reduction."
+          "text": "A decision to leave because of fear is one physical event, but explaining it requires its place in a network of beliefs and reasons.",
+          "note": "The case illustrates identity without reduction: the event has a physical realization and remains irreducibly interpretable as action."
         }
       ],
       "commonMisreadings": [
-        "Anomalous monism is not substance dualism because it does not posit two kinds of event substance."
+        "Anomalous monism is not substance dualism; it denies that mental events are a second kind of substance.",
+        "Anomalous does not mean mental events are causally inert or random."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that causal efficacy is difficult to reconcile with the denial of strict mental-physical laws and may leave mental causation explanatorily redundant."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1949,20 +2048,23 @@
       "name": "Antecedent",
       "aliases": [],
       "symbolName": null,
-      "summary": "The component of a conditional proposition that states the condition or suppositional starting point.",
-      "body": "The component of a conditional proposition that states the condition or suppositional starting point. In the conditional \"If it rains, the ground gets wet,\" the antecedent is the clause stating that it rains.",
+      "summary": "A proposition or condition that supplies the if-part of a conditional statement or inference.",
+      "body": "An antecedent is the condition introduced by an if-clause in a conditional, while the consequent is what follows after then or its implicit equivalent. In \"If the sensor is charged, the alarm will sound,\" the sensor's being charged is the antecedent. The term concerns logical position, not truth or causal priority: a false antecedent can occur in a true conditional, and an antecedent need not be the cause of its consequent. Keeping these roles distinct prevents confusion between grammar, implication, and explanation.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "In \"If the battery is charged, the device starts,\" \"the battery is charged\" is the antecedent.",
-          "note": "It supplies the condition under which the consequent is asserted to follow."
+          "text": "In \"If a number is divisible by four, it is even,\" divisibility by four is the antecedent.",
+          "note": "The example identifies the conditional role without implying that the first clause is a temporal event or empirical cause."
         }
       ],
       "commonMisreadings": [
-        "An antecedent is not necessarily a cause; a conditional can express a logical or evidential relation."
+        "An antecedent is not automatically a cause; logical condition and causal mechanism are different relations.",
+        "It is not the same as a premise in every argument, since a conditional's antecedent may be embedded inside a larger premise."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "The ordinary term is uncontroversial, but philosophical disputes arise when material, strict, counterfactual, and relevant conditionals assign it different inferential roles."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -1974,20 +2076,23 @@
       "name": "Anti-authoritarianism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Opposition to unjustified or excessive authority and to relationships of domination.",
-      "body": "Opposition to unjustified or excessive authority and to relationships of domination. Anti-authoritarian views ask that commands be justified and that people retain meaningful control over decisions affecting them.",
+      "summary": "A family of political positions that rejects unjustified domination and demands that power be accountable, limited, or abolished.",
+      "body": "Anti-authoritarianism begins with a challenge to command as a default justification. It asks why one person or institution may issue binding orders, whether those orders can be contested, and how dependence shapes apparent consent. The answer need not be identical with full anarchism: some anti-authoritarians permit temporary coordination, expertise, or public institutions when power is revocable and non-dominating. The central distinction is between coordination that agents can scrutinize and hierarchy that treats obedience as a standing entitlement.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A workplace that replaces a permanent manager with accountable rotating coordinators adopts an anti-authoritarian measure.",
-          "note": "The arrangement limits entrenched command while preserving coordination."
+          "text": "A neighborhood emergency committee publishes its decisions, rotates coordinators, and can be recalled by the affected residents.",
+          "note": "The arrangement uses authority for coordination while building mechanisms against entrenched command."
         }
       ],
       "commonMisreadings": [
-        "Anti-authoritarianism is not opposition to every form of expertise, guidance, or temporary leadership."
+        "Anti-authoritarianism is not opposition to every rule, expertise, or collective decision.",
+        "It does not assume that informal power disappears when formal offices are removed."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that suspicion of authority can weaken coordination and leave less visible economic or social power unchecked."
+      ],
       "lookalikes": [],
       "related": [
         "cornelius-castoriadis"
@@ -2001,20 +2106,23 @@
       "name": "Anti-capitalism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A set of positions criticizing or seeking to replace capitalism's systems of private ownership, wage labor, and market power.",
-      "body": "A set of positions criticizing or seeking to replace capitalism's systems of private ownership, wage labor, and market power. Anti-capitalist arguments may focus on exploitation, inequality, alienation, ecological damage, or domination by capital.",
+      "summary": "A broad critique of capitalism's ownership, wage, market, and accumulation structures, often paired with proposals for alternative economic institutions.",
+      "body": "Anti-capitalism is a family resemblance term rather than one economic program. Its arguments may target private ownership of productive assets, exploitation in wage labor, commodification, class dependence, perpetual accumulation, or ecological externalization. Socialist, anarchist, democratic, feminist, and ecological critics disagree about what should replace markets and firms. A careful use of the term therefore identifies the mechanism under criticism and the proposed alternative instead of treating every opposition to inequality as opposition to capitalism itself.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A movement demanding worker ownership of factories is anti-capitalist.",
-          "note": "It challenges the ownership and control structure central to capitalist production."
+          "text": "A campaign seeks worker ownership of a platform and limits investor extraction rather than merely asking for higher wages.",
+          "note": "The demand targets ownership and control, showing how anti-capitalist criticism differs from ordinary redistribution within a firm."
         }
       ],
       "commonMisreadings": [
-        "Anti-capitalism includes multiple traditions and does not specify one replacement system."
+        "Anti-capitalism is not one synonym for communism, and it does not settle whether some markets may remain.",
+        "Criticizing capitalism does not imply opposition to all trade, innovation, or private consumption."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that proposed alternatives can lose information, investment, or productive incentives and may concentrate power in new administrative institutions."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2026,20 +2134,23 @@
       "name": "Anti-clericalism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Opposition to the political, social, or institutional power of clergy and religious establishments.",
-      "body": "Opposition to the political, social, or institutional power of clergy and religious establishments. Anti-clericalists may defend secular government while distinguishing criticism of clerical power from hostility toward personal faith.",
+      "summary": "Opposition to clerical privilege or institutional religious power in public and political life.",
+      "body": "Anti-clericalism targets the political authority, legal privilege, wealth, or social control exercised by clergy and religious institutions. It is distinct from atheism: a person can defend religious belief while opposing clerical rule, and a secular state can coexist with private religious practice. Historical anti-clerical movements have therefore ranged from liberal demands for church-state separation to revolutionary campaigns against religious property and education. The object is institutional power, though rhetoric can slide into hostility toward believers.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A campaign to remove clerical privilege from public education is anti-clericalist.",
-          "note": "The target is institutional religious authority in civic life."
+          "text": "A legislature removes a church's automatic control over public schooling while protecting families' freedom to teach religion privately.",
+          "note": "The measure separates institutional privilege from individual belief and practice."
         }
       ],
       "commonMisreadings": [
-        "Anti-clericalism is not necessarily atheism or opposition to all religion."
+        "Anti-clericalism is not necessarily anti-religious or anti-theistic.",
+        "Opposition to clerical privilege does not by itself justify suppressing religious association or conscience."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that anti-clerical campaigns can become cultural persecution, especially when they treat ordinary believers as agents of institutional power."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2051,20 +2162,23 @@
       "name": "Anti-colonialism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A political and intellectual movement opposing colonial domination and supporting self-determination for colonized peoples.",
-      "body": "A political and intellectual movement opposing colonial domination and supporting self-determination for colonized peoples. Anti-colonialism critiques territorial conquest, extraction, racial hierarchy, and imposed cultural rule.",
+      "summary": "A political and intellectual opposition to colonial domination, extraction, racial hierarchy, and the denial of collective self-determination.",
+      "body": "Anti-colonialism analyzes colonialism as a system in which an external power controls land, labor, law, knowledge, and political membership while presenting that control as civilizing or developmental. Resistance may seek independence, land restitution, cultural renewal, economic transformation, or new forms of international solidarity. It also questions inherited categories: a formally independent state can preserve colonial borders, economic dependence, or racialized administration. The concept therefore concerns both ending direct rule and dismantling the relations that made rule durable.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An independence movement that seeks to end foreign administration and restore local political sovereignty is anti-colonial.",
-          "note": "Its objective is to dismantle a relationship of external rule."
+          "text": "A movement demands control over mineral licensing, local language education, and land governance after a constitutional transfer of power.",
+          "note": "Political independence is treated as incomplete without economic and cultural self-determination."
         }
       ],
       "commonMisreadings": [
-        "Anti-colonialism is not reducible to a change of flag if economic and cultural domination remain intact."
+        "Anti-colonialism is not only a demand for a new flag; it can include struggles against ongoing extraction and epistemic domination.",
+        "It is not a single ideology, since anti-colonial movements disagree about nation, class, religion, and state power."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics warn that nationalist liberation can reproduce internal ethnic hierarchy, authoritarian rule, or economic dependence after colonial withdrawal."
+      ],
       "lookalikes": [],
       "related": [
         "abolitionism",
@@ -2081,20 +2195,23 @@
       "name": "Anti-communism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Opposition to communist theories, movements, parties, or states.",
-      "body": "Opposition to communist theories, movements, parties, or states. Anti-communist arguments range from defenses of liberal democracy and private property to religious, nationalist, or authoritarian critiques.",
+      "summary": "Opposition to communist theories, parties, states, or revolutionary movements, with arguments ranging from liberal rights claims to anti-socialist nationalism.",
+      "body": "Anti-communism covers distinct objections and should not be treated as a single doctrine. Some critics reject abolition of private property; others focus on one-party rule, coercive collectivization, censorship, or the concentration of economic power in the state. Cold War anti-communism also functioned as a geopolitical program, sometimes supporting dictatorships that violated the liberal freedoms it claimed to defend. Separating arguments about communist theory from judgments about particular regimes makes the term analytically useful.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A politician campaigning against a communist party's planned nationalization program expresses anti-communism.",
-          "note": "The position rejects a specified communist political project."
+          "text": "A constitutional party opposes nationalizing all industry but supports unions, public healthcare, and competitive elections.",
+          "note": "The example shows that anti-communism can reject a system without rejecting every social-democratic policy."
         }
       ],
       "commonMisreadings": [
-        "Anti-communism is not one coherent ideology and can coexist with very different political systems."
+        "Anti-communism is not automatically a defense of laissez-faire capitalism or liberal democracy.",
+        "Criticizing a communist government is not the same as disproving every communist argument about class and ownership."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that anti-communist rhetoric has often conflated reform, socialism, and authoritarian state communism to justify repression."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2106,20 +2223,23 @@
       "name": "Anti-essentialism",
       "aliases": [],
       "symbolName": null,
-      "summary": "The view that categories do not have fixed, intrinsic essences that determine all members and uses.",
-      "body": "The view that categories do not have fixed, intrinsic essences that determine all members and uses. Anti-essentialist analysis emphasizes history, relations, practices, variation, and contested boundaries.",
+      "summary": "The rejection of fixed, intrinsic essences as necessary explanations of identities, meanings, categories, or social kinds.",
+      "body": "Anti-essentialism argues that a category need not share one hidden property that makes every member what it is. Identities can be historically produced, relational, plural, or stabilized by practices rather than discovered as timeless substances. The view does not require categories to be useless: a category can support prediction or political action while remaining revisable and internally heterogeneous. Anti-essentialist analysis therefore asks who made a boundary, what it excludes, and which relations sustain it.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An anti-essentialist account of gender studies how roles and identities are socially organized rather than defined by one timeless property.",
-          "note": "The category is explained through changing relations and practices."
+          "text": "A study of disability examines built environments, institutions, and norms alongside bodily differences rather than reducing disability to one biological essence.",
+          "note": "The explanation preserves material facts while showing how social organization helps constitute the category's practical meaning."
         }
       ],
       "commonMisreadings": [
-        "Anti-essentialism does not imply that categories are meaningless or that every classification is equally good."
+        "Anti-essentialism does not say that all distinctions are arbitrary or that bodies and histories have no effects.",
+        "It is not mere relativism; claims about how categories are made can still be evidence-based and politically consequential."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics worry that abandoning essences can weaken stable grounds for solidarity, explanation, or resistance to oppressive classification."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2131,20 +2251,23 @@
       "name": "Anti-fascism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Opposition to fascist ideology, movements, and regimes.",
-      "body": "Opposition to fascist ideology, movements, and regimes. Anti-fascism can include electoral organizing, public education, labor resistance, direct action, and defense of pluralist institutions.",
+      "summary": "Opposition to fascist politics, including ultranationalist mass mobilization, authoritarian leadership, political violence, and exclusionary hierarchy.",
+      "body": "Anti-fascism is a heterogeneous field of arguments and practices rather than one party program. It may defend constitutional democracy, organize labor and community defense, oppose racist movements, or seek revolutionary transformation of the institutions that enable fascism. Its analysis focuses on how crisis, nationalism, scapegoating, paramilitary violence, and charismatic authority can turn social fear into organized domination. Disagreement over tactics—electoral coalition, direct action, or physical confrontation—does not erase the shared target.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A coalition that mobilizes to prevent a fascist party from using violence to abolish democratic opposition is anti-fascist.",
-          "note": "The coalition resists authoritarian ultranationalism and political violence."
+          "text": "A coalition protects a threatened community, exposes a violent organization, and campaigns against the emergency laws that expand executive power.",
+          "note": "Anti-fascist action can address both movement violence and the institutional conditions that normalize it."
         }
       ],
       "commonMisreadings": [
-        "Anti-fascism is not synonymous with one political party or one method of resistance."
+        "Anti-fascism is not a single ideology and is not identical to support for any one government.",
+        "Opposing fascism does not make every tactic used by an anti-fascist group democratic or justified."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that some anti-fascist tactics suppress legitimate dissent or reproduce factional violence, while defenders answer that passive neutrality can enable organized terror."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2156,20 +2279,23 @@
       "name": "Anti-foundationalism",
       "aliases": [],
       "symbolName": null,
-      "summary": "The epistemological view that knowledge and justification need not rest on an ultimate, indubitable foundation.",
-      "body": "The epistemological view that knowledge and justification need not rest on an ultimate, indubitable foundation. Anti-foundationalists often understand beliefs as supported within interconnected practices, languages, or systems rather than by a single base.",
+      "summary": "The view that inquiry need not rest on an indubitable, universal foundation from which all justified claims are derived.",
+      "body": "Anti-foundationalism challenges the image of knowledge as a building supported by unquestionable first principles. Inquiry can instead be understood as holistic, historical, pragmatic, linguistic, or socially situated: beliefs support one another, answer problems, and remain open to revision. This does not abolish standards. Evidence, coherence, explanatory power, and practical consequences still constrain belief, but none is guaranteed from a perspective outside all practices. The position shifts attention from ultimate foundations to how justification works within revisable systems.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A coherentist tests a scientific claim by examining how it fits with observations and established theories.",
-          "note": "Support comes from relations within a web of commitments rather than one self-justifying premise."
+          "text": "A scientific theory is defended by its predictions, measurements, coherence with related theories, and capacity to survive attempted refutation.",
+          "note": "No single premise is treated as an absolute base; justification is distributed across an interconnected practice."
         }
       ],
       "commonMisreadings": [
-        "Anti-foundationalism does not mean that reasons, evidence, or standards are unnecessary."
+        "Anti-foundationalism is not the claim that every belief is equally good or that reasons are unnecessary.",
+        "Rejecting an indubitable starting point does not entail rejecting truth, evidence, or criticism."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that without foundations anti-foundationalism cannot distinguish genuine justification from inherited consensus or circular support."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2181,20 +2307,23 @@
       "name": "Anti-imperialism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Opposition to imperial domination, in which a powerful state controls other peoples or territories for political, economic, or strategic ends.",
-      "body": "Opposition to imperial domination, in which a powerful state controls other peoples or territories for political, economic, or strategic ends. Anti-imperialist analysis focuses on unequal sovereignty, extraction, military control, and dependency.",
+      "summary": "Opposition to domination exercised across borders through military power, economic dependence, political control, or cultural hierarchy.",
+      "body": "Anti-imperialism treats empire as a relation, not only as formal annexation. A powerful state or bloc may control another society through occupation, unequal trade, debt, bases, proxy governments, resource concessions, or norms that privilege its interests. Anti-imperialist politics therefore connects sovereignty with material capacity and asks who bears the costs of security and development. It can coexist with criticism of the ruling class or government inside the dominated society; resisting external domination need not mean endorsing every local authority.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A movement opposing a foreign power's military bases and resource concessions in its country is anti-imperialist.",
-          "note": "It challenges external power exercised through political and economic control."
+          "text": "A debt campaign links opposition to foreign military bases with demands for transparent lending and local control of resource revenue.",
+          "note": "The example shows military and financial mechanisms as connected forms of external power."
         }
       ],
       "commonMisreadings": [
-        "Anti-imperialism can criticize formal conquest and informal domination alike."
+        "Anti-imperialism is not simply support for any state opposed to a Western power.",
+        "It does not require ignoring repression committed by a government claiming national independence."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that anti-imperialist frameworks can become selective, excusing authoritarianism or treating local agency as an effect of foreign influence alone."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2206,20 +2335,23 @@
       "name": "Anti-natalism",
       "aliases": [],
       "symbolName": null,
-      "summary": "The ethical view that bringing new people into existence is morally problematic or wrong.",
-      "body": "The ethical view that bringing new people into existence is morally problematic or wrong. Antinatalist arguments often emphasize unavoidable suffering, consent, or the asymmetry between harms and benefits of existence.",
+      "summary": "The ethical position that bringing new people into existence is morally wrong or presumptively wrong because existence exposes them to harm.",
+      "body": "Anti-natalist arguments focus on the asymmetry between creating a person and refraining from creation. Some argue that avoiding suffering has moral importance even when no one is deprived of pleasure by not being born; others emphasize the impossibility of obtaining consent from a future person and the inevitability of serious harms. The view concerns procreation, not necessarily suicide or the value of existing lives. Its force depends on how harm, benefit, consent, and obligations to future people are understood.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An antinatalist chooses not to have children because they believe preventing suffering has stronger moral weight than creating possible pleasures.",
-          "note": "The moral concern is directed at procreation itself rather than at harming existing people."
+          "text": "A couple declines to have a child because they judge unavoidable suffering and environmental pressure to outweigh the benefits they could provide.",
+          "note": "The decision applies an anti-natalist argument to creation without claiming that an existing person's life should be ended."
         }
       ],
       "commonMisreadings": [
-        "Antinatalism is distinct from pessimism about one's own life or from population policy imposed by the state."
+        "Anti-natalism is not identical to pessimism about every existing life or a demand that existing people disappear.",
+        "It does not have one argument; asymmetry, consent, environmental, and quality-of-life arguments differ."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that the view underweights goods, relationships, and the possibility of responsible parenting, and that nonexistence cannot straightforwardly be called better for someone."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2231,20 +2363,23 @@
       "name": "Anti-racism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A commitment to identifying, opposing, and changing racial prejudice, discrimination, and institutional racial inequality.",
-      "body": "A commitment to identifying, opposing, and changing racial prejudice, discrimination, and institutional racial inequality. Anti-racism treats racial injustice as reproduced through practices and structures as well as explicit individual hostility.",
+      "summary": "A set of theories and practices opposing racial hierarchy, racialized exclusion, and the institutions that reproduce unequal treatment.",
+      "body": "Anti-racism treats racism as more than explicit prejudice. It examines laws, organizations, economic distributions, cultural representations, and inherited arrangements that can produce racial advantage even without openly racist intent. Different anti-racist traditions prioritize universal rights, racial justice, reparations, coalition, self-determination, or transforming the institutions that classify people. The common commitment is active opposition: neutrality toward a racial hierarchy leaves its effects in place, while diagnosis must be connected to accountable change.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An organization audits promotion data and changes procedures after finding systematic racial disparities.",
-          "note": "The action addresses institutional effects rather than merely expressing personal tolerance."
+          "text": "A city audits housing allocation, measures racial outcomes, and changes its criteria after finding that a formally neutral rule excludes a minority group.",
+          "note": "The example distinguishes equal wording from equal institutional effect."
         }
       ],
       "commonMisreadings": [
-        "Anti-racism is not exhausted by refusing to use slurs or claiming to be color-blind."
+        "Anti-racism is not reducible to being personally polite or free of conscious bias.",
+        "It does not require treating every racialized group as having identical histories or political needs."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics dispute which remedies are fair and whether group-conscious policies can reduce hierarchy without creating new forms of unequal treatment."
+      ],
       "lookalikes": [],
       "related": [
         "angela-davis",
@@ -2262,20 +2397,23 @@
       "name": "Anti-realism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A family of views denying that a domain's claims describe a mind-independent reality in the realist sense.",
-      "body": "A family of views denying that a domain's claims describe a mind-independent reality in the realist sense. Anti-realists may interpret truth in terms of verification, conceptual schemes, linguistic practices, or successful construction.",
+      "summary": "A family of views denying that a domain's truths require a mind-independent reality of the kind asserted by corresponding realism.",
+      "body": "Anti-realism is domain-specific: a philosopher may be realist about ordinary objects but anti-realist about moral facts, mathematical objects, or theoretical entities. Some versions identify truth with warranted assertibility, verification, conceptual practice, or the rules of a language; others deny that a disputed class exists at all. The position is not simply skepticism, because an anti-realist can accept robust standards and many truths. Its central question is what truth in the domain consists in and what would make it correct.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An anti-realist about morality may say that moral truth depends on human practices rather than stance-independent moral facts.",
-          "note": "The account explains moral correctness through conditions of human judgment instead of independent moral objects."
+          "text": "A moral anti-realist explains \"cruelty is wrong\" through norms that agents can justify rather than through a moral particle existing independently of all evaluative practice.",
+          "note": "The example shows how a claim can remain meaningful and criticizable without realist moral objects."
         }
       ],
       "commonMisreadings": [
-        "Anti-realism is not simply the view that a subject is mistaken or that a domain lacks importance."
+        "Anti-realism does not mean that every opinion is equally valid or that reality never constrains belief.",
+        "It is not identical to denying the existence of physical objects; its target may be one specific domain."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Realists argue that anti-realist accounts risk making truth too dependent on current human capacities, practices, or standards."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2287,20 +2425,23 @@
       "name": "Anti-statism",
       "aliases": [],
       "symbolName": null,
-      "summary": "Opposition to the state as a necessary or legitimate form of political authority.",
-      "body": "Opposition to the state as a necessary or legitimate form of political authority. Anti-statist positions include anarchist, libertarian, autonomist, and some communal theories with different reasons for rejecting states.",
+      "summary": "Opposition to the state as a standing institution of territorial sovereignty, coercive law, and centralized political authority.",
+      "body": "Anti-statism questions whether a state can be justified as the ultimate authority over a territory and population. Arguments may appeal to individual liberty, domination, mutual aid, class power, colonial violence, or the ability of decentralized institutions to coordinate without sovereignty. The term covers anarchist abolitionism as well as positions that seek radically smaller or transformed states. A serious anti-statist account must explain how common goods, conflict, defense, and unequal private power would be handled after state authority is reduced.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An anti-statist collective provides dispute resolution through voluntary federations rather than a territorial government.",
-          "note": "The proposed institution performs coordination without a sovereign state."
+          "text": "A network of municipalities shares infrastructure through revocable delegates while retaining local control over policing and welfare.",
+          "note": "The arrangement tests whether coordination can occur without a separate sovereign body standing above the communities."
         }
       ],
       "commonMisreadings": [
-        "Anti-statism is broader than opposition to one particular government or regime."
+        "Anti-statism is not necessarily opposition to every public institution or every rule.",
+        "It does not solve private domination merely by removing government; property and social hierarchy remain questions."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that anti-statist arrangements may be unable to resist organized violence, enforce rights, or prevent powerful private groups from becoming de facto states."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2312,20 +2453,23 @@
       "name": "Antifragility",
       "aliases": [],
       "symbolName": null,
-      "summary": "A property of systems that improve through exposure to shocks, volatility, or disorder.",
-      "body": "A property of systems that improve through exposure to shocks, volatility, or disorder. An antifragile system gains from stress rather than merely resisting or surviving it.",
+      "summary": "The property of benefiting from volatility, stress, or disorder rather than merely resisting or surviving it.",
+      "body": "Antifragility, associated with Nassim Nicholas Taleb, distinguishes systems that improve through shocks from robust systems that remain mostly unchanged. The mechanism is usually asymmetry: small failures reveal information or remove weak components, while favorable variation produces larger gains. Redundancy, optionality, decentralization, and limited exposure can make a system learn from uncertainty. Antifragility is therefore not a slogan to seek maximum disruption; uncontrolled shocks can destroy the very capacity that would have adapted.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A decentralized immune system becomes more capable after encountering and learning from a pathogen.",
-          "note": "The disturbance produces increased future capacity rather than only temporary damage or recovery."
+          "text": "A portfolio of small independent experiments lets a research group abandon failed trials while scaling the few that succeed.",
+          "note": "Many limited failures create information and preserve upside without placing the whole organization at one risk point."
         }
       ],
       "commonMisreadings": [
-        "Antifragility is not the same as robustness, which withstands stress without benefiting from it."
+        "Antifragility is not the same as resilience: resilience returns to a prior state, while antifragility gains from disturbance.",
+        "It does not mean that all stress is beneficial or that systems should be exposed to arbitrary crises."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that the concept can be vague, retrospectively applied, and inattentive to who bears the costs of experiments and failure."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2337,20 +2481,23 @@
       "name": "Aparigraha",
       "aliases": [],
       "symbolName": null,
-      "summary": "The ethical principle of non-possessiveness or non-grasping, especially associated with Jain and yogic traditions.",
-      "body": "The ethical principle of non-possessiveness or non-grasping, especially associated with Jain and yogic traditions. Aparigraha counsels limiting attachment to possessions, accumulation, and control over others.",
+      "summary": "A Jain and broader Indian ethical ideal of non-possessiveness, limiting attachment to property, status, and accumulation.",
+      "body": "Aparigraha is more than owning few objects. It concerns grasping: the desire to possess, control, accumulate, or define security through things can bind a person to violence and dependence. In Jain ethics, restraint in acquisition supports nonviolence because production, protection, and consumption can injure living beings. The ideal has both ascetic and lay forms, ranging from strict renunciation to limits on household accumulation. It asks what one actually needs and what obligations follow from taking more than that share.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A practitioner gives away surplus goods and avoids acquiring more than can be responsibly used.",
-          "note": "The conduct reduces both material accumulation and psychological attachment."
+          "text": "A household sets a material limit, repairs existing tools, and redirects surplus income to relief rather than treating every new purchase as an entitlement.",
+          "note": "The practice addresses attachment and the harms of accumulation, not only the number of possessions visible at one time."
         }
       ],
       "commonMisreadings": [
-        "Aparigraha does not require abandoning every necessary possession."
+        "Aparigraha is not simply minimalism as a style or a ban on all property for every practitioner.",
+        "It is not indifference to poverty; voluntary restraint by the secure differs from blaming people who lack necessities."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics question how an ethic of individual restraint can address structural production, unequal ownership, and institutions that reward accumulation."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2362,20 +2509,23 @@
       "name": "Appearance and reality",
       "aliases": [],
       "symbolName": null,
-      "summary": "The philosophical distinction between how things seem and how they are independently of appearance.",
-      "body": "The philosophical distinction between how things seem and how they are independently of appearance. The distinction raises questions about perception, illusion, representation, and the possibility of knowledge.",
+      "summary": "The philosophical problem of how things seem in experience relate to what they are independently of that appearance.",
+      "body": "The appearance-reality distinction asks whether perception, language, or social presentation reveals the world or mediates it through a standpoint. An appearance can be deceptive, but it can also be a real relational feature: a cup looks red under ordinary light even if its color depends on conditions. Philosophers disagree about whether reality is hidden behind appearances, structured through them, or accessible only by comparing perspectives and explanations. The distinction therefore concerns epistemic access as well as metaphysical structure.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A straight stick partly submerged in water appears bent although it is physically straight.",
-          "note": "The perceptual appearance differs from the object's measured condition."
+          "text": "A straight stick appears bent in water, while measuring the refraction explains both the visual appearance and the stick's physical shape.",
+          "note": "The case shows that correcting an appearance need not make the appearance meaningless; it can become evidence within a better account."
         }
       ],
       "commonMisreadings": [
-        "The distinction does not imply that every appearance is false or that reality is inaccessible."
+        "Appearance is not always false and reality is not necessarily a simple object hidden behind perception.",
+        "The distinction does not by itself establish that sensory experience is unreliable."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that speaking of reality entirely apart from every possible appearance may use a contrast whose terms cannot be independently specified."
+      ],
       "lookalikes": [],
       "related": [
         "parmenides"
@@ -2389,20 +2539,23 @@
       "name": "Applied ethics",
       "aliases": [],
       "symbolName": null,
-      "summary": "The branch of ethics that applies moral principles and arguments to concrete practices and public problems.",
-      "body": "The branch of ethics that applies moral principles and arguments to concrete practices and public problems. Applied ethics addresses issues such as abortion, war, animal treatment, business conduct, technology, and environmental responsibility.",
+      "summary": "The use of ethical theories and principles to analyze concrete practices, institutions, policies, and technologies.",
+      "body": "Applied ethics moves from general moral questions to cases in which facts, roles, power, and consequences matter. Bioethics, business ethics, environmental ethics, technology ethics, and professional ethics all combine normative reasoning with empirical detail. The field does not merely apply a single rule mechanically: cases can expose conflicts among autonomy, welfare, justice, rights, and relationships, forcing theories to clarify their scope. Good applied analysis states relevant facts, identifies affected parties, and explains why a principle fits the case.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Evaluating whether autonomous cars should prioritize minimizing deaths is an applied-ethics problem.",
-          "note": "The inquiry connects normative reasoning with a specific technological decision."
+          "text": "An ethics committee evaluates an AI triage tool by examining accuracy, consent, unequal error rates, accountability, and alternatives.",
+          "note": "The example shows applied ethics as structured judgment about a real institution, not a detached declaration of values."
         }
       ],
       "commonMisreadings": [
-        "Applied ethics is not merely giving personal opinions about controversial topics."
+        "Applied ethics is not opinion-giving without factual investigation.",
+        "It does not require abandoning theory; general principles help identify what is morally at stake in a concrete case."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that case-based analysis can become inconsistent or merely confirm the intuitions of powerful institutions."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2414,20 +2567,23 @@
       "name": "Aretaic ethics",
       "aliases": [],
       "symbolName": null,
-      "summary": "An approach to ethics that evaluates character and action through virtues, excellences, and human flourishing.",
-      "body": "An approach to ethics that evaluates character and action through virtues, excellences, and human flourishing. Aretaic theories ask what a good person would characteristically perceive, feel, and do in a situation.",
+      "summary": "An ethical approach centered on virtue, character, practical wisdom, and the kind of life an agent should cultivate.",
+      "body": "Aretaic ethics evaluates action partly through the qualities expressed and developed by the agent. Courage, justice, honesty, generosity, and practical wisdom are not isolated rules but dispositions shaped by perception, habit, relationships, and social institutions. A virtuous response depends on context: courage differs from recklessness because practical judgment identifies the right risk for the right reason. The approach therefore asks not only \"What should I do?\" but \"What kind of person and community does this action form?\"",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A courageous firefighter enters a dangerous building for a well-judged rescue rather than from reckless thrill-seeking.",
-          "note": "The moral assessment depends on the agent's practical character and appropriate motivation."
+          "text": "A manager admits a costly mistake, protects an employee from scapegoating, and changes the process that enabled it.",
+          "note": "The action expresses honesty and justice while showing that virtue includes institutional repair, not just private feeling."
         }
       ],
       "commonMisreadings": [
-        "Aretaic ethics is not identical to any rule-based theory, even though virtues can guide rules."
+        "Aretaic ethics is not a demand to display a fixed list of admirable traits in every circumstance.",
+        "It does not make consequences irrelevant; practical wisdom must understand what actions do to people."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that virtue language can be culturally conservative or too indeterminate to resolve hard conflicts between competing virtues."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2439,20 +2595,23 @@
       "name": "Argument",
       "aliases": [],
       "symbolName": null,
-      "summary": "A structured set of premises offered in support of a conclusion.",
-      "body": "A structured set of premises offered in support of a conclusion. An argument aims to give a reason for accepting its conclusion, whether or not the reasoning succeeds.",
+      "summary": "A structured set of premises offered to support a conclusion, with its quality depending on support, relevance, and truth.",
+      "body": "An argument is not a quarrel but an inferential structure: premises are presented as reasons for a conclusion. Deductive arguments aim for validity, where true premises cannot yield a false conclusion; inductive and abductive arguments aim for graded support, prediction, or explanation. Evaluating an argument therefore requires separating form from premise truth and asking whether omitted assumptions carry the inferential weight. A conclusion can be true even when the argument offered for it is invalid or unsound.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Because the pavement is wet and the sky is dark, the argument concludes that it probably rained.",
-          "note": "The premises are presented as support for the conclusion about rain."
+          "text": "All metals tested in the sample expand when heated; this wire is made of the same metal; therefore the wire will probably expand.",
+          "note": "The conclusion is supported inductively, so the evidence raises probability rather than guaranteeing it."
         }
       ],
       "commonMisreadings": [
-        "An argument is not the same as a quarrel or a mere sequence of statements."
+        "An argument is not necessarily deductive, and validity alone does not make its premises true.",
+        "Disagreement with a conclusion does not show that no supporting argument exists."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics note that formal models can hide rhetorical, social, or background assumptions that determine whether a real audience should accept the inference."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2464,20 +2623,23 @@
       "name": "Argument map",
       "aliases": [],
       "symbolName": null,
-      "summary": "A visual or structured representation showing how claims, reasons, objections, and replies relate in an argument.",
-      "body": "A visual or structured representation showing how claims, reasons, objections, and replies relate in an argument. Argument maps make support and conflict explicit by linking premises to intermediate and final conclusions.",
+      "summary": "A visual or structured representation of how claims, reasons, objections, and evidence support or challenge one another.",
+      "body": "Argument mapping makes inferential structure explicit. A main conclusion is connected to supporting premises, intermediate claims, objections, replies, and sometimes independent lines of evidence. The map is useful because prose can make several conclusions appear to follow from one reason or conceal an unstated assumption. It does not decide truth by itself: a clear map can display a weak premise, an ambiguous term, or competing standards without resolving them.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A map may show survey data supporting a policy claim while a rebuttal challenges the data's reliability.",
-          "note": "The diagram displays the inferential structure rather than only listing quotations."
+          "text": "A policy map separates the claim that a congestion charge reduces traffic from the separate claim that it is fair, then records evidence and objections for each.",
+          "note": "The structure prevents empirical effectiveness from silently standing in for distributive justification."
         }
       ],
       "commonMisreadings": [
-        "An argument map is not a mind map of associated topics without support relations."
+        "An argument map is not a vote count or a diagram in which the most connected claim automatically wins.",
+        "Mapping an argument does not endorse every premise placed on the page."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that maps can impose a simplified linear structure on narrative, practical, or dialogical reasoning that depends on context."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2489,20 +2651,23 @@
       "name": "Aristocracy",
       "aliases": [],
       "symbolName": null,
-      "summary": "A form of government or social order in which political authority or privilege is held by a hereditary or perceived elite.",
-      "body": "A form of government or social order in which political authority or privilege is held by a hereditary or perceived elite. Aristocratic systems justify rule through lineage, landholding, honor, education, or claims of superior virtue.",
+      "summary": "Rule by a privileged class or the claim that political authority should be held by those judged most qualified or excellent.",
+      "body": "Aristocracy has both a descriptive and a normative sense. Descriptively, it names rule by a hereditary or socially privileged elite; normatively, it can mean government by the best, where education, virtue, or competence is supposed to qualify rulers. The gap between these senses matters because inherited privilege can present itself as merit while insulating power from challenge. Any aristocratic proposal must explain who identifies the best, how their authority is limited, and how non-elites can contest the judgment.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A hereditary chamber whose members inherit legislative seats exemplifies an aristocratic institution.",
-          "note": "Political status is allocated through elite lineage rather than equal election."
+          "text": "A hereditary council controls land and law while claiming that its lineage proves superior fitness to govern.",
+          "note": "The case shows how aristocracy can convert social inheritance into a political credential."
         }
       ],
       "commonMisreadings": [
-        "Aristocracy can refer to a ruling class and need not mean every wealthy person."
+        "Aristocracy is not simply the presence of experts in public administration.",
+        "Calling rule \"by the best\" does not establish that the ruling class is virtuous or competent."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that concentrated privilege corrupts judgment, blocks accountability, and treats equal citizens as subjects of an unearned status order."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2514,20 +2679,23 @@
       "name": "Aristotelianism",
       "aliases": [],
       "symbolName": null,
-      "summary": "The philosophical tradition developing the doctrines and methods associated with Aristotle.",
-      "body": "The philosophical tradition developing the doctrines and methods associated with Aristotle. Aristotelianism includes accounts of substance, causes, virtue, logic, nature, and the good life, often revised by later thinkers.",
+      "summary": "A philosophical tradition developing Aristotle's accounts of substance, explanation, virtue, logic, nature, and human flourishing.",
+      "body": "Aristotelianism is not a single frozen doctrine. Its recurring commitments include explaining things through form, matter, activity, and ends; treating living beings through their characteristic powers; and understanding ethical excellence as habituated practical judgment aimed at flourishing. Later Aristotelians revised Aristotle on theology, science, politics, and metaphysics, often combining his concepts with other traditions. The label is therefore historical and argumentative: it identifies a family of problems and methods rather than requiring agreement with every Aristotelian conclusion.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A philosopher explains an oak through material, formal, efficient, and final causes in an Aristotelian manner.",
-          "note": "The explanation uses Aristotle's four-cause framework to understand a natural object."
+          "text": "A medical account explains a heart by its structure, development, activity, and role in an organism's life rather than by material composition alone.",
+          "note": "The example illustrates Aristotle's layered explanation and its difference from a purely efficient-cause description."
         }
       ],
       "commonMisreadings": [
-        "Aristotelianism is a diverse historical tradition, not a frozen repetition of every Aristotelian claim."
+        "Aristotelianism is not identical to medieval scholasticism or to uncritical loyalty to Aristotle's biology.",
+        "A teleological explanation need not mean that nature consciously plans an outcome."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics challenge substantial forms and natural purposes as scientifically unnecessary or too easily projected from human artifacts onto nature."
+      ],
       "lookalikes": [],
       "related": [
         "al-farabi",
@@ -2544,20 +2712,23 @@
       "name": "Arrow's impossibility theorem",
       "aliases": [],
       "symbolName": null,
-      "summary": "A result showing that no ranked voting system can satisfy several specified fairness conditions simultaneously for three or more alternatives.",
-      "body": "A result showing that no ranked voting system can satisfy several specified fairness conditions simultaneously for three or more alternatives. Arrow's theorem assumes conditions including unrestricted domain, non-dictatorship, Pareto efficiency, and independence of irrelevant alternatives.",
+      "summary": "Kenneth Arrow's result that no ranked voting system can satisfy several attractive fairness conditions for three or more alternatives.",
+      "body": "Arrow's theorem concerns aggregating individual rankings into one social ranking. Under conditions including unrestricted preference orderings, non-dictatorship, independence of irrelevant alternatives, and Pareto responsiveness, no system can always produce a coherent social ordering when at least three options are available. The result does not say that every election is irrational or that voting is pointless. It shows that institutional design must sacrifice or reinterpret at least one fairness condition, making trade-offs unavoidable rather than hidden in a supposedly neutral procedure.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A committee cannot design a deterministic ranked-choice rule that always meets all of those conditions for three or more options.",
-          "note": "The impossibility follows from the formal combination of the fairness requirements."
+          "text": "Three voters rank three candidates differently, and a pairwise majority cycle makes A beat B, B beat C, and C beat A.",
+          "note": "The cycle demonstrates how individually ordered preferences can produce a socially intransitive result."
         }
       ],
       "commonMisreadings": [
-        "The theorem does not show that every voting system is equally bad or that collective choice is impossible."
+        "Arrow's theorem is not the claim that no voting method can choose a winner.",
+        "It does not prove that dictatorship is morally preferable; dictatorship is one condition a fair system rejects."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics note that the theorem's assumptions concern complete rankings and pairwise aggregation, so alternative voting inputs or deliberative institutions may avoid its exact scope."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2569,20 +2740,23 @@
       "name": "Art",
       "aliases": [],
       "symbolName": null,
-      "summary": "A category of human practices and works involving creation, presentation, interpretation, or appreciation of form, expression, and meaning.",
-      "body": "A category of human practices and works involving creation, presentation, interpretation, or appreciation of form, expression, and meaning. The concept of art is contested because works can be defined by intention, institutional context, historical relation, experience, or social practice.",
+      "summary": "A contested domain of practices and works involving making, presenting, interpreting, or attending to form, expression, and meaning.",
+      "body": "Art is difficult to define because its boundaries can be drawn through intention, formal properties, expression, institutional recognition, historical relation, or the experience it affords. A ready-made object can become art through a practice of presentation; a technically skilled object can fail to matter artistically if its context and point are absent. These theories need not be mutually exclusive in every case. The concept remains useful when it identifies what a work asks viewers to notice and which practices confer artistic significance.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A performance piece using silence and audience movement can count as art even without a conventional object.",
-          "note": "Its artistic status depends on practices and interpretation rather than only on craftsmanship."
+          "text": "A gallery presents an ordinary chair with documentation of labor, ownership, and use, inviting visitors to treat it as an artwork.",
+          "note": "Its status depends on context and interpretation as well as on the physical object."
         }
       ],
       "commonMisreadings": [
-        "Art is not limited to objects that are beautiful or made for decoration."
+        "Art is not limited to beauty, decoration, or private self-expression.",
+        "Calling something art does not end criticism; artistic status and artistic value are separate questions."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Institutional theories are criticized for making the artworld's gatekeepers too powerful, while purely formal theories struggle with conceptual and participatory works."
+      ],
       "lookalikes": [],
       "related": [
         "aesthetics"
@@ -2596,20 +2770,23 @@
       "name": "Art for art's sake",
       "aliases": [],
       "symbolName": null,
-      "summary": "The doctrine that art should be valued for its own aesthetic qualities rather than for moral instruction, politics, or practical utility.",
-      "body": "The doctrine that art should be valued for its own aesthetic qualities rather than for moral instruction, politics, or practical utility. It emphasizes artistic autonomy and rejects the requirement that art justify itself through an external purpose.",
+      "summary": "The aestheticist doctrine that art should be valued for its own forms and experiences rather than subordinated to moral, political, religious, or practical aims.",
+      "body": "Art for art's sake resists treating artistic work as propaganda, moral instruction, or useful decoration. Its claim may concern artistic autonomy, the independence of aesthetic standards, or the freedom to pursue form without an external commission. It does not necessarily deny that art has social effects; it denies that those effects are the work's required justification. The doctrine becomes controversial when supposedly autonomous art depends on public institutions, labor, markets, and audiences that are never socially neutral.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A poet defends an abstract poem because its rhythm and imagery are valuable even though it teaches no lesson.",
-          "note": "The defense makes aesthetic purpose sufficient for the work's value."
+          "text": "A composer rejects a commission requiring a patriotic message and develops an abstract work whose structure is its primary concern.",
+          "note": "The choice illustrates autonomy from an external political purpose without proving that the music has no social meaning."
         }
       ],
       "commonMisreadings": [
-        "Art for art's sake does not mean artists have no social or political effects."
+        "Art for art's sake does not mean artists lack politics or that artworks have no consequences.",
+        "It is not the claim that every work should be abstract or beautiful."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that aesthetic autonomy can conceal class privilege and allow artists or institutions to evade responsibility for the social conditions of production."
+      ],
       "lookalikes": [],
       "related": [
         "aestheticism"
@@ -2623,20 +2800,23 @@
       "name": "Artha",
       "aliases": [],
       "symbolName": null,
-      "summary": "In Indian thought, a human aim concerning material prosperity, livelihood, power, and effective worldly action.",
-      "body": "In Indian thought, a human aim concerning material prosperity, livelihood, power, and effective worldly action. Artha is one of the traditional purusharthas and can be pursued within ethical and social constraints.",
+      "summary": "The Indian ethical and political aim of material prosperity, security, capability, and effective worldly action.",
+      "body": "Artha names the resources and practical capacities needed to sustain a household, polity, and social order. In classical Indian thought it is one of the puruṣārthas, alongside desire, ethical duty, and liberation; its legitimacy is therefore conditioned by other aims rather than treated as unlimited accumulation. Political writings on artha address administration, wealth, diplomacy, and security, while ethical reflection asks how pursuit of power can be restrained by dharma. The concept joins material competence to questions of rightful use.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "Building a stable livelihood to support a household can be a pursuit of artha.",
-          "note": "The goal concerns worldly resources and flourishing rather than liberation alone."
+          "text": "A ruler builds irrigation and stores grain for famine while refusing to treat emergency surplus as private treasure.",
+          "note": "The example treats prosperity and state capacity as legitimate when directed toward social security and constrained by duty."
         }
       ],
       "commonMisreadings": [
-        "Artha is not simply greed; classical discussions place it in relation to dharma and other aims."
+        "Artha is not simply greed or a religious endorsement of wealth without limits.",
+        "It is not identical to modern GDP, since it includes security, competence, and political effectiveness."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics worry that appeals to practical necessity can excuse hierarchy, coercion, or accumulation when rulers claim that power serves the common good."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2648,20 +2828,23 @@
       "name": "Artistic intention",
       "aliases": [],
       "symbolName": null,
-      "summary": "The purpose, aim, or meaning an artist has in creating or presenting a work.",
-      "body": "The purpose, aim, or meaning an artist has in creating or presenting a work. Debates about intention ask whether an artist's intended meaning controls interpretation or is only one source of evidence.",
+      "summary": "The role an artist's purposes, plans, or communicative aims should play in interpreting and evaluating an artwork.",
+      "body": "The intention question separates at least three issues: what an artist meant to do, what the work publicly makes available, and what audiences are justified in attributing to it. Intentions can clarify references, genre, or deliberate irony, but a work may exceed its maker's understanding or acquire meanings through history. Some theories treat intended meaning as decisive; others give priority to linguistic and formal evidence available to an audience. A responsible interpretation uses intention as evidence without making private psychology a substitute for the work.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "An artist deliberately repeats a broken clock motif to symbolize historical paralysis.",
-          "note": "The motif's significance is connected to a purpose the artist consciously formed."
+          "text": "An artist says a repeated image is ironic, but the published work supplies no stable cues and audiences read it as sincere political praise.",
+          "note": "The case tests whether testimony can override the work's public evidence or merely count as one interpretive consideration."
         }
       ],
       "commonMisreadings": [
-        "Artistic intention is not always identical to audience interpretation or the work's total meaning."
+        "Artistic intention is not whatever an artist later claims, and it is not irrelevant in every interpretation.",
+        "The creator's intended meaning does not automatically determine moral or aesthetic value."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that intention-based interpretation can privilege inaccessible biography, while strict anti-intentionalism can ignore deliberate design and communicative context."
+      ],
       "lookalikes": [],
       "related": [],
       "tags": [
@@ -2673,20 +2856,23 @@
       "name": "Asceticism",
       "aliases": [],
       "symbolName": null,
-      "summary": "A disciplined practice of restricting bodily pleasures, possessions, or desires for spiritual, ethical, or philosophical purposes.",
-      "body": "A disciplined practice of restricting bodily pleasures, possessions, or desires for spiritual, ethical, or philosophical purposes. Ascetic traditions differ in whether they treat deprivation as purification, liberation, devotion, or resistance to social excess.",
+      "summary": "A disciplined reduction or renunciation of bodily comforts, possessions, and desires for religious, ethical, intellectual, or political purposes.",
+      "body": "Asceticism treats restraint as a way of changing attention, desire, and dependence. Practices may include fasting, celibacy, poverty, silence, solitude, endurance, or regulated consumption, but their meaning depends on the tradition that interprets them. The point can be purification, liberation, solidarity, mastery, protest, or preparation for knowledge. Asceticism is therefore not simply pain-seeking: a practice is ascetic when limitation is deliberately used to reorder a life around a chosen good.",
       "origin": null,
       "keyFigures": [],
       "examples": [
         {
-          "text": "A monk takes a vow of poverty and follows a demanding fasting schedule as part of religious discipline.",
-          "note": "The restrictions are adopted as a deliberate path toward a spiritual aim."
+          "text": "A religious practitioner limits possessions and eats at set times to reduce distraction and make dependence on others visible.",
+          "note": "The restriction is purposeful and interpreted as training, not merely deprivation for its own sake."
         }
       ],
       "commonMisreadings": [
-        "Asceticism is not simply poverty caused by deprivation or suffering imposed without purpose."
+        "Asceticism is not identical to self-harm or to poverty imposed by social injustice.",
+        "It does not always reject the body; many ascetic traditions discipline bodily habits to care for spiritual or ethical life."
       ],
-      "criticisms": [],
+      "criticisms": [
+        "Critics argue that ascetic ideals can romanticize suffering, intensify social control, or shift attention from unjust institutions onto individual self-denial."
+      ],
       "lookalikes": [],
       "related": [
         "arthur-schopenhauer",
@@ -3176,6 +3362,40 @@
       ]
     },
     {
+      "id": "bad-faith",
+      "name": "Bad faith",
+      "aliases": [
+        "Mauvaise foi"
+      ],
+      "symbolName": null,
+      "summary": "Sartre's account of fleeing the anxiety of freedom by treating oneself as a fixed thing or pretending one's situation leaves no room for choice.",
+      "body": "Bad faith is a self-deceptive way of managing the tension between facticity and transcendence. A person has a history, body, role, and situation, yet can interpret those facts as an absolute identity that excuses every possibility; alternatively, the person can pretend to be pure freedom and deny real constraints. Sartre's famous examples show consciousness performing a lie to itself, not merely lying to another person. The deception is unstable because the person must understand the freedom being denied in order to enact the denial.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "A waiter performs the role so completely that he treats being a waiter as his entire being and denies that he can choose how to inhabit or leave it.",
+          "note": "The example shows a social fact becoming a false essence, not simply a dishonest statement to a customer."
+        }
+      ],
+      "commonMisreadings": [
+        "Bad faith is not just deliberate lying to someone else and is not ordinary hypocrisy whenever a person makes a mistake.",
+        "Sartre does not claim that people can choose outside every material constraint; bad faith misrepresents the relation between constraint and possibility."
+      ],
+      "criticisms": [
+        "Critics question whether self-deception requires two beliefs held at once and whether Sartre's account gives enough weight to unconscious conflict and structural power."
+      ],
+      "lookalikes": [],
+      "related": [
+        "existentialism",
+        "freedom",
+        "authenticity"
+      ],
+      "tags": [
+        "mind-consciousness-and-agency"
+      ]
+    },
+    {
       "id": "bayesian-epistemology",
       "name": "Bayesian epistemology",
       "aliases": [],
@@ -3486,6 +3706,43 @@
       "related": [],
       "tags": [
         "mind-consciousness-and-agency"
+      ]
+    },
+    {
+      "id": "biopolitics",
+      "name": "Biopolitics",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "A concept for forms of power that regulate populations and life processes such as health, birth, risk, and mortality.",
+      "body": "In Foucault's usage, biopolitics names a modern shift toward governing populations through statistics, public health, demography, regulation, and the management of collective risks. It differs from discipline, which trains and surveils individual bodies, although the two techniques overlap in institutions such as hospitals, schools, and prisons. Foucault did not coin the word and did not present biopolitics as one total policy; the term has earlier and later uses. Its critical value lies in showing how care and control can operate through the same management of life.",
+      "origin": null,
+      "keyFigures": [
+        "michel-foucault"
+      ],
+      "examples": [
+        {
+          "text": "A government uses birth records, vaccination data, and mortality statistics to allocate clinics and set public-health interventions.",
+          "note": "The population is treated as a measurable living field, while individual encounters may also involve disciplinary examination."
+        }
+      ],
+      "commonMisreadings": [
+        "Biopolitics is not identical to discipline: population regulation and individual body training are distinct though connected.",
+        "Foucault did not invent the term or claim that every public-health measure is simply oppressive."
+      ],
+      "criticisms": [
+        "Critics argue that the concept can become so broad that it labels all health policy as domination and neglects democratic agency or material benefits."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "disciplinary-power",
+          "note": "Biopolitics manages collective life and rates; disciplinary power trains individual bodies and conduct."
+        }
+      ],
+      "related": [
+        "disciplinary-power"
+      ],
+      "tags": [
+        "political-philosophy-and-institutions"
       ]
     },
     {
@@ -7032,6 +7289,39 @@
       ]
     },
     {
+      "id": "culture-industry",
+      "name": "Culture industry",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Adorno and Horkheimer's critique of mass cultural production as standardized commodities that organize pleasure, attention, and social conformity.",
+      "body": "The culture industry thesis says that modern entertainment is produced through industrial routines that make cultural goods appear diverse while repeating profitable formulas. Standardization makes products predictable; pseudo-individualization adds small differences so consumers experience choice without challenging the underlying pattern. Culture becomes a training ground for adapting to work, markets, and existing authority, though audiences are not simply passive and works can contain tensions that exceed their production. The concept criticizes an economic and social system, not the mere existence of popular culture or technology.",
+      "origin": null,
+      "keyFigures": [
+        "theodor-adorno"
+      ],
+      "examples": [
+        {
+          "text": "A streaming service offers hundreds of shows whose plots, pacing, and cliffhangers vary within a narrow formula optimized by audience data.",
+          "note": "The example shows pseudo-choice and standardization operating together."
+        }
+      ],
+      "commonMisreadings": [
+        "The culture industry is not just a synonym for culture that many people enjoy.",
+        "Adorno and Horkheimer did not claim every popular work has identical effects or that audiences have no interpretive agency."
+      ],
+      "criticisms": [
+        "Critics argue that the thesis underestimates audience creativity, subcultures, cultural difference, and the possibility that commercial media can support dissent."
+      ],
+      "lookalikes": [],
+      "related": [
+        "administered-society",
+        "critical-theory"
+      ],
+      "tags": [
+        "aesthetics-and-culture"
+      ]
+    },
+    {
       "id": "cynicism",
       "name": "Cynicism",
       "aliases": [],
@@ -7867,6 +8157,43 @@
       ]
     },
     {
+      "id": "disciplinary-power",
+      "name": "Disciplinary power",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Foucault's account of power that produces useful, observable, and self-regulating individual bodies through routines, surveillance, examination, and normalization.",
+      "body": "Disciplinary power works through detailed organization of time, space, movement, performance, and attention. Schools, barracks, factories, hospitals, and prisons divide people into inspectable positions, compare their conduct against norms, and attach correction to examination. The result is not only obedience: bodies become trained capacities, and people learn to monitor themselves because observation may occur at any time. Discipline differs from biopolitics, which targets population-level processes, but institutions frequently combine the two techniques.",
+      "origin": null,
+      "keyFigures": [
+        "michel-foucault"
+      ],
+      "examples": [
+        {
+          "text": "A school timetable, graded examination, seating plan, and attendance register make each pupil continuously comparable and correctable.",
+          "note": "The system produces individual visibility and normalized performance rather than relying only on a single sovereign command."
+        }
+      ],
+      "commonMisreadings": [
+        "Disciplinary power is not just physical punishment and does not require a guard to be visibly present.",
+        "It is not the same as biopolitics: discipline individualizes bodies, while biopolitics regulates populations."
+      ],
+      "criticisms": [
+        "Critics argue that Foucault's account can understate resistance, consent, and the ways institutions genuinely enable learning or care."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "biopolitics",
+          "note": "Discipline trains individual bodies; biopolitics manages the rates and risks of populations, with overlap but no identity."
+        }
+      ],
+      "related": [
+        "biopolitics"
+      ],
+      "tags": [
+        "political-philosophy-and-institutions"
+      ]
+    },
+    {
       "id": "discounting",
       "name": "Discounting",
       "aliases": [],
@@ -8359,6 +8686,45 @@
         "michel-foucault",
         "bell-hooks",
         "philip-pettit"
+      ],
+      "tags": [
+        "political-philosophy-and-institutions"
+      ]
+    },
+    {
+      "id": "double-consciousness",
+      "name": "Double consciousness",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "W. E. B. Du Bois's account of experiencing oneself through one's own identity and through the hostile or distorting gaze of a dominant society.",
+      "body": "Double consciousness describes the divided standpoint produced by racial domination. The Black subject must develop a sense of self while also monitoring how a white supremacist society sees and evaluates that self. This is not a simple psychological split or two equal identities; it is an imposed tension between self-knowledge and an external standard that denies full personhood. Du Bois also treats the condition as a source of insight, since living under the veil can reveal contradictions hidden from the dominant group, though insight does not make oppression desirable.",
+      "origin": null,
+      "keyFigures": [
+        "w-e-b-du-bois"
+      ],
+      "examples": [
+        {
+          "text": "A Black student excels in a classroom while continually calculating whether a mistake will be read as evidence about the whole group.",
+          "note": "The example shows self-monitoring under a stereotype rather than ordinary awareness of an audience."
+        }
+      ],
+      "commonMisreadings": [
+        "Double consciousness is not a claim that Black people lack an authentic self or possess a clinical disorder.",
+        "It is not simply code-switching, although language and presentation can be sites where the imposed double perspective appears."
+      ],
+      "criticisms": [
+        "Critics note that the concept can be generalized too broadly and that gender, class, sexuality, and national location shape racialized self-perception differently."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "alienation",
+          "note": "Both describe divided experience, but double consciousness specifically concerns racialized selfhood under an external dominant gaze."
+        }
+      ],
+      "related": [
+        "alienation",
+        "anti-racism",
+        "personal-identity"
       ],
       "tags": [
         "political-philosophy-and-institutions"
@@ -9948,6 +10314,36 @@
       "related": [],
       "tags": [
         "political-ideologies-and-isms"
+      ]
+    },
+    {
+      "id": "ethnophilosophy",
+      "name": "Ethnophilosophy",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "An approach that presents a community's shared oral, religious, or cultural beliefs as a collective philosophy, and the debate over whether that presentation counts as philosophy.",
+      "body": "Ethnophilosophy became controversial in African philosophy when writers and interpreters treated proverbs, myths, language, and customary beliefs as evidence of a collective worldview. Hountondji is a leading critic of this approach, arguing that philosophy requires identifiable, contestable authors and arguments rather than an undifferentiated communal mind; he is not the author or an endorser of the collective worldview it targets, and he was not necessarily the term's first coiner. The debate concerns authorship, literacy, translation, colonial categories, and who gets recognized as a philosopher.",
+      "origin": null,
+      "keyFigures": [
+        "paulin-hountondji"
+      ],
+      "examples": [
+        {
+          "text": "A researcher compiles proverbs from one society and declares them a complete philosophy without naming speakers, disagreements, or historical changes.",
+          "note": "The example exposes the risk of turning cultural materials into a timeless collective subject."
+        }
+      ],
+      "commonMisreadings": [
+        "Ethnophilosophy is not simply any study of African thought, and Hountondji's criticism should not be misreported as his endorsement.",
+        "A collective tradition can contain philosophical questions without proving that it is a single person's argument or a uniform worldview."
+      ],
+      "criticisms": [
+        "Critics of Hountondji's strict author-centered model argue that oral, communal, and nonacademic practices can carry reflection even when authorship is distributed."
+      ],
+      "lookalikes": [],
+      "related": [],
+      "tags": [
+        "religion-asian-african-and-indigenous-philosophy"
       ]
     },
     {
@@ -11811,6 +12207,45 @@
       ],
       "tags": [
         "reasoning-methods"
+      ]
+    },
+    {
+      "id": "general-will",
+      "name": "General will",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Rousseau's idea of a people's common political will directed toward the shared conditions of freedom rather than the sum of private preferences.",
+      "body": "The general will is not simply whatever most people currently want. Rousseau distinguishes the common interest that citizens can will as equals from the aggregate of particular interests pursued by factions. A law expresses the general will when it applies generally and citizens can regard themselves as co-authors rather than subjects of another person's command. The concept is meant to reconcile political authority with freedom, but it creates a danger: rulers may claim to know the people's true common interest and silence dissent as mere faction.",
+      "origin": null,
+      "keyFigures": [
+        "jean-jacques-rousseau"
+      ],
+      "examples": [
+        {
+          "text": "Citizens adopt a tax that applies by a public rule and funds services all can use, even though each household would prefer to pay less.",
+          "note": "The example contrasts a general law with a private bargain that privileges one group."
+        }
+      ],
+      "commonMisreadings": [
+        "The general will is not identical to a simple majority vote or to the private will of a leader.",
+        "Rousseau's claim that citizens can be forced to be free is not a license for any government to label coercion freedom."
+      ],
+      "criticisms": [
+        "Critics argue that the concept can erase plural interests and provide authoritarian governments with a vocabulary for claiming that dissenters misunderstand the common good."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "social-contract",
+          "note": "The general will is part of Rousseau's account of legitimate collective authority, but it is a substantive standard for law rather than a mere agreement to obey."
+        }
+      ],
+      "related": [
+        "social-contract",
+        "political-sovereignty",
+        "republicanism"
+      ],
+      "tags": [
+        "political-philosophy-and-institutions"
       ]
     },
     {
@@ -14221,6 +14656,47 @@
       ]
     },
     {
+      "id": "investigation-of-things",
+      "name": "Investigation of things",
+      "aliases": [
+        "Gewu",
+        "格物"
+      ],
+      "symbolName": null,
+      "summary": "A Confucian practice of extending knowledge by investigating things, affairs, and patterns through disciplined attention and ethical cultivation.",
+      "body": "Investigation of things is the phrase Zhu Xi uses in a program of learning in which attention to particular affairs gradually discloses their patterns and reforms the learner's conduct. \"Things\" includes objects but also events, texts, relationships, and responsibilities. The method is not detached data collection: knowledge is incomplete when it fails to become rightly ordered action. Zhu Xi systematizes an older phrase within a larger account of principle, mind, and self-cultivation, and later Confucian traditions dispute whether investigation is primarily empirical, textual, moral, or all three.",
+      "origin": null,
+      "keyFigures": [
+        "zhu-xi"
+      ],
+      "examples": [
+        {
+          "text": "A student studies how a family obligation works in concrete cases, compares classical discussions, and changes conduct when the relevant pattern becomes clear.",
+          "note": "The example joins inquiry to moral practice rather than treating knowledge of a thing as merely descriptive."
+        }
+      ],
+      "commonMisreadings": [
+        "Investigation of things does not mean modern laboratory science alone and does not reduce Confucian learning to collecting facts.",
+        "Zhu Xi did not invent the phrase; he gave it a systematic interpretation within Neo-Confucianism."
+      ],
+      "criticisms": [
+        "Wang Yangming and other critics argue that exhaustive external investigation can postpone moral action because principle is also accessible through reflective self-cultivation."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "li-principle",
+          "note": "Investigation is a method of learning patterns; li is the ordering principle that the investigation seeks to understand."
+        }
+      ],
+      "related": [
+        "li-principle",
+        "confucian-li"
+      ],
+      "tags": [
+        "religion-asian-african-and-indigenous-philosophy"
+      ]
+    },
+    {
       "id": "irreversibility",
       "name": "Irreversibility",
       "aliases": [],
@@ -15193,6 +15669,51 @@
       "related": [],
       "tags": [
         "memory-learning-and-reported-psychological-effects"
+      ]
+    },
+    {
+      "id": "li-principle",
+      "name": "Li (principle)",
+      "aliases": [
+        "Li (Neo-Confucian principle)"
+      ],
+      "symbolName": null,
+      "summary": "The Neo-Confucian concept of patterned order or principle that makes things and relationships intelligible, especially in Zhu Xi's systematic metaphysics.",
+      "body": "Li is the intelligible pattern, ordering reason, or normative structure present in things and affairs. In Zhu Xi's account it is inseparable from qi, the material and dynamic force through which patterns are embodied, but li is not a separate physical substance. This li is not identical to Confucian li as ritual propriety: ritual is one expression of normative order, while the Neo-Confucian principle has a wider metaphysical and ethical scope. The words predate Zhu Xi; he systematized a particular account rather than inventing either term.",
+      "origin": null,
+      "keyFigures": [
+        "zhu-xi"
+      ],
+      "examples": [
+        {
+          "text": "A just family practice expresses a pattern of relationship, while the same principle can be obscured by selfish habit and social disorder.",
+          "note": "The example links metaphysical intelligibility to ethical cultivation without reducing li to a ritual rule."
+        }
+      ],
+      "commonMisreadings": [
+        "This li is not simply Confucian ritual propriety, which is the existing lookalike concept confucian-li.",
+        "Zhu Xi did not invent li or qi; he developed a distinctive systematic interpretation of inherited terms."
+      ],
+      "criticisms": [
+        "Wang Yangming and other critics argue that treating principle as something to investigate externally can separate knowledge from immediate moral realization."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "confucian-li",
+          "note": "Confucian li concerns ritual propriety and patterned conduct; Neo-Confucian li is the broader ordering principle in Zhu Xi's metaphysics."
+        },
+        {
+          "targetID": "qi",
+          "note": "Li is patterned order; qi is the dynamic material force through which patterns become concrete, though the distinction is not a separation into two independent substances."
+        }
+      ],
+      "related": [
+        "qi",
+        "confucian-li",
+        "investigation-of-things"
+      ],
+      "tags": [
+        "religion-asian-african-and-indigenous-philosophy"
       ]
     },
     {
@@ -16725,6 +17246,45 @@
       ],
       "tags": [
         "metaphysics-and-ontology"
+      ]
+    },
+    {
+      "id": "methodological-anarchism",
+      "name": "Methodological anarchism",
+      "aliases": [
+        "Epistemological anarchism"
+      ],
+      "symbolName": null,
+      "summary": "Paul Feyerabend's claim that no single universal scientific method should govern every successful episode of inquiry.",
+      "body": "Feyerabend's methodological anarchism is a philosophy of scientific practice, not a program for abolishing political government. It argues that historical advances often depended on violating accepted rules, using rival theories, adapting evidence standards, and preserving plural methods. The slogan \"anything goes\" describes the absence of a fixed universal recipe, not permission for every claim to evade criticism. Feyerabend's deeper point is that methodological diversity can protect inquiry from premature closure, though it must still confront evidence, argument, and the social consequences of expertise.",
+      "origin": null,
+      "keyFigures": [
+        "paul-feyerabend"
+      ],
+      "examples": [
+        {
+          "text": "A researcher temporarily develops a theory inconsistent with an established framework because its unusual predictions expose anomalies the standard method ignores.",
+          "note": "The example treats rule-breaking as a source of discovery, not as proof that all theories are equally credible."
+        }
+      ],
+      "commonMisreadings": [
+        "Methodological anarchism is not political anarchism and does not advocate social disorder.",
+        "Feyerabend did not say that evidence and criticism are worthless; he rejected a single method claimed to fit all inquiry."
+      ],
+      "criticisms": [
+        "Critics argue that the view can understate the role of disciplined replication and make it difficult to distinguish fruitful pluralism from arbitrary pseudoscience."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "scientific-method",
+          "note": "Methodological anarchism criticizes the idea of one scientific method; it does not deny that particular fields use disciplined methods."
+        }
+      ],
+      "related": [
+        "scientific-method"
+      ],
+      "tags": [
+        "epistemology-and-philosophy-of-science"
       ]
     },
     {
@@ -18345,6 +18905,42 @@
       "tags": [
         "logic-and-reasoning"
       ]
+    },
+    {
+      "id": "negative-dialectics",
+      "name": "Negative dialectics",
+      "aliases": [],
+      "symbolName": null,
+      "summary": "Adorno's method of keeping thought attentive to what concepts exclude instead of resolving contradictions into a final positive system.",
+      "body": "Negative dialectics begins from the nonidentity between a concept and the particular thing it names. Concepts are necessary for thought, yet every classification leaves something out; treating the concept as complete turns abstraction into domination. Rather than harmonizing contradiction into a higher unity, Adorno uses contradiction to expose the suffering and remainder hidden by systematic identity. The method is critical and material: social arrangements are read through the experiences they suppress, while philosophical language is made to register its own limits.",
+      "examples": [
+        {
+          "text": "A labor statistic reports full employment while an analysis follows the insecure workers and unpaid care that the category leaves out.",
+          "note": "The example uses a general concept as evidence while refusing to let it erase the concrete remainder."
+        }
+      ],
+      "commonMisreadings": [
+        "Negative dialectics is not simple skepticism or a refusal to use concepts.",
+        "It is not Hegelian dialectics with the conclusion deleted; its criticism of positive totality is specifically Adorno's."
+      ],
+      "criticisms": [
+        "Critics argue that the method's refusal of positive reconciliation makes it difficult to state constructive political criteria or distinguish better totalities from worse ones."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "dialectical-materialism",
+          "note": "Both analyze contradiction, but negative dialectics rejects a guaranteed synthesis and centers nonidentity and suffering."
+        }
+      ],
+      "related": [
+        "culture-industry",
+        "administered-society",
+        "critical-theory"
+      ],
+      "tags": [
+        "philosophical-schools-and-isms"
+      ],
+      "keyFigures": []
     },
     {
       "id": "negative-liberty",
@@ -20055,6 +20651,47 @@
       "related": [],
       "tags": [
         "metaphysics-and-ontology"
+      ]
+    },
+    {
+      "id": "pascal-s-wager",
+      "name": "Pascal's wager",
+      "aliases": [
+        "Pascal's betting argument"
+      ],
+      "symbolName": null,
+      "summary": "A decision argument that religious commitment may be rationally favored when the possible gains and losses of belief are treated as vastly unequal.",
+      "body": "Pascal's wager does not try to prove that God exists. It models a decision under uncertainty: if a religious life has an indefinitely valuable outcome when God exists, while disbelief risks losing it, the expected value can favor belief even when the evidence is inconclusive. The argument depends on a decision-maker's credences, the costs of religious practice, and how many-gods or rival-religion possibilities are assigned. It also faces the voluntariness problem: one may choose practices, but sincere belief may not arrive by command.",
+      "origin": null,
+      "keyFigures": [
+        "blaise-pascal"
+      ],
+      "examples": [
+        {
+          "text": "A person with no decisive evidence compares the finite costs of attending to a Christian life with the claimed infinite stakes of salvation.",
+          "note": "The case illustrates practical decision reasoning, not an inference that the Christian proposition is thereby true."
+        }
+      ],
+      "commonMisreadings": [
+        "The wager is not a proof of God's existence and does not make faith sincere merely by choosing its benefits.",
+        "It does not automatically answer the many-gods objection, since different religions can attach different stakes to the same choice."
+      ],
+      "criticisms": [
+        "Critics challenge infinite utility calculations, arbitrary credence assignments, the possibility of many rival deities, and the morality of believing for advantage."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "decision-theory",
+          "note": "The wager uses decision-theoretic comparison of outcomes, but its religious stakes and belief-voluntariness problems make it a distinctive application."
+        }
+      ],
+      "related": [
+        "decision-theory",
+        "problem-of-religious-diversity",
+        "pragmatism"
+      ],
+      "tags": [
+        "decision-theory-systems-and-methods"
       ]
     },
     {
@@ -22677,6 +23314,46 @@
       "related": [],
       "tags": [
         "philosophical-schools-and-isms"
+      ]
+    },
+    {
+      "id": "qi",
+      "name": "Qi",
+      "aliases": [
+        "Ch'i"
+      ],
+      "symbolName": null,
+      "summary": "A Chinese philosophical term for dynamic material force or vital process, interpreted differently across cosmological, medical, and Neo-Confucian traditions.",
+      "body": "Qi is a family of concepts rather than one fixed substance. It can name breath, energetic activity, material process, or the changing stuff through which bodies and worlds take form. In Zhu Xi's Neo-Confucian system, qi is the dynamic medium in which li is embodied: variations in qi help explain difference, change, health, and moral obscurity. Qi and li are ancient terms, not inventions of Zhu Xi; his contribution was to systematize one influential relationship between them. Translation as \"energy\" can mislead when it imports modern physics.",
+      "origin": null,
+      "keyFigures": [
+        "zhu-xi"
+      ],
+      "examples": [
+        {
+          "text": "A person's temperament is described as clearer or more turbid qi, affecting how a shared moral pattern is expressed in conduct.",
+          "note": "The example uses qi to explain embodied variation without treating it as a measurable physical energy in the modern scientific sense."
+        }
+      ],
+      "commonMisreadings": [
+        "Qi is not simply electricity, a supernatural fluid, or one concept with the same meaning in every Chinese tradition.",
+        "Zhu Xi did not coin qi or li; he arranged inherited terms into a distinctive metaphysical account."
+      ],
+      "criticisms": [
+        "Critics argue that qi can become too elastic to explain anything unless a tradition specifies its processes and standards of evidence."
+      ],
+      "lookalikes": [
+        {
+          "targetID": "li-principle",
+          "note": "Qi is dynamic material force or process; li is patterned order. Zhu Xi treats them as inseparable aspects, not identical terms."
+        }
+      ],
+      "related": [
+        "li-principle",
+        "confucian-li"
+      ],
+      "tags": [
+        "religion-asian-african-and-indigenous-philosophy"
       ]
     },
     {

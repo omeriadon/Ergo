@@ -1,6 +1,22 @@
 {
   "portraits": [
     {
+      "id": "shankara",
+      "name": "Adi Shankara",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Raja_Ravi_Varma_-_Sankaracharya.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Raja_Ravi_Varma_-_Sankaracharya.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "artist": "Raja Ravi Varma",
+      "credit": "Google Arts & Culture  — adi-shankaracharya/WgFvX3x6i0ckfQ",
+      "attribution": "",
+      "copyright": "",
+      "license": "Public domain",
+      "licenseURL": "",
+      "image": "shankara.jxl",
+      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching.",
+      "width": 544,
+      "height": 768
+    },
+    {
       "id": "agnes-heller",
       "name": "Agnes Heller",
       "sourcePage": "https://commons.wikimedia.org/wiki/File:%C3%81gnes_Heller_G%C3%B6teborg_Book_Fair_2015.jpg",
@@ -465,20 +481,20 @@
       "height": 768
     },
     {
-      "id": "derrida-jacques",
-      "name": "Jacques Derrida",
-      "width": 576,
-      "height": 768,
-      "image": "derrida-jacques.jxl",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Derrida_EHESS_(cropped).png",
-      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Derrida_EHESS_%28cropped%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "artist": "Auto-épreuve",
-      "credit": "File:Derrida_EHESS.jpg",
+      "id": "erasmus",
+      "name": "Desiderius Erasmus",
+      "image": "erasmus.jxl",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Holbein-erasmus.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/3/30/Holbein-erasmus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "artist": "Hans Holbein the Younger",
+      "credit": "Web Gallery of Art:   Image  Info about artworkwga QS:P11807,\"h/holbein/hans_y/1525/08erasmu\"",
       "attribution": "",
       "copyright": "",
-      "license": "CC BY 4.0",
-      "licenseURL": "https://creativecommons.org/licenses/by/4.0",
-      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
+      "license": "Public domain",
+      "licenseURL": "",
+      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
+      "width": 542,
+      "height": 768
     },
     {
       "id": "dharmakirti",
@@ -529,22 +545,6 @@
       "height": 768
     },
     {
-      "id": "duns-scotus",
-      "name": "John Duns Scotus",
-      "width": 512,
-      "height": 768,
-      "image": "duns-scotus.jxl",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Scoto_(Duns_Scoto).jpg",
-      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Scoto_%28Duns_Scoto%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "artist": "Justus van Gent / Pedro Berruguete",
-      "credit": "Own work",
-      "attribution": "",
-      "copyright": "",
-      "license": "Public domain",
-      "licenseURL": "",
-      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
-    },
-    {
       "id": "edmund-husserl",
       "name": "Edmund Husserl",
       "image": "edmund-husserl.jxl",
@@ -559,22 +559,6 @@
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
       "width": 536,
       "height": 768
-    },
-    {
-      "id": "elizabeth-anscombe",
-      "name": "G. E. M. Anscombe",
-      "image": "elizabeth-anscombe.jxl",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Elisabeth_Anscombe.jpg",
-      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/8/86/Elisabeth_Anscombe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "artist": "Albarluque",
-      "credit": "Own work",
-      "attribution": "",
-      "copyright": "",
-      "license": "CC BY-SA 3.0",
-      "licenseURL": "https://creativecommons.org/licenses/by-sa/3.0",
-      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
-      "width": 768,
-      "height": 767
     },
     {
       "id": "emmanuel-levinas",
@@ -622,22 +606,6 @@
       "image": "epicurus.jxl",
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching.",
       "width": 512,
-      "height": 768
-    },
-    {
-      "id": "erasmus",
-      "name": "Desiderius Erasmus",
-      "image": "erasmus.jxl",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Holbein-erasmus.jpg",
-      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/3/30/Holbein-erasmus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "artist": "Hans Holbein the Younger",
-      "credit": "Web Gallery of Art:   Image  Info about artworkwga QS:P11807,\"h/holbein/hans_y/1525/08erasmu\"",
-      "attribution": "",
-      "copyright": "",
-      "license": "Public domain",
-      "licenseURL": "",
-      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
-      "width": 542,
       "height": 768
     },
     {
@@ -689,6 +657,22 @@
       "height": 768
     },
     {
+      "id": "elizabeth-anscombe",
+      "name": "G. E. M. Anscombe",
+      "image": "elizabeth-anscombe.jxl",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Elisabeth_Anscombe.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/8/86/Elisabeth_Anscombe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "artist": "Albarluque",
+      "credit": "Own work",
+      "attribution": "",
+      "copyright": "",
+      "license": "CC BY-SA 3.0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/3.0",
+      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
+      "width": 768,
+      "height": 767
+    },
+    {
       "id": "g-e-moore",
       "name": "G. E. Moore",
       "image": "g-e-moore.jxl",
@@ -735,6 +719,23 @@
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
       "width": 569,
       "height": 768
+    },
+    {
+      "id": "gilbert-ryle",
+      "name": "Gilbert Ryle",
+      "sourcePage": "https://en.wikipedia.org/wiki/File:Gilbert_Ryle_(by_Rex_Whistler).jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/en/e/e8/Gilbert_Ryle_%28by_Rex_Whistler%29.jpg",
+      "artist": "Rex Whistler (1905–1944)",
+      "credit": "Painting reproduced in the English Wikipedia biographical file.",
+      "copyright": "The source classifies this reproduction as non-free and copyrighted in the United States.",
+      "license": "Non-free; the source provides a Wikipedia-specific fair-use rationale, not a general reuse license.",
+      "image": "gilbert-ryle.jxl",
+      "licenseURL": "",
+      "attribution": "See source and creator information.",
+      "reuseStatus": "No open reuse license verified",
+      "changes": "Converted to PNG for the Xcode asset catalog and JPEG XL for the portrait archive; reduced proportionally only if larger than768 pixels. No crop, retouching, or enlargement.",
+      "width": 220,
+      "height": 293
     },
     {
       "id": "gilles-deleuze",
@@ -849,22 +850,6 @@
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
     },
     {
-      "id": "horkheimer-max",
-      "name": "Max Horkheimer",
-      "width": 661,
-      "height": 768,
-      "image": "horkheimer-max.jxl",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Max_Horkheimer.jpg",
-      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/9/94/Max_Horkheimer.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "artist": "Jeremy J. Shapiro",
-      "credit": "Cropped from File:AdornoHorkheimerHabermasbyJeremyJShapiro2.png (photograph taken in April 1964 at the Max Weber-Soziologentag).",
-      "attribution": "",
-      "copyright": "",
-      "license": "CC BY-SA 3.0",
-      "licenseURL": "http://creativecommons.org/licenses/by-sa/3.0/",
-      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
-    },
-    {
       "id": "hypatia",
       "name": "Hypatia",
       "width": 405,
@@ -929,6 +914,22 @@
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
     },
     {
+      "id": "derrida-jacques",
+      "name": "Jacques Derrida",
+      "width": 576,
+      "height": 768,
+      "image": "derrida-jacques.jxl",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Derrida_EHESS_(cropped).png",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Derrida_EHESS_%28cropped%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "artist": "Auto-épreuve",
+      "credit": "File:Derrida_EHESS.jpg",
+      "attribution": "",
+      "copyright": "",
+      "license": "CC BY 4.0",
+      "licenseURL": "https://creativecommons.org/licenses/by/4.0",
+      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
+    },
+    {
       "id": "jean-jacques-rousseau",
       "name": "Jean-Jacques Rousseau",
       "image": "jean-jacques-rousseau.jxl",
@@ -943,6 +944,22 @@
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
       "width": 606,
       "height": 768
+    },
+    {
+      "id": "sartre-jean-paul",
+      "name": "Jean-Paul Sartre",
+      "width": 586,
+      "height": 768,
+      "image": "sartre-jean-paul.jxl",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Jean_Paul_Sartre_1965.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Jean_Paul_Sartre_1965.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "artist": "Unknown authorUnknown author",
+      "credit": "[1] Dutch National Archives, The Hague, Fotocollectie Algemeen Nederlands Persbureau (ANEFO), 1945-1989 bekijk toegang 2.24.01.04 Bestanddeelnummer 917-9600",
+      "attribution": "",
+      "copyright": "",
+      "license": "CC BY-SA 3.0 nl",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/3.0/nl/deed.en",
+      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
     },
     {
       "id": "jeremy-bentham",
@@ -970,6 +987,22 @@
       "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/e/ef/John_Dewey_cph.3a51565.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "artist": "Underwood & Underwood",
       "credit": "This image  is available from the United States Library of Congress's Prints and Photographs division under the digital ID cph.3a51565.This tag does not indicate the copyright status of the attached work. A normal copyright tag is still required. See Commons:Licensing.",
+      "attribution": "",
+      "copyright": "",
+      "license": "Public domain",
+      "licenseURL": "",
+      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
+    },
+    {
+      "id": "duns-scotus",
+      "name": "John Duns Scotus",
+      "width": 512,
+      "height": 768,
+      "image": "duns-scotus.jxl",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Scoto_(Duns_Scoto).jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Scoto_%28Duns_Scoto%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "artist": "Justus van Gent / Pedro Berruguete",
+      "credit": "Own work",
       "attribution": "",
       "copyright": "",
       "license": "Public domain",
@@ -1089,6 +1122,40 @@
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
     },
     {
+      "id": "kwame-gyekye",
+      "name": "Kwame Gyekye",
+      "sourcePage": "https://africafeeds.com/2019/04/30/opinion-a-tribute-to-emeritus-prof-kwame-gyekye/",
+      "sourceImage": "https://africafeeds.com/wp-content/uploads/2019/04/Prof.-Gyekye.jpg",
+      "artist": "Photographer not identified on the source page.",
+      "credit": "Africa Feeds, accompanying a tribute by Robert Nii Arday Clegg, 30 April 2019. The article identifies the pictured subject as Professor Gyekye.",
+      "copyright": "No separate photograph reuse license documented by the publisher.",
+      "license": "Copyrighted; no open reuse license documented.",
+      "image": "kwame-gyekye.jxl",
+      "licenseURL": "",
+      "attribution": "See source and creator information.",
+      "reuseStatus": "No open reuse license verified",
+      "changes": "Converted to PNG for the Xcode asset catalog and JPEG XL for the portrait archive; reduced proportionally only if larger than768 pixels. No crop, retouching, or enlargement.",
+      "width": 768,
+      "height": 514
+    },
+    {
+      "id": "kwasi-wiredu",
+      "name": "Kwasi Wiredu",
+      "sourcePage": "https://en.wikipedia.org/wiki/File:Kwasi_Wiredu.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/en/d/db/Kwasi_Wiredu.jpg",
+      "artist": "Global Echo, as attributed by the source file.",
+      "credit": "Photograph reproduced in the English Wikipedia biographical file.",
+      "copyright": "Copyrighted photograph; the source classifies this image as non-free.",
+      "license": "Non-free; the source provides a Wikipedia-specific fair-use rationale, not a general reuse license.",
+      "image": "kwasi-wiredu.jxl",
+      "licenseURL": "",
+      "attribution": "See source and creator information.",
+      "reuseStatus": "No open reuse license verified",
+      "changes": "Converted to PNG for the Xcode asset catalog and JPEG XL for the portrait archive; reduced proportionally only if larger than768 pixels. No crop, retouching, or enlargement.",
+      "width": 273,
+      "height": 365
+    },
+    {
       "id": "laozi",
       "name": "Laozi",
       "width": 622,
@@ -1119,38 +1186,6 @@
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
       "width": 567,
       "height": 768
-    },
-    {
-      "id": "machiavelli",
-      "name": "Niccolò Machiavelli",
-      "image": "machiavelli.jxl",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Portrait_of_Niccol%C3%B2_Machiavelli_by_Santi_di_Tito.jpg",
-      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Portrait_of_Niccol%C3%B2_Machiavelli_by_Santi_di_Tito.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "artist": "Santi di Tito",
-      "credit": "Cropped and enhanced from a book cover found on Google Images.",
-      "attribution": "",
-      "copyright": "",
-      "license": "Public domain",
-      "licenseURL": "",
-      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
-      "width": 597,
-      "height": 768
-    },
-    {
-      "id": "maimonides",
-      "name": "Moses Maimonides",
-      "width": 768,
-      "height": 436,
-      "image": "maimonides.jxl",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Portrait_of_Moses_Maimonides_in_Thesaurus_antiquitatum_sacrarum.tif",
-      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/3/38/Portrait_of_Moses_Maimonides_in_Thesaurus_antiquitatum_sacrarum.tif?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "artist": "Blaisio Ugolino",
-      "credit": "https://collections.library.yale.edu/catalog/2008140",
-      "attribution": "",
-      "copyright": "",
-      "license": "Public domain",
-      "licenseURL": "",
-      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
     },
     {
       "id": "mao-zedong",
@@ -1265,6 +1300,22 @@
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
     },
     {
+      "id": "horkheimer-max",
+      "name": "Max Horkheimer",
+      "width": 661,
+      "height": 768,
+      "image": "horkheimer-max.jxl",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Max_Horkheimer.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/9/94/Max_Horkheimer.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "artist": "Jeremy J. Shapiro",
+      "credit": "Cropped from File:AdornoHorkheimerHabermasbyJeremyJShapiro2.png (photograph taken in April 1964 at the Max Weber-Soziologentag).",
+      "attribution": "",
+      "copyright": "",
+      "license": "CC BY-SA 3.0",
+      "licenseURL": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
+    },
+    {
       "id": "mencius",
       "name": "Mencius",
       "image": "mencius.jxl",
@@ -1278,6 +1329,22 @@
       "licenseURL": "",
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
       "width": 567,
+      "height": 768
+    },
+    {
+      "id": "montaigne",
+      "name": "Michel de Montaigne",
+      "image": "montaigne.jxl",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Portrait_of_Michel_de_Montaigne,_circa_unknown.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Portrait_of_Michel_de_Montaigne%2C_circa_unknown.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "artist": "Unknown authorUnknown author",
+      "credit": "http://www.archivio.formazione.unimib.it/DATA/Insegnamenti/11_2349/materiale/2.pdf",
+      "attribution": "",
+      "copyright": "",
+      "license": "Public domain",
+      "licenseURL": "",
+      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
+      "width": 563,
       "height": 768
     },
     {
@@ -1297,20 +1364,20 @@
       "height": 768
     },
     {
-      "id": "montaigne",
-      "name": "Michel de Montaigne",
-      "image": "montaigne.jxl",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Portrait_of_Michel_de_Montaigne,_circa_unknown.jpg",
-      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Portrait_of_Michel_de_Montaigne%2C_circa_unknown.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "artist": "Unknown authorUnknown author",
-      "credit": "http://www.archivio.formazione.unimib.it/DATA/Insegnamenti/11_2349/materiale/2.pdf",
+      "id": "maimonides",
+      "name": "Moses Maimonides",
+      "width": 768,
+      "height": 436,
+      "image": "maimonides.jxl",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Portrait_of_Moses_Maimonides_in_Thesaurus_antiquitatum_sacrarum.tif",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/3/38/Portrait_of_Moses_Maimonides_in_Thesaurus_antiquitatum_sacrarum.tif?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "artist": "Blaisio Ugolino",
+      "credit": "https://collections.library.yale.edu/catalog/2008140",
       "attribution": "",
       "copyright": "",
       "license": "Public domain",
       "licenseURL": "",
-      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
-      "width": 563,
-      "height": 768
+      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
     },
     {
       "id": "mozi",
@@ -1345,6 +1412,22 @@
       "height": 768
     },
     {
+      "id": "machiavelli",
+      "name": "Niccolò Machiavelli",
+      "image": "machiavelli.jxl",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Portrait_of_Niccol%C3%B2_Machiavelli_by_Santi_di_Tito.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Portrait_of_Niccol%C3%B2_Machiavelli_by_Santi_di_Tito.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "artist": "Santi di Tito",
+      "credit": "Cropped and enhanced from a book cover found on Google Images.",
+      "attribution": "",
+      "copyright": "",
+      "license": "Public domain",
+      "licenseURL": "",
+      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
+      "width": 597,
+      "height": 768
+    },
+    {
       "id": "parmenides",
       "name": "Parmenides",
       "width": 632,
@@ -1375,6 +1458,23 @@
       "license": "Public domain",
       "licenseURL": "",
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
+    },
+    {
+      "id": "paulin-hountondji",
+      "name": "Paulin J. Hountondji",
+      "sourcePage": "https://www.stias.ac.za/people/paulin-j-hountondji/",
+      "sourceImage": "https://www.stias.ac.za/uploads/466bea10-b2ee-4142-9dd4-ec7c34ac5b9e.jpg",
+      "artist": "Photographer not identified on the source page.",
+      "credit": "Stellenbosch Institute for Advanced Study (STIAS) fellow portrait.",
+      "copyright": "Source website copyright notice: STIAS. No separate photograph reuse license documented.",
+      "license": "Copyrighted; no open reuse license documented.",
+      "image": "paulin-hountondji.jxl",
+      "licenseURL": "",
+      "attribution": "See source and creator information.",
+      "reuseStatus": "No open reuse license verified",
+      "changes": "Converted to PNG for the Xcode asset catalog and JPEG XL for the portrait archive; reduced proportionally only if larger than768 pixels. No crop, retouching, or enlargement.",
+      "width": 510,
+      "height": 768
     },
     {
       "id": "peter-singer",
@@ -1537,22 +1637,6 @@
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
     },
     {
-      "id": "sartre-jean-paul",
-      "name": "Jean-Paul Sartre",
-      "width": 586,
-      "height": 768,
-      "image": "sartre-jean-paul.jxl",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Jean_Paul_Sartre_1965.jpg",
-      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Jean_Paul_Sartre_1965.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "artist": "Unknown authorUnknown author",
-      "credit": "[1] Dutch National Archives, The Hague, Fotocollectie Algemeen Nederlands Persbureau (ANEFO), 1945-1989 bekijk toegang 2.24.01.04 Bestanddeelnummer 917-9600",
-      "attribution": "",
-      "copyright": "",
-      "license": "CC BY-SA 3.0 nl",
-      "licenseURL": "https://creativecommons.org/licenses/by-sa/3.0/nl/deed.en",
-      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
-    },
-    {
       "id": "seneca",
       "name": "Seneca",
       "image": "seneca.jxl",
@@ -1583,22 +1667,6 @@
       "license": "Public domain",
       "licenseURL": "",
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
-    },
-    {
-      "id": "shankara",
-      "name": "Adi Shankara",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Raja_Ravi_Varma_-_Sankaracharya.jpg",
-      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Raja_Ravi_Varma_-_Sankaracharya.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "artist": "Raja Ravi Varma",
-      "credit": "Google Arts & Culture  — adi-shankaracharya/WgFvX3x6i0ckfQ",
-      "attribution": "",
-      "copyright": "",
-      "license": "Public domain",
-      "licenseURL": "",
-      "image": "shankara.jxl",
-      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching.",
-      "width": 544,
-      "height": 768
     },
     {
       "id": "simone-de-beauvoir",
@@ -1649,22 +1717,6 @@
       "height": 768
     },
     {
-      "id": "soren-kierkegaard",
-      "name": "Søren Kierkegaard",
-      "image": "soren-kierkegaard.jxl",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:S%C3%B8ren_Kierkegaard_(1813-1855)_-_(cropped).jpg",
-      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/d/d4/S%C3%B8ren_Kierkegaard_%281813-1855%29_-_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "artist": "La Biblioteca Real de Dinamarca",
-      "credit": "https://www.flickr.com/photos/45270502@N06/9645352916/",
-      "attribution": "",
-      "copyright": "",
-      "license": "Public domain",
-      "licenseURL": "",
-      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
-      "width": 544,
-      "height": 768
-    },
-    {
       "id": "sri-aurobindo",
       "name": "Sri Aurobindo",
       "width": 576,
@@ -1695,6 +1747,22 @@
       "license": "CC BY-SA 4.0",
       "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
       "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as PNG for the Xcode asset catalog and JPEG XL for the original portrait archive; no crop or retouching."
+    },
+    {
+      "id": "soren-kierkegaard",
+      "name": "Søren Kierkegaard",
+      "image": "soren-kierkegaard.jxl",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:S%C3%B8ren_Kierkegaard_(1813-1855)_-_(cropped).jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/d/d4/S%C3%B8ren_Kierkegaard_%281813-1855%29_-_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "artist": "La Biblioteca Real de Dinamarca",
+      "credit": "https://www.flickr.com/photos/45270502@N06/9645352916/",
+      "attribution": "",
+      "copyright": "",
+      "license": "Public domain",
+      "licenseURL": "",
+      "changes": "Resized proportionally to a maximum dimension of 768 pixels and encoded as JPEG XL; no crop or retouching.",
+      "width": 544,
+      "height": 768
     },
     {
       "id": "theodor-adorno",

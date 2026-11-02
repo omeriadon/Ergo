@@ -62,6 +62,21 @@ struct PhilosopherDetailView: View {
 							.foregroundStyle(.white)
 							.font(.largeTitle.bold())
 							.frame(maxWidth: .infinity, alignment: .center)
+							.lineLimit(2)
+
+						HStack {
+							Text(philosopher.birthYear.description)
+							Text(philosopher.deathYear == nil ? "-" : "to")
+							if let deathYear = philosopher.deathYear {
+								Text(deathYear.description)
+							} else {
+								Text("present")
+							}
+						}
+						.frame(maxWidth: .infinity, alignment: .center)
+						.monospaced()
+						.fontDesign(.monospaced)
+						.foregroundStyle(.secondary)
 
 						Spacer()
 							.frame(height: 60)
