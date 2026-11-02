@@ -14,7 +14,12 @@ struct SymbolsView: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
-	@State private var tokens: [SymbolSearchToken] = []
+	@State private var tokens: [SymbolSearchToken]
+
+	init(initialFilter: SymbolSearchToken? = nil) {
+		_tokens = State(initialValue: initialFilter.map { [$0] } ?? [])
+	}
+
 	@State private var searchTerm = ""
 
 	private var matchingTokens: [SymbolSearchToken] {

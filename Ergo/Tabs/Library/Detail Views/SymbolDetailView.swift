@@ -82,7 +82,7 @@ struct SymbolDetailView: View {
 									.foregroundStyle(.secondary)
 									.textCase(.uppercase)
 
-								NavigationLink(value: LibraryRoute.category(.symbols)) {
+								NavigationLink(value: LibraryRoute.symbols(filter: .group(symbol.group))) {
 									HStack(spacing: 2) {
 										Text(symbol.group.rawValue.capitalized)
 										Image(systemName: "chevron.right")
@@ -106,7 +106,12 @@ struct SymbolDetailView: View {
 					.frame(maxWidth: .infinity, alignment: .leading)
 				}
 				.scrollEdgeEffectStyle(.soft, for: .all)
+				.navigationTitle(symbol.name.capitalized)
 				.toolbar {
+					ToolbarItem(placement: .title) {
+						Text("")
+					}
+
 					ToolbarItem(placement: .topBarTrailing) {
 						Button {} label: {
 							Label("Bookmark", systemImage: "bookmark")

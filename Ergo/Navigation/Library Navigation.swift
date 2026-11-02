@@ -24,6 +24,8 @@ enum LibraryContent: Hashable {
 enum LibraryRoute: Hashable {
 	case category(LibraryContent)
 	case detail(category: LibraryContent, id: String)
+
+	case symbols(filter: SymbolSearchToken)
 }
 
 // MARK: - Symbol

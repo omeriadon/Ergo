@@ -46,6 +46,9 @@ struct ContentView: View {
 
 								case let .detail(category, id):
 									LibraryDetailView(category: category, id: id)
+
+								case let .symbols(filter):
+									SymbolsView(initialFilter: filter)
 							}
 						}
 						.toolbarTitleItem()
