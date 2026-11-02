@@ -136,6 +136,7 @@ struct PhilosophersView: View {
 		_ philosophers: [Philosopher],
 		query: String
 	) -> [Philosopher] {
+		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !query.isEmpty else { return philosophers }
 
 		let matcher = FuzzyMatcher()
@@ -143,10 +144,7 @@ struct PhilosophersView: View {
 		var buffer = matcher.makeBuffer()
 
 		return philosophers.compactMap { philosopher -> (Philosopher, Double)? in
-			let fields: [(String, Double)] = [
-				(philosopher.name, 1.0),
-				(philosopher.summary, 0.5),
-			]
+			let fields = philosopher.searchFields
 
 			let score = fields.compactMap { text, weight in
 				matcher.score(

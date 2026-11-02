@@ -247,6 +247,7 @@ struct SymbolsView: View {
 		_ symbols: [LogicSymbol],
 		query: String
 	) -> [LogicSymbol] {
+		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !query.isEmpty else { return symbols }
 
 		let matcher = FuzzyMatcher()
@@ -254,12 +255,7 @@ struct SymbolsView: View {
 		var buffer = matcher.makeBuffer()
 
 		return symbols.compactMap { symbol -> (LogicSymbol, Double)? in
-			let fields: [(String, Double)] = [
-				(symbol.name, 1.0),
-				(symbol.glyph, 1.0),
-				(symbol.body, 0.5),
-				(symbol.summary, 0.5),
-			] + symbol.aliases.map { ($0, 0.9) }
+			let fields = symbol.searchFields
 
 			let score = fields.compactMap { text, weight in
 				matcher.score(

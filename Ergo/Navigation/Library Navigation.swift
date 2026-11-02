@@ -20,6 +20,27 @@ nonisolated enum LibraryContent: Hashable, Codable, Sendable, Defaults.Serializa
 	case philosophers
 	case razors
 	case arguments
+
+	var symbol: String {
+		switch self {
+			case .biases:
+				"distribute.vertical.center"
+			case .razors:
+				"scissors"
+			case .symbols:
+				"f.cursive"
+			case .concepts:
+				"book.closed"
+			case .paradoxes:
+				"infinity"
+			case .philosophers:
+				"brain.head.profile"
+			case .fallacies:
+				"repeat.badge.xmark"
+			case .arguments:
+				"text.bubble"
+		}
+	}
 }
 
 /// the actual library route, middle plus detail

@@ -208,6 +208,7 @@ struct RazorsView: View {
 		_ razors: [Razor],
 		query: String
 	) -> [Razor] {
+		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !query.isEmpty else { return razors }
 
 		let matcher = FuzzyMatcher()
@@ -215,11 +216,7 @@ struct RazorsView: View {
 		var buffer = matcher.makeBuffer()
 
 		return razors.compactMap { razor -> (Razor, Double)? in
-			let fields: [(String, Double)] = [
-				(razor.name, 1.0),
-				(razor.body, 0.5),
-				(razor.summary, 0.5),
-			] + razor.aliases.map { ($0, 0.9) }
+			let fields = razor.searchFields
 
 			let score = fields.compactMap { text, weight in
 				matcher.score(

@@ -185,6 +185,7 @@ struct ArgumentsView: View {
 		_ arguments: [Argument],
 		query: String
 	) -> [Argument] {
+		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !query.isEmpty else { return arguments }
 
 		let matcher = FuzzyMatcher()
@@ -192,11 +193,7 @@ struct ArgumentsView: View {
 		var buffer = matcher.makeBuffer()
 
 		return arguments.compactMap { argument -> (Argument, Double)? in
-			let fields: [(String, Double)] = [
-				(argument.name, 1.0),
-				(argument.body, 0.5),
-				(argument.summary, 0.5),
-			] + argument.aliases.map { ($0, 0.9) }
+			let fields = argument.searchFields
 
 			let score = fields.compactMap { text, weight in
 				matcher.score(

@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
+import FuzzyMatch
 import SwiftUI
 
 private struct CardView: View {
@@ -69,7 +70,7 @@ struct LibraryTabView: View {
 				id: entry.id,
 				name: entry.name,
 				category: .biases,
-				searchableText: ([entry.name, entry.summary, entry.body] + entry.aliases).joined(separator: " ")
+				searchFields: entry.searchFields
 			)
 		}
 		let conceptResults = catalog.concepts.concepts.map { entry in
@@ -77,7 +78,7 @@ struct LibraryTabView: View {
 				id: entry.id,
 				name: entry.name,
 				category: .concepts,
-				searchableText: ([entry.name, entry.summary, entry.body] + entry.aliases).joined(separator: " ")
+				searchFields: entry.searchFields
 			)
 		}
 		let fallacyResults = catalog.fallacies.fallacies.map { entry in
@@ -85,7 +86,7 @@ struct LibraryTabView: View {
 				id: entry.id,
 				name: entry.name,
 				category: .fallacies,
-				searchableText: ([entry.name, entry.summary, entry.body] + entry.aliases).joined(separator: " ")
+				searchFields: entry.searchFields
 			)
 		}
 		let symbolResults = catalog.logicSymbols.symbols.map { entry in
@@ -93,7 +94,7 @@ struct LibraryTabView: View {
 				id: entry.id,
 				name: entry.name,
 				category: .symbols,
-				searchableText: ([entry.name, entry.summary, entry.body, entry.glyph] + entry.aliases).joined(separator: " ")
+				searchFields: entry.searchFields
 			)
 		}
 		let paradoxResults = catalog.paradoxes.paradoxes.map { entry in
@@ -101,7 +102,7 @@ struct LibraryTabView: View {
 				id: entry.id,
 				name: entry.name,
 				category: .paradoxes,
-				searchableText: ([entry.name, entry.summary, entry.body] + entry.aliases).joined(separator: " ")
+				searchFields: entry.searchFields
 			)
 		}
 		let philosopherResults = catalog.philosophers.philosophers.map { entry in
@@ -109,7 +110,7 @@ struct LibraryTabView: View {
 				id: entry.id,
 				name: entry.name,
 				category: .philosophers,
-				searchableText: [entry.name, entry.summary, entry.body].joined(separator: " ")
+				searchFields: entry.searchFields
 			)
 		}
 		let razorResults = catalog.razors.razors.map { entry in
@@ -117,7 +118,7 @@ struct LibraryTabView: View {
 				id: entry.id,
 				name: entry.name,
 				category: .razors,
-				searchableText: ([entry.name, entry.summary, entry.body] + entry.aliases).joined(separator: " ")
+				searchFields: entry.searchFields
 			)
 		}
 		let argumentResults = catalog.arguments.arguments.map { entry in
@@ -125,7 +126,7 @@ struct LibraryTabView: View {
 				id: entry.id,
 				name: entry.name,
 				category: .arguments,
-				searchableText: ([entry.name, entry.summary, entry.body] + entry.aliases).joined(separator: " ")
+				searchFields: entry.searchFields
 			)
 		}
 		var entries = biasResults
@@ -136,7 +137,32 @@ struct LibraryTabView: View {
 		entries += philosopherResults
 		entries += razorResults
 		entries += argumentResults
-		return entries.filter { $0.searchableText.localizedStandardContains(query) }
+		return searchLibrary(entries, query: query)
+	}
+
+	func searchLibrary(
+		_ entries: [LibrarySearchEntry],
+		query: String
+	) -> [LibrarySearchEntry] {
+		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
+		guard !query.isEmpty else { return [] }
+
+		let matcher = FuzzyMatcher()
+		let prepared = matcher.prepare(query)
+		var buffer = matcher.makeBuffer()
+		return entries.compactMap { entry -> (LibrarySearchEntry, Double)? in
+			let score = entry.searchFields.compactMap { field in
+				matcher.score(
+					field.text,
+					against: prepared,
+					buffer: &buffer
+				).map { $0.score * field.weight }
+			}.max()
+			guard let score else { return nil }
+			return (entry, score)
+		}
+		.sorted { $0.1 > $1.1 }
+		.map(\.0)
 	}
 
 	var body: some View {
@@ -159,20 +185,22 @@ struct LibraryTabView: View {
 				} else if searchResults.isEmpty {
 					ContentUnavailableView.search(text: searchTerm)
 				} else {
-					LazyVStack(alignment: .leading, spacing: 0) {
+					LazyVStack(alignment: .leading, spacing: 10) {
 						ForEach(searchResults) { result in
 							NavigationLink(
 								value: LibraryRoute.detail(category: result.category, id: result.id)
 							) {
-								Label(result.name, systemImage: "magnifyingglass")
+								Label(result.name, systemImage: result.category.symbol)
 							}
 							.accessibilityIdentifier("library.search.\(result.category).\(result.id)")
 							.padding(.horizontal)
 							.padding(.vertical, 10)
+							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
 						}
 					}
+					.animation(.easeInOut(duration: 0.2), value: searchPresented)
+					.animation(.easeInOut(duration: 0.2), value: searchTerm)
 				}
-
 			} else {
 				Grid(horizontalSpacing: 12, verticalSpacing: 12) {
 					GridRow {

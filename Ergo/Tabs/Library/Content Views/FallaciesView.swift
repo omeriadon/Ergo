@@ -185,6 +185,7 @@ struct FallaciesView: View {
 		_ fallacies: [Fallacy],
 		query: String
 	) -> [Fallacy] {
+		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !query.isEmpty else { return fallacies }
 
 		let matcher = FuzzyMatcher()
@@ -192,11 +193,7 @@ struct FallaciesView: View {
 		var buffer = matcher.makeBuffer()
 
 		return fallacies.compactMap { fallacy -> (Fallacy, Double)? in
-			let fields: [(String, Double)] = [
-				(fallacy.name, 1.0),
-				(fallacy.body, 0.5),
-				(fallacy.summary, 0.5),
-			] + fallacy.aliases.map { ($0, 0.9) }
+			let fields = fallacy.searchFields
 
 			let score = fields.compactMap { text, weight in
 				matcher.score(

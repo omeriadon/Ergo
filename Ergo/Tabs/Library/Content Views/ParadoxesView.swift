@@ -208,6 +208,7 @@ struct ParadoxesView: View {
 		_ paradoxes: [Paradox],
 		query: String
 	) -> [Paradox] {
+		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !query.isEmpty else { return paradoxes }
 
 		let matcher = FuzzyMatcher()
@@ -215,11 +216,7 @@ struct ParadoxesView: View {
 		var buffer = matcher.makeBuffer()
 
 		return paradoxes.compactMap { paradox -> (Paradox, Double)? in
-			let fields: [(String, Double)] = [
-				(paradox.name, 1.0),
-				(paradox.body, 0.5),
-				(paradox.summary, 0.5),
-			] + paradox.aliases.map { ($0, 0.9) }
+			let fields = paradox.searchFields
 
 			let score = fields.compactMap { text, weight in
 				matcher.score(

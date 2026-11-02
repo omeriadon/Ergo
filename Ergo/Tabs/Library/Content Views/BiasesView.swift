@@ -208,6 +208,7 @@ struct BiasesView: View {
 		_ biases: [Bias],
 		query: String
 	) -> [Bias] {
+		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !query.isEmpty else { return biases }
 
 		let matcher = FuzzyMatcher()
@@ -215,11 +216,7 @@ struct BiasesView: View {
 		var buffer = matcher.makeBuffer()
 
 		return biases.compactMap { bias -> (Bias, Double)? in
-			let fields: [(String, Double)] = [
-				(bias.name, 1.0),
-				(bias.body, 0.5),
-				(bias.summary, 0.5),
-			] + bias.aliases.map { ($0, 0.9) }
+			let fields = bias.searchFields
 
 			let score = fields.compactMap { text, weight in
 				matcher.score(

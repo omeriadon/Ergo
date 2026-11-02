@@ -185,6 +185,7 @@ struct ConceptsView: View {
 		_ concepts: [Concept],
 		query: String
 	) -> [Concept] {
+		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !query.isEmpty else { return concepts }
 
 		let matcher = FuzzyMatcher()
@@ -192,11 +193,7 @@ struct ConceptsView: View {
 		var buffer = matcher.makeBuffer()
 
 		return concepts.compactMap { concept -> (Concept, Double)? in
-			let fields: [(String, Double)] = [
-				(concept.name, 1.0),
-				(concept.body, 0.5),
-				(concept.summary, 0.5),
-			] + concept.aliases.map { ($0, 0.9) }
+			let fields = concept.searchFields
 
 			let score = fields.compactMap { text, weight in
 				matcher.score(
