@@ -25,52 +25,72 @@ struct SymbolDetailView: View {
 			if let symbol = catalog.logicSymbols.symbols.first(where: { $0.id == id }) {
 				ScrollView {
 					VStack(alignment: .leading) {
-						Button {
-							if !symbol.alternateGlyphs.isEmpty || !symbol.aliases.isEmpty {
-								showAlternateGlyphs = true
-							}
-						} label: {
-							Text(symbol.glyph)
-								.font(.largeTitle.scaled(by: 2.4))
-								.popover(isPresented: $showAlternateGlyphs) {
-									VStack(alignment: .leading, spacing: 20) {
-										if !symbol.alternateGlyphs.isEmpty {
-											VStack(alignment: .leading) {
-												Text("Alternate Glyphs")
-													.font(.caption)
-													.foregroundStyle(.secondary)
-													.textCase(.uppercase)
-
-												HStack(spacing: 45) {
-													ForEach(symbol.alternateGlyphs, id: \.description) { alt in
-														Text(alt)
-													}
-												}
-												.font(.system(.largeTitle, design: .monospaced))
-												.monospaced()
-											}
-										}
-
-										if !symbol.aliases.isEmpty {
-											VStack(alignment: .leading) {
-												Text("Aliases")
-													.font(.caption)
-													.foregroundStyle(.secondary)
-													.textCase(.uppercase)
-
-												HStack(spacing: 45) {
-													ForEach(symbol.aliases, id: \.description) { alt in
-														Text(alt)
-													}
-												}
-												.font(.system(.title, design: .monospaced))
-												.monospaced()
-											}
-										}
-									}
-									.padding()
-									.presentationCompactAdaptation(.popover)
+						HStack(alignment: .top) {
+							Button {
+								if !symbol.alternateGlyphs.isEmpty || !symbol.aliases.isEmpty {
+									showAlternateGlyphs = true
 								}
+							} label: {
+								Text(symbol.glyph)
+									.font(.largeTitle.scaled(by: 2.4))
+									.popover(isPresented: $showAlternateGlyphs) {
+										VStack(alignment: .leading, spacing: 20) {
+											if !symbol.alternateGlyphs.isEmpty {
+												VStack(alignment: .leading) {
+													Text("Alternate Glyphs")
+														.font(.caption)
+														.foregroundStyle(.secondary)
+														.textCase(.uppercase)
+
+													HStack(spacing: 45) {
+														ForEach(symbol.alternateGlyphs, id: \.description) { alt in
+															Text(alt)
+														}
+													}
+													.font(.system(.largeTitle, design: .monospaced))
+													.monospaced()
+												}
+											}
+
+											if !symbol.aliases.isEmpty {
+												VStack(alignment: .leading) {
+													Text("Aliases")
+														.font(.caption)
+														.foregroundStyle(.secondary)
+														.textCase(.uppercase)
+
+													HStack(spacing: 45) {
+														ForEach(symbol.aliases, id: \.description) { alt in
+															Text(alt)
+														}
+													}
+													.font(.system(.title, design: .monospaced))
+													.monospaced()
+												}
+											}
+										}
+										.padding()
+										.presentationCompactAdaptation(.popover)
+									}
+							}
+
+							Spacer()
+
+							HStack {
+								Text("Group:")
+									.font(.caption)
+									.foregroundStyle(.secondary)
+									.textCase(.uppercase)
+
+								NavigationLink(value: LibraryRoute.category(.symbols)) {
+									HStack(spacing: 2) {
+										Text(symbol.group.rawValue.capitalized)
+										Image(systemName: "chevron.right")
+											.imageScale(.small)
+									}
+								}
+							}
+							.padding(.top, 20)
 						}
 
 						Text(symbol.name)

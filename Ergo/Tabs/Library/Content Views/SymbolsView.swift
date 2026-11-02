@@ -14,81 +14,215 @@ struct SymbolsView: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
+	@State private var tokens: [SymbolSearchToken] = []
 	@State private var searchTerm = ""
+
+	private var matchingTokens: [SymbolSearchToken] {
+		let allTokens: [SymbolSearchToken] =
+			SymbolGroup.allCases.map { .group($0) } +
+			SymbolTag.allCases.map { .tag($0) }
+
+		return allTokens.filter { token in
+			!tokens.contains(token) &&
+				(
+					searchTerm.isEmpty ||
+						token.title.localizedStandardContains(searchTerm)
+				)
+		}
+	}
+
+	private var suggestedTokens: Binding<[SymbolSearchToken]> {
+		Binding(
+			get: { matchingTokens },
+			set: { _ in }
+		)
+	}
+
+	private var selectedGroups: Set<SymbolGroup> {
+		Set(tokens.compactMap {
+			guard case let .group(group) = $0 else { return nil }
+			return group
+		})
+	}
+
+	private var selectedTags: Set<SymbolTag> {
+		Set(tokens.compactMap {
+			guard case let .tag(tag) = $0 else { return nil }
+			return tag
+		})
+	}
+
+	private func toggleToken(_ token: SymbolSearchToken) {
+		withAnimation(.easeInOut(duration: 0.2)) {
+			if tokens.contains(token) {
+				tokens.removeAll { $0 == token }
+			} else {
+				tokens.append(token)
+			}
+		}
+	}
 
 	@State private var searchPresented = false
 
-	var body: some View {
+	var main: some View {
 		List {
-			if searchPresented {
-				if searchTerm.isEmpty {
-					VStack(spacing: 20) {
-						Image("Ergo")
-							.resizable()
-							.aspectRatio(contentMode: .fit)
-							.foregroundStyle(.accent.gradient)
-							.frame(width: 50, height: 50)
-						Text("Search Something")
-							.font(.title3)
-					}
-					.padding(.top, 90)
-					.listRowBackground(Color.clear)
-					.frame(maxWidth: .infinity, alignment: .center)
-					.transition(.opacity)
-				} else {
-					let results = searchSymbols(catalog.logicSymbols.symbols, query: searchTerm)
-
-					ForEach(results) { symbol in
-						NavigationLink(value: LibraryRoute.detail(category: .symbols, id: symbol.id)) {
-							HStack(alignment: .center) {
-								Text(symbol.glyph)
-									.font(.title)
-									.fontDesign(.monospaced)
-									.monospaced()
-									.frame(width: symbol.glyph.count < 3 ? 40 : 110, alignment: .leading)
-
-								Text(symbol.name)
-
-								Spacer()
-							}
-						}
-						.transition(.opacity)
-					}
-				}
-
-			} else {
-				ForEach(catalog.logicSymbols.symbols) { symbol in
-					NavigationLink(value: LibraryRoute.detail(category: .symbols, id: symbol.id)) {
-						HStack(alignment: .center) {
-							Text(symbol.glyph)
-								.font(.title)
-								.fontDesign(.monospaced)
-								.monospaced()
-								.frame(width: symbol.glyph.count < 3 ? 40 : 110, alignment: .leading)
-
-							Text(symbol.name)
-
-							Spacer()
+			if searchPresented, !matchingTokens.isEmpty {
+				Section("Filters") {
+					ForEach(matchingTokens) { token in
+						Button {
+							toggleToken(token)
+							searchTerm = ""
+						} label: {
+							Label(token.title, systemImage: token.symbol)
 						}
 					}
 				}
 			}
+
+			results
 		}
 		.scrollEdgeEffectStyle(.soft, for: .all)
 		.buttonStyle(.plain)
 		.toolbarMinimizationBehavior(.onScrollDown, for: .navigationBar)
 		.searchable(
 			text: $searchTerm,
+			tokens: $tokens,
 			isPresented: $searchPresented,
 			placement: .navigationBarDrawer(displayMode: .always),
 			prompt: "Search logic symbols"
-		)
-		.animation(.easeInOut(duration: 0.1), value: "\(searchPresented)\(searchTerm)")
+		) { token in
+			Text(token.title)
+		}
 		.navigationTitle("Symbols")
-		.toolbar {
-			ToolbarItem(placement: .title) {
-				Text("Symbols")
+		.animation(.easeInOut(duration: 0.2), value: tokens)
+	}
+
+	@ContentBuilder
+	var searchPresentedView: some View {
+		if !matchingTokens.isEmpty {
+			Section("Filters") {
+				ForEach(matchingTokens) { token in
+					Button {
+						tokens.append(token)
+						searchTerm = ""
+					} label: {
+						Label {
+							Text(token.title)
+						} icon: {
+							Image(systemName: token.symbol)
+						}
+					}
+				}
 			}
+		}
+
+		results
+	}
+
+	private var filteredSymbols: [LogicSymbol] {
+		let groups = selectedGroups
+		let tags = Set(selectedTags.map(\.rawValue))
+
+		let filtered = catalog.logicSymbols.symbols.filter { symbol in
+			let groupMatches =
+				groups.isEmpty ||
+				groups.contains(symbol.group)
+
+			let tagMatches =
+				tags.isEmpty ||
+				!tags.isDisjoint(with: symbol.tags)
+
+			return groupMatches && tagMatches
+		}
+
+		return searchSymbols(
+			filtered,
+			query: searchPresented ? searchTerm : ""
+		)
+	}
+
+	var results: some View {
+		Section {
+			ForEach(filteredSymbols) { symbol in
+				NavigationLink(
+					value: LibraryRoute.detail(
+						category: .symbols,
+						id: symbol.id
+					)
+				) {
+					HStack {
+						Text(symbol.glyph)
+							.font(.title)
+							.fontDesign(.monospaced)
+							.foregroundStyle(.accent)
+							.frame(
+								width: symbol.glyph.count < 3 ? 40 : 110,
+								alignment: .leading
+							)
+
+						Text(symbol.name)
+						Spacer()
+					}
+				}
+			}
+		}
+	}
+
+	var body: some View {
+		main
+			.toolbar {
+				ToolbarItem(placement: .title) {
+					Text("Symbols")
+				}
+
+				ToolbarItem(placement: .topBarTrailing) {
+					filterMenu
+						.background(tokens.isEmpty ? .clear : .accent, in: Circle())
+				}
+			}
+	}
+
+	private var filterMenu: some View {
+		Menu {
+			Menu("Groups", systemImage: "square.grid.2x2") {
+				ForEach(SymbolGroup.allCases) { group in
+					Toggle(
+						group.rawValue.capitalized,
+						isOn: Binding(
+							get: { tokens.contains(.group(group)) },
+							set: { _ in toggleToken(.group(group)) }
+						)
+					)
+				}
+			}
+			.menuActionDismissBehavior(.disabled)
+			.tint(.accent)
+
+			Menu("Tags", systemImage: "tag") {
+				ForEach(SymbolTag.allCases) { tag in
+					Toggle(
+						tag.rawValue.capitalized,
+						isOn: Binding(
+							get: { tokens.contains(.tag(tag)) },
+							set: { _ in toggleToken(.tag(tag)) }
+						)
+					)
+				}
+			}
+			.menuActionDismissBehavior(.disabled)
+			.tint(.accent)
+
+			Divider()
+
+			Button("Clear Filters") {
+				withAnimation(.easeInOut(duration: 0.2)) {
+					tokens.removeAll()
+				}
+			}
+			.disabled(tokens.isEmpty)
+			.tint(.accent)
+		} label: {
+			Image(systemName: "line.3.horizontal.decrease")
 		}
 	}
 

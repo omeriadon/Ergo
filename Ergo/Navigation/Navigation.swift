@@ -23,23 +23,6 @@ enum DebateRoute: Hashable {
 	case summary(id: String)
 }
 
-/// all the content middle views library can go to
-enum LibraryContent: Hashable {
-	case biases
-	case concepts
-	case fallacies
-	case symbols
-	case paradoxes
-	case philosophers
-	case razors
-}
-
-/// the actual library route, middle plus detail
-enum LibraryRoute: Hashable {
-	case category(LibraryContent)
-	case detail(category: LibraryContent, id: String)
-}
-
 enum AppSheet: Hashable, Identifiable {
 	case scanner
 	case paste

@@ -29,13 +29,17 @@ nonisolated enum CheckMode: String, Codable, Sendable {
 	case model
 }
 
-nonisolated enum SymbolGroup: String, Codable, Sendable {
+nonisolated enum SymbolGroup: String, Codable, CaseIterable, Identifiable, Sendable {
 	case connective
 	case quantifier
 	case modal
 	case constant
 	case relation
 	case set
+
+	var id: Self {
+		self
+	}
 }
 
 nonisolated struct Fallacy: Codable, Identifiable, Sendable {
