@@ -79,6 +79,9 @@ struct SymbolDetailView: View {
 
 						tags
 							.padding(.top)
+
+						Spacer()
+							.frame(height: 40)
 					}
 					.padding(.horizontal)
 					.frame(maxWidth: .infinity, alignment: .leading)
@@ -141,6 +144,9 @@ struct SymbolDetailView: View {
 						ForEach(symbol.tags, id: \.self) { tag in
 							NavigationLink(value: LibraryRoute.symbols(filter: .tag(tag))) {
 								HStack {
+									Image(systemName: "tag")
+										.imageScale(.small)
+
 									Text(tag.title)
 									Spacer()
 									Image(systemName: "chevron.right")

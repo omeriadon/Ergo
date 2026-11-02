@@ -46,6 +46,14 @@ nonisolated struct CatalogReference: Hashable, Identifiable, Codable, Sendable, 
 		self.category = category
 	}
 
+	nonisolated init(id: String, from decoder: Decoder) throws {
+		guard let index = decoder.userInfo[.catalogIndex] as? CatalogIndex else {
+			throw CatalogIndexError.missingID(id)
+		}
+
+		self = try index.reference(for: id)
+	}
+
 	init(from decoder: Decoder) throws {
 		if let id = try? decoder.singleValueContainer().decode(String.self) {
 			self = try CatalogReference(id: id, from: decoder)

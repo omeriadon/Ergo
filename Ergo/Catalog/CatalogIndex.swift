@@ -58,13 +58,3 @@ nonisolated struct CatalogIndex: Sendable {
 extension CodingUserInfoKey {
 	nonisolated static let catalogIndex = CodingUserInfoKey(rawValue: "catalogIndex")!
 }
-
-extension CatalogReference {
-	nonisolated init(id: String, from decoder: Decoder) throws {
-		guard let index = decoder.userInfo[.catalogIndex] as? CatalogIndex else {
-			throw CatalogIndexError.missingID(id)
-		}
-
-		self = try index.reference(for: id)
-	}
-}
