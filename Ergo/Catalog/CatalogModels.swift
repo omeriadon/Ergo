@@ -35,7 +35,7 @@ nonisolated struct CatalogLink: Codable, Sendable {
 	}
 }
 
-nonisolated enum BiasTag: String, Codable, CaseIterable, Hashable, Sendable {
+nonisolated enum BiasTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
 	case attention
 	case attribution
 	case beliefAssessment = "belief-assessment"
@@ -43,6 +43,29 @@ nonisolated enum BiasTag: String, Codable, CaseIterable, Hashable, Sendable {
 	case memory
 	case researchAndMeasurement = "research-and-measurement"
 	case socialJudgment = "social-judgment"
+
+	var title: String {
+		switch self {
+			case .attention:
+				"Attention"
+			case .attribution:
+				"Attribution"
+			case .beliefAssessment:
+				"Belief Assessment"
+			case .decisionMaking:
+				"Decisionmaking"
+			case .memory:
+				"Memory"
+			case .researchAndMeasurement:
+				"Research & Measurement"
+			case .socialJudgment:
+				"Social Judgement"
+		}
+	}
+
+	var id: Self {
+		self
+	}
 }
 
 nonisolated enum FallacyTag: String, Codable, CaseIterable, Hashable, Sendable {

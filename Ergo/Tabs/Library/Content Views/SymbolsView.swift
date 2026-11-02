@@ -86,6 +86,7 @@ struct SymbolsView: View {
 
 			results
 		}
+		.animation(.easeInOut(duration: 0.2), value: searchPresented)
 		.scrollEdgeEffectStyle(.soft, for: .all)
 		.buttonStyle(.plain)
 		.toolbarMinimizationBehavior(.never, for: .navigationBar)

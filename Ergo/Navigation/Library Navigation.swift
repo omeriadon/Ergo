@@ -27,6 +27,7 @@ enum LibraryRoute: Hashable {
 	case detail(category: LibraryContent, id: String)
 
 	case symbols(filter: SymbolSearchToken)
+	case biases(filter: BiasTag)
 }
 
 nonisolated struct CatalogReference: Hashable, Identifiable, Codable, Sendable, Defaults.Serializable {
