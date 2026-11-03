@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 2/11/2026.
 //
 
+import Defaults
 import SwiftUI
 
 struct FallaciesView: View {
@@ -12,11 +13,16 @@ struct FallaciesView: View {
 
 	@Environment(CatalogStore.self) private var catalog
 
+	@Environment(NavigationManager.self)
+	private var navigation
+
 	@State private var tokens: [FallacyTag]
 
 	init(initialFilter: FallacyTag? = nil) {
 		_tokens = State(initialValue: initialFilter.map { [$0] } ?? [])
 	}
+
+	@Default(.bookmarks) var bookmarks
 
 	@State private var searchTerm = ""
 	@State private var searchedFallacies: [Fallacy] = []
@@ -136,11 +142,42 @@ struct FallaciesView: View {
 							id: fallacy.id
 						)
 					) {
+						let target = CatalogReference(id: fallacy.id, name: fallacy.name, category: .fallacies)
+
+						let isBookmarked = bookmarks.contains(target)
+
 						HStack {
 							Label(fallacy.name, systemImage: fallacy.symbolName ?? "repeat.badge.xmark")
 							Spacer()
+
+							if isBookmarked {
+								Image(systemName: "bookmark")
+									.foregroundStyle(.secondary)
+									.symbolVariant(.fill)
+							}
 						}
 						.accessibilityIdentifier("library.fallacies.\(fallacy.id)")
+						.contextMenu {
+							Button {
+								withAnimation(.easeInOut) {
+									if isBookmarked {
+										bookmarks.remove(target)
+									} else {
+										bookmarks.insert(target)
+									}
+								}
+							} label: {
+								if isBookmarked {
+									Label("Remove Bookmark", systemImage: "bookmark.fill")
+								} else {
+									Label("Bookmark", systemImage: "bookmark")
+								}
+							}
+						} preview: {
+							LibraryDetailView(category: target.category, id: target.id)
+								.environment(catalog)
+								.environment(navigation)
+						}
 					}
 					.transition(.opacity)
 				}

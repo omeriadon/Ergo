@@ -9,7 +9,7 @@ import Defaults
 import Foundation
 
 /// all the content middle views library can go to
-nonisolated enum LibraryContent: Hashable, Codable, Sendable, Defaults.Serializable {
+nonisolated enum LibraryContent: String, Hashable, Codable, Sendable, Defaults.Serializable {
 	case biases
 	case concepts
 	case fallacies
@@ -39,6 +39,10 @@ nonisolated enum LibraryContent: Hashable, Codable, Sendable, Defaults.Serializa
 				"text.bubble"
 		}
 	}
+
+	var title: String {
+		rawValue.capitalized
+	}
 }
 
 /// the actual library route, middle plus detail
@@ -53,4 +57,6 @@ enum LibraryRoute: Hashable {
 	case concepts(filter: ConceptTag)
 	case fallacies(filter: FallacyTag)
 	case arguments(filter: ArgumentTag)
+
+	case bookmarks
 }

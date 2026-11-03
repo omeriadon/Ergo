@@ -8,31 +8,25 @@
 import SwiftUI
 
 struct AboutView: View {
-
 	@Environment(NavigationManager.self)
 	private var navigation
 
-    var body: some View {
+	var body: some View {
 		NavigationStack {
 			ZStack {
 				DitherView(configuration: configuration)
 					.ignoresSafeArea()
 
 				VStack {
-
-
 					Spacer()
 
 					VStack(spacing: 0) {
-						
 						ErgoIcon(size: 240)
 
 						VStack(spacing: 16) {
-
 							Text("Ergo")
 								.font(.largeTitle)
 								.bold()
-
 
 							HStack(spacing: 0) {
 								Text("v")
@@ -43,7 +37,6 @@ struct AboutView: View {
 							}
 							.monospaced()
 							.fontDesign(.monospaced)
-
 						}
 					}
 					.padding(.bottom)
@@ -58,9 +51,7 @@ struct AboutView: View {
 							.foregroundStyle(.red.gradient)
 							.symbolEffect(.bounce)
 					}
-
 				}
-
 			}
 			.fontDesign(.rounded)
 			.toolbar {
@@ -72,7 +63,7 @@ struct AboutView: View {
 			}
 		}
 		.interactiveDismissDisabled()
-    }
+	}
 
 	private var configuration: DitherConfiguration {
 		var c = DitherConfiguration()
@@ -104,8 +95,8 @@ struct AboutView: View {
 		c.backgroundColor = SIMD3<Float>(0, 0, 0)
 
 		c.palette = [
-			SIMD3<Float>(122 / 255.0, 82 / 255.0, 48 / 255.0),   // #7A5230
-			SIMD3<Float>(201 / 255.0, 160 / 255.0, 122 / 255.0) // #C9A07A
+			SIMD3<Float>(122 / 255.0, 82 / 255.0, 48 / 255.0), // #7A5230
+			SIMD3<Float>(201 / 255.0, 160 / 255.0, 122 / 255.0), // #C9A07A
 		]
 
 		c.backgroundStyle = "custom"
@@ -129,7 +120,6 @@ struct AboutView: View {
 
 		return c
 	}
-
 }
 
 #Preview {

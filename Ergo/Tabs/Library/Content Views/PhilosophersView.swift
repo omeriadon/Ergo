@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
+import Defaults
 import SwiftUI
 
 struct PhilosophersView: View {
@@ -14,6 +15,8 @@ struct PhilosophersView: View {
 
 	@Environment(NavigationManager.self)
 	private var navigation
+
+	@Default(.bookmarks) var bookmarks
 
 	@State private var searchTerm = ""
 	@State private var searchedPhilosophers: [Philosopher] = []
@@ -82,6 +85,10 @@ struct PhilosophersView: View {
 							id: philosopher.id
 						)
 					) {
+						let target = CatalogReference(id: philosopher.id, name: philosopher.name, category: .philosophers)
+
+						let isBookmarked = bookmarks.contains(target)
+
 						HStack {
 							ZStack {
 								Image(philosopher.id)
@@ -121,6 +128,33 @@ struct PhilosophersView: View {
 							Text(philosopher.name)
 
 							Spacer()
+
+							if isBookmarked {
+								Image(systemName: "bookmark")
+									.foregroundStyle(.secondary)
+									.symbolVariant(.fill)
+							}
+						}
+						.contextMenu {
+							Button {
+								withAnimation(.easeInOut) {
+									if isBookmarked {
+										bookmarks.remove(target)
+									} else {
+										bookmarks.insert(target)
+									}
+								}
+							} label: {
+								if isBookmarked {
+									Label("Remove Bookmark", systemImage: "bookmark.fill")
+								} else {
+									Label("Bookmark", systemImage: "bookmark")
+								}
+							}
+						} preview: {
+							LibraryDetailView(category: target.category, id: target.id)
+								.environment(catalog)
+								.environment(navigation)
 						}
 					}
 					.transition(.opacity)

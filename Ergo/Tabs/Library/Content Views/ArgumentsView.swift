@@ -5,10 +5,16 @@
 //  Created by Adon Omeri on 2/11/2026.
 //
 
+import Defaults
 import SwiftUI
 
 struct ArgumentsView: View {
 	@Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+	@Environment(NavigationManager.self)
+	private var navigation
+
+	@Default(.bookmarks) var bookmarks
 
 	@Environment(CatalogStore.self) private var catalog
 
@@ -136,11 +142,36 @@ struct ArgumentsView: View {
 							id: argument.id
 						)
 					) {
+						let target = CatalogReference(id: argument.id, name: argument.name, category: .arguments)
+
+						let isBookmarked = bookmarks.contains(target)
+
 						HStack {
 							Label(argument.name, systemImage: argument.symbolName ?? "text.bubble")
 							Spacer()
 						}
 						.accessibilityIdentifier("library.arguments.\(argument.id)")
+						.contextMenu {
+							Button {
+								withAnimation(.easeInOut) {
+									if isBookmarked {
+										bookmarks.remove(target)
+									} else {
+										bookmarks.insert(target)
+									}
+								}
+							} label: {
+								if isBookmarked {
+									Label("Remove Bookmark", systemImage: "bookmark.fill")
+								} else {
+									Label("Bookmark", systemImage: "bookmark")
+								}
+							}
+						} preview: {
+							LibraryDetailView(category: target.category, id: target.id)
+								.environment(catalog)
+								.environment(navigation)
+						}
 					}
 					.transition(.opacity)
 				}

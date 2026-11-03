@@ -67,6 +67,9 @@ struct ContentView: View {
 
 								case let .arguments(filter):
 									ArgumentsView(initialFilter: filter)
+
+								case .bookmarks:
+									BookmarksView()
 							}
 						}
 						.toolbarTitleItem()
@@ -109,7 +112,7 @@ struct ContentView: View {
 		.environment(catalog)
 		.onAppear {
 			thing.selectedTab = .library
-			thing.libraryPath = [.category(.paradoxes), .detail(category: .paradoxes, id: "grandfather-paradox")]
+			thing.libraryPath = [.bookmarks]
 			Task {
 				try? await catalog.load()
 			}

@@ -27,6 +27,7 @@ struct ErgoIcon: View {
 		.scaleEffect(size / 92)
 		.frame(width: size, height: size)
 	}
+
 	private var glassCircle: some View {
 		Text(" ")
 			.frame(width: diameter, height: diameter)

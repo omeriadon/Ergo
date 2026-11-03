@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 2/11/2026.
 //
 
+import Defaults
 import SwiftUI
 
 struct ParadoxesView: View {
@@ -14,6 +15,8 @@ struct ParadoxesView: View {
 
 	@Environment(NavigationManager.self)
 	private var navigation
+
+	@Default(.bookmarks) var bookmarks
 
 	@State private var tokens: [ParadoxTag]
 
@@ -161,9 +164,40 @@ struct ParadoxesView: View {
 							id: paradox.id
 						)
 					) {
+						let target = CatalogReference(id: paradox.id, name: paradox.name, category: .paradoxes)
+
+						let isBookmarked = bookmarks.contains(target)
+
 						HStack {
 							Label(paradox.name, systemImage: "infinity")
 							Spacer()
+
+							if isBookmarked {
+								Image(systemName: "bookmark")
+									.foregroundStyle(.secondary)
+									.symbolVariant(.fill)
+							}
+						}
+						.contextMenu {
+							Button {
+								withAnimation(.easeInOut) {
+									if isBookmarked {
+										bookmarks.remove(target)
+									} else {
+										bookmarks.insert(target)
+									}
+								}
+							} label: {
+								if isBookmarked {
+									Label("Remove Bookmark", systemImage: "bookmark.fill")
+								} else {
+									Label("Bookmark", systemImage: "bookmark")
+								}
+							}
+						} preview: {
+							LibraryDetailView(category: target.category, id: target.id)
+								.environment(catalog)
+								.environment(navigation)
 						}
 					}
 					.transition(.opacity)

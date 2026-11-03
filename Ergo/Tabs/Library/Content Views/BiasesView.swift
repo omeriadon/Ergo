@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
+import Defaults
 import SwiftUI
 
 struct BiasesView: View {
@@ -14,6 +15,8 @@ struct BiasesView: View {
 
 	@Environment(NavigationManager.self)
 	private var navigation
+
+	@Default(.bookmarks) var bookmarks
 
 	@State private var tokens: [BiasTag]
 
@@ -161,9 +164,40 @@ struct BiasesView: View {
 							id: bias.id
 						)
 					) {
+						let target = CatalogReference(id: bias.id, name: bias.name, category: .biases)
+
+						let isBookmarked = bookmarks.contains(target)
+
 						HStack {
 							Text(bias.name)
 							Spacer()
+
+							if isBookmarked {
+								Image(systemName: "bookmark")
+									.foregroundStyle(.secondary)
+									.symbolVariant(.fill)
+							}
+						}
+						.contextMenu {
+							Button {
+								withAnimation(.easeInOut) {
+									if isBookmarked {
+										bookmarks.remove(target)
+									} else {
+										bookmarks.insert(target)
+									}
+								}
+							} label: {
+								if isBookmarked {
+									Label("Remove Bookmark", systemImage: "bookmark.fill")
+								} else {
+									Label("Bookmark", systemImage: "bookmark")
+								}
+							}
+						} preview: {
+							LibraryDetailView(category: target.category, id: target.id)
+								.environment(catalog)
+								.environment(navigation)
 						}
 					}
 					.transition(.opacity)

@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
+import Defaults
 import SwiftUI
 
 struct SymbolsView: View {
@@ -14,6 +15,8 @@ struct SymbolsView: View {
 
 	@Environment(NavigationManager.self)
 	private var navigation
+
+	@Default(.bookmarks) var bookmarks
 
 	@State private var tokens: [SymbolSearchToken]
 
@@ -178,6 +181,10 @@ struct SymbolsView: View {
 								id: symbol.id
 							)
 						) {
+							let target = CatalogReference(id: symbol.id, name: symbol.name, category: .symbols)
+
+							let isBookmarked = bookmarks.contains(target)
+
 							HStack {
 								Text(symbol.glyph)
 									.font(.title)
@@ -190,6 +197,33 @@ struct SymbolsView: View {
 
 								Text(symbol.name)
 								Spacer()
+
+								if isBookmarked {
+									Image(systemName: "bookmark")
+										.foregroundStyle(.secondary)
+										.symbolVariant(.fill)
+								}
+							}
+							.contextMenu {
+								Button {
+									withAnimation(.easeInOut) {
+										if isBookmarked {
+											bookmarks.remove(target)
+										} else {
+											bookmarks.insert(target)
+										}
+									}
+								} label: {
+									if isBookmarked {
+										Label("Remove Bookmark", systemImage: "bookmark.fill")
+									} else {
+										Label("Bookmark", systemImage: "bookmark")
+									}
+								}
+							} preview: {
+								LibraryDetailView(category: target.category, id: target.id)
+									.environment(catalog)
+									.environment(navigation)
 							}
 						}
 						.transition(.opacity)

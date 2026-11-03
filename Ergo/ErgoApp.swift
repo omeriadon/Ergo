@@ -9,11 +9,11 @@ import SwiftUI
 
 @main
 struct ErgoApp: App {
-    var body: some Scene {
-        WindowGroup {
+	var body: some Scene {
+		WindowGroup {
 			AppScene()
-        }
-    }
+		}
+	}
 }
 
 struct AppScene: View {

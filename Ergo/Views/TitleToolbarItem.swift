@@ -32,20 +32,16 @@ private struct ToolbarTitleItemModifier: ViewModifier {
 }
 
 struct ToolbarTitleItem: ToolbarContent {
-
 	let openSettings: () -> Void
 	let openAbout: () -> Void
 
-
 	var body: some ToolbarContent {
 		ToolbarItem(placement: .topBarLeading) {
-
 			Menu {
 				Button {
 					openSettings()
 				} label: {
 					Label("Settings", systemImage: "gearshape")
-
 				}
 
 				Button {
