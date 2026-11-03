@@ -70,8 +70,6 @@ struct CheckTabView: View {
 					.regular.interactive(),
 					in: RoundedRectangle(cornerRadius: 20)
 				)
-
-//				bottomControls
 			}
 			.padding(15)
 			.frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -112,48 +110,6 @@ struct CheckTabView: View {
 					.accessibilityIdentifier("check.doneButton")
 				}
 			}
-		}
-	}
-
-	@ViewBuilder
-	var bottomControls: some View {
-		if focusedField == nil {
-			GeometryReader { _ in
-				ScrollView(.horizontal) {
-					HStack(spacing: 0) {
-						HStack {
-							ForEach(SymbolEnum.basic) { symbol in
-								Text(symbol.glyph)
-							}
-						}
-						.containerRelativeFrame(.horizontal)
-
-						HStack {
-							ForEach(SymbolEnum.predicate) { symbol in
-								Text(symbol.glyph)
-							}
-						}
-						.containerRelativeFrame(.horizontal)
-
-						HStack {
-							Text("Custom")
-							Button("Example") {}
-						}
-						.containerRelativeFrame(.horizontal)
-					}
-					.scrollTargetLayout()
-				}
-				.scrollClipDisabled()
-				.scrollTargetBehavior(.paging)
-				.scrollBounceBehavior(.always)
-				.scrollIndicators(.hidden)
-			}
-			.frame(height: 40)
-			.font(.system(.title2, design: .monospaced))
-			.monospaced()
-			.padding(.horizontal, 5)
-			.padding(.vertical, 5)
-			.glassEffect(.clear.interactive(), in: Capsule())
 		}
 	}
 }
