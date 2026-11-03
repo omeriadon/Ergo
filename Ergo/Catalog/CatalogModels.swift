@@ -1,5 +1,6 @@
 // Models for the eight bundled JSON catalogs.
 
+import Defaults
 import Foundation
 
 nonisolated struct Example: Codable, Sendable {
@@ -35,444 +36,57 @@ nonisolated struct CatalogLink: Codable, Sendable {
 	}
 }
 
-nonisolated enum BiasTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
-	case attention
-	case attribution
-	case beliefAssessment = "belief-assessment"
-	case decisionMaking = "decision-making"
-	case memory
-	case researchAndMeasurement = "research-and-measurement"
-	case socialJudgment = "social-judgment"
+nonisolated struct CatalogReference: Hashable, Identifiable, Codable, Sendable, Defaults.Serializable {
+	let id: String
+	let name: String
+	let category: LibraryContent
 
-	var title: String {
-		switch self {
-			case .attention:
-				"Attention"
-			case .attribution:
-				"Attribution"
-			case .beliefAssessment:
-				"Belief Assessment"
-			case .decisionMaking:
-				"Decision Making"
-			case .memory:
-				"Memory"
-			case .researchAndMeasurement:
-				"Research & Measurement"
-			case .socialJudgment:
-				"Social Judgement"
+	private enum CodingKeys: String, CodingKey {
+		case id
+		case name
+		case category
+	}
+
+	init(id: String, name: String, category: LibraryContent) {
+		self.id = id
+		self.name = name
+		self.category = category
+	}
+
+	nonisolated init(id: String, from decoder: Decoder) throws {
+		guard let index = decoder.userInfo[.catalogIndex] as? CatalogIndex else {
+			throw CatalogIndexError.missingID(id)
 		}
+
+		self = try index.reference(for: id)
 	}
 
-	var id: Self {
-		self
-	}
-}
-
-nonisolated enum FallacyTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
-	case causalReasoning = "causal-reasoning"
-	case ethicsHistoryAndEconomics = "ethics-history-and-economics"
-	case formalLogic = "formal-logic"
-	case generalizationAndSampling = "generalization-and-sampling"
-	case languageAndAmbiguity = "language-and-ambiguity"
-	case premisesAndEvidence = "premises-and-evidence"
-	case probabilityAndStatistics = "probability-and-statistics"
-	case relevanceAndAppeals = "relevance-and-appeals"
-	case relevanceAndDebate = "relevance-and-debate"
-
-	var title: String {
-		rawValue.split(separator: "-").map { word in
-			switch word {
-				case "and":
-					"&"
-				case "of":
-					"of"
-				default:
-					word.capitalized
-			}
-		}.joined(separator: " ")
-	}
-
-	var id: Self {
-		self
-	}
-}
-
-nonisolated enum RazorTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
-	case attribution
-	case decisionMaking = "decision-making"
-	case evidence
-	case interpretation
-	case parsimony
-
-	var title: String {
-		switch self {
-			case .attribution:
-				"Attribution"
-			case .decisionMaking:
-				"Decision Making"
-			case .evidence:
-				"Evidence"
-			case .interpretation:
-				"Interpretation"
-			case .parsimony:
-				"Parsimony"
+	init(from decoder: Decoder) throws {
+		if let id = try? decoder.singleValueContainer().decode(String.self) {
+			self = try CatalogReference(id: id, from: decoder)
+			return
 		}
-	}
 
-	var id: Self {
-		self
-	}
-}
-
-nonisolated enum ConceptTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
-	case aestheticsAndCulture = "aesthetics-and-culture"
-	case decisionTheorySystemsAndMethods = "decision-theory-systems-and-methods"
-	case epistemologyAndPhilosophyOfScience = "epistemology-and-philosophy-of-science"
-	case ethicsAndValue = "ethics-and-value"
-	case languageMeaningAndInterpretation = "language-meaning-and-interpretation"
-	case logicAndReasoning = "logic-and-reasoning"
-	case memoryLearningAndReportedPsychologicalEffects = "memory-learning-and-reported-psychological-effects"
-	case metaphysicsAndOntology = "metaphysics-and-ontology"
-	case mindConsciousnessAndAgency = "mind-consciousness-and-agency"
-	case philosophicalSchoolsAndIsms = "philosophical-schools-and-isms"
-	case politicalIdeologiesAndIsms = "political-ideologies-and-isms"
-	case politicalPhilosophyAndInstitutions = "political-philosophy-and-institutions"
-	case reasoningMethods = "reasoning-methods"
-	case religionAsianAfricanAndIndigenousPhilosophy = "religion-asian-african-and-indigenous-philosophy"
-	case thoughtExperiments = "thought-experiments"
-
-	var title: String {
-		rawValue.split(separator: "-").map { word in
-			switch word {
-				case "and":
-					"&"
-				case "of":
-					"of"
-				default:
-					word.capitalized
-			}
-		}.joined(separator: " ")
-	}
-
-	var id: Self {
-		self
-	}
-}
-
-nonisolated enum ParadoxTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
-	case ethicsAndValue = "ethics-and-value"
-	case knowledgeAndMeaning = "knowledge-and-meaning"
-	case logicAndLanguage = "logic-and-language"
-	case metaphysics
-
-	var title: String {
-		switch self {
-			case .ethicsAndValue:
-				"Ethics & Value"
-			case .knowledgeAndMeaning:
-				"Knowledge & Meanings"
-			case .logicAndLanguage:
-				"Logic & Language"
-			case .metaphysics:
-				"Metaphysics"
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		let decodedID = try container.decode(String.self, forKey: .id)
+		if decoder.userInfo[.catalogIndex] != nil {
+			self = try CatalogReference(id: decodedID, from: decoder)
+			return
 		}
+
+		id = decodedID
+		name = try container.decode(String.self, forKey: .name)
+		category = try container.decode(LibraryContent.self, forKey: .category)
 	}
 
-	var id: Self {
-		self
+	func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try container.encode(id, forKey: .id)
+		try container.encode(name, forKey: .name)
+		try container.encode(category, forKey: .category)
 	}
-}
 
-nonisolated enum CheckMode: String, Codable, Sendable {
-	case solver
-	case model
-}
-
-nonisolated enum SymbolGroup: String, Codable, CaseIterable, Identifiable, Sendable {
-	case connective
-	case quantifier
-	case modal
-	case constant
-	case relation
-	case set
-
-	var id: Self {
-		self
-	}
-}
-
-nonisolated struct Fallacy: Codable, Identifiable, Sendable {
-	let id: String
-	let name: String
-	let aliases: [String]
-	let symbolName: String?
-	let summary: String
-	let body: String
-	let detectionCriteria: String?
-	let checkMode: CheckMode
-	let examples: [Example]
-	let doesNotCountWhen: [String]
-	let lookalikes: [CatalogLink]
-	let related: [CatalogReference]
-	let tags: [FallacyTag]
-
-	private enum CodingKeys: String, CodingKey {
-		case id
-		case name
-		case aliases
-		case symbolName
-		case summary
-		case body
-		case detectionCriteria
-		case checkMode
-		case examples
-		case doesNotCountWhen
-		case lookalikes
-		case related
-		case tags
-	}
-}
-
-nonisolated struct Razor: Codable, Identifiable, Sendable {
-	let id: String
-	let name: String
-	let aliases: [String]
-	let symbolName: String?
-	let summary: String
-	let body: String
-	let lensQuestion: String
-	let examples: [Example]
-	let limitations: [String]
-	let related: [CatalogReference]
-	let tags: [RazorTag]
-
-	private enum CodingKeys: String, CodingKey {
-		case id
-		case name
-		case aliases
-		case symbolName
-		case summary
-		case body
-		case lensQuestion
-		case examples
-		case limitations
-		case related
-		case tags
-	}
-}
-
-nonisolated struct Bias: Codable, Identifiable, Sendable {
-	let id: String
-	let name: String
-	let aliases: [String]
-	let symbolName: String?
-	let summary: String
-	let body: String
-	let examples: [Example]
-	let counters: [String]
-	let limitations: [String]
-	let evidenceNote: String?
-	let lookalikes: [CatalogLink]
-	let related: [CatalogReference]
-	let tags: [BiasTag]
-
-	private enum CodingKeys: String, CodingKey {
-		case id
-		case name
-		case aliases
-		case symbolName
-		case summary
-		case body
-		case examples
-		case counters
-		case limitations
-		case evidenceNote
-		case lookalikes
-		case related
-		case tags
-	}
-}
-
-nonisolated struct LogicSymbol: Codable, Identifiable, Sendable {
-	let id: String
-	let name: String
-	let glyph: String
-	let alternateGlyphs: [String]
-	let aliases: [String]
-	let group: SymbolGroup
-	let arity: Int
-	let shortcodes: [String]
-	let englishReadings: [String]
-	let summary: String
-	let body: String
-	let examples: [Example]
-	let limitations: [String]
-	let lookalikes: [CatalogLink]
-	let related: [CatalogReference]
-	let tags: [SymbolTag]
-
-	private enum CodingKeys: String, CodingKey {
-		case id
-		case name
-		case glyph
-		case alternateGlyphs
-		case aliases
-		case group
-		case arity
-		case shortcodes
-		case englishReadings
-		case summary
-		case body
-		case examples
-		case limitations
-		case lookalikes
-		case related
-		case tags
-	}
-}
-
-nonisolated struct Concept: Codable, Identifiable, Sendable {
-	let id: String
-	let name: String
-	let aliases: [String]
-	let symbolName: String?
-	let summary: String
-	let body: String
-	let origin: String?
-	let keyFigures: [CatalogReference]
-	let examples: [Example]
-	let commonMisreadings: [String]
-	let criticisms: [String]
-	let lookalikes: [CatalogLink]
-	let related: [CatalogReference]
-	let tags: [ConceptTag]
-
-	private enum CodingKeys: String, CodingKey {
-		case id
-		case name
-		case aliases
-		case symbolName
-		case summary
-		case body
-		case origin
-		case keyFigures
-		case examples
-		case commonMisreadings
-		case criticisms
-		case lookalikes
-		case related
-		case tags
-	}
-}
-
-nonisolated struct Paradox: Codable, Identifiable, Sendable {
-	let id: String
-	let name: String
-	let aliases: [String]
-	let symbolName: String?
-	let summary: String
-	let body: String
-	let origin: String?
-	let keyFigures: [CatalogReference]
-	let examples: [Example]
-	let commonMisreadings: [String]
-	let criticisms: [String]
-	let lookalikes: [CatalogLink]
-	let related: [CatalogReference]
-	let tags: [ParadoxTag]
-
-	private enum CodingKeys: String, CodingKey {
-		case id
-		case name
-		case aliases
-		case symbolName
-		case summary
-		case body
-		case origin
-		case keyFigures
-		case examples
-		case commonMisreadings
-		case criticisms
-		case lookalikes
-		case related
-		case tags
-	}
-}
-
-nonisolated struct FallacyCatalog: Codable, Sendable {
-	let fallacies: [Fallacy]
-
-	private enum CodingKeys: String, CodingKey {
-		case fallacies
-	}
-}
-
-nonisolated struct RazorCatalog: Codable, Sendable {
-	let razors: [Razor]
-
-	private enum CodingKeys: String, CodingKey {
-		case razors
-	}
-}
-
-nonisolated struct BiasCatalog: Codable, Sendable {
-	let biases: [Bias]
-
-	private enum CodingKeys: String, CodingKey {
-		case biases
-	}
-}
-
-nonisolated struct LogicSymbolCatalog: Codable, Sendable {
-	let symbols: [LogicSymbol]
-
-	private enum CodingKeys: String, CodingKey {
-		case symbols
-	}
-}
-
-nonisolated struct ConceptCatalog: Codable, Sendable {
-	let concepts: [Concept]
-
-	private enum CodingKeys: String, CodingKey {
-		case concepts
-	}
-}
-
-nonisolated struct ParadoxCatalog: Codable, Sendable {
-	let paradoxes: [Paradox]
-
-	private enum CodingKeys: String, CodingKey {
-		case paradoxes
-	}
-}
-
-nonisolated struct Philosopher: Codable, Identifiable, Sendable {
-	let id: String
-	let name: String
-	let image: String
-	let birthYear: Int
-	let deathYear: Int?
-	let summary: String
-	let body: String
-	let related: [CatalogReference]
-
-	private enum CodingKeys: String, CodingKey {
-		case id
-		case name
-		case image
-		case birthYear
-		case deathYear
-		case summary
-		case body
-		case related
-	}
-}
-
-nonisolated struct PhilosopherCatalog: Codable, Sendable {
-	let philosophers: [Philosopher]
-
-	private enum CodingKeys: String, CodingKey {
-		case philosophers
+	var route: LibraryRoute {
+		.detail(category: category, id: id)
 	}
 }
