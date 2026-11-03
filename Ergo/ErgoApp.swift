@@ -25,6 +25,7 @@ struct AppScene: View {
 			.environment(catalog)
 			.environment(navigation)
 			.task {
+				navigation.startup()
 				try? await catalog.load()
 			}
 	}

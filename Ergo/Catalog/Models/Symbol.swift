@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 3/11/2026.
 //
 
+import Defaults
 import Foundation
 
 nonisolated enum SymbolGroup: String, Codable, CaseIterable, Identifiable, Sendable {
@@ -97,7 +98,7 @@ enum SymbolTag: String, Codable, Hashable, Identifiable, CaseIterable, Sendable 
 	}
 }
 
-enum SymbolSearchToken: Hashable, Identifiable {
+enum SymbolSearchToken: Hashable, Identifiable, Codable, Defaults.Serializable {
 	case group(SymbolGroup)
 	case tag(SymbolTag)
 

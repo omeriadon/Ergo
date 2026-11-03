@@ -5,6 +5,8 @@
 //  Created by Adon Omeri on 3/11/2026.
 //
 
+import Defaults
+
 nonisolated struct Paradox: Codable, Identifiable, Sendable {
 	let id: String
 	let name: String
@@ -47,7 +49,7 @@ nonisolated struct ParadoxCatalog: Codable, Sendable {
 	}
 }
 
-nonisolated enum ParadoxTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
+nonisolated enum ParadoxTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable {
 	case ethicsAndValue = "ethics-and-value"
 	case knowledgeAndMeaning = "knowledge-and-meaning"
 	case logicAndLanguage = "logic-and-language"

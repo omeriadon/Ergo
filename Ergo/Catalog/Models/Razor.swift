@@ -5,6 +5,8 @@
 //  Created by Adon Omeri on 3/11/2026.
 //
 
+import Defaults
+
 nonisolated struct Razor: Codable, Identifiable, Sendable {
 	let id: String
 	let name: String
@@ -41,7 +43,7 @@ nonisolated struct RazorCatalog: Codable, Sendable {
 	}
 }
 
-nonisolated enum RazorTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
+nonisolated enum RazorTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable {
 	case attribution
 	case decisionMaking = "decision-making"
 	case evidence

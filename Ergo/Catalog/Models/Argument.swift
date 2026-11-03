@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 3/11/2026.
 //
 
+import Defaults
 import Foundation
 
 nonisolated struct Argument: Codable, Identifiable, Sendable {
@@ -34,7 +35,7 @@ nonisolated struct ArgumentObjection: Codable, Sendable {
 	let reply: String
 }
 
-nonisolated enum ArgumentTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
+nonisolated enum ArgumentTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable {
 	case ethics
 	case epistemology
 	case metaphysics

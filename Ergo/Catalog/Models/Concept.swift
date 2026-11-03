@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 3/11/2026.
 //
 
+import Defaults
 import Foundation
 
 nonisolated struct Concept: Codable, Identifiable, Sendable {
@@ -41,7 +42,7 @@ nonisolated struct Concept: Codable, Identifiable, Sendable {
 	}
 }
 
-nonisolated enum ConceptTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
+nonisolated enum ConceptTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable {
 	case aestheticsAndCulture = "aesthetics-and-culture"
 	case decisionTheorySystemsAndMethods = "decision-theory-systems-and-methods"
 	case epistemologyAndPhilosophyOfScience = "epistemology-and-philosophy-of-science"

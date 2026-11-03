@@ -13,4 +13,11 @@ extension Defaults.Keys {
 		"bookmarks",
 		default: []
 	)
+
+	static let selectedTab = Key<AppTab>("selectedTab", default: .check)
+
+	static let libraryPath = Key<[LibraryRoute]>("libraryPath", default: [])
+	static let debatePath = Key<[DebateRoute]>("debatePath", default: [])
+
+	static let presentedSheet = Key<AppSheet?>("presentedSheet", default: nil)
 }

@@ -156,7 +156,7 @@ struct LibraryTabView: View {
 							.aspectRatio(contentMode: .fit)
 							.foregroundStyle(.accent.gradient)
 							.frame(width: 50, height: 50)
-						Text("Search Something")
+						Text("Search anything")
 							.font(.title3)
 					}
 					.padding(.top, 90)
@@ -175,14 +175,20 @@ struct LibraryTabView: View {
 								value: LibraryRoute.detail(category: result.category, id: result.id)
 							) {
 								HStack {
-									Label(result.name, systemImage: result.category.symbol)
-										.font(.title3)
-										.frame(maxWidth: .infinity, alignment: .leading)
+									Label {
+										Text(result.name)
+									} icon: {
+										Image(systemName: result.category.symbol)
+											.foregroundStyle(.accent)
+									}
+									.font(.title3)
+									.frame(maxWidth: .infinity, alignment: .leading)
+									.labelIconToTitleSpacing(10)
 
 									Spacer()
 
 									Image(systemName: "chevron.right")
-										.foregroundStyle(.secondary)
+										.foregroundStyle(.accent.secondary)
 								}
 							}
 							.accessibilityIdentifier("library.search.\(result.category).\(result.id)")
@@ -264,6 +270,7 @@ struct LibraryTabView: View {
 			placement: .toolbarPrincipal,
 			prompt: "Search anything"
 		)
+		.scrollEdgeEffectStyle(.soft, for: .all)
 		.navigationBarTitleDisplayMode(.inline)
 		.navigationTitle("Library")
 		.toolbar {

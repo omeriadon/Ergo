@@ -5,6 +5,8 @@
 //  Created by Adon Omeri on 3/11/2026.
 //
 
+import Defaults
+
 nonisolated struct Bias: Codable, Identifiable, Sendable {
 	let id: String
 	let name: String
@@ -45,7 +47,7 @@ nonisolated struct BiasCatalog: Codable, Sendable {
 	}
 }
 
-nonisolated enum BiasTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
+nonisolated enum BiasTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable {
 	case attention
 	case attribution
 	case beliefAssessment = "belief-assessment"

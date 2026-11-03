@@ -46,7 +46,7 @@ nonisolated enum LibraryContent: String, Hashable, Codable, Sendable, Defaults.S
 }
 
 /// the actual library route, middle plus detail
-enum LibraryRoute: Hashable {
+enum LibraryRoute: Hashable, Codable, Defaults.Serializable {
 	case category(LibraryContent)
 	case detail(category: LibraryContent, id: String)
 

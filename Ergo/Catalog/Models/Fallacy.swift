@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 3/11/2026.
 //
 
+import Defaults
 import Foundation
 
 nonisolated struct Fallacy: Codable, Identifiable, Sendable {
@@ -47,7 +48,7 @@ nonisolated struct FallacyCatalog: Codable, Sendable {
 	}
 }
 
-nonisolated enum FallacyTag: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
+nonisolated enum FallacyTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable {
 	case causalReasoning = "causal-reasoning"
 	case ethicsHistoryAndEconomics = "ethics-history-and-economics"
 	case formalLogic = "formal-logic"

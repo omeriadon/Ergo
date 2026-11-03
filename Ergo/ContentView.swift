@@ -111,6 +111,7 @@ struct ContentView: View {
 		.environment(thing)
 		.environment(catalog)
 		.onAppear {
+			thing.startup()
 			thing.selectedTab = .library
 			thing.libraryPath = [.bookmarks, .category(.concepts), .detail(category: .concepts, id: "absurdism")]
 			Task {
