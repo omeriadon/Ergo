@@ -94,7 +94,7 @@ struct RazorDetailView: View {
 				} action: { _, newValue in
 					hasScrolled = newValue
 				}
-				.richNavigationTitle(height: 40, width: 160) {
+				.richNavigationTitle(height: 40, width: 360) {
 					VStack {
 						Text(hasScrolled ? razor.name : "")
 

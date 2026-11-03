@@ -74,13 +74,7 @@ struct SymbolDetailView: View {
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
 
-						NotesSection(list: symbol.shortcodes, title: "Shortcodes")
-							.padding(.top)
-
 						NotesSection(list: symbol.englishReadings, title: "English Readings")
-							.padding(.top)
-
-						NotesSection(list: ["Arity: \(symbol.arity)"], title: "Arity")
 							.padding(.top)
 
 						ExamplesSection(list: symbol.examples)
@@ -117,7 +111,7 @@ struct SymbolDetailView: View {
 				} action: { _, newValue in
 					hasScrolled = newValue
 				}
-				.richNavigationTitle(height: 40, width: 160) {
+				.richNavigationTitle(height: 40, width: 360) {
 					VStack {
 						Text(hasScrolled ? symbol.name : "")
 
