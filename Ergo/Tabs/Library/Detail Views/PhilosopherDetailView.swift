@@ -48,9 +48,11 @@ struct PhilosopherDetailView: View {
 									isLifted: true,
 									animated: false,
 									configuration: .init(
+										style: 0,
 										warpsContentBelow: true,
 										restingBackgroundColor: .white.withAlphaComponent(0),
-										liftedDisplacement: 100
+										liftedDisplacement: 100,
+										innerShadowOpacity: 0
 									),
 									configure: { handle in
 										guard let flex = handle.value(for: .flexInteraction) as? NSObject else {
@@ -64,7 +66,6 @@ struct PhilosopherDetailView: View {
 										)
 									}
 								)
-
 								.frame(width: geo.size.width, height: geo.size.width)
 							}
 							.frame(width: geo.size.width, height: geo.size.width)
@@ -116,7 +117,7 @@ struct PhilosopherDetailView: View {
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(philosopher.name.capitalized)
 				.onScrollGeometryChange(for: Bool.self) { geometry in
-					geometry.contentOffset.y + geometry.contentInsets.top > 70
+					geometry.contentOffset.y + geometry.contentInsets.top > 480
 				} action: { _, newValue in
 					hasScrolled = newValue
 				}

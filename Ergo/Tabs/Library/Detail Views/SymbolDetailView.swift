@@ -107,7 +107,7 @@ struct SymbolDetailView: View {
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(symbol.name.capitalized)
 				.onScrollGeometryChange(for: Bool.self) { geometry in
-					geometry.contentOffset.y + geometry.contentInsets.top > 70
+					geometry.contentOffset.y + geometry.contentInsets.top > 150
 				} action: { _, newValue in
 					hasScrolled = newValue
 				}

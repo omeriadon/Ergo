@@ -113,7 +113,7 @@ struct ContentView: View {
 		.onAppear {
 			thing.startup()
 			thing.selectedTab = .library
-			thing.libraryPath = [.bookmarks, .category(.concepts), .detail(category: .concepts, id: "absurdism")]
+			thing.libraryPath = [.bookmarks, .category(.philosophers), .detail(category: .philosophers, id: "david-hume")]
 			Task {
 				try? await catalog.load()
 			}
