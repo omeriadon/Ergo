@@ -7,52 +7,6 @@
 
 import SwiftUI
 
-private struct CardView: View {
-	let title: String
-	let color: Color
-
-	var body: some View {
-		HStack(alignment: .center) {
-			VStack(alignment: .leading, spacing: 8) {
-				let image = switch title {
-					case "Biases":
-						"distribute.vertical.center"
-					case "Razors":
-						"scissors"
-					case "Symbols":
-						"f.cursive"
-					case "Concepts":
-						"book.closed"
-					case "Paradoxes":
-						"infinity"
-					case "Philosophers":
-						"brain.head.profile"
-					case "Fallacies":
-						"repeat.badge.xmark"
-					case "Arguments":
-						"text.bubble"
-					case "Bookmarks":
-						"bookmark"
-					default:
-						""
-				}
-
-				Image(systemName: image)
-
-				Text(title)
-					.font(.title2)
-			}
-
-			Spacer()
-
-			Image(systemName: "chevron.right")
-				.padding(.trailing, 3)
-		}
-		.padding(11)
-		.glassEffect(.clear.tint(color).interactive(), in: RoundedRectangle(cornerRadius: 22))
-	}
-}
-
 struct LibraryTabView: View {
 	@Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -144,10 +98,10 @@ struct LibraryTabView: View {
 		return entries
 	}
 
-	var body: some View {
+	var scrollView: some View {
 		let results = searchPresented ? searchResults : []
 
-		ScrollView {
+		return ScrollView {
 			if searchPresented {
 				if searchTerm.isEmpty {
 					VStack(spacing: 20) {
@@ -170,137 +124,98 @@ struct LibraryTabView: View {
 						.transition(.opacity)
 				} else {
 					LazyVStack(alignment: .leading, spacing: 10) {
-						ForEach(results) { result in
-							NavigationLink(
-								value: LibraryRoute.detail(category: result.category, id: result.id)
-							) {
-								HStack {
-									Label {
-										Text(result.name)
-									} icon: {
-										Image(systemName: result.category.symbol)
-											.foregroundStyle(.accent)
-									}
-									.font(.title3)
-									.frame(maxWidth: .infinity, alignment: .leading)
-									.labelIconToTitleSpacing(10)
-
-									Spacer()
-
-									Image(systemName: "chevron.right")
-										.foregroundStyle(.accent.secondary)
-								}
-							}
-							.accessibilityIdentifier("library.search.\(result.category).\(result.id)")
-							.padding(.horizontal, 16)
-							.padding(.vertical, 16)
-							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
-							.contentShape(RoundedRectangle(cornerRadius: 18))
-							.transition(.opacity)
-						}
+						resultsList
 					}
 					.padding(.horizontal, 7)
 					.padding(.top, 20)
 					.transition(.opacity)
 				}
 			} else {
-				Grid(horizontalSpacing: 12, verticalSpacing: 12) {
-					GridRow {
-						NavigationLink(value: LibraryRoute.category(.biases)) {
-							CardView(title: "Biases", color: .red)
-						}
-
-						NavigationLink(value: LibraryRoute.category(.concepts)) {
-							CardView(title: "Concepts", color: .green)
-						}
-					}
-
-					GridRow {
-						NavigationLink(value: LibraryRoute.category(.fallacies)) {
-							CardView(title: "Fallacies", color: .blue)
-						}
-
-						NavigationLink(value: LibraryRoute.category(.symbols)) {
-							CardView(title: "Symbols", color: .orange)
-						}
-					}
-
-					GridRow {
-						NavigationLink(value: LibraryRoute.category(.paradoxes)) {
-							CardView(title: "Paradoxes", color: .mint)
-						}
-
-						NavigationLink(value: LibraryRoute.category(.philosophers)) {
-							CardView(title: "Philosophers", color: .purple)
-						}
-					}
-
-					GridRow {
-						NavigationLink(value: LibraryRoute.category(.razors)) {
-							CardView(title: "Razors", color: .yellow)
-						}
-						NavigationLink(value: LibraryRoute.category(.arguments)) {
-							CardView(title: "Arguments", color: .teal)
-						}
-					}
-
-					Spacer()
-						.frame(height: 30)
-
-					GridRow {
-						NavigationLink(value: LibraryRoute.bookmarks) {
-							CardView(title: "Bookmarks", color: .accent)
-						}
-						.gridCellColumns(2)
-					}
-				}
-				.padding()
-				.transition(.opacity)
+				LibraryGridView()
+					.padding()
+					.transition(.opacity)
 			}
 		}
 		.animation(
 			reduceMotion ? nil : .smooth(duration: 0.22),
 			value: results.map(\.id)
 		)
-		.animation(.easeInOut(duration: 0.1), value: "\(searchPresented)\(searchTerm.isEmpty)")
-		.buttonStyle(.plain)
-		.searchable(
-			text: $searchTerm,
-			isPresented: $searchPresented,
-			placement: .toolbarPrincipal,
-			prompt: "Search anything"
-		)
-		.scrollEdgeEffectStyle(.soft, for: .all)
-		.navigationBarTitleDisplayMode(.inline)
-		.navigationTitle("Library")
-		.toolbar {
-			ToolbarItem(placement: .title) {
-				Text("Library")
-					.fontDesign(.rounded)
-					.font(.title)
+	}
+
+	var resultsList: some View {
+		let results = searchPresented ? searchResults : []
+
+		return ForEach(results) { result in
+			NavigationLink(
+				value: LibraryRoute.detail(category: result.category, id: result.id)
+			) {
+				HStack {
+					Label {
+						Text(result.name)
+					} icon: {
+						Image(systemName: result.category.symbol)
+							.foregroundStyle(.accent)
+					}
+					.font(.title3)
+					.frame(maxWidth: .infinity, alignment: .leading)
+					.labelIconToTitleSpacing(10)
+
+					Spacer()
+
+					Image(systemName: "chevron.right")
+						.foregroundStyle(.accent.secondary)
+				}
 			}
+			.accessibilityIdentifier("library.search.\(result.category).\(result.id)")
+			.padding(.horizontal, 16)
+			.padding(.vertical, 16)
+			.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
+			.contentShape(RoundedRectangle(cornerRadius: 18))
+			.transition(.opacity)
 		}
-		.task(id: "\(searchPresented)-\(searchTerm.trimmingCharacters(in: .whitespacesAndNewlines))-\(catalog.isLoaded)") {
-			let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
-			guard searchPresented, !query.isEmpty, catalog.isLoaded else {
-				searchResults = []
-				return
+	}
+
+	var body: some View {
+		scrollView
+			.animation(.easeInOut(duration: 0.1), value: "\(searchPresented)\(searchTerm.isEmpty)")
+			.buttonStyle(.plain)
+			.searchable(
+				text: $searchTerm,
+				isPresented: $searchPresented,
+				placement: .toolbarPrincipal,
+				prompt: "Search anything"
+			)
+			.scrollEdgeEffectStyle(.soft, for: .all)
+			.navigationBarTitleDisplayMode(.inline)
+			.navigationTitle("Library")
+			.toolbar {
+				ToolbarItem(placement: .title) {
+					Text("Library")
+						.fontDesign(.rounded)
+						.font(.title)
+				}
 			}
-			do {
-				try await Task.sleep(for: .milliseconds(120))
-				let entries = libraryEntries
-				let matches = try await CatalogSearch.ranked(
-					entries,
-					query: query,
-					limit: CatalogSearch.resultLimit
-				) { $0.searchFields }
-				try Task.checkCancellation()
-				searchResults = matches
-			} catch is CancellationError {
-				return
-			} catch {
-				searchResults = []
+			.task(id: "\(searchPresented)-\(searchTerm.trimmingCharacters(in: .whitespacesAndNewlines))-\(catalog.isLoaded)") {
+				let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+				guard searchPresented, !query.isEmpty, catalog.isLoaded else {
+					searchResults = []
+					return
+				}
+				do {
+					try await Task.sleep(for: .milliseconds(120))
+					let entries = libraryEntries
+					let matches = try await CatalogSearch.ranked(
+						entries,
+						query: query,
+						limit: CatalogSearch.resultLimit
+					) { $0.searchFields }
+					try Task.checkCancellation()
+					searchResults = matches
+				} catch is CancellationError {
+					return
+				} catch {
+					searchResults = []
+				}
 			}
-		}
 	}
 }

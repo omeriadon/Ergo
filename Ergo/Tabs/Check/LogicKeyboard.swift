@@ -76,130 +76,17 @@ struct LogicKeyboard: View {
 				}
 			}
 
-			let row2: [String] = ["¬", "∧", "∨", "→", "(", ")", "[", "]"]
+			let row2Symbols: [String] = ["¬", "∧", "∨", "→", "(", ")", "[", "]"]
 
 			HStack(spacing: 4) {
-				ForEach(row2, id: \.self) { symbol in
+				ForEach(row2Symbols, id: \.self) { symbol in
 					KeyboardButton(char: symbol, currentlySelectedLetter: $currentlySelectedLetter) { onInsert(symbol) }
 				}
 			}
 
-			HStack {
-				let array1: [[String]] = [
-					["=", "∈", "∪", "∩", "⊂", "∅"],
-					["∴", "∵", "≔", "∎"],
-				]
+			row1
 
-				ScrollView(.horizontal) {
-					HStack(spacing: 0) {
-						ForEach(array1, id: \.self) { array in
-							HStack(spacing: 4) {
-								ForEach(array, id: \.self) { letter in
-									KeyboardButton(char: letter, currentlySelectedLetter: $currentlySelectedLetter) { onInsert(letter) }
-								}
-							}
-							.containerRelativeFrame(.horizontal)
-							.scrollTransition(.interactive) { content, phase in
-								content
-									.scaleEffect(phase.isIdentity ? 1 : 0.5)
-									.blur(radius: phase.isIdentity ? 0 : 5)
-							}
-						}
-					}
-					.background {
-						ScrollViewResolver { scroll in
-							sync.top = scroll
-						}
-					}
-					.scrollTargetLayout()
-				}
-				.scrollIndicators(.hidden)
-				.scrollTargetBehavior(.paging)
-				.scrollClipDisabled()
-				.onScrollGeometryChange(for: Metrics.self) {
-					Metrics($0)
-				} action: { _, metrics in
-					if source == .top {
-						pageProgress = metrics.progress
-						sync.moveBottom(to: metrics.progress)
-					}
-				}
-				.onScrollPhaseChange { _, phase in
-					if phase == .interacting {
-						source = .top
-					} else if phase == .idle, source == .top {
-						source = nil
-					}
-				}
-
-				KeyboardButton2(currentlySelectedLetter: $currentlySelectedLetter) {
-					onDelete()
-				} view: {
-					Image(systemName: "delete.left")
-				}
-				.frame(width: 58)
-			}
-
-			HStack {
-				KeyboardButton(char: ",", currentlySelectedLetter: $currentlySelectedLetter) { onInsert(",") }
-					.frame(width: 58)
-					.zIndex(1)
-
-				let array2: [[String]] = [
-					["↔", "⊕", "⊤", "∀", "∃"],
-					["□", "◇", "⊢", "⊨", "⇔"],
-				]
-
-				ScrollView(.horizontal) {
-					HStack(spacing: 0) {
-						ForEach(array2, id: \.self) { array in
-							HStack(spacing: 4) {
-								ForEach(array, id: \.self) { letter in
-									KeyboardButton(char: letter, currentlySelectedLetter: $currentlySelectedLetter) { onInsert(letter) }
-								}
-							}
-							.containerRelativeFrame(.horizontal)
-							.scrollTransition(.interactive) { content, phase in
-								content
-									.scaleEffect(phase.isIdentity ? 1 : 0.5)
-									.blur(radius: phase.isIdentity ? 0 : 5)
-							}
-						}
-					}
-					.background {
-						ScrollViewResolver { scroll in
-							sync.bottom = scroll
-						}
-					}
-					.scrollTargetLayout()
-				}
-				.scrollIndicators(.hidden)
-				.scrollClipDisabled()
-				.scrollBounceBehavior(.basedOnSize)
-				.scrollTargetBehavior(.paging)
-				.onScrollGeometryChange(for: Metrics.self) {
-					Metrics($0)
-				} action: { _, metrics in
-					if source == .bottom {
-						pageProgress = metrics.progress
-						sync.moveTop(to: metrics.progress)
-					}
-				}
-				.onScrollPhaseChange { _, phase in
-					if phase == .interacting {
-						source = .bottom
-					} else if phase == .idle, source == .bottom {
-						source = nil
-					}
-				}
-
-				KeyboardButton2(currentlySelectedLetter: $currentlySelectedLetter) {
-					onInsert("\n")
-				} view: {
-					Image(systemName: "return")
-				}
-				.frame(width: 58)
-			}
+			row2
 
 			pageIndicator
 				.padding(.top, 3)
@@ -216,6 +103,127 @@ struct LogicKeyboard: View {
 			alignment: .top
 		)
 		.dynamicTypeSize(.small)
+	}
+
+	var row1: some View {
+		HStack {
+			let array1: [[String]] = [
+				["=", "∈", "∪", "∩", "⊂", "∅"],
+				["∴", "∵", "≔", "∎"],
+			]
+
+			ScrollView(.horizontal) {
+				HStack(spacing: 0) {
+					ForEach(array1, id: \.self) { array in
+						HStack(spacing: 4) {
+							ForEach(array, id: \.self) { letter in
+								KeyboardButton(char: letter, currentlySelectedLetter: $currentlySelectedLetter) { onInsert(letter) }
+							}
+						}
+						.containerRelativeFrame(.horizontal)
+						.scrollTransition(.interactive) { content, phase in
+							content
+								.scaleEffect(phase.isIdentity ? 1 : 0.5)
+								.blur(radius: phase.isIdentity ? 0 : 5)
+						}
+					}
+				}
+				.background {
+					ScrollViewResolver { scroll in
+						sync.top = scroll
+					}
+				}
+				.scrollTargetLayout()
+			}
+			.scrollIndicators(.hidden)
+			.scrollTargetBehavior(.paging)
+			.scrollClipDisabled()
+			.onScrollGeometryChange(for: Metrics.self) {
+				Metrics($0)
+			} action: { _, metrics in
+				if source == .top {
+					pageProgress = metrics.progress
+					sync.moveBottom(to: metrics.progress)
+				}
+			}
+			.onScrollPhaseChange { _, phase in
+				if phase == .interacting {
+					source = .top
+				} else if phase == .idle, source == .top {
+					source = nil
+				}
+			}
+
+			KeyboardButton2(currentlySelectedLetter: $currentlySelectedLetter) {
+				onDelete()
+			} view: {
+				Image(systemName: "delete.left")
+			}
+			.frame(width: 58)
+		}
+	}
+
+	var row2: some View {
+		HStack {
+			KeyboardButton(char: ",", currentlySelectedLetter: $currentlySelectedLetter) { onInsert(",") }
+				.frame(width: 58)
+				.zIndex(1)
+
+			let array2: [[String]] = [
+				["↔", "⊕", "⊤", "∀", "∃"],
+				["□", "◇", "⊢", "⊨", "⇔"],
+			]
+
+			ScrollView(.horizontal) {
+				HStack(spacing: 0) {
+					ForEach(array2, id: \.self) { array in
+						HStack(spacing: 4) {
+							ForEach(array, id: \.self) { letter in
+								KeyboardButton(char: letter, currentlySelectedLetter: $currentlySelectedLetter) { onInsert(letter) }
+							}
+						}
+						.containerRelativeFrame(.horizontal)
+						.scrollTransition(.interactive) { content, phase in
+							content
+								.scaleEffect(phase.isIdentity ? 1 : 0.5)
+								.blur(radius: phase.isIdentity ? 0 : 5)
+						}
+					}
+				}
+				.background {
+					ScrollViewResolver { scroll in
+						sync.bottom = scroll
+					}
+				}
+				.scrollTargetLayout()
+			}
+			.scrollIndicators(.hidden)
+			.scrollClipDisabled()
+			.scrollBounceBehavior(.basedOnSize)
+			.scrollTargetBehavior(.paging)
+			.onScrollGeometryChange(for: Metrics.self) {
+				Metrics($0)
+			} action: { _, metrics in
+				if source == .bottom {
+					pageProgress = metrics.progress
+					sync.moveTop(to: metrics.progress)
+				}
+			}
+			.onScrollPhaseChange { _, phase in
+				if phase == .interacting {
+					source = .bottom
+				} else if phase == .idle, source == .bottom {
+					source = nil
+				}
+			}
+
+			KeyboardButton2(currentlySelectedLetter: $currentlySelectedLetter) {
+				onInsert("\n")
+			} view: {
+				Image(systemName: "return")
+			}
+			.frame(width: 58)
+		}
 	}
 }
 
