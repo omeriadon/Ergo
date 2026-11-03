@@ -6,6 +6,8 @@ struct ConceptDetailView: View {
 	@Environment(CatalogStore.self) private var catalog
 	@Environment(NavigationManager.self) private var navigation
 
+	@State private var hasScrolled = false
+
 	var body: some View {
 		ZStack {
 			DitherView(configuration: {
@@ -26,6 +28,9 @@ struct ConceptDetailView: View {
 						Text(concept.summary)
 							.lineLimit(10)
 
+						RelatedSection(list: concept.keyFigures, title: "Key Figures")
+							.padding(.top)
+
 						Text(concept.body)
 							.padding(12)
 							.frame(maxWidth: .infinity, alignment: .leading)
@@ -36,9 +41,6 @@ struct ConceptDetailView: View {
 							NotesSection(list: [origin], title: "Origin")
 								.padding(.top)
 						}
-
-						RelatedSection(list: concept.keyFigures, title: "Key Figures")
-							.padding(.top)
 
 						ExamplesSection(list: concept.examples)
 							.padding(.top)
@@ -71,13 +73,26 @@ struct ConceptDetailView: View {
 					.padding(.horizontal)
 					.frame(maxWidth: .infinity, alignment: .leading)
 				}
+				.onScrollGeometryChange(for: Bool.self) { geometry in
+					geometry.contentOffset.y + geometry.contentInsets.top > 70
+				} action: { _, newValue in
+					hasScrolled = newValue
+				}
+				.richNavigationTitle(height: 40, width: 160) {
+					VStack {
+						Text(hasScrolled ? concept.name : "")
+
+						Text(hasScrolled ? "Concepts" : "")
+							.textCase(.uppercase)
+							.font(.caption2)
+							.foregroundStyle(.secondary)
+					}
+					.contentTransition(.numericText())
+					.animation(.easeInOut(duration: 0.2), value: hasScrolled)
+				}
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(concept.name.capitalized)
 				.toolbar {
-					ToolbarItem(placement: .title) {
-						Text("")
-					}
-
 					ToolbarItem(placement: .topBarTrailing) {
 						let reference = CatalogReference(
 							id: concept.id,

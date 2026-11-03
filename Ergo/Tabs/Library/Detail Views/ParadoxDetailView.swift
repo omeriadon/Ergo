@@ -18,6 +18,8 @@ struct ParadoxDetailView: View {
 
 	@Default(.bookmarks) var bookmarks
 
+	@State private var hasScrolled = false
+
 	var body: some View {
 		ZStack {
 			DitherView(configuration: {
@@ -41,6 +43,9 @@ struct ParadoxDetailView: View {
 						Text(paradox.summary)
 							.lineLimit(10)
 
+						RelatedSection(list: paradox.keyFigures, title: "Key Figures")
+							.padding(.top)
+
 						Spacer()
 							.frame(height: 20)
 
@@ -53,9 +58,6 @@ struct ParadoxDetailView: View {
 							NotesSection(list: [origin], title: "Origin")
 								.padding(.top)
 						}
-
-						RelatedSection(list: paradox.keyFigures, title: "Key Figures")
-							.padding(.top)
 
 						ExamplesSection(list: paradox.examples)
 							.padding(.top)
@@ -89,6 +91,23 @@ struct ParadoxDetailView: View {
 				}
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(paradox.name.capitalized)
+				.onScrollGeometryChange(for: Bool.self) { geometry in
+					geometry.contentOffset.y + geometry.contentInsets.top > 70
+				} action: { _, newValue in
+					hasScrolled = newValue
+				}
+				.richNavigationTitle(height: 40, width: 160) {
+					VStack {
+						Text(hasScrolled ? paradox.name : "")
+
+						Text(hasScrolled ? "Paradoxes" : "")
+							.textCase(.uppercase)
+							.font(.caption2)
+							.foregroundStyle(.secondary)
+					}
+					.contentTransition(.numericText())
+					.animation(.easeInOut(duration: 0.2), value: hasScrolled)
+				}
 				.toolbar {
 					ToolbarItem(placement: .title) {
 						Text("")

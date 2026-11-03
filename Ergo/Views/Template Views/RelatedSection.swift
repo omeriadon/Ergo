@@ -21,49 +21,112 @@ struct RelatedSection: View {
 
 	var body: some View {
 		if !list.isEmpty {
-			VStack(alignment: .leading, spacing: 13) {
-				Text(title)
-					.textCase(.uppercase)
-					.foregroundStyle(.secondary)
+			if list.allSatisfy({ $0.category == .philosophers }) {
+				VStack(alignment: .leading, spacing: 20) {
+					Text("Key Figures")
+						.textCase(.uppercase)
+						.font(.title3)
+						.foregroundStyle(.secondary)
 
-				VStack(alignment: .leading, spacing: 10) {
-					ForEach(list, id: \.id) { target in
-						let isBookmarked = bookmarks.contains(target)
-
-						NavigationLink(value: target.route) {
+					ForEach(Array(list.enumerated()), id: \.element.id) { index, philosopher in
+						NavigationLink(value: philosopher.route) {
 							HStack {
-								Text(target.name)
-								Spacer()
+								ZStack {
+									Image(philosopher.id)
+										.resizable()
+										.aspectRatio(contentMode: .fill)
+										.frame(width: 40, height: 40)
+										.clipShape(Circle())
+
+									Color.white.opacity(0)
+										.contentShape(Circle())
+										.background {
+											LiquidLens(
+												isLifted: true,
+												animated: true,
+												configuration: .init(
+													style: 1,
+													warpsContentBelow: true,
+													restingBackgroundColor: .white.withAlphaComponent(0),
+													liftedDisplacement: 0
+												),
+												configure: { handle in
+													guard let flex = handle.value(for: .flexInteraction) as? NSObject else {
+														return
+													}
+
+													handle.setValue(
+														0,
+														forKeyPath: "preferredFlexSources",
+														on: flex
+													)
+												}
+											)
+										}
+								}
+								.frame(width: 40, height: 40)
+
+								Text(philosopher.name)
+
 								Image(systemName: "chevron.right")
+									.imageScale(.small)
 							}
-							.contextMenu {
-								Button {
-									withAnimation(.easeInOut) {
+							.tint(.primary)
+							.padding(.leading, CGFloat(index) * 40)
+						}
+					}
+				}
+				.padding(.vertical, 20)
+				.padding(.horizontal, 25)
+				.frame(maxWidth: .infinity, alignment: .leading)
+				.glassEffect(.clear.interactive(), in: RoundedRectangle(cornerRadius: 30))
+				.padding(.top)
+
+			} else {
+				VStack(alignment: .leading, spacing: 13) {
+					Text(title)
+						.textCase(.uppercase)
+						.foregroundStyle(.secondary)
+
+					VStack(alignment: .leading, spacing: 10) {
+						ForEach(list, id: \.id) { target in
+							let isBookmarked = bookmarks.contains(target)
+
+							NavigationLink(value: target.route) {
+								HStack {
+									Text(target.name)
+									Spacer()
+									Image(systemName: "chevron.right")
+								}
+								.contextMenu {
+									Button {
+										withAnimation(.easeInOut) {
+											if isBookmarked {
+												bookmarks.remove(target)
+											} else {
+												bookmarks.insert(target)
+											}
+										}
+									} label: {
 										if isBookmarked {
-											bookmarks.remove(target)
+											Label("Remove Bookmark", systemImage: "bookmark.fill")
 										} else {
-											bookmarks.insert(target)
+											Label("Bookmark", systemImage: "bookmark")
 										}
 									}
-								} label: {
-									if isBookmarked {
-										Label("Remove Bookmark", systemImage: "bookmark.fill")
-									} else {
-										Label("Bookmark", systemImage: "bookmark")
-									}
+								} preview: {
+									LibraryDetailView(category: target.category, id: target.id)
+										.environment(catalog)
+										.environment(navigation)
 								}
-							} preview: {
-								LibraryDetailView(category: target.category, id: target.id)
-									.environment(catalog)
-									.environment(navigation)
 							}
 						}
 					}
 				}
+				.padding(12)
+				.frame(maxWidth: .infinity, alignment: .leading)
+				.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 			}
-			.padding(12)
-			.frame(maxWidth: .infinity, alignment: .leading)
-			.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 		}
 	}
 }

@@ -49,7 +49,7 @@ private struct CardView: View {
 				.padding(.trailing, 3)
 		}
 		.padding(11)
-		.glassEffect(.clear.tint(color).interactive(), in: RoundedRectangle(cornerRadius: 18))
+		.glassEffect(.clear.tint(color).interactive(), in: RoundedRectangle(cornerRadius: 22))
 	}
 }
 

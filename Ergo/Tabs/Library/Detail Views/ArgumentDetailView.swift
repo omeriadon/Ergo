@@ -6,6 +6,8 @@ struct ArgumentDetailView: View {
 	@Environment(CatalogStore.self) private var catalog
 	@Environment(NavigationManager.self) private var navigation
 
+	@State private var hasScrolled = false
+
 	var body: some View {
 		ZStack {
 			DitherView(configuration: {
@@ -26,6 +28,9 @@ struct ArgumentDetailView: View {
 						Text(argument.summary)
 							.lineLimit(10)
 
+						RelatedSection(list: argument.keyFigures, title: "Key Figures")
+							.padding(.top)
+
 						Text(argument.body)
 							.padding(12)
 							.frame(maxWidth: .infinity, alignment: .leading)
@@ -36,9 +41,6 @@ struct ArgumentDetailView: View {
 							NotesSection(list: [origin], title: "Origin")
 								.padding(.top)
 						}
-
-						RelatedSection(list: argument.keyFigures, title: "Key Figures")
-							.padding(.top)
 
 						NotesSection(list: argument.premises, title: "Premises")
 							.padding(.top)
@@ -83,6 +85,23 @@ struct ArgumentDetailView: View {
 					.frame(maxWidth: .infinity, alignment: .leading)
 				}
 				.scrollEdgeEffectStyle(.soft, for: .all)
+				.onScrollGeometryChange(for: Bool.self) { geometry in
+					geometry.contentOffset.y + geometry.contentInsets.top > 70
+				} action: { _, newValue in
+					hasScrolled = newValue
+				}
+				.richNavigationTitle(height: 40, width: 160) {
+					VStack {
+						Text(hasScrolled ? argument.name : "")
+
+						Text(hasScrolled ? "Arguments" : "")
+							.textCase(.uppercase)
+							.font(.caption2)
+							.foregroundStyle(.secondary)
+					}
+					.contentTransition(.numericText())
+					.animation(.easeInOut(duration: 0.2), value: hasScrolled)
+				}
 				.navigationTitle(argument.name.capitalized)
 				.toolbar {
 					ToolbarItem(placement: .title) {

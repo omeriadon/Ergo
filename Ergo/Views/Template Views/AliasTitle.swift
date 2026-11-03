@@ -13,6 +13,7 @@ struct AliasTitle: View {
 			}
 		} label: {
 			Label(name, systemImage: "textformat.alt")
+				.multilineTextAlignment(.leading)
 				.labelStyle(.titleOnly)
 				.foregroundStyle(.white)
 				.font(.largeTitle.bold())

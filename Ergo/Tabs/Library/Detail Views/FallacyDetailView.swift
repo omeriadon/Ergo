@@ -1,3 +1,4 @@
+import Defaults
 import SwiftUI
 
 struct FallacyDetailView: View {
@@ -5,6 +6,10 @@ struct FallacyDetailView: View {
 
 	@Environment(CatalogStore.self) private var catalog
 	@Environment(NavigationManager.self) private var navigation
+
+	@State private var hasScrolled = false
+
+	@Default(.bookmarks) var bookmarks
 
 	var body: some View {
 		ZStack {
@@ -26,16 +31,29 @@ struct FallacyDetailView: View {
 						Text(fallacy.summary)
 							.lineLimit(10)
 
+						if let criteria = fallacy.detectionCriteria, !criteria.isEmpty {
+							VStack(alignment: .leading, spacing: 12) {
+								Text("How to identify")
+									.textCase(.uppercase)
+									.foregroundStyle(.secondary)
+
+								HStack {
+									Image(systemName: "checklist")
+										.font(.title)
+									Text(criteria)
+								}
+							}
+							.padding(12)
+							.frame(maxWidth: .infinity, alignment: .leading)
+							.glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 20))
+							.padding(.top)
+						}
+
 						Text(fallacy.body)
 							.padding(12)
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
-
-						if let criteria = fallacy.detectionCriteria, !criteria.isEmpty {
-							NotesSection(list: [criteria], title: "Detection Criteria")
-								.padding(.top)
-						}
 
 						ExamplesSection(list: fallacy.examples)
 							.padding(.top)
@@ -67,6 +85,23 @@ struct FallacyDetailView: View {
 				}
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(fallacy.name.capitalized)
+				.onScrollGeometryChange(for: Bool.self) { geometry in
+					geometry.contentOffset.y + geometry.contentInsets.top > 70
+				} action: { _, newValue in
+					hasScrolled = newValue
+				}
+				.richNavigationTitle(height: 40, width: 160) {
+					VStack {
+						Text(hasScrolled ? fallacy.name : "")
+
+						Text(hasScrolled ? "Fallacies" : "")
+							.textCase(.uppercase)
+							.font(.caption2)
+							.foregroundStyle(.secondary)
+					}
+					.contentTransition(.numericText())
+					.animation(.easeInOut(duration: 0.2), value: hasScrolled)
+				}
 				.toolbar {
 					ToolbarItem(placement: .title) {
 						Text("")

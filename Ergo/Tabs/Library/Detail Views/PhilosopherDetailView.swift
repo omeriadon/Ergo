@@ -20,6 +20,8 @@ struct PhilosopherDetailView: View {
 
 	@State private var showAliases = false
 
+	@State private var hasScrolled = false
+
 	var body: some View {
 		ZStack {
 			DitherView(configuration: {
@@ -113,6 +115,23 @@ struct PhilosopherDetailView: View {
 				}
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(philosopher.name.capitalized)
+				.onScrollGeometryChange(for: Bool.self) { geometry in
+					geometry.contentOffset.y + geometry.contentInsets.top > 70
+				} action: { _, newValue in
+					hasScrolled = newValue
+				}
+				.richNavigationTitle(height: 40, width: 160) {
+					VStack {
+						Text(hasScrolled ? philosopher.name : "")
+
+						Text(hasScrolled ? "Philosophers" : "")
+							.textCase(.uppercase)
+							.font(.caption2)
+							.foregroundStyle(.secondary)
+					}
+					.contentTransition(.numericText())
+					.animation(.easeInOut(duration: 0.2), value: hasScrolled)
+				}
 				.toolbar {
 					ToolbarItem(placement: .title) {
 						Text("")

@@ -18,6 +18,8 @@ struct RazorDetailView: View {
 
 	@Default(.bookmarks) var bookmarks
 
+	@State private var hasScrolled = false
+
 	var body: some View {
 		ZStack {
 			DitherView(configuration: {
@@ -86,6 +88,23 @@ struct RazorDetailView: View {
 					}
 					.padding(.horizontal)
 					.frame(maxWidth: .infinity, alignment: .leading)
+				}
+				.onScrollGeometryChange(for: Bool.self) { geometry in
+					geometry.contentOffset.y + geometry.contentInsets.top > 70
+				} action: { _, newValue in
+					hasScrolled = newValue
+				}
+				.richNavigationTitle(height: 40, width: 160) {
+					VStack {
+						Text(hasScrolled ? razor.name : "")
+
+						Text(hasScrolled ? "Razors" : "")
+							.textCase(.uppercase)
+							.font(.caption2)
+							.foregroundStyle(.secondary)
+					}
+					.contentTransition(.numericText())
+					.animation(.easeInOut(duration: 0.2), value: hasScrolled)
 				}
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(razor.name.capitalized)
