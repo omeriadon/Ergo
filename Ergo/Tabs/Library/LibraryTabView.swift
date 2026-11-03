@@ -161,8 +161,10 @@ struct LibraryTabView: View {
 					.listRowBackground(Color.clear)
 					.frame(maxWidth: .infinity, alignment: .center)
 					.transition(.opacity)
-				} else if results.isEmpty {
+				} else if results.isEmpty, searchTerm.count > 2 {
 					ContentUnavailableView.search(text: searchTerm)
+						.tint(.accent)
+						.padding(.top, 90)
 						.transition(.opacity)
 				} else {
 					LazyVStack(alignment: .leading, spacing: 10) {
@@ -170,17 +172,27 @@ struct LibraryTabView: View {
 							NavigationLink(
 								value: LibraryRoute.detail(category: result.category, id: result.id)
 							) {
-								Label(result.name, systemImage: result.category.symbol)
+								HStack {
+									Label(result.name, systemImage: result.category.symbol)
+										.font(.title3)
+										.frame(maxWidth: .infinity, alignment: .leading)
+
+									Spacer()
+
+									Image(systemName: "chevron.right")
+										.foregroundStyle(.secondary)
+								}
 							}
 							.accessibilityIdentifier("library.search.\(result.category).\(result.id)")
-							.frame(maxWidth: .infinity, alignment: .leading)
-							.padding(.horizontal)
-							.padding(.vertical, 10)
-							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
+							.padding(.horizontal, 16)
+							.padding(.vertical, 16)
+							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
+							.contentShape(RoundedRectangle(cornerRadius: 18))
 							.transition(.opacity)
 						}
 					}
-					.padding(.horizontal)
+					.padding(.horizontal, 7)
+					.padding(.top, 20)
 					.transition(.opacity)
 				}
 			} else {
