@@ -61,7 +61,7 @@ struct BookmarksView: View {
 			if groupedBookmarks.isEmpty {
 				ContentUnavailableView("No Bookmarks", systemImage: "bookmark")
 					.listRowBackground(Color.clear)
-					.padding(.top, 100)
+					.padding(.top, 140)
 			} else {
 				results
 			}
