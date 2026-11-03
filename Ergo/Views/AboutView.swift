@@ -79,6 +79,7 @@ struct AboutView: View {
 
 		// Animation
 		c.disableAnimation = false
+		c.framesPerSecond = 30
 		c.intro = false
 
 		// Cells and dithering

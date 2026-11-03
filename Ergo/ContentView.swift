@@ -112,7 +112,7 @@ struct ContentView: View {
 		.environment(catalog)
 		.onAppear {
 			thing.startup()
-			thing.selectedTab = .library
+			thing.selectedTab = .check
 			thing.libraryPath = [.bookmarks, .category(.philosophers), .detail(category: .philosophers, id: "david-hume")]
 			Task {
 				try? await catalog.load()

@@ -126,3 +126,186 @@ enum SymbolSearchToken: Hashable, Identifiable, Codable, Defaults.Serializable {
 		}
 	}
 }
+
+enum SymbolEnum: String, CaseIterable, Identifiable, Codable, Defaults.Serializable {
+	case accessibilityRelation
+	case alwaysOperator
+	case becauseMarker
+	case beliefOperator
+	case boundedExistentialQuantifier
+	case boundedUniversalQuantifier
+	case conjunction
+	case definiteDescription
+	case definitionMarker
+	case emptySet
+	case endOfProofMarker
+	case eventuallyOperator
+	case exclusiveDisjunction
+	case existentialQuantifier
+	case failureOfEntailment
+	case falsityConstant
+	case formalDerivability
+	case formalNonderivability
+	case formulaMetavariable
+	case functionApplication
+	case groupingDelimiters
+	case hilbertChoiceOperator
+	case identity
+	case disjunction
+	case individualConstant
+	case individualVariable
+	case interpretationBrackets
+	case knowledgeOperator
+	case lambdaAbstraction
+	case logicalEquivalenceMarker
+	case logicalValidityMarker
+	case materialBiconditional
+	case materialConditional
+	case modelSatisfaction
+	case nand
+	case necessityOperator
+	case negatedExistentialQuantifier
+	case negation
+	case nextOperator
+	case nonidentity
+	case nor
+	case obligationOperator
+	case permissionOperator
+	case possibilityOperator
+	case predicateApplication
+	case predicateLetter
+	case premiseSetMetavariable
+	case prohibitionOperator
+	case properSubset
+	case relationApplication
+	case semanticConsequence
+	case sentenceLetter
+	case sequentArrow
+	case setIntersection
+	case setMembership
+	case setNonmembership
+	case setUnion
+	case subset
+	case substitutionNotation
+	case theoremhoodMarker
+	case thereforeMarker
+	case truthConstant
+	case typeAnnotation
+	case uniqueExistentialQuantifier
+	case universalQuantifier
+	case untilOperator
+
+	var id: SymbolEnum {
+		self
+	}
+
+	var glyph: String {
+		switch self {
+			case .accessibilityRelation: "R"
+			case .alwaysOperator: "G"
+			case .becauseMarker: "∵"
+			case .beliefOperator: "Bₐ"
+			case .boundedExistentialQuantifier: "∃x ∈ A"
+			case .boundedUniversalQuantifier: "∀x ∈ A"
+			case .conjunction: "∧"
+			case .definiteDescription: "ι"
+			case .definitionMarker: "≔"
+			case .emptySet: "∅"
+			case .endOfProofMarker: "∎"
+			case .eventuallyOperator: "F"
+			case .exclusiveDisjunction: "⊕"
+			case .existentialQuantifier: "∃"
+			case .failureOfEntailment: "⊭"
+			case .falsityConstant: "⊥"
+			case .formalDerivability: "⊢"
+			case .formalNonderivability: "⊬"
+			case .formulaMetavariable: "φ"
+			case .functionApplication: "f(·)"
+			case .groupingDelimiters: "( )"
+			case .hilbertChoiceOperator: "ε"
+			case .identity: "="
+			case .disjunction: "∨"
+			case .individualConstant: "a"
+			case .individualVariable: "x"
+			case .interpretationBrackets: "⟦ ⟧"
+			case .knowledgeOperator: "Kₐ"
+			case .lambdaAbstraction: "λ"
+			case .logicalEquivalenceMarker: "⇔"
+			case .logicalValidityMarker: "⊨"
+			case .materialBiconditional: "↔"
+			case .materialConditional: "→"
+			case .modelSatisfaction: "⊨"
+			case .nand: "↑"
+			case .necessityOperator: "□"
+			case .negatedExistentialQuantifier: "∄"
+			case .negation: "¬"
+			case .nextOperator: "X"
+			case .nonidentity: "≠"
+			case .nor: "↓"
+			case .obligationOperator: "O"
+			case .permissionOperator: "P"
+			case .possibilityOperator: "◇"
+			case .predicateApplication: "P(·)"
+			case .predicateLetter: "P"
+			case .premiseSetMetavariable: "Γ"
+			case .prohibitionOperator: "F"
+			case .properSubset: "⊊"
+			case .relationApplication: "R(·,·)"
+			case .semanticConsequence: "⊨"
+			case .sentenceLetter: "p"
+			case .sequentArrow: "⇒"
+			case .setIntersection: "∩"
+			case .setMembership: "∈"
+			case .setNonmembership: "∉"
+			case .setUnion: "∪"
+			case .subset: "⊆"
+			case .substitutionNotation: "[t/x]"
+			case .theoremhoodMarker: "⊢"
+			case .thereforeMarker: "∴"
+			case .truthConstant: "⊤"
+			case .typeAnnotation: ":"
+			case .uniqueExistentialQuantifier: "∃!"
+			case .universalQuantifier: "∀"
+			case .untilOperator: "U"
+		}
+	}
+
+	static let basic: [SymbolEnum] = [
+		.negation,
+		.conjunction,
+		.disjunction,
+		.materialConditional,
+		.materialBiconditional,
+	]
+
+	static let predicate: [SymbolEnum] = [
+		.universalQuantifier,
+		.existentialQuantifier,
+		.uniqueExistentialQuantifier,
+
+		.identity,
+		.nonidentity,
+		.individualVariable,
+		.individualConstant,
+		.predicateLetter,
+		.predicateApplication,
+		.relationApplication,
+		.functionApplication,
+	]
+
+	var name: String {
+		switch self {
+			case .nand: "NAND"
+			case .nor: "NOR"
+			case .disjunction: "Inclusive disjunction"
+			default:
+				rawValue
+					.replacingOccurrences(
+						of: "([a-z])([A-Z])",
+						with: "$1 $2",
+						options: .regularExpression
+					)
+					.capitalized
+		}
+	}
+}

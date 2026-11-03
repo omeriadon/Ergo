@@ -29,6 +29,7 @@ public nonisolated struct DitherConfiguration: Equatable, Sendable {
 	public var colorNum: Float = 4
 	public var pixelSize: Float = 5
 	public var disableAnimation = false
+	public var framesPerSecond = 5
 	public var ditherMode = 0
 	public var ditherStrength: Float = 1
 	public var palette: [SIMD3<Float>] = [
@@ -50,9 +51,9 @@ public nonisolated struct DitherConfiguration: Equatable, Sendable {
 	public var squareStyle = "white"
 	public var useThemeColors = false
 	public var opacity: Float = 1
-	public var topBlur = true
+	public var topBlur = false
 
-	public var cursorInteractionEnabled = true
+	public var cursorInteractionEnabled = false
 	public var cursorRadius: Double = 0.5
 	public var cursorStrength: Double = 1
 	public var cursorResponse: Double = 0.28
@@ -84,6 +85,7 @@ public nonisolated struct DitherConfiguration: Equatable, Sendable {
 	func bounded() -> Self {
 		var value = self
 		value.waveSpeed = finite(waveSpeed, 0.05, 0 ... 1)
+		value.framesPerSecond = min(max(framesPerSecond, 1), 120)
 		value.waveDirection = Self.normalizedWaveDirection(waveDirection) ?? Self.defaultWaveDirection
 		value.waveFrequency = finite(waveFrequency, 3, 0.01 ... 12)
 		value.waveAmplitude = finite(waveAmplitude, 0.3, 0 ... 1)
@@ -163,6 +165,36 @@ struct DitherAnimationTiming {
 
 	mutating func reset() {
 		lastTime = nil
+	}
+}
+
+struct DitherFrameScheduler {
+	private(set) var lastRenderTime: TimeInterval?
+	private var frameRequested = true
+
+	mutating func requestFrame() {
+		frameRequested = true
+	}
+
+	func shouldRender(now: TimeInterval, isAnimating: Bool, framesPerSecond: Int = 5) -> Bool {
+		guard isAnimating || frameRequested else {
+			return false
+		}
+
+		guard isAnimating else {
+			return true
+		}
+
+		let interval = 1.0 / Double(max(1, framesPerSecond))
+		guard let lastRenderTime else {
+			return true
+		}
+		return now - lastRenderTime >= interval
+	}
+
+	mutating func didRender(now: TimeInterval) {
+		lastRenderTime = now
+		frameRequested = false
 	}
 }
 
@@ -253,20 +285,31 @@ private struct CellBlurCompositeUniforms {
 
 private final class DitherMetalBundleMarker {}
 
-private final class SharedMetalResources: @unchecked Sendable {
+private struct CoverageKey: Hashable {
+	let cell: Int
+	let gap: Float
+	let radius: Float
+}
+
+@MainActor
+private final class SharedMetalResources {
 	let device: MTLDevice
-	let fieldPipeline: MTLRenderPipelineState
-	let cellPipeline: MTLRenderPipelineState
-	let fusedCellComputePipeline: MTLComputePipelineState
-	let referenceDitherPipeline: MTLRenderPipelineState
-	let optimizedDitherPipeline: MTLRenderPipelineState
+	let queue: MTLCommandQueue
+	let library: MTLLibrary
+	let vertex: MTLFunction
 	let gradientTexture: MTLTexture
-	let atlasDitherPipeline: MTLRenderPipelineState
-	let coverageComputePipeline: MTLComputePipelineState
-	let joinMaskComputePipeline: MTLComputePipelineState
-	let blurCompositePipeline: MTLRenderPipelineState
-	let cellBlurHorizontalPipeline: MTLComputePipelineState
-	let cellBlurCompositePipeline: MTLRenderPipelineState
+	private var fieldPipeline: MTLRenderPipelineState?
+	private var cellPipeline: MTLRenderPipelineState?
+	private var fusedCellComputePipeline: MTLComputePipelineState?
+	private var referenceDitherPipeline: MTLRenderPipelineState?
+	private var optimizedDitherPipeline: MTLRenderPipelineState?
+	private var atlasDitherPipeline: MTLRenderPipelineState?
+	private var coverageComputePipeline: MTLComputePipelineState?
+	private var joinMaskComputePipeline: MTLComputePipelineState?
+	private var blurCompositePipeline: MTLRenderPipelineState?
+	private var cellBlurHorizontalPipeline: MTLComputePipelineState?
+	private var cellBlurCompositePipeline: MTLRenderPipelineState?
+	private var coverageTextures: [CoverageKey: MTLTexture] = [:]
 
 	init() throws {
 		guard let device = MTLCreateSystemDefaultDevice() else {
@@ -278,18 +321,27 @@ private final class SharedMetalResources: @unchecked Sendable {
 			throw NSError(domain: "DitherMetal", code: 3, userInfo: [NSLocalizedDescriptionKey: "default.metallib could not be loaded; include OptimizedDither.metal in this target"])
 		}
 		guard let vertex = library.makeFunction(name: "ditherVertex"),
-		      let field = library.makeFunction(name: "ditherField"),
-		      let cell = library.makeFunction(name: "ditherCell"),
-		      let fusedCellCompute = library.makeFunction(name: "ditherFusedCellCompute"),
-		      let referenceDither = library.makeFunction(name: "ditherUpscale"),
-		      let optimizedDither = library.makeFunction(name: "ditherUpscaleOptimized"),
-		      let blurComposite = library.makeFunction(name: "ditherTopBlurComposite"),
-		      let cellBlurHorizontal = library.makeFunction(name: "ditherCellBlurHorizontal"),
-		      let cellBlurComposite = library.makeFunction(name: "ditherCellBlurComposite"),
-		      let gradientFunction = library.makeFunction(name: "ditherGradient")
+		      let gradientFunction = library.makeFunction(name: "ditherGradient"),
+		      let queue = device.makeCommandQueue(),
+		      let gradients = device.makeTexture(descriptor: {
+		      	let descriptor = MTLTextureDescriptor.texture2DDescriptor(
+		      		pixelFormat: .rgba32Float,
+		      		width: 289,
+		      		height: 289,
+		      		mipmapped: false
+		      	)
+		      	descriptor.storageMode = .private
+		      	descriptor.usage = [.renderTarget, .shaderRead]
+		      	return descriptor
+		      }()),
+		      let initialization = queue.makeCommandBuffer()
 		else {
 			throw NSError(domain: "DitherMetal", code: 4, userInfo: [NSLocalizedDescriptionKey: "Dither shader functions are missing"])
 		}
+		self.queue = queue
+		self.library = library
+		self.vertex = vertex
+		gradientTexture = gradients
 
 		func makePipeline(fragment: MTLFunction, pixelFormat: MTLPixelFormat) throws -> MTLRenderPipelineState {
 			let descriptor = MTLRenderPipelineDescriptor()
@@ -299,42 +351,6 @@ private final class SharedMetalResources: @unchecked Sendable {
 			return try device.makeRenderPipelineState(descriptor: descriptor)
 		}
 
-		do {
-			fieldPipeline = try makePipeline(fragment: field, pixelFormat: .rgba8Unorm)
-			cellPipeline = try makePipeline(fragment: cell, pixelFormat: .rgba16Float)
-			fusedCellComputePipeline = try device.makeComputePipelineState(function: fusedCellCompute)
-			referenceDitherPipeline = try makePipeline(fragment: referenceDither, pixelFormat: .bgra8Unorm)
-			optimizedDitherPipeline = try makePipeline(fragment: optimizedDither, pixelFormat: .bgra8Unorm)
-			blurCompositePipeline = try makePipeline(fragment: blurComposite, pixelFormat: .bgra8Unorm)
-			cellBlurHorizontalPipeline = try device.makeComputePipelineState(function: cellBlurHorizontal)
-			cellBlurCompositePipeline = try makePipeline(fragment: cellBlurComposite, pixelFormat: .bgra8Unorm)
-		} catch {
-			throw NSError(domain: "DitherMetal", code: 5, userInfo: [NSLocalizedDescriptionKey: "Dither pipeline creation failed: \(error)"])
-		}
-
-		guard let atlasFunction = library.makeFunction(name: "ditherUpscaleAtlas"),
-		      let coverageComputeFunction = library.makeFunction(name: "ditherCoverageCompute"),
-		      let joinMaskComputeFunction = library.makeFunction(name: "ditherJoinMaskCompute")
-		else {
-			throw NSError(domain: "DitherMetal", code: 4)
-		}
-		atlasDitherPipeline = try makePipeline(fragment: atlasFunction, pixelFormat: .bgra8Unorm)
-		coverageComputePipeline = try device.makeComputePipelineState(function: coverageComputeFunction)
-		joinMaskComputePipeline = try device.makeComputePipelineState(function: joinMaskComputeFunction)
-		let gradientDescriptor = MTLTextureDescriptor.texture2DDescriptor(
-			pixelFormat: .rgba32Float,
-			width: 289,
-			height: 289,
-			mipmapped: false
-		)
-		gradientDescriptor.storageMode = .private
-		gradientDescriptor.usage = [.renderTarget, .shaderRead]
-		guard let gradients = device.makeTexture(descriptor: gradientDescriptor),
-		      let queue = device.makeCommandQueue(),
-		      let initialization = queue.makeCommandBuffer()
-		else {
-			throw NSError(domain: "DitherMetal", code: 13)
-		}
 		let gradientPipeline = try makePipeline(fragment: gradientFunction, pixelFormat: .rgba32Float)
 		let gradientPass = MTLRenderPassDescriptor()
 		gradientPass.colorAttachments[0].texture = gradients
@@ -351,7 +367,141 @@ private final class SharedMetalResources: @unchecked Sendable {
 		if let error = initialization.error {
 			throw error
 		}
-		gradientTexture = gradients
+	}
+
+	private func renderPipeline(fragment name: String, pixelFormat: MTLPixelFormat) throws -> MTLRenderPipelineState {
+		guard let function = library.makeFunction(name: name) else {
+			throw NSError(domain: "DitherMetal", code: 4, userInfo: [NSLocalizedDescriptionKey: "Missing Metal shader function: \(name)"])
+		}
+		let descriptor = MTLRenderPipelineDescriptor()
+		descriptor.vertexFunction = vertex
+		descriptor.fragmentFunction = function
+		descriptor.colorAttachments[0].pixelFormat = pixelFormat
+		do {
+			return try device.makeRenderPipelineState(descriptor: descriptor)
+		} catch {
+			throw NSError(domain: "DitherMetal", code: 5, userInfo: [NSLocalizedDescriptionKey: "Dither pipeline creation failed: \(error)"])
+		}
+	}
+
+	func fieldPipelineState() throws -> MTLRenderPipelineState {
+		if let fieldPipeline {
+			return fieldPipeline
+		}
+		let pipeline = try renderPipeline(fragment: "ditherField", pixelFormat: .rgba8Unorm)
+		fieldPipeline = pipeline
+		return pipeline
+	}
+
+	func cellPipelineState() throws -> MTLRenderPipelineState {
+		if let cellPipeline {
+			return cellPipeline
+		}
+		let pipeline = try renderPipeline(fragment: "ditherCell", pixelFormat: .rgba16Float)
+		cellPipeline = pipeline
+		return pipeline
+	}
+
+	func fusedCellComputePipelineState() throws -> MTLComputePipelineState {
+		if let fusedCellComputePipeline {
+			return fusedCellComputePipeline
+		}
+		guard let function = library.makeFunction(name: "ditherFusedCellCompute") else {
+			throw NSError(domain: "DitherMetal", code: 4)
+		}
+		let pipeline = try device.makeComputePipelineState(function: function)
+		fusedCellComputePipeline = pipeline
+		return pipeline
+	}
+
+	func ditherPipelineState(fused: Bool) throws -> MTLRenderPipelineState {
+		if fused, let optimizedDitherPipeline {
+			return optimizedDitherPipeline
+		}
+		if !fused, let referenceDitherPipeline {
+			return referenceDitherPipeline
+		}
+		let pipeline = try renderPipeline(fragment: fused ? "ditherUpscaleOptimized" : "ditherUpscale", pixelFormat: .bgra8Unorm)
+		if fused {
+			optimizedDitherPipeline = pipeline
+		} else {
+			referenceDitherPipeline = pipeline
+		}
+		return pipeline
+	}
+
+	func atlasDitherPipelineState() throws -> MTLRenderPipelineState {
+		if let atlasDitherPipeline {
+			return atlasDitherPipeline
+		}
+		let pipeline = try renderPipeline(fragment: "ditherUpscaleAtlas", pixelFormat: .bgra8Unorm)
+		atlasDitherPipeline = pipeline
+		return pipeline
+	}
+
+	func coverageComputePipelineState() throws -> MTLComputePipelineState {
+		if let coverageComputePipeline {
+			return coverageComputePipeline
+		}
+		guard let function = library.makeFunction(name: "ditherCoverageCompute") else {
+			throw NSError(domain: "DitherMetal", code: 4)
+		}
+		let pipeline = try device.makeComputePipelineState(function: function)
+		coverageComputePipeline = pipeline
+		return pipeline
+	}
+
+	func joinMaskComputePipelineState() throws -> MTLComputePipelineState {
+		if let joinMaskComputePipeline {
+			return joinMaskComputePipeline
+		}
+		guard let function = library.makeFunction(name: "ditherJoinMaskCompute") else {
+			throw NSError(domain: "DitherMetal", code: 4)
+		}
+		let pipeline = try device.makeComputePipelineState(function: function)
+		joinMaskComputePipeline = pipeline
+		return pipeline
+	}
+
+	func blurCompositePipelineState() throws -> MTLRenderPipelineState {
+		if let blurCompositePipeline {
+			return blurCompositePipeline
+		}
+		let pipeline = try renderPipeline(fragment: "ditherTopBlurComposite", pixelFormat: .bgra8Unorm)
+		blurCompositePipeline = pipeline
+		return pipeline
+	}
+
+	func cellBlurHorizontalPipelineState() throws -> MTLComputePipelineState {
+		if let cellBlurHorizontalPipeline {
+			return cellBlurHorizontalPipeline
+		}
+		guard let function = library.makeFunction(name: "ditherCellBlurHorizontal") else {
+			throw NSError(domain: "DitherMetal", code: 4)
+		}
+		let pipeline = try device.makeComputePipelineState(function: function)
+		cellBlurHorizontalPipeline = pipeline
+		return pipeline
+	}
+
+	func cellBlurCompositePipelineState() throws -> MTLRenderPipelineState {
+		if let cellBlurCompositePipeline {
+			return cellBlurCompositePipeline
+		}
+		let pipeline = try renderPipeline(fragment: "ditherCellBlurComposite", pixelFormat: .bgra8Unorm)
+		cellBlurCompositePipeline = pipeline
+		return pipeline
+	}
+
+	func coverageTexture(for key: CoverageKey) -> MTLTexture? {
+		coverageTextures[key]
+	}
+
+	func publishCoverageTexture(_ texture: MTLTexture, for key: CoverageKey) {
+		if coverageTextures.count >= 8 {
+			coverageTextures.removeAll(keepingCapacity: true)
+		}
+		coverageTextures[key] = texture
 	}
 }
 
@@ -376,13 +526,7 @@ private final class DitherMetalRenderer {
 
 	let device: MTLDevice
 	private let queue: MTLCommandQueue
-	private let fieldPipeline: MTLRenderPipelineState
-	private let cellPipeline: MTLRenderPipelineState
-	private let fusedCellComputePipeline: MTLComputePipelineState
-	private let ditherPipeline: MTLRenderPipelineState
-	private let blurCompositePipeline: MTLRenderPipelineState
-	private let cellBlurHorizontalPipeline: MTLComputePipelineState
-	private let cellBlurCompositePipeline: MTLRenderPipelineState
+	private let sharedResources: SharedMetalResources
 	private let gradientTexture: MTLTexture
 	private var fieldTexture: MTLTexture?
 	private var cellTexture: MTLTexture?
@@ -429,13 +573,6 @@ private final class DitherMetalRenderer {
 	/// failed initialization remains a thrown error rather than terminating the app.
 	private static let sharedResources = Result { try SharedMetalResources() }
 
-	private struct CoverageKey: Hashable {
-		let cell: Int
-		let gap: Float
-		let radius: Float
-	}
-
-	private var coverageTextures: [CoverageKey: MTLTexture] = [:]
 	private let usesCoverageAtlas: Bool
 
 	init(
@@ -458,18 +595,9 @@ private final class DitherMetalRenderer {
 			throw NSError(domain: "DitherMetal", code: 12, userInfo: [NSLocalizedDescriptionKey: "Swift and Metal uniform layouts do not match"])
 		}
 		let resources = try Self.sharedResources.get()
-		guard let queue = resources.device.makeCommandQueue() else {
-			throw NSError(domain: "DitherMetal", code: 2, userInfo: [NSLocalizedDescriptionKey: "Could not create Metal command queue"])
-		}
+		sharedResources = resources
 		device = resources.device
-		self.queue = queue
-		fieldPipeline = resources.fieldPipeline
-		cellPipeline = resources.cellPipeline
-		fusedCellComputePipeline = resources.fusedCellComputePipeline
-		ditherPipeline = usesFusedFieldAndCellPass ? resources.optimizedDitherPipeline : resources.referenceDitherPipeline
-		blurCompositePipeline = resources.blurCompositePipeline
-		cellBlurHorizontalPipeline = resources.cellBlurHorizontalPipeline
-		cellBlurCompositePipeline = resources.cellBlurCompositePipeline
+		queue = resources.queue
 		gradientTexture = resources.gradientTexture
 		guard let paletteBuffer = device.makeBuffer(length: 8 * MemoryLayout<SIMD3<Float>>.stride, options: .storageModeShared) else {
 			throw NSError(domain: "DitherMetal", code: 11, userInfo: [NSLocalizedDescriptionKey: "Could not allocate palette buffer"])
@@ -561,18 +689,19 @@ private final class DitherMetalRenderer {
 			cellDescriptor.usage = usesFusedFieldAndCellPass ? [.shaderRead, .shaderWrite] : [.renderTarget, .shaderRead]
 			cellDescriptor.storageMode = .private
 			cellTexture = device.makeTexture(descriptor: cellDescriptor)
-			let maskDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Uint, width: columns, height: rows, mipmapped: false)
-			maskDescriptor.storageMode = .private
-			maskDescriptor.usage = [.shaderRead, .shaderWrite]
-			joinMaskTexture = device.makeTexture(descriptor: maskDescriptor)
+			joinMaskTexture = nil
 			fieldSize = MTLSize(width: columns, height: rows, depth: 1)
 		}
 		guard let cellTexture else {
 			throw NSError(domain: "DitherMetal", code: 6, userInfo: [NSLocalizedDescriptionKey: "Could not allocate field texture"])
 		}
-		let trail = (0 ..< 8).map { index -> SIMD3<Float> in
-			guard configuration.cursorInteractionEnabled, !configuration.disableAnimation,
-			      index < inputs.cursorTrail.count else { return .zero }
+		func trailSample(_ index: Int) -> SIMD3<Float> {
+			guard configuration.cursorInteractionEnabled,
+			      !configuration.disableAnimation,
+			      index < inputs.cursorTrail.count
+			else {
+				return .zero
+			}
 			let sample = inputs.cursorTrail[index]
 			return SIMD3<Float>(sample.x * scale, sample.y * scale, sample.z)
 		}
@@ -595,14 +724,14 @@ private final class DitherMetalRenderer {
 			cursorWarp: Float(configuration.cursorWarp),
 			cursorPresence: configuration.cursorInteractionEnabled && !configuration.disableAnimation ? inputs.cursorPresence : 0,
 			cursorTouch: inputs.cursorTouch * scale,
-			trail0: trail[0],
-			trail1: trail[1],
-			trail2: trail[2],
-			trail3: trail[3],
-			trail4: trail[4],
-			trail5: trail[5],
-			trail6: trail[6],
-			trail7: trail[7]
+			trail0: trailSample(0),
+			trail1: trailSample(1),
+			trail2: trailSample(2),
+			trail3: trailSample(3),
+			trail4: trailSample(4),
+			trail5: trailSample(5),
+			trail6: trailSample(6),
+			trail7: trailSample(7)
 		)
 		let effectiveBackground: SIMD3<Float> = switch configuration.backgroundStyle {
 			case "black": .zero
@@ -613,6 +742,12 @@ private final class DitherMetalRenderer {
 		let effectiveWave: SIMD3<Float> = configuration.colorPlacement == "background"
 			? (configuration.squareStyle == "black" ? .zero : SIMD3<Float>(repeating: 1))
 			: configuration.waveColor
+		let backgroundStyle: Int32 = switch configuration.backgroundStyle {
+			case "black": 1
+			case "white": 2
+			case "dim": 3
+			default: 0
+		}
 		var dither = DitherUniforms(
 			fieldSize: SIMD2<Int32>(Int32(columns), Int32(rows)),
 			cellDevice: Float(cell),
@@ -632,7 +767,7 @@ private final class DitherMetalRenderer {
 			themeCount: Int32(min(DitherConfiguration.supportedPaletteCount, inputs.themeColors.count)),
 			useThemeColors: configuration.useThemeColors ? 1 : 0,
 			colorPlacement: configuration.colorPlacement == "background" ? 1 : 0,
-			backgroundStyle: ["custom": 0, "black": 1, "white": 2, "dim": 3][configuration.backgroundStyle] ?? 0,
+			backgroundStyle: backgroundStyle,
 			squareStyle: configuration.squareStyle == "black" ? 1 : 0,
 			cursorPresence: inputs.cursorPresence
 		)
@@ -672,7 +807,8 @@ private final class DitherMetalRenderer {
 				throw NSError(domain: "DitherMetal", code: 8, userInfo: [NSLocalizedDescriptionKey: "Could not create fused field and cell compute encoder"])
 			}
 			fusedComputeEncoder = computeEncoder
-			computeEncoder.setComputePipelineState(fusedCellComputePipeline)
+			let pipeline = try sharedResources.fusedCellComputePipelineState()
+			computeEncoder.setComputePipelineState(pipeline)
 			computeEncoder.setTexture(cellTexture, index: 0)
 			computeEncoder.setTexture(gradientTexture, index: 1)
 			computeEncoder.setBytes(&field, length: MemoryLayout<FieldUniforms>.stride, index: 0)
@@ -688,7 +824,8 @@ private final class DitherMetalRenderer {
 				computeEncoder,
 				width: columns,
 				height: rows,
-				pipeline: fusedCellComputePipeline
+				pipeline: pipeline,
+				usesTwoDimensionalThreadgroups: usesTwoDimensionalThreadgroups
 			)
 			computeDispatchCount += 1
 		} else {
@@ -699,6 +836,7 @@ private final class DitherMetalRenderer {
 			fieldPass.colorAttachments[0].texture = fieldTexture
 			fieldPass.colorAttachments[0].loadAction = .dontCare
 			fieldPass.colorAttachments[0].storeAction = .store
+			let fieldPipeline = try sharedResources.fieldPipelineState()
 			guard let fieldEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: fieldPass) else {
 				throw NSError(domain: "DitherMetal", code: 8, userInfo: [NSLocalizedDescriptionKey: "Could not create field encoder"])
 			}
@@ -711,6 +849,7 @@ private final class DitherMetalRenderer {
 			cellPass.colorAttachments[0].texture = cellTexture
 			cellPass.colorAttachments[0].loadAction = .dontCare
 			cellPass.colorAttachments[0].storeAction = .store
+			let cellPipeline = try sharedResources.cellPipelineState()
 			guard let cellEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: cellPass) else {
 				throw NSError(domain: "DitherMetal", code: 8, userInfo: [NSLocalizedDescriptionKey: "Could not create cell encoder"])
 			}
@@ -732,7 +871,7 @@ private final class DitherMetalRenderer {
 		var newCoverageKey: CoverageKey?
 		if usesFusedFieldAndCellPass && usesCoverageAtlas && cell <= 128 && (dither.gap > 0 || dither.cornerRadius > 0) {
 			let key = CoverageKey(cell: cell, gap: dither.gap, radius: dither.cornerRadius)
-			if let cached = coverageTextures[key] {
+			if let cached = sharedResources.coverageTexture(for: key) {
 				coverageTexture = cached
 			} else {
 				let resources = try Self.sharedResources.get()
@@ -742,14 +881,15 @@ private final class DitherMetalRenderer {
 				guard let texture = device.makeTexture(descriptor: descriptor), let computeEncoder = fusedComputeEncoder else {
 					throw NSError(domain: "DitherMetal", code: 14)
 				}
-				computeEncoder.setComputePipelineState(resources.coverageComputePipeline)
+				let pipeline = try resources.coverageComputePipelineState()
+				computeEncoder.setComputePipelineState(pipeline)
 				computeEncoder.setTexture(texture, index: 0)
 				computeEncoder.setBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
 				dispatch(
 					computeEncoder,
 					width: cell,
 					height: texture.height,
-					pipeline: resources.coverageComputePipeline
+					pipeline: pipeline
 				)
 				computeDispatchCount += 1
 				newCoverageKey = key
@@ -757,12 +897,24 @@ private final class DitherMetalRenderer {
 			}
 		}
 		if coverageTexture != nil && dither.joinAdjacentSquares > 0 && dither.gap == 0 && dither.cornerRadius > 0 {
+			if joinMaskTexture == nil {
+				let maskDescriptor = MTLTextureDescriptor.texture2DDescriptor(
+					pixelFormat: .r8Uint,
+					width: columns,
+					height: rows,
+					mipmapped: false
+				)
+				maskDescriptor.storageMode = .private
+				maskDescriptor.usage = [.shaderRead, .shaderWrite]
+				joinMaskTexture = device.makeTexture(descriptor: maskDescriptor)
+			}
 			guard let joinMaskTexture, let encoder = fusedComputeEncoder else {
 				throw NSError(domain: "DitherMetal", code: 15)
 			}
 			let resources = try Self.sharedResources.get()
 			encoder.memoryBarrier(scope: .textures)
-			encoder.setComputePipelineState(resources.joinMaskComputePipeline)
+			let pipeline = try resources.joinMaskComputePipelineState()
+			encoder.setComputePipelineState(pipeline)
 			encoder.setTexture(cellTexture, index: 0)
 			encoder.setTexture(joinMaskTexture, index: 1)
 			encoder.setBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
@@ -770,7 +922,7 @@ private final class DitherMetalRenderer {
 				encoder,
 				width: columns,
 				height: rows,
-				pipeline: resources.joinMaskComputePipeline,
+				pipeline: pipeline,
 				usesTwoDimensionalThreadgroups: usesTwoDimensionalThreadgroups
 			)
 			computeDispatchCount += 1
@@ -815,19 +967,28 @@ private final class DitherMetalRenderer {
 		}
 		let finalPass = finalPassDescriptor
 		finalPass.colorAttachments[0].texture = target
+		defer {
+			finalPass.colorAttachments[0].texture = nil
+		}
 		finalPass.colorAttachments[0].loadAction = usesFusedFieldAndCellPass ? .dontCare : .clear
 		finalPass.colorAttachments[0].storeAction = .store
 		finalPass.colorAttachments[0].clearColor = MTLClearColor(red: Double(effectiveBackground.x), green: Double(effectiveBackground.y), blue: Double(effectiveBackground.z), alpha: 1)
 		guard let finalEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: finalPass) else {
 			throw NSError(domain: "DitherMetal", code: 9, userInfo: [NSLocalizedDescriptionKey: "Could not create composite encoder"])
 		}
+		var finalEncodingEnded = false
+		defer {
+			if !finalEncodingEnded {
+				finalEncoder.endEncoding()
+			}
+		}
 		renderPassCount += 1
 		if let coverageTexture {
-			try finalEncoder.setRenderPipelineState(Self.sharedResources.get().atlasDitherPipeline)
+			try finalEncoder.setRenderPipelineState(sharedResources.atlasDitherPipelineState())
 			finalEncoder.setFragmentTexture(coverageTexture, index: 1)
 			finalEncoder.setFragmentTexture(joinMaskTexture, index: 2)
 		} else {
-			finalEncoder.setRenderPipelineState(ditherPipeline)
+			try finalEncoder.setRenderPipelineState(sharedResources.ditherPipelineState(fused: usesFusedFieldAndCellPass))
 		}
 		finalEncoder.setFragmentTexture(cellTexture, index: 0)
 		finalEncoder.setFragmentBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
@@ -844,11 +1005,12 @@ private final class DitherMetalRenderer {
 			finalEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
 		}
 		if usesCellBlur {
-			encodeCellBlurComposite(encoder: finalEncoder, width: width, stripHeight: stripHeight, cell: cell, dither: dither)
+			try encodeCellBlurComposite(encoder: finalEncoder, width: width, stripHeight: stripHeight, cell: cell, dither: dither)
 		} else if usesTopBlur {
-			encodeTopBlurComposite(encoder: finalEncoder, width: width, stripHeight: stripHeight, scale: scale)
+			try encodeTopBlurComposite(encoder: finalEncoder, width: width, stripHeight: stripHeight, scale: scale)
 		}
 		finalEncoder.endEncoding()
+		finalEncodingEnded = true
 		if let drawable {
 			commandBuffer.present(drawable)
 		}
@@ -856,10 +1018,7 @@ private final class DitherMetalRenderer {
 		// Publish only after submission: a failed encoder must not leave an
 		// uninitialized atlas in the cache for the next frame.
 		if let newCoverageKey, let coverageTexture {
-			if coverageTextures.count >= 8 {
-				coverageTextures.removeAll(keepingCapacity: true)
-			}
-			coverageTextures[newCoverageKey] = coverageTexture
+			sharedResources.publishCoverageTexture(coverageTexture, for: newCoverageKey)
 		}
 		let submissionElapsed = CACurrentMediaTime() - cpuStart
 		if waitUntilCompleted {
@@ -970,10 +1129,13 @@ private final class DitherMetalRenderer {
 		sourcePass.colorAttachments[0].texture = resources.source
 		sourcePass.colorAttachments[0].loadAction = .dontCare
 		sourcePass.colorAttachments[0].storeAction = .store
+		let sourcePipeline = try coverageTexture == nil
+			? sharedResources.ditherPipelineState(fused: usesFusedFieldAndCellPass)
+			: sharedResources.atlasDitherPipelineState()
 		guard let sourceEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: sourcePass) else {
 			throw NSError(domain: "DitherMetal", code: 17, userInfo: [NSLocalizedDescriptionKey: "Could not create top blur source encoder"])
 		}
-		try sourceEncoder.setRenderPipelineState(coverageTexture == nil ? ditherPipeline : Self.sharedResources.get().atlasDitherPipeline)
+		sourceEncoder.setRenderPipelineState(sourcePipeline)
 		sourceEncoder.setFragmentTexture(cellTexture, index: 0)
 		if let coverageTexture {
 			sourceEncoder.setFragmentTexture(coverageTexture, index: 1)
@@ -1110,6 +1272,7 @@ private final class DitherMetalRenderer {
 				stripHeight: stripHeight
 			)
 		}
+		let horizontalPipeline = try sharedResources.cellBlurHorizontalPipelineState()
 		guard let resources = cellBlurResources,
 		      let encoder = commandBuffer.makeComputeCommandEncoder()
 		else {
@@ -1125,7 +1288,7 @@ private final class DitherMetalRenderer {
 			weightStride: 0
 		)
 		var sourceDither = dither
-		encoder.setComputePipelineState(cellBlurHorizontalPipeline)
+		encoder.setComputePipelineState(horizontalPipeline)
 		encoder.setTexture(cellTexture, index: 0)
 		encoder.setBytes(&sourceDither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
 		for level in sigmas.indices {
@@ -1139,14 +1302,14 @@ private final class DitherMetalRenderer {
 				encoder,
 				width: cell == 4 ? width / 4 : width,
 				height: resources.rowCount,
-				pipeline: cellBlurHorizontalPipeline,
+				pipeline: horizontalPipeline,
 				usesTwoDimensionalThreadgroups: true
 			)
 		}
 		encoder.endEncoding()
 	}
 
-	private func encodeCellBlurComposite(encoder: MTLRenderCommandEncoder, width: Int, stripHeight: Int, cell: Int, dither: DitherUniforms) {
+	private func encodeCellBlurComposite(encoder: MTLRenderCommandEncoder, width: Int, stripHeight: Int, cell: Int, dither: DitherUniforms) throws {
 		guard let resources = cellBlurResources else {
 			return
 		}
@@ -1162,7 +1325,7 @@ private final class DitherMetalRenderer {
 		uniforms.transparent = dither.transparent
 		encoder.setViewport(MTLViewport(originX: 0, originY: 0, width: Double(width), height: Double(stripHeight), znear: 0, zfar: 1))
 		encoder.setScissorRect(MTLScissorRect(x: 0, y: 0, width: width, height: stripHeight))
-		encoder.setRenderPipelineState(cellBlurCompositePipeline)
+		try encoder.setRenderPipelineState(sharedResources.cellBlurCompositePipelineState())
 		for index in resources.levels.indices {
 			encoder.setFragmentTexture(resources.levels[index], index: index)
 			encoder.setFragmentBuffer(resources.verticalWeights[index], offset: 0, index: index)
@@ -1244,14 +1407,14 @@ private final class DitherMetalRenderer {
 		return result
 	}
 
-	private func encodeTopBlurComposite(encoder: MTLRenderCommandEncoder, width: Int, stripHeight: Int, scale: Float) {
+	private func encodeTopBlurComposite(encoder: MTLRenderCommandEncoder, width: Int, stripHeight: Int, scale: Float) throws {
 		guard let resources = topBlurResources else {
 			return
 		}
 		var uniforms = TopBlurUniforms(stripHeight: Float(Self.topBlurStripPixels(scale: scale)))
 		encoder.setViewport(MTLViewport(originX: 0, originY: 0, width: Double(width), height: Double(stripHeight), znear: 0, zfar: 1))
 		encoder.setScissorRect(MTLScissorRect(x: 0, y: 0, width: width, height: stripHeight))
-		encoder.setRenderPipelineState(blurCompositePipeline)
+		try encoder.setRenderPipelineState(sharedResources.blurCompositePipelineState())
 		encoder.setFragmentTexture(resources.source, index: 0)
 		for (index, level) in resources.levels.enumerated() {
 			encoder.setFragmentTexture(level, index: index + 1)
@@ -1263,11 +1426,34 @@ private final class DitherMetalRenderer {
 
 /// An interactive Metal background. Size it with SwiftUI layout modifiers.
 @MainActor
+private final class DitherInputStorage {
+	var hoverLocation: CGPoint?
+	var dragLocation: CGPoint?
+
+	var location: CGPoint? {
+		dragLocation ?? hoverLocation
+	}
+
+	func setHoverLocation(_ location: CGPoint?) {
+		hoverLocation = location
+	}
+
+	func setDragLocation(_ location: CGPoint?) {
+		dragLocation = location
+	}
+
+	func clear() {
+		hoverLocation = nil
+		dragLocation = nil
+	}
+}
+
+@MainActor
 public struct DitherView: View {
 	public var configuration: DitherConfiguration
 
-	@State private var hoverLocation: CGPoint?
-	@GestureState private var dragLocation: CGPoint?
+	@State private var inputStorage = DitherInputStorage()
+	@State private var isVisible = false
 
 	@Environment(\.scenePhase) private var scenePhase
 	@Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -1280,33 +1466,27 @@ public struct DitherView: View {
 		let bounded = configuration.bounded()
 		DitherPlatformView(
 			configuration: renderingConfiguration(bounded),
-			active: scenePhase == .active,
+			active: scenePhase == .active && isVisible && bounded.opacity > 0,
 			reduceMotion: reduceMotion,
-			interactionLocation: dragLocation ?? hoverLocation
+			inputStorage: inputStorage
 		)
 		.opacity(Double(bounded.opacity))
 		.contentShape(Rectangle())
-		.onContinuousHover { phase in
-			switch phase {
-				case let .active(location):
-					hoverLocation = location
-				case .ended:
-					hoverLocation = nil
-			}
-		}
-		.simultaneousGesture(
-			DragGesture(minimumDistance: 0, coordinateSpace: .local)
-				.updating($dragLocation) { value, location, _ in
-					location = value.location
-				}
-		)
+		.modifier(DitherInputModifier(
+			inputStorage: inputStorage,
+			enabled: bounded.cursorInteractionEnabled && !bounded.disableAnimation && !reduceMotion
+		))
 		.onChange(of: scenePhase) { _, phase in
 			if phase != .active {
-				hoverLocation = nil
+				inputStorage.clear()
 			}
 		}
+		.onAppear {
+			isVisible = true
+		}
 		.onDisappear {
-			hoverLocation = nil
+			isVisible = false
+			inputStorage.clear()
 		}
 		.allowsHitTesting(bounded.cursorInteractionEnabled && !bounded.disableAnimation && !reduceMotion)
 		.accessibilityHidden(true)
@@ -1319,11 +1499,51 @@ public struct DitherView: View {
 	}
 }
 
+private struct DitherInputModifier: ViewModifier {
+	let inputStorage: DitherInputStorage
+	let enabled: Bool
+
+	@GestureState private var isDragging = false
+
+	func body(content: Content) -> some View {
+		if enabled {
+			content
+				.onContinuousHover { phase in
+					switch phase {
+						case let .active(location):
+							inputStorage.setHoverLocation(location)
+						case .ended:
+							inputStorage.setHoverLocation(nil)
+					}
+				}
+				.simultaneousGesture(
+					DragGesture(minimumDistance: 0, coordinateSpace: .local)
+						.updating($isDragging) { _, isDragging, _ in
+							isDragging = true
+						}
+						.onChanged { value in
+							inputStorage.setDragLocation(value.location)
+						}
+				)
+				.onChange(of: isDragging) { _, isDragging in
+					if !isDragging {
+						inputStorage.setDragLocation(nil)
+					}
+				}
+				.onDisappear {
+					inputStorage.clear()
+				}
+		} else {
+			content
+		}
+	}
+}
+
 private struct DitherPlatformView {
 	let configuration: DitherConfiguration
 	let active: Bool
 	let reduceMotion: Bool
-	let interactionLocation: CGPoint?
+	let inputStorage: DitherInputStorage
 
 	@MainActor
 	private func update(_ view: DitherHostView) {
@@ -1331,7 +1551,7 @@ private struct DitherPlatformView {
 			configuration: configuration,
 			active: active,
 			reduceMotion: reduceMotion,
-			interactionLocation: interactionLocation
+			inputStorage: inputStorage
 		)
 	}
 }
@@ -1379,8 +1599,12 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 	private var reduceMotion = false
 	private var renderer: DitherMetalRenderer?
 	private var failed = false
-	private var interactionLocation: CGPoint?
+	private var inputStorage: DitherInputStorage?
 	private var interaction = DitherInteraction()
+	private var frameScheduler = DitherFrameScheduler()
+	#if os(macOS)
+		private var occlusionObserver: NSObjectProtocol?
+	#endif
 
 	override init(frame: CGRect, device: MTLDevice?) {
 		super.init(frame: frame, device: device)
@@ -1412,9 +1636,9 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 		configuration: DitherConfiguration,
 		active: Bool,
 		reduceMotion: Bool,
-		interactionLocation: CGPoint?
+		inputStorage: DitherInputStorage
 	) {
-		guard self.configuration != configuration || self.active != active || self.reduceMotion != reduceMotion || self.interactionLocation != interactionLocation else {
+		guard self.configuration != configuration || self.active != active || self.reduceMotion != reduceMotion || self.inputStorage !== inputStorage else {
 			return
 		}
 		if self.configuration.topBlur != configuration.topBlur {
@@ -1423,7 +1647,17 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 		self.configuration = configuration
 		self.active = active
 		self.reduceMotion = reduceMotion
-		self.interactionLocation = interactionLocation
+		self.inputStorage = inputStorage
+
+		#if os(iOS)
+			isOpaque = !configuration.transparent
+			backgroundColor = configuration.transparent ? .clear : .black
+		#else
+			layer?.isOpaque = !configuration.transparent
+		#endif
+		if let metalLayer = layer as? CAMetalLayer {
+			metalLayer.isOpaque = !configuration.transparent
+		}
 		failed = false
 		updateScheduling()
 		requestFrame()
@@ -1438,6 +1672,7 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 	#else
 		override func viewDidMoveToWindow() {
 			super.viewDidMoveToWindow()
+			updateOcclusionObserver()
 			updateScheduling()
 			requestFrame()
 		}
@@ -1460,6 +1695,37 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 		}
 	#endif
 
+	#if os(macOS)
+		deinit {
+			if let occlusionObserver {
+				NotificationCenter.default.removeObserver(occlusionObserver)
+			}
+		}
+
+		private func updateOcclusionObserver() {
+			if let occlusionObserver {
+				NotificationCenter.default.removeObserver(occlusionObserver)
+			}
+			occlusionObserver = nil
+			guard let window else {
+				return
+			}
+			occlusionObserver = NotificationCenter.default.addObserver(
+				forName: NSWindow.didChangeOcclusionStateNotification,
+				object: window,
+				queue: .main
+			) { [weak self] _ in
+				guard let self else {
+					return
+				}
+				updateScheduling()
+				if canRender {
+					requestFrame()
+				}
+			}
+		}
+	#endif
+
 	private var canRender: Bool {
 		guard window != nil, active else {
 			return false
@@ -1471,13 +1737,30 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 		#endif
 	}
 
-	private func updateScheduling() {
-		// Request this display's maximum; the system controls actual delivery cadence.
+	private var hasVisibleDrawableArea: Bool {
 		#if os(iOS)
-			preferredFramesPerSecond = window?.screen.maximumFramesPerSecond ?? 60
+			guard let window else {
+				return false
+			}
+			var visible = convert(bounds, to: window).intersection(window.bounds)
+			var ancestor = superview
+			while let view = ancestor, !visible.isEmpty {
+				if view.isHidden || view.alpha == 0 {
+					return false
+				}
+				if view.clipsToBounds {
+					visible = visible.intersection(view.convert(view.bounds, to: window))
+				}
+				ancestor = view.superview
+			}
+			return !visible.isEmpty && alpha > 0
 		#else
-			preferredFramesPerSecond = window?.screen?.maximumFramesPerSecond ?? 60
+			return !visibleRect.isEmpty
 		#endif
+	}
+
+	private func updateScheduling() {
+		preferredFramesPerSecond = configuration.framesPerSecond
 		if !canRender || reduceMotion || configuration.disableAnimation || !configuration.cursorInteractionEnabled {
 			interaction = DitherInteraction()
 		}
@@ -1487,9 +1770,13 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 		}
 		isPaused = paused
 		enableSetNeedsDisplay = paused
+		if !canRender {
+			releaseDrawables()
+		}
 	}
 
 	private func requestFrame() {
+		frameScheduler.requestFrame()
 		#if os(iOS)
 			setNeedsDisplay()
 		#else
@@ -1503,11 +1790,20 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 	}
 
 	func draw(in _: MTKView) {
-		guard canRender, bounds.width > 0, bounds.height > 0,
+		let now = CACurrentMediaTime()
+		guard canRender,
+		      bounds.width > 0, bounds.height > 0,
+		      frameScheduler.shouldRender(
+		      	now: now,
+		      	isAnimating: !isPaused,
+		      	framesPerSecond: configuration.framesPerSecond
+		      ),
+		      hasVisibleDrawableArea,
 		      let drawable = currentDrawable
 		else {
 			return
 		}
+		frameScheduler.didRender(now: now)
 		do {
 			if renderer == nil {
 				let created = try DitherMetalRenderer(usesTopBlur: configuration.topBlur)
@@ -1520,15 +1816,20 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 				frameConfiguration.disableAnimation = true
 				frameConfiguration.intro = false
 			}
+			let inputs: DitherRenderInputs = if frameConfiguration.cursorInteractionEnabled, !frameConfiguration.disableAnimation {
+				interaction.inputs(
+					location: inputStorage?.location,
+					now: now,
+					configuration: frameConfiguration
+				)
+			} else {
+				.empty
+			}
 			try renderer?.render(
 				to: drawable,
 				size: bounds.size,
 				configuration: frameConfiguration,
-				inputs: interaction.inputs(
-					location: interactionLocation,
-					now: CACurrentMediaTime(),
-					configuration: frameConfiguration
-				),
+				inputs: inputs,
 				advance: !isPaused
 			)
 		} catch {
