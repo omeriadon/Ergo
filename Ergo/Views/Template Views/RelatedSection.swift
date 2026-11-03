@@ -32,11 +32,7 @@ struct RelatedSection: View {
 						NavigationLink(value: philosopher.route) {
 							HStack {
 								ZStack {
-									Image(philosopher.id)
-										.resizable()
-										.aspectRatio(contentMode: .fill)
-										.frame(width: 40, height: 40)
-										.clipShape(Circle())
+									PhilosopherThumbnail(id: philosopher.id)
 
 									Color.white.opacity(0)
 										.contentShape(Circle())

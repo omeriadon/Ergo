@@ -202,7 +202,8 @@ struct ArgumentsView: View {
 					try await Task.sleep(for: .milliseconds(120))
 					let matches = try await CatalogSearch.ranked(
 						catalog.arguments.arguments,
-						query: query
+						query: query,
+						limit: CatalogSearch.resultLimit
 					) { $0.searchFields }
 					try Task.checkCancellation()
 					searchedArguments = matches

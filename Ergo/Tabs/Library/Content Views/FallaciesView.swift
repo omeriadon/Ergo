@@ -208,7 +208,8 @@ struct FallaciesView: View {
 					try await Task.sleep(for: .milliseconds(120))
 					let matches = try await CatalogSearch.ranked(
 						catalog.fallacies.fallacies,
-						query: query
+						query: query,
+						limit: CatalogSearch.resultLimit
 					) { $0.searchFields }
 					try Task.checkCancellation()
 					searchedFallacies = matches

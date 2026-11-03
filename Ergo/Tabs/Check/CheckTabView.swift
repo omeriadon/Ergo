@@ -118,11 +118,9 @@ struct CheckTabView: View {
 	@ViewBuilder
 	var bottomControls: some View {
 		if focusedField == nil {
-			GeometryReader { geo in
+			GeometryReader { _ in
 				ScrollView(.horizontal) {
 					HStack(spacing: 0) {
-						LetterPage(height: geo.size.height)
-
 						HStack {
 							ForEach(SymbolEnum.basic) { symbol in
 								Text(symbol.glyph)
@@ -157,89 +155,5 @@ struct CheckTabView: View {
 			.padding(.vertical, 5)
 			.glassEffect(.clear.interactive(), in: Capsule())
 		}
-	}
-}
-
-private struct LetterPage: View {
-	let height: CGFloat
-
-	private let letters: [String] = [
-		"X", "Y", "Z", "P", "Q", "R",
-	]
-
-	@State private var currentlySelectedLetter = ""
-
-	var body: some View {
-		HStack(spacing: 0) {
-			ForEach(letters, id: \.self) { letter in
-				Button {} label: {
-					Text(letter)
-						.frame(width: height, height: height)
-				}
-				.buttonStyle(
-					LetterPressStyle(
-						letter: letter,
-						selectedLetter: $currentlySelectedLetter
-					)
-				)
-				.scrollTransition(.interactive) { content, phase in
-					content
-						.scaleEffect(phase.isIdentity ? 1 : 0)
-						.blur(radius: phase.isIdentity ? 0 : 10)
-				}
-
-				if letter != letters.last {
-					Spacer(minLength: 1)
-				}
-			}
-
-			Spacer()
-
-			Button {} label: {
-				Label("Edit Symbols", systemImage: "pencil")
-					.labelStyle(.iconOnly)
-			}
-			.frame(width: height, height: height)
-			.scrollTransition(.interactive) { content, phase in
-				content
-					.scaleEffect(phase.isIdentity ? 1 : 0)
-					.blur(radius: phase.isIdentity ? 0 : 10)
-			}
-		}
-		.scrollTransition(.interactive) { content, phase in
-			content
-				.scaleEffect(phase.isIdentity ? 1 : 0.7)
-		}
-		.containerRelativeFrame(.horizontal)
-	}
-}
-
-private struct LetterPressStyle: ButtonStyle {
-	let letter: String
-	@Binding var selectedLetter: String
-
-	func makeBody(configuration: Configuration) -> some View {
-		configuration.label
-			.glassEffect(
-				.clear.interactive(),
-				in: RoundedRectangle(cornerRadius: 19)
-			)
-			.background {
-				RoundedRectangle(cornerRadius: 19)
-					.fill(
-						Color.accentColor.opacity(
-							configuration.isPressed ? 1 : 0
-						)
-					)
-					.allowsHitTesting(false)
-					.animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
-			}
-			.onChange(of: configuration.isPressed) { _, pressed in
-				if pressed {
-					selectedLetter = letter
-				} else if selectedLetter == letter {
-					selectedLetter = ""
-				}
-			}
 	}
 }

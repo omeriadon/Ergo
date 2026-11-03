@@ -229,7 +229,8 @@ struct BiasesView: View {
 					try await Task.sleep(for: .milliseconds(120))
 					let matches = try await CatalogSearch.ranked(
 						catalog.biases.biases,
-						query: query
+						query: query,
+						limit: CatalogSearch.resultLimit
 					) { $0.searchFields }
 					try Task.checkCancellation()
 					searchedBiases = matches

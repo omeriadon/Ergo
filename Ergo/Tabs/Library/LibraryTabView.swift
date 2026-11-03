@@ -289,9 +289,13 @@ struct LibraryTabView: View {
 			do {
 				try await Task.sleep(for: .milliseconds(120))
 				let entries = libraryEntries
-				let matches = try await CatalogSearch.ranked(entries, query: query) { $0.searchFields }
+				let matches = try await CatalogSearch.ranked(
+					entries,
+					query: query,
+					limit: CatalogSearch.resultLimit
+				) { $0.searchFields }
 				try Task.checkCancellation()
-				searchResults = Array(matches.prefix(CatalogSearch.resultLimit))
+				searchResults = matches
 			} catch is CancellationError {
 				return
 			} catch {

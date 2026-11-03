@@ -10,15 +10,24 @@ nonisolated enum CatalogSearch {
 	static func ranked<T: Sendable>(
 		_ items: [T],
 		query: String,
+		limit: Int? = nil,
 		fields: @escaping @Sendable (T) -> [CatalogSearchField]
 	) async throws -> [T] {
 		let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !query.isEmpty else { return [] }
+		if let limit, limit <= 0 {
+			try Task.checkCancellation()
+			return []
+		}
 		let matcher = FuzzyMatcher()
 		let prepared = matcher.prepare(query)
 		var buffer = matcher.makeBuffer()
 		var scored: [(item: T, score: Double, index: Int)] = []
-		scored.reserveCapacity(items.count)
+		if let limit {
+			scored.reserveCapacity(min(limit, items.count))
+		} else {
+			scored.reserveCapacity(items.count)
+		}
 		for (index, item) in items.enumerated() {
 			try Task.checkCancellation()
 			var score: Double?
@@ -33,10 +42,26 @@ nonisolated enum CatalogSearch {
 				}
 			}
 			if let score {
-				scored.append((item, score, index))
+				guard let limit else {
+					scored.append((item, score, index))
+					continue
+				}
+
+				let insertionIndex = scored.firstIndex { existing in
+					existing.score < score || (existing.score == score && existing.index > index)
+				} ?? scored.endIndex
+				if scored.count < limit {
+					scored.insert((item, score, index), at: insertionIndex)
+				} else if insertionIndex < scored.endIndex {
+					scored.insert((item, score, index), at: insertionIndex)
+					scored.removeLast()
+				}
 			}
 		}
 		try Task.checkCancellation()
+		if limit != nil {
+			return scored.map(\.item)
+		}
 		return scored.sorted {
 			if $0.score == $1.score {
 				return $0.index < $1.index

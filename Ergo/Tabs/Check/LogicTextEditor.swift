@@ -50,17 +50,18 @@ struct LogicTextEditor: UIViewRepresentable {
 				}
 			)
 		)
+		keyboardHost.safeAreaRegions = []
 		keyboardHost.view.backgroundColor = .clear
+		keyboardHost.view.translatesAutoresizingMaskIntoConstraints = false
 
 		let keyboardContainer = UIInputView(
 			frame: CGRect(x: 0, y: 0, width: 0, height: 250),
 			inputViewStyle: .keyboard
 		)
 
-		keyboardContainer.autoresizingMask = [.flexibleWidth]
 		keyboardContainer.allowsSelfSizing = false
+		keyboardContainer.autoresizingMask = [.flexibleWidth]
 
-		keyboardHost.view.translatesAutoresizingMaskIntoConstraints = false
 		keyboardContainer.addSubview(keyboardHost.view)
 
 		NSLayoutConstraint.activate([

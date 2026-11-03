@@ -20,4 +20,6 @@ extension Defaults.Keys {
 	static let debatePath = Key<[DebateRoute]>("debatePath", default: [])
 
 	static let presentedSheet = Key<AppSheet?>("presentedSheet", default: nil)
+
+	static let logicLetters = Key<[String]>("logicLetters", default: ["X", "Y", "Z", "P", "Q", "R"])
 }

@@ -255,7 +255,8 @@ struct SymbolsView: View {
 					try await Task.sleep(for: .milliseconds(120))
 					let matches = try await CatalogSearch.ranked(
 						catalog.logicSymbols.symbols,
-						query: query
+						query: query,
+						limit: CatalogSearch.resultLimit
 					) { $0.searchFields }
 					try Task.checkCancellation()
 					searchedSymbols = matches

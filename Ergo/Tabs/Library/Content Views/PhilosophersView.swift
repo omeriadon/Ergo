@@ -91,11 +91,7 @@ struct PhilosophersView: View {
 
 						HStack {
 							ZStack {
-								Image(philosopher.id)
-									.resizable()
-									.aspectRatio(contentMode: .fill)
-									.frame(width: 40, height: 40)
-									.clipShape(Circle())
+								PhilosopherThumbnail(id: philosopher.id)
 
 								Color.white.opacity(0)
 									.contentShape(Circle())
@@ -181,7 +177,8 @@ struct PhilosophersView: View {
 					try await Task.sleep(for: .milliseconds(120))
 					let matches = try await CatalogSearch.ranked(
 						catalog.philosophers.philosophers,
-						query: query
+						query: query,
+						limit: CatalogSearch.resultLimit
 					) { $0.searchFields }
 					try Task.checkCancellation()
 					searchedPhilosophers = matches
