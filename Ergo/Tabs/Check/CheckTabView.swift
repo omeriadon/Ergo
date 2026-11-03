@@ -15,6 +15,9 @@ struct CheckTabView: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
+	@Environment(CatalogStore.self)
+	private var catalog
+
 	@State private var english = ""
 	@State private var englishSelection: TextSelection?
 	@FocusState private var englishFocused: Bool
@@ -40,6 +43,10 @@ struct CheckTabView: View {
 
 	@State private var ditherSize = CGSize.zero
 
+	private var logicSymbolDefinitions: [LogicEditorSymbolDefinition] {
+		LogicEditorSymbols.definitions(catalogSymbols: catalog.logicSymbols.symbols)
+	}
+
 	var body: some View {
 		ZStack {
 			VStack(spacing: 20) {
@@ -63,7 +70,8 @@ struct CheckTabView: View {
 
 				LogicTextEditor(
 					text: $logic,
-					isFocused: logicFocus
+					isFocused: logicFocus,
+					symbolDefinitions: logicSymbolDefinitions
 				)
 				.padding(15)
 				.glassEffect(
