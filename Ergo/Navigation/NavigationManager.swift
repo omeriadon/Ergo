@@ -56,6 +56,11 @@ final class NavigationManager {
 		presentedSheet = nil
 	}
 
+	func openLibraryEntry(category: LibraryContent, id: String) {
+		selectedTab = .library
+		libraryPath.append(.detail(category: category, id: id))
+	}
+
 	// MARK: - Reset Navigation
 
 	func reset(_ tab: AppTab) {

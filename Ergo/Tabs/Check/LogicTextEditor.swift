@@ -35,12 +35,26 @@ struct LogicTextEditor: UIViewRepresentable {
 		text: Binding<String>,
 		isFocused: Binding<Bool>,
 		symbolDefinitions: [LogicEditorSymbolDefinition] = [],
-		entryAppearance: @escaping (LogicKeyboardEntry) -> LogicInlineSymbolAppearance = LogicInlineSymbolAppearance.appearance
+		entryAppearance: @escaping (LogicKeyboardEntry) -> LogicInlineSymbolAppearance
 	) {
 		_text = text
 		_isFocused = isFocused
 		self.symbolDefinitions = symbolDefinitions
 		self.entryAppearance = entryAppearance
+	}
+
+	@MainActor
+	init(
+		text: Binding<String>,
+		isFocused: Binding<Bool>,
+		symbolDefinitions: [LogicEditorSymbolDefinition] = []
+	) {
+		self.init(
+			text: text,
+			isFocused: isFocused,
+			symbolDefinitions: symbolDefinitions,
+			entryAppearance: LogicInlineSymbolAppearance.appearance
+		)
 	}
 
 	func makeCoordinator() -> Coordinator {

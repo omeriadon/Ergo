@@ -6,6 +6,7 @@
 //
 
 import AppIntents
+import CoreSpotlight
 import SwiftUI
 
 @main
@@ -36,7 +37,12 @@ struct ErgoApp: App {
 				.environment(navigation)
 				.task {
 					navigation.startup()
-					try? await catalog.load()
+
+					do {
+						try await LibraryIndexer.indexIfNeeded(from: catalog)
+					} catch {
+						print("Library indexing failed: \(error)")
+					}
 				}
 		}
 	}

@@ -34,6 +34,10 @@ nonisolated struct ArgumentCatalog: Codable, Sendable {
 nonisolated struct ArgumentObjection: Codable, Sendable {
 	let objection: String
 	let reply: String
+
+	nonisolated var entityText: String {
+		"\(objection) Reply: \(reply)"
+	}
 }
 
 nonisolated enum ArgumentTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable, AppEnum {
