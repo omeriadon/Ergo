@@ -18,7 +18,14 @@ struct PhilosophersView: View {
 
 	@Default(.bookmarks) var bookmarks
 
-	@State private var searchTerm = ""
+	private var searchBinding: Binding<String> {
+		navigation.librarySearchBinding(for: .philosophers)
+	}
+
+	private var searchTerm: String {
+		searchBinding.wrappedValue
+	}
+
 	@State private var searchedPhilosophers: [Philosopher] = []
 
 	@State private var searchPresented = false
@@ -44,11 +51,16 @@ struct PhilosophersView: View {
 		.buttonStyle(.plain)
 		.toolbarMinimizationBehavior(.never, for: .navigationBar)
 		.searchable(
-			text: $searchTerm,
+			text: searchBinding,
 			isPresented: $searchPresented,
 			placement: .navigationBarDrawer(displayMode: .always),
 			prompt: "Search philosphers"
 		)
+		.onChange(of: searchTerm, initial: true) { _, newValue in
+			if !newValue.isEmpty {
+				searchPresented = true
+			}
+		}
 		.searchPresentationToolbarBehavior(.avoidHidingContent)
 		.navigationTitle("Philosophers")
 	}
@@ -153,6 +165,7 @@ struct PhilosophersView: View {
 								.environment(navigation)
 						}
 					}
+					.listedEntity(PhilosopherEntity.self, id: philosopher.id)
 					.transition(.opacity)
 				}
 			}

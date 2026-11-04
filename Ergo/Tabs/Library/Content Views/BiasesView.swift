@@ -24,7 +24,14 @@ struct BiasesView: View {
 		_tokens = State(initialValue: initialFilter.map { [$0] } ?? [])
 	}
 
-	@State private var searchTerm = ""
+	private var searchBinding: Binding<String> {
+		navigation.librarySearchBinding(for: .biases)
+	}
+
+	private var searchTerm: String {
+		searchBinding.wrappedValue
+	}
+
 	@State private var searchedBiases: [Bias] = []
 
 	private var matchingTokens: [BiasTag] {
@@ -63,7 +70,7 @@ struct BiasesView: View {
 					ForEach(matchingTokens) { token in
 						Button {
 							toggleToken(token)
-							searchTerm = ""
+							searchBinding.wrappedValue = ""
 						} label: {
 							Label(token.title, systemImage: "tag")
 						}
@@ -90,7 +97,7 @@ struct BiasesView: View {
 		.buttonStyle(.plain)
 		.toolbarMinimizationBehavior(.never, for: .navigationBar)
 		.searchable(
-			text: $searchTerm,
+			text: searchBinding,
 			tokens: $tokens,
 			isPresented: $searchPresented,
 			placement: .navigationBarDrawer(displayMode: .always),
@@ -98,31 +105,14 @@ struct BiasesView: View {
 		) { token in
 			Text(token.title)
 		}
+		.onChange(of: searchTerm, initial: true) { _, newValue in
+			if !newValue.isEmpty {
+				searchPresented = true
+			}
+		}
 		.searchPresentationToolbarBehavior(.avoidHidingContent)
 		.navigationTitle("Biases")
 		.animation(.easeInOut(duration: 0.2), value: tokens)
-	}
-
-	@ContentBuilder
-	var searchPresentedView: some View {
-		if !matchingTokens.isEmpty {
-			Section("Filters") {
-				ForEach(matchingTokens) { token in
-					Button {
-						tokens.append(token)
-						searchTerm = ""
-					} label: {
-						Label {
-							Text(token.title)
-						} icon: {
-							Image(systemName: "tag")
-						}
-					}
-				}
-			}
-		}
-
-		results
 	}
 
 	private var filteredBiases: [Bias] {
@@ -200,6 +190,7 @@ struct BiasesView: View {
 								.environment(navigation)
 						}
 					}
+					.listedEntity(BiasEntity.self, id: bias.id)
 					.transition(.opacity)
 				}
 			}

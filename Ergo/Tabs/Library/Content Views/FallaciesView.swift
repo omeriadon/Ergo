@@ -24,7 +24,14 @@ struct FallaciesView: View {
 
 	@Default(.bookmarks) var bookmarks
 
-	@State private var searchTerm = ""
+	private var searchBinding: Binding<String> {
+		navigation.librarySearchBinding(for: .fallacies)
+	}
+
+	private var searchTerm: String {
+		searchBinding.wrappedValue
+	}
+
 	@State private var searchedFallacies: [Fallacy] = []
 
 	private var matchingTokens: [FallacyTag] {
@@ -56,7 +63,7 @@ struct FallaciesView: View {
 					ForEach(matchingTokens) { token in
 						Button {
 							toggleToken(token)
-							searchTerm = ""
+							searchBinding.wrappedValue = ""
 						} label: {
 							Label(token.title, systemImage: "tag")
 						}
@@ -84,13 +91,18 @@ struct FallaciesView: View {
 		.buttonStyle(.plain)
 		.toolbarMinimizationBehavior(.never, for: .navigationBar)
 		.searchable(
-			text: $searchTerm,
+			text: searchBinding,
 			tokens: $tokens,
 			isPresented: $searchPresented,
 			placement: .navigationBarDrawer(displayMode: .always),
 			prompt: "Search fallacies"
 		) { token in
 			Text(token.title)
+		}
+		.onChange(of: searchTerm, initial: true) { _, newValue in
+			if !newValue.isEmpty {
+				searchPresented = true
+			}
 		}
 		.searchPresentationToolbarBehavior(.avoidHidingContent)
 		.navigationTitle("Fallacies")
@@ -179,6 +191,7 @@ struct FallaciesView: View {
 								.environment(navigation)
 						}
 					}
+					.listedEntity(FallacyEntity.self, id: fallacy.id)
 					.transition(.opacity)
 				}
 			}

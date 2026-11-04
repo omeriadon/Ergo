@@ -24,7 +24,14 @@ struct ArgumentsView: View {
 		_tokens = State(initialValue: initialFilter.map { [$0] } ?? [])
 	}
 
-	@State private var searchTerm = ""
+	private var searchBinding: Binding<String> {
+		navigation.librarySearchBinding(for: .arguments)
+	}
+
+	private var searchTerm: String {
+		searchBinding.wrappedValue
+	}
+
 	@State private var searchedArguments: [Argument] = []
 
 	private var matchingTokens: [ArgumentTag] {
@@ -56,7 +63,7 @@ struct ArgumentsView: View {
 					ForEach(matchingTokens) { token in
 						Button {
 							toggleToken(token)
-							searchTerm = ""
+							searchBinding.wrappedValue = ""
 						} label: {
 							Label(token.title, systemImage: "tag")
 						}
@@ -84,13 +91,18 @@ struct ArgumentsView: View {
 		.buttonStyle(.plain)
 		.toolbarMinimizationBehavior(.never, for: .navigationBar)
 		.searchable(
-			text: $searchTerm,
+			text: searchBinding,
 			tokens: $tokens,
 			isPresented: $searchPresented,
 			placement: .navigationBarDrawer(displayMode: .always),
 			prompt: "Search arguments"
 		) { token in
 			Text(token.title)
+		}
+		.onChange(of: searchTerm, initial: true) { _, newValue in
+			if !newValue.isEmpty {
+				searchPresented = true
+			}
 		}
 		.searchPresentationToolbarBehavior(.avoidHidingContent)
 		.navigationTitle("Arguments")
@@ -173,6 +185,7 @@ struct ArgumentsView: View {
 								.environment(navigation)
 						}
 					}
+					.listedEntity(ArgumentEntity.self, id: argument.id)
 					.transition(.opacity)
 				}
 			}

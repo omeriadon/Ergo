@@ -38,6 +38,18 @@ final class NavigationManager {
 		}
 	}
 
+	var librarySearchText: [LibraryContent: String] = [:] {
+		didSet {
+			Defaults[.librarySearchText] = librarySearchText
+		}
+	}
+
+	var libraryGeneralSearchText = "" {
+		didSet {
+			Defaults[.libraryGeneralSearchText] = libraryGeneralSearchText
+		}
+	}
+
 	func open(_ route: DebateRoute) {
 		selectedTab = .debate
 		debatePath.append(route)
@@ -75,6 +87,7 @@ final class NavigationManager {
 	}
 
 	func startup() {
+		librarySearchText = Defaults[.librarySearchText]
 		presentedSheet = Defaults[.presentedSheet]
 		selectedTab = Defaults[.selectedTab]
 		libraryPath = Defaults[.libraryPath]

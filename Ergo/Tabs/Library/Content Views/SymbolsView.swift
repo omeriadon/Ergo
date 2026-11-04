@@ -24,7 +24,14 @@ struct SymbolsView: View {
 		_tokens = State(initialValue: initialFilter.map { [$0] } ?? [])
 	}
 
-	@State private var searchTerm = ""
+	private var searchBinding: Binding<String> {
+		navigation.librarySearchBinding(for: .symbols)
+	}
+
+	private var searchTerm: String {
+		searchBinding.wrappedValue
+	}
+
 	@State private var searchedSymbols: [LogicSymbol] = []
 
 	private var matchingTokens: [SymbolSearchToken] {
@@ -81,7 +88,7 @@ struct SymbolsView: View {
 					ForEach(matchingTokens) { token in
 						Button {
 							toggleToken(token)
-							searchTerm = ""
+							searchBinding.wrappedValue = ""
 						} label: {
 							Label(token.title, systemImage: token.symbol)
 						}
@@ -107,7 +114,7 @@ struct SymbolsView: View {
 		.buttonStyle(.plain)
 		.toolbarMinimizationBehavior(.never, for: .navigationBar)
 		.searchable(
-			text: $searchTerm,
+			text: searchBinding,
 			tokens: $tokens,
 			isPresented: $searchPresented,
 			placement: .navigationBarDrawer(displayMode: .always),
@@ -115,31 +122,14 @@ struct SymbolsView: View {
 		) { token in
 			Text(token.title)
 		}
+		.onChange(of: searchTerm, initial: true) { _, newValue in
+			if !newValue.isEmpty {
+				searchPresented = true
+			}
+		}
 		.searchPresentationToolbarBehavior(.avoidHidingContent)
 		.navigationTitle("Symbols")
 		.animation(.easeInOut(duration: 0.2), value: tokens)
-	}
-
-	@ContentBuilder
-	var searchPresentedView: some View {
-		if !matchingTokens.isEmpty {
-			Section("Filters") {
-				ForEach(matchingTokens) { token in
-					Button {
-						tokens.append(token)
-						searchTerm = ""
-					} label: {
-						Label {
-							Text(token.title)
-						} icon: {
-							Image(systemName: token.symbol)
-						}
-					}
-				}
-			}
-		}
-
-		results
 	}
 
 	private var filteredSymbols: [LogicSymbol] {
@@ -226,6 +216,7 @@ struct SymbolsView: View {
 									.environment(navigation)
 							}
 						}
+						.listedEntity(SymbolEntity.self, id: symbol.id)
 						.transition(.opacity)
 					}
 				}

@@ -24,7 +24,14 @@ struct ConceptsView: View {
 		_tokens = State(initialValue: initialFilter.map { [$0] } ?? [])
 	}
 
-	@State private var searchTerm = ""
+	private var searchBinding: Binding<String> {
+		navigation.librarySearchBinding(for: .concepts)
+	}
+
+	private var searchTerm: String {
+		searchBinding.wrappedValue
+	}
+
 	@State private var searchedConcepts: [Concept] = []
 
 	private var matchingTokens: [ConceptTag] {
@@ -56,7 +63,7 @@ struct ConceptsView: View {
 					ForEach(matchingTokens) { token in
 						Button {
 							toggleToken(token)
-							searchTerm = ""
+							searchBinding.wrappedValue = ""
 						} label: {
 							Label(token.title, systemImage: "tag")
 						}
@@ -84,13 +91,18 @@ struct ConceptsView: View {
 		.buttonStyle(.plain)
 		.toolbarMinimizationBehavior(.never, for: .navigationBar)
 		.searchable(
-			text: $searchTerm,
+			text: searchBinding,
 			tokens: $tokens,
 			isPresented: $searchPresented,
 			placement: .navigationBarDrawer(displayMode: .always),
 			prompt: "Search concepts"
 		) { token in
 			Text(token.title)
+		}
+		.onChange(of: searchTerm, initial: true) { _, newValue in
+			if !newValue.isEmpty {
+				searchPresented = true
+			}
 		}
 		.searchPresentationToolbarBehavior(.avoidHidingContent)
 		.navigationTitle("Concepts")
@@ -179,6 +191,7 @@ struct ConceptsView: View {
 								.environment(navigation)
 						}
 					}
+					.listedEntity(ConceptEntity.self, id: concept.id)
 					.transition(.opacity)
 				}
 			}

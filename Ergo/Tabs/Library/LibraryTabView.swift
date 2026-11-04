@@ -15,7 +15,20 @@ struct LibraryTabView: View {
 
 	@Environment(CatalogStore.self) private var catalog
 
-	@State private var searchTerm = ""
+	private var searchBinding: Binding<String> {
+		Binding(
+			get: {
+				navigation.libraryGeneralSearchText
+			},
+			set: { newValue in
+				navigation.libraryGeneralSearchText = newValue
+			}
+		)
+	}
+
+	private var searchTerm: String {
+		navigation.libraryGeneralSearchText
+	}
 
 	@State private var searchPresented = false
 	@State private var searchResults: [LibrarySearchEntry] = []
@@ -180,11 +193,16 @@ struct LibraryTabView: View {
 			.animation(.easeInOut(duration: 0.1), value: "\(searchPresented)\(searchTerm.isEmpty)")
 			.buttonStyle(.plain)
 			.searchable(
-				text: $searchTerm,
+				text: searchBinding,
 				isPresented: $searchPresented,
 				placement: .toolbarPrincipal,
 				prompt: "Search anything"
 			)
+			.onChange(of: searchTerm, initial: true) { _, newValue in
+				if !newValue.isEmpty {
+					searchPresented = true
+				}
+			}
 			.scrollEdgeEffectStyle(.soft, for: .all)
 			.navigationBarTitleDisplayMode(.inline)
 			.navigationTitle("Library")

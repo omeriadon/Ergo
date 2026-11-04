@@ -10,7 +10,15 @@ import Defaults
 import Foundation
 
 /// all the content middle views library can go to
-nonisolated enum LibraryContent: String, Hashable, Codable, Sendable, Defaults.Serializable, AppEnum {
+nonisolated enum LibraryContent: String, Hashable, Codable, Sendable, Defaults.Serializable, AppEnum, LosslessStringConvertible {
+	var description: String {
+		rawValue.capitalized
+	}
+
+	init?(_ description: String) {
+		self.init(rawValue: description.lowercased())
+	}
+
 	case biases
 	case concepts
 	case fallacies
