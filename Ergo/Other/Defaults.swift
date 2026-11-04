@@ -21,8 +21,6 @@ extension Defaults.Keys {
 
 	static let presentedSheet = Key<AppSheet?>("presentedSheet", default: nil)
 
-	static let librarySearchText = Key<[LibraryContent: String]>("librarySearchText", default: [:])
-
 	static let libraryGeneralSearchText = Key<String>("libraryGeneralSearchText", default: "")
 
 	static let logicLetters = Key<[String]>("logicLetters", default: ["X", "Y", "Z", "P", "Q", "R"])

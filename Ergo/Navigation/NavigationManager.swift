@@ -11,19 +11,23 @@ import SwiftUI
 @MainActor
 @Observable
 final class NavigationManager {
-	/// Currently visible tab
+	// MARK: - selectedTab
+
 	var selectedTab: AppTab = .check {
 		didSet {
 			Defaults[.selectedTab] = selectedTab
 		}
 	}
 
-	/// Independent navigation histories
+	// MARK: - libraryPath
+
 	var libraryPath: [LibraryRoute] = [] {
 		didSet {
 			Defaults[.libraryPath] = libraryPath
 		}
 	}
+
+	// MARK: - debatePath
 
 	var debatePath: [DebateRoute] = [] {
 		didSet {
@@ -31,18 +35,31 @@ final class NavigationManager {
 		}
 	}
 
-	/// Currently presented sheet
+	// MARK: - presentedSheet
+
 	var presentedSheet: AppSheet? {
 		didSet {
 			Defaults[.presentedSheet] = presentedSheet
 		}
 	}
 
-	var librarySearchText: [LibraryContent: String] = [:] {
-		didSet {
-			Defaults[.librarySearchText] = librarySearchText
+	// MARK: - listStates
+
+	let listStates: [LibraryContent: LibraryListState] = Dictionary(
+		uniqueKeysWithValues: LibraryContent.allCases.map { category in
+			(category, LibraryListState())
 		}
-	}
+	)
+
+	// MARK: - symbolFilters
+
+	var symbolFilters: [SymbolSearchToken] = []
+
+	// MARK: - libraryTagFilters
+
+	var libraryTagFilters: [LibraryContent: [String]] = [:]
+
+	// MARK: - libraryGeneralSearchText
 
 	var libraryGeneralSearchText = "" {
 		didSet {
@@ -50,30 +67,40 @@ final class NavigationManager {
 		}
 	}
 
+	// MARK: - open()
+
 	func open(_ route: DebateRoute) {
 		selectedTab = .debate
 		debatePath.append(route)
 	}
+
+	// MARK: - openLibrary
 
 	func openLibrary(_ route: LibraryRoute) {
 		selectedTab = .library
 		libraryPath.append(route)
 	}
 
+	// MARK: - presentSheet
+
 	func presentSheet(_ sheet: AppSheet) {
 		presentedSheet = sheet
 	}
 
+	// MARK: - dismissSheet
+
 	func dismissSheet() {
 		presentedSheet = nil
 	}
+
+	// MARK: - openLibraryEntry
 
 	func openLibraryEntry(category: LibraryContent, id: String) {
 		selectedTab = .library
 		libraryPath.append(.detail(category: category, id: id))
 	}
 
-	// MARK: - Reset Navigation
+	// MARK: - reset()
 
 	func reset(_ tab: AppTab) {
 		switch tab {
@@ -86,8 +113,9 @@ final class NavigationManager {
 		}
 	}
 
+	// MARK: - startup()
+
 	func startup() {
-		librarySearchText = Defaults[.librarySearchText]
 		presentedSheet = Defaults[.presentedSheet]
 		selectedTab = Defaults[.selectedTab]
 		libraryPath = Defaults[.libraryPath]

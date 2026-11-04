@@ -48,25 +48,25 @@ struct ContentView: View {
 									LibraryDetailView(category: category, id: id)
 
 								case let .symbols(filter):
-									SymbolsView(initialFilter: filter)
+									LibraryListView<LogicSymbol>(initialFilter: filter.libraryFilter)
 
 								case let .biases(filter):
-									BiasesView(initialFilter: filter)
+									LibraryListView<Bias>(initialFilter: filter.libraryFilter)
 
 								case let .razors(filter):
-									RazorsView(initialFilter: filter)
+									LibraryListView<Razor>(initialFilter: filter.libraryFilter)
 
 								case let .paradoxes(filter):
-									ParadoxesView(initialFilter: filter)
+									LibraryListView<Paradox>(initialFilter: filter.libraryFilter)
 
 								case let .concepts(filter):
-									ConceptsView(initialFilter: filter)
+									LibraryListView<Concept>(initialFilter: filter.libraryFilter)
 
 								case let .fallacies(filter):
-									FallaciesView(initialFilter: filter)
+									LibraryListView<Fallacy>(initialFilter: filter.libraryFilter)
 
 								case let .arguments(filter):
-									ArgumentsView(initialFilter: filter)
+									LibraryListView<Argument>(initialFilter: filter.libraryFilter)
 
 								case .bookmarks:
 									BookmarksView()

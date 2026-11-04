@@ -10,7 +10,7 @@ import Defaults
 import Foundation
 
 /// all the content middle views library can go to
-nonisolated enum LibraryContent: String, Hashable, Codable, Sendable, Defaults.Serializable, AppEnum, LosslessStringConvertible {
+nonisolated enum LibraryContent: String, Hashable, CaseIterable, Codable, Sendable, Defaults.Serializable, AppEnum, LosslessStringConvertible {
 	var description: String {
 		rawValue.capitalized
 	}
@@ -83,4 +83,35 @@ enum LibraryRoute: Hashable, Codable, Defaults.Serializable {
 	case arguments(filter: ArgumentTag)
 
 	case bookmarks
+
+	var listCategory: LibraryContent? {
+		switch self {
+			case let .category(category):
+				category
+
+			case .symbols:
+				.symbols
+
+			case .biases:
+				.biases
+
+			case .razors:
+				.razors
+
+			case .paradoxes:
+				.paradoxes
+
+			case .concepts:
+				.concepts
+
+			case .fallacies:
+				.fallacies
+
+			case .arguments:
+				.arguments
+
+			case .detail, .bookmarks:
+				nil
+		}
+	}
 }
