@@ -89,9 +89,6 @@ struct CheckTabView: View {
 					)
 					.ignoresSafeArea(.container)
 					.allowsHitTesting(false)
-					.onGeometryChange(for: CGSize.self, of: { $0.size }) { _, size in
-						print("Actual dither size:", size)
-					}
 			}
 			.onGeometryChange(for: CGSize.self, of: { $0.size }) { _, size in
 				guard size.width > 0, size.height > 0 else { return }

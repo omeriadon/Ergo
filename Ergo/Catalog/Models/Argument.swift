@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 3/11/2026.
 //
 
+import AppIntents
 import Defaults
 import Foundation
 
@@ -35,7 +36,7 @@ nonisolated struct ArgumentObjection: Codable, Sendable {
 	let reply: String
 }
 
-nonisolated enum ArgumentTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable {
+nonisolated enum ArgumentTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable, AppEnum {
 	case ethics
 	case epistemology
 	case metaphysics
@@ -55,4 +56,17 @@ nonisolated enum ArgumentTag: String, Codable, Defaults.Serializable, CaseIterab
 	var id: Self {
 		self
 	}
+
+	static var typeDisplayRepresentation: TypeDisplayRepresentation {
+		TypeDisplayRepresentation(name: "Argument Tag")
+	}
+
+	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+		.ethics: DisplayRepresentation(title: "Ethics"),
+		.epistemology: DisplayRepresentation(title: "Epistemology"),
+		.metaphysics: DisplayRepresentation(title: "Metaphysics"),
+		.mind: DisplayRepresentation(title: "Mind"),
+		.religion: DisplayRepresentation(title: "Religion"),
+		.politicalPhilosophy: DisplayRepresentation(title: "Political Philosophy"),
+	]
 }

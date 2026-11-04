@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 3/11/2026.
 //
 
+import AppIntents
 import Defaults
 
 nonisolated struct Razor: Codable, Identifiable, Sendable {
@@ -43,7 +44,7 @@ nonisolated struct RazorCatalog: Codable, Sendable {
 	}
 }
 
-nonisolated enum RazorTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable {
+nonisolated enum RazorTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable, AppEnum {
 	case attribution
 	case decisionMaking = "decision-making"
 	case evidence
@@ -68,4 +69,16 @@ nonisolated enum RazorTag: String, Codable, Defaults.Serializable, CaseIterable,
 	var id: Self {
 		self
 	}
+
+	static var typeDisplayRepresentation: TypeDisplayRepresentation {
+		TypeDisplayRepresentation(name: "Razor Tag")
+	}
+
+	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+		.attribution: DisplayRepresentation(title: "Attribution"),
+		.decisionMaking: DisplayRepresentation(title: "Decision making"),
+		.evidence: DisplayRepresentation(title: "Evidence"),
+		.interpretation: DisplayRepresentation(title: "Interpretation"),
+		.parsimony: DisplayRepresentation(title: "Parsimony"),
+	]
 }

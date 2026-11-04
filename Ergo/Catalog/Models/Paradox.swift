@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 3/11/2026.
 //
 
+import AppIntents
 import Defaults
 
 nonisolated struct Paradox: Codable, Identifiable, Sendable {
@@ -49,7 +50,7 @@ nonisolated struct ParadoxCatalog: Codable, Sendable {
 	}
 }
 
-nonisolated enum ParadoxTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable {
+nonisolated enum ParadoxTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable, AppEnum {
 	case ethicsAndValue = "ethics-and-value"
 	case knowledgeAndMeaning = "knowledge-and-meaning"
 	case logicAndLanguage = "logic-and-language"
@@ -71,4 +72,15 @@ nonisolated enum ParadoxTag: String, Codable, Defaults.Serializable, CaseIterabl
 	var id: Self {
 		self
 	}
+
+	static var typeDisplayRepresentation: TypeDisplayRepresentation {
+		TypeDisplayRepresentation(name: "Fallacy Tag")
+	}
+
+	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+		.ethicsAndValue: DisplayRepresentation(title: "Ethics & Value"),
+		.knowledgeAndMeaning: DisplayRepresentation(title: "Knowledge & Meaning"),
+		.logicAndLanguage: DisplayRepresentation(title: "Logic & Language"),
+		.metaphysics: DisplayRepresentation(title: "Metaphysics"),
+	]
 }

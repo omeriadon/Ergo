@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 3/11/2026.
 //
 
+import AppIntents
 import Defaults
 
 nonisolated struct Bias: Codable, Identifiable, Sendable {
@@ -47,7 +48,7 @@ nonisolated struct BiasCatalog: Codable, Sendable {
 	}
 }
 
-nonisolated enum BiasTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable {
+nonisolated enum BiasTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable, AppEnum {
 	case attention
 	case attribution
 	case beliefAssessment = "belief-assessment"
@@ -78,4 +79,18 @@ nonisolated enum BiasTag: String, Codable, Defaults.Serializable, CaseIterable, 
 	var id: Self {
 		self
 	}
+
+	static var typeDisplayRepresentation: TypeDisplayRepresentation {
+		TypeDisplayRepresentation(name: "Bias Tag")
+	}
+
+	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+		.attention: DisplayRepresentation(title: "Attention"),
+		.attribution: DisplayRepresentation(title: "Attribution"),
+		.beliefAssessment: DisplayRepresentation(title: "Belief Assessment"),
+		.decisionMaking: DisplayRepresentation(title: "Decision Making"),
+		.memory: DisplayRepresentation(title: "Memory"),
+		.researchAndMeasurement: DisplayRepresentation(title: "Research & Measurement"),
+		.socialJudgment: DisplayRepresentation(title: "Social Judgement"),
+	]
 }

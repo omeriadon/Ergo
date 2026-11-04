@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 3/11/2026.
 //
 
+import AppIntents
 import Defaults
 import Foundation
 
@@ -42,7 +43,7 @@ nonisolated struct Concept: Codable, Identifiable, Sendable {
 	}
 }
 
-nonisolated enum ConceptTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable {
+nonisolated enum ConceptTag: String, Codable, Defaults.Serializable, CaseIterable, Identifiable, Hashable, Sendable, AppEnum {
 	case aestheticsAndCulture = "aesthetics-and-culture"
 	case decisionTheorySystemsAndMethods = "decision-theory-systems-and-methods"
 	case epistemologyAndPhilosophyOfScience = "epistemology-and-philosophy-of-science"
@@ -75,6 +76,28 @@ nonisolated enum ConceptTag: String, Codable, Defaults.Serializable, CaseIterabl
 	var id: Self {
 		self
 	}
+
+	static var typeDisplayRepresentation: TypeDisplayRepresentation {
+		TypeDisplayRepresentation(name: "Concept Tag")
+	}
+
+	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+		.aestheticsAndCulture: DisplayRepresentation(title: "Aesthetics & Culture"),
+		.decisionTheorySystemsAndMethods: DisplayRepresentation(title: "Decision Theory Systems & Methods"),
+		.epistemologyAndPhilosophyOfScience: DisplayRepresentation(title: "Epistemology & Philosophy of Science"),
+		.ethicsAndValue: DisplayRepresentation(title: "Ethics & Value"),
+		.languageMeaningAndInterpretation: DisplayRepresentation(title: "Language, Meaning & Interpretation"),
+		.logicAndReasoning: DisplayRepresentation(title: "Logic & Reasoning"),
+		.memoryLearningAndReportedPsychologicalEffects: DisplayRepresentation(title: "Memory, Learning & Reported Psychological Effects"),
+		.metaphysicsAndOntology: DisplayRepresentation(title: "Metaphysics & Ontology"),
+		.mindConsciousnessAndAgency: DisplayRepresentation(title: "Mind Consciousness & Agency"),
+		.philosophicalSchoolsAndIsms: DisplayRepresentation(title: "Philosophical Schools and Isms"),
+		.politicalIdeologiesAndIsms: DisplayRepresentation(title: "Political Ideologies & Isms"),
+		.politicalPhilosophyAndInstitutions: DisplayRepresentation(title: "Political Philosophy and Institutions"),
+		.reasoningMethods: DisplayRepresentation(title: "Reasoning Methods"),
+		.religionAsianAfricanAndIndigenousPhilosophy: DisplayRepresentation(title: "Religion, Asian, African, & Indigenous Philosphy"),
+		.thoughtExperiments: DisplayRepresentation(title: "Thought Experiments"),
+	]
 }
 
 nonisolated struct ConceptCatalog: Codable, Sendable {
