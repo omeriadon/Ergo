@@ -1,5 +1,5 @@
 //
-//  NavigationManager+Library.swift
+//  + Library.swift
 //  Ergo
 //
 //  Created by Adon Omeri on 4/11/2026.

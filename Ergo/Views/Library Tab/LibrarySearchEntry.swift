@@ -58,15 +58,6 @@ extension Argument {
 	}
 }
 
-private nonisolated func yearFields(_ year: Int) -> [CatalogSearchField] {
-	var fields: [CatalogSearchField] = [(String(year), 0.7)]
-	if year < 0 {
-		fields.append(("\(abs(year)) BC", 0.7))
-		fields.append(("\(abs(year)) BCE", 0.7))
-	}
-	return fields
-}
-
 extension Philosopher {
 	nonisolated var searchFields: [CatalogSearchField] {
 		var fields: [CatalogSearchField] = [
@@ -81,4 +72,13 @@ extension Philosopher {
 		}
 		return fields
 	}
+}
+
+private nonisolated func yearFields(_ year: Int) -> [CatalogSearchField] {
+	var fields: [CatalogSearchField] = [(String(year), 0.7)]
+	if year < 0 {
+		fields.append(("\(abs(year)) BC", 0.7))
+		fields.append(("\(abs(year)) BCE", 0.7))
+	}
+	return fields
 }
