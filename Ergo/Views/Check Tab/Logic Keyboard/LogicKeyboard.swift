@@ -95,7 +95,6 @@ struct LogicKeyboard: View {
 			pageIndicator
 				.padding(.top, 3)
 		}
-		.buttonStyle(.glass)
 		.padding(.horizontal, 10)
 		.padding(.top, 10)
 		.font(.title3)
@@ -107,6 +106,28 @@ struct LogicKeyboard: View {
 			alignment: .top
 		)
 		.dynamicTypeSize(.small)
+		.overlayPreferenceValue(AlternatePopupKey.self) { items in
+			GeometryReader { proxy in
+				ForEach(items, id: \.glyph) { item in
+					let frame = proxy[item.bounds]
+
+					Text(item.glyph)
+						.font(.title2)
+						.fontDesign(.monospaced)
+						.frame(width: 54, height: 54)
+						.glassEffect(.regular.tint(.accent.opacity(0.5)).interactive(), in: RoundedRectangle(cornerRadius: 18))
+						.position(
+							x: frame.midX,
+							y: frame.minY - 34
+						)
+						.transition(
+							.blurReplace
+						)
+				}
+			}
+			.allowsHitTesting(false)
+			.animation(.easeOut(duration: 0.15), value: items.count)
+		}
 	}
 
 	var row1: some View {
@@ -174,7 +195,7 @@ struct LogicKeyboard: View {
 		HStack {
 			KeyboardButton(entry: .delimiter(","), currentlySelectedLetter: $currentlySelectedLetter) { onInsert(",") }
 				.frame(width: 58)
-				.zIndex(1)
+				.zIndex(2)
 
 			ScrollView(.horizontal) {
 				HStack(spacing: 0) {
@@ -231,134 +252,23 @@ struct LogicKeyboard: View {
 	}
 }
 
-private struct KeyboardButton: View {
-	let entry: LogicKeyboardEntry
+struct AlternatePopupItem {
+	let glyph: String
+	let bounds: Anchor<CGRect>
+}
 
-	@Binding var currentlySelectedLetter: String
+struct AlternatePopupKey: PreferenceKey {
+	static let defaultValue: [AlternatePopupItem] = []
 
-	var alternateAction: ((String) -> Void)?
-	let action: () -> Void
-
-	@State private var showingAlternate = false
-
-	private var alternate: LogicKeyboardEntry? {
-		LogicKeyboardEntry.alternate(for: entry.glyph)
-	}
-
-	@ViewBuilder
-	private var key: some View {
-		if let alternate, let alternateAction {
-			Button(action: action) {
-				keyLabel
-			}
-			.buttonStyle(AlternateKeyPressStyle(showingAlternate: $showingAlternate) {
-				alternateAction(alternate.glyph)
-			})
-		} else {
-			Button(action: action) {
-				keyLabel
-			}
-			.buttonStyle(LetterPressStyle(
-				letter: entry.glyph,
-				entry: entry,
-				selectedLetter: $currentlySelectedLetter
-			))
-		}
-	}
-
-	private var keyLabel: some View {
-		Label(entry.glyph, systemImage: "character")
-			.labelStyle(.titleOnly)
-			.frame(height: 48)
-			.frame(maxWidth: .infinity)
-			.contentShape(RoundedRectangle(cornerRadius: 19))
-	}
-
-	var body: some View {
-		key
-			.overlay(alignment: .top) {
-				if showingAlternate, let alternate {
-					Text(alternate.glyph)
-						.font(.title2)
-						.frame(width: 54, height: 54)
-						.background(
-							.ultraThinMaterial,
-							in: RoundedRectangle(cornerRadius: 18)
-						)
-						.offset(y: -60)
-						.allowsHitTesting(false)
-						.transition(
-							.opacity.combined(with: .scale(scale: 0.85))
-						)
-				}
-			}
-			.overlay(alignment: .bottomTrailing) {
-				if alternate != nil {
-					Circle()
-						.fill(.secondary)
-						.frame(width: 5, height: 5)
-						.padding(7)
-						.allowsHitTesting(false)
-				}
-			}
-			.zIndex(showingAlternate ? 1 : 0)
-			.animation(
-				.easeOut(duration: 0.15),
-				value: showingAlternate
-			)
-			.accessibilityLabel("Insert \(entry.glyph)")
-			.accessibilityHint(alternate == nil ? "Double tap to insert" : "Double tap to insert. Hold to insert \(alternate?.glyph ?? "")")
-			.accessibilityIdentifier("check.logicKeyboard.\(entry.id)")
-			.accessibilityAction(named: Text("Insert alternate")) {
-				if let alternate {
-					alternateAction?(alternate.glyph)
-				}
-			}
+	static func reduce(
+		value: inout [AlternatePopupItem],
+		nextValue: () -> [AlternatePopupItem]
+	) {
+		value.append(contentsOf: nextValue())
 	}
 }
 
-private struct AlternateKeyPressStyle: PrimitiveButtonStyle {
-	@Binding var showingAlternate: Bool
-	let insertAlternate: () -> Void
-	@GestureState private var isHolding = false
-
-	func makeBody(configuration: Configuration) -> some View {
-		configuration.label
-			.glassEffect(.clear.interactive(), in: RoundedRectangle(cornerRadius: 19))
-			.background {
-				RoundedRectangle(cornerRadius: 19)
-					.fill(Color.accentColor.opacity(isHolding ? 1 : 0))
-					.allowsHitTesting(false)
-			}
-			.gesture(
-				LongPressGesture(minimumDuration: 0.5, maximumDistance: 10)
-					.exclusively(before: TapGesture())
-					.updating($isHolding) { value, state, _ in
-						if case .first(true) = value {
-							state = true
-						}
-					}
-					.onEnded { value in
-						switch value {
-							case .first(true):
-								insertAlternate()
-							case .second:
-								configuration.trigger()
-							default:
-								break
-						}
-					}
-			)
-			.onChange(of: isHolding) { _, value in
-				showingAlternate = value
-			}
-			.accessibilityAction {
-				configuration.trigger()
-			}
-	}
-}
-
-private struct KeyboardButton2<Content: View>: View {
+struct KeyboardButton2<Content: View>: View {
 	@Binding var currentlySelectedLetter: String
 	let action: () -> Void
 
@@ -375,47 +285,47 @@ private struct KeyboardButton2<Content: View>: View {
 	}
 }
 
-private struct LetterPressStyle: ButtonStyle {
-	let letter: String
-	let entry: LogicKeyboardEntry
-	@Binding var selectedLetter: String
-
-	func makeBody(configuration: Configuration) -> some View {
-		configuration.label
-			.glassEffect(
-				.clear.tint(glassTint).interactive(),
-				in: RoundedRectangle(cornerRadius: 19)
-			)
-			.background {
-				RoundedRectangle(cornerRadius: 19)
-					.fill(
-						Color.accentColor.opacity(
-							configuration.isPressed ? 1 : 0
-						)
-					)
-					.allowsHitTesting(false)
-					.animation(.easeInOut(duration: 0), value: configuration.isPressed)
-			}
-			.onChange(of: configuration.isPressed) { _, pressed in
-				if pressed {
-					selectedLetter = letter
-				} else if selectedLetter == letter {
-					selectedLetter = ""
-				}
-			}
-	}
-
-	private var glassTint: Color {
-		switch entry {
-			case .variable:
-				.white.opacity(0.1)
-			case .symbol:
-				.clear
-			case .delimiter:
-				.black.opacity(0.04)
-		}
-	}
-}
+// struct LetterPressStyle: ButtonStyle {
+//	let letter: String
+//	let entry: LogicKeyboardEntry
+//	@Binding var selectedLetter: String
+//
+//	func makeBody(configuration: Configuration) -> some View {
+//		configuration.label
+//			.glassEffect(
+//				.clear.tint(glassTint).interactive(),
+//				in: RoundedRectangle(cornerRadius: 19)
+//			)
+//			.background {
+//				RoundedRectangle(cornerRadius: 19)
+//					.fill(
+//						Color.accentColor.opacity(
+//							configuration.isPressed ? 1 : 0
+//						)
+//					)
+//					.allowsHitTesting(false)
+//					.animation(.easeInOut(duration: 0), value: configuration.isPressed)
+//			}
+//			.onChange(of: configuration.isPressed) { _, pressed in
+//				if pressed {
+//					selectedLetter = letter
+//				} else if selectedLetter == letter {
+//					selectedLetter = ""
+//				}
+//			}
+//	}
+//
+//	private var glassTint: Color {
+//		switch entry {
+//			case .variable:
+//				.white.opacity(0.1)
+//			case .symbol:
+//				.clear
+//			case .delimiter:
+//				.black.opacity(0.04)
+//		}
+//	}
+// }
 
 private struct LetterPressStyle2: ButtonStyle {
 	func makeBody(configuration: Configuration) -> some View {
