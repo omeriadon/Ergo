@@ -8,6 +8,7 @@
 import AppIntents
 import Foundation
 
+@AppIntent(.tool)
 struct OpenSymbolsIntent: AppIntent {
 	static var title: LocalizedStringResource = "Open Symbols"
 

@@ -7,6 +7,7 @@
 
 import AppIntents
 
+@AppIntent(.tool)
 struct OpenParadoxesIntent: AppIntent {
 	static var title: LocalizedStringResource = "Open Paradoxes"
 

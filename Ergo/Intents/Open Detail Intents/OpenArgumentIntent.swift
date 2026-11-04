@@ -20,7 +20,7 @@ struct OpenArgumentIntent: OpenIntent {
 		false
 	}
 
-	@Parameter(title: "Argument")
+	@Parameter(title: "Argument", description: "The target argument entity to open")
 	var target: ArgumentEntity
 
 	@Dependency

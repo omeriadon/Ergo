@@ -20,7 +20,7 @@ struct OpenBiasIntent: OpenIntent {
 		false
 	}
 
-	@Parameter(title: "Bias")
+	@Parameter(title: "Bias", description: "The target bias entity to open")
 	var target: BiasEntity
 
 	@Dependency

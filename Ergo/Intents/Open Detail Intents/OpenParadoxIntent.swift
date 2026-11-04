@@ -20,7 +20,7 @@ struct OpenParadoxIntent: OpenIntent {
 		false
 	}
 
-	@Parameter(title: "Paradox")
+	@Parameter(title: "Paradox", description: "The target paradox entity to open")
 	var target: ParadoxEntity
 
 	@Dependency

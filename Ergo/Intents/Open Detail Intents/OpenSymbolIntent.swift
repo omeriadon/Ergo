@@ -9,6 +9,7 @@
 
 import AppIntents
 
+@AppIntent(.tool)
 struct OpenSymbolIntent: OpenIntent {
 	static var title: LocalizedStringResource = "Open Symbol"
 
@@ -20,7 +21,7 @@ struct OpenSymbolIntent: OpenIntent {
 		false
 	}
 
-	@Parameter(title: "Symbol")
+	@Parameter(title: "Symbol", description: "The target symbol entity to open")
 	var target: SymbolEntity
 
 	@Dependency

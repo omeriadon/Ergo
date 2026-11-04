@@ -7,6 +7,7 @@
 
 import AppIntents
 
+@AppIntent(.tool)
 struct OpenConceptsIntent: AppIntent {
 	static var title: LocalizedStringResource = "Open Concepts"
 

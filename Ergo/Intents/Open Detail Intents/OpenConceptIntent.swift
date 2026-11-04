@@ -20,7 +20,7 @@ struct OpenConceptIntent: OpenIntent {
 		false
 	}
 
-	@Parameter(title: "Concept")
+	@Parameter(title: "Concept", description: "The target concept entity to open")
 	var target: ConceptEntity
 
 	@Dependency

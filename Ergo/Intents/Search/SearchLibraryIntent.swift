@@ -18,22 +18,7 @@ struct SearchLibraryIntent: ShowInAppSearchResultsIntent {
 
 	@MainActor
 	func perform() async throws -> some IntentResult {
-		navigation.selectedTab = .library
-
-		let term = criteria.term.trimmingCharacters(in: .whitespacesAndNewlines)
-
-		guard !term.isEmpty else {
-			return .result()
-		}
-
-		if let route = navigation.libraryTagRoute(for: term) {
-			navigation.libraryPath.append(route)
-		} else if let category = navigation.currentLibraryCategory {
-			navigation.librarySearchText[category] = term
-		} else {
-			navigation.libraryPath.removeAll()
-			navigation.libraryGeneralSearchText = term
-		}
+		navigation.applyLibrarySearch(term: criteria.term)
 
 		return .result()
 	}

@@ -86,4 +86,23 @@ extension NavigationManager {
 
 		return nil
 	}
+
+	func applyLibrarySearch(term: String) {
+		selectedTab = .library
+
+		let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+
+		guard !trimmed.isEmpty else {
+			return
+		}
+
+		if let route = libraryTagRoute(for: trimmed) {
+			libraryPath.append(route)
+		} else if let category = currentLibraryCategory {
+			librarySearchText[category] = trimmed
+		} else {
+			libraryPath.removeAll()
+			libraryGeneralSearchText = trimmed
+		}
+	}
 }

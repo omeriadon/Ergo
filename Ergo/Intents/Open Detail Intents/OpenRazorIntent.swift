@@ -20,7 +20,7 @@ struct OpenRazorIntent: OpenIntent {
 		false
 	}
 
-	@Parameter(title: "Razor")
+	@Parameter(title: "Razor", description: "The target razor entity to open")
 	var target: RazorEntity
 
 	@Dependency

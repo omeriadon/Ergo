@@ -198,6 +198,7 @@ struct LibraryTabView: View {
 				placement: .toolbarPrincipal,
 				prompt: "Search anything"
 			)
+			.searchPresentationToolbarBehavior(.avoidHidingContent)
 			.onChange(of: searchTerm, initial: true) { _, newValue in
 				if !newValue.isEmpty {
 					searchPresented = true

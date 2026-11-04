@@ -20,7 +20,7 @@ struct OpenPhilosopherIntent: OpenIntent {
 		false
 	}
 
-	@Parameter(title: "Philosopher")
+	@Parameter(title: "Philosopher", description: "The target philosopher entity to open")
 	var target: PhilosopherEntity
 
 	@Dependency

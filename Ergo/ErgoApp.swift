@@ -39,6 +39,7 @@ struct ErgoApp: App {
 					navigation.startup()
 
 					do {
+						try await catalog.load()
 						try await LibraryIndexer.indexIfNeeded(from: catalog)
 					} catch {
 						print("Library indexing failed: \(error)")

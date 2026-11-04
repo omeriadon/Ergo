@@ -20,7 +20,7 @@ struct OpenFallacyIntent: OpenIntent {
 		false
 	}
 
-	@Parameter(title: "Fallacy")
+	@Parameter(title: "Fallacy", description: "The target fallacy entity to open")
 	var target: FallacyEntity
 
 	@Dependency
