@@ -1,13 +1,25 @@
 import UIKit
 
-final class LogicEditorTextView: UITextView, UIGestureRecognizerDelegate {
+final class LogicEditorTextView: UITextView, UIGestureRecognizerDelegate, UITextViewDelegate {
 	var onSymbolTap: ((NSRange) -> Void)?
 
+	var allowedCharacters: Set<Character> = Set("=∈∪∩⊂∅∴∵≔∎↔⊕⊤∀∃□◇⊢⊨⇔¬∧∨→()[],\n≠∉⊆")
+
 	func installTapHandling() {
+		delegate = self
+
 		let tap = UITapGestureRecognizer(target: self, action: #selector(tappedEntry(_:)))
 		tap.cancelsTouchesInView = false
 		tap.delegate = self
 		addGestureRecognizer(tap)
+	}
+
+	func textView(
+		_: UITextView,
+		shouldChangeTextIn _: NSRange,
+		replacementText text: String
+	) -> Bool {
+		text.allSatisfy { allowedCharacters.contains($0) }
 	}
 
 	@objc private func tappedEntry(_ gesture: UITapGestureRecognizer) {

@@ -64,7 +64,7 @@ struct KeyboardButton: View {
 				action()
 			}
 			.onLongPressGesture(
-				minimumDuration: supportsAlternate ? 0.5 : .infinity,
+				minimumDuration: 0.5,
 				maximumDistance: 10,
 				perform: {
 					guard let alternate, let alternateAction else {
