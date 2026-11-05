@@ -6,16 +6,12 @@
 //
 
 import Defaults
-import ErgoLogic
-import ErgoProtocol
 import SwiftUI
 
 struct SettingsView: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
-	@Default(.ditherEnabled) var ditherEnabled
-	@Default(.logicLetters) var logicLetters
 	// Release builds never read these two, but views watch them so a debug build follows a switch
 	@Default(.serverEnvironment) var serverEnvironment
 	@Default(.translationServer) var translationServer
@@ -27,37 +23,43 @@ struct SettingsView: View {
 	var body: some View {
 		NavigationStack {
 			Form {
-				Section {
-					Toggle("Dither", isOn: $ditherEnabled)
-				} footer: {
-					Text("The animated backgrounds behind detail pages and Check. Turning this off removes them entirely.")
+				NavigationLink {
+					UISettingsView()
+				} label: {
+					Label("UI", systemImage: "widget.small")
 				}
 
 				Section {
 					NavigationLink {
-						LogicLettersView()
+						AccountSettingsView()
 					} label: {
-						LabeledContent("Logic Letters") {
-							Text(LogicLetters.resolved(logicLetters).joined(separator: " "))
-								.monospaced()
-						}
+						Label("Account", systemImage: "person.crop.circle")
 					}
 				}
-
-				AccountSettingsView()
 
 				Section {
 					NavigationLink {
 						TranslationSettingsView()
 					} label: {
-						LabeledContent("Translation") {
+						LabeledContent {
 							Text(translationValue)
+						} label: {
+							Label("Logic Translation", systemImage: "translate")
 						}
 					}
 					.accessibilityIdentifier("settings.translation")
 				}
+
+				Section {
+					NavigationLink {
+						AboutView()
+					} label: {
+						Label("About Ergo", image: "Ergo")
+					}
+				}
 			}
-			.navigationTitle("Settings")
+			.tint(.accent)
+			.toolbarTitleVire("Settings", "gearshape")
 			.toolbar {
 				ToolbarItem(placement: .topBarTrailing) {
 					Button(role: .close) {

@@ -176,12 +176,14 @@ struct LibraryTabView: View {
 					Spacer()
 
 					Image(systemName: "chevron.right")
-						.foregroundStyle(.accent.secondary)
+						.foregroundStyle(.tertiary)
+						.imageScale(.large)
 				}
+				.contentShape(Rectangle())
 			}
 			.accessibilityIdentifier("library.search.\(result.category).\(result.id)")
-			.padding(.horizontal, 16)
-			.padding(.vertical, 16)
+			.padding(.horizontal, 14)
+			.padding(.vertical, 13)
 			.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
 			.contentShape(RoundedRectangle(cornerRadius: 18))
 			.transition(.opacity)

@@ -1,5 +1,5 @@
 //
-//  PagesView.swift
+//  PagesSheet.swift
 //  Ergo
 //
 //  Created by Adon Omeri on 5/11/2026.
@@ -53,8 +53,7 @@ struct PagesSheet: View {
 					)
 				}
 			}
-			.navigationTitle("Pages")
-			.navigationBarTitleDisplayMode(.inline)
+			.toolbarTitleVire("Pages", "text.page.and.line.vertical.and.text.page")
 			.toolbar {
 				ToolbarItem(placement: .topBarLeading) {
 					Button(role: .close) {
@@ -67,6 +66,8 @@ struct PagesSheet: View {
 						pageStore.newPage()
 						navigation.dismissSheet()
 					}
+					.buttonStyle(.glassProminent)
+					.scrollEdgeEffectStyle(.soft, for: .all)
 					.accessibilityIdentifier("pages.newPage")
 				}
 			}

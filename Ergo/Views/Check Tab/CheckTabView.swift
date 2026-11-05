@@ -205,7 +205,7 @@ struct CheckTabView: View {
 		.toolbar {
 			ToolbarItem(placement: .topBarTrailing) {
 				if focusedField == nil {
-					Button("Pages", systemImage: "doc.on.doc") {
+					Button("Pages", systemImage: "text.page.and.line.vertical.and.text.page") {
 						navigation.presentSheet(.pages)
 					}
 					.accessibilityIdentifier("check.pagesButton")
@@ -222,6 +222,7 @@ struct CheckTabView: View {
 				}
 			}
 		}
+		.animation(.easeInOut, value: focusedField == nil)
 	}
 
 	private func analyze() {

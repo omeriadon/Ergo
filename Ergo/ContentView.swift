@@ -78,6 +78,8 @@ struct ContentView: View {
 				Label("Library", systemImage: "books.vertical")
 			}
 		}
+		.tabViewStyle(.tabBarOnly)
+		.tabBarMinimizeBehavior(.onScrollDown)
 		.sheet(item: $router.presentedSheet) { sheet in
 			switch sheet {
 				case .scanner:
@@ -94,9 +96,6 @@ struct ContentView: View {
 
 				case .settings:
 					SettingsView()
-
-				case .about:
-					AboutView()
 
 				case .logicLetters:
 					LogicLettersSheet()

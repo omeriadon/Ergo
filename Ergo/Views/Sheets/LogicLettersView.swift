@@ -23,38 +23,35 @@ struct LogicLettersView: View {
 	}
 
 	var body: some View {
-		Form {
-			Section {
-				HStack(spacing: 8) {
-					ForEach(LogicLetters.slots, id: \.self) { slot in
-						LetterSlotField(
-							letter: LogicLetters.letter(for: slot, in: letters),
-							commit: { letter in
-								setLetter(letter, in: slot)
-							}
-						)
-						.focused($focusedSlot, equals: slot)
-						.accessibilityLabel("Letter \(slot)")
-					}
+		VStack {
+			HStack(spacing: 8) {
+				ForEach(LogicLetters.slots, id: \.self) { slot in
+					LetterSlotField(
+						letter: LogicLetters.letter(for: slot, in: letters),
+						commit: { letter in
+							setLetter(letter, in: slot)
+						}
+					)
+					.focused($focusedSlot, equals: slot)
+					.accessibilityLabel("Letter \(slot)")
 				}
-				.listRowBackground(Color.clear)
-				.listRowInsets(EdgeInsets())
-			} footer: {
-				Group {
-					switch problem {
-						case .notALetter:
-							Text("Only the letters A to Z.")
-								.foregroundStyle(.red)
-						case .alreadyUsed:
-							Text("That letter's already one of the six.")
-								.foregroundStyle(.red)
-						case nil:
-							Text("Six different letters for the logic keyboard. Anything you've already written switches over too.")
-					}
-				}
-				.padding(.top, 8)
-				.animation(.easeInOut(duration: 0.2), value: problem)
 			}
+
+			ZStack {
+				switch problem {
+					case .notALetter:
+						Text("Only the letters A to Z.")
+							.foregroundStyle(.red)
+					case .alreadyUsed:
+						Text("That letter's already one of the six.")
+							.foregroundStyle(.red)
+					case nil:
+						Text("Six different letters for the logic keyboard. Anything you've already written switches over too.")
+				}
+			}
+			.padding(.top, 8)
+			.animation(.easeInOut(duration: 0.2), value: problem)
+			.padding(.bottom, 30)
 
 			if let descriptors {
 				Section {
@@ -81,23 +78,25 @@ struct LogicLettersView: View {
 				}
 			}
 
-			Section {
-				Button("Reset Letters") {
-					logicLetters = LogicLetters.defaults
-					problem = nil
-				}
-				.disabled(letters == LogicLetters.defaults)
-
-				if let descriptors {
-					Button("Clear Descriptors", role: .destructive) {
-						descriptors.wrappedValue = LogicLetters.emptyDescriptors
-					}
-					.disabled(LogicLetters.slots.allSatisfy { LogicLetters.descriptor(for: $0, in: descriptors.wrappedValue).isEmpty })
-				}
+			Button("Reset Letters", systemImage: "arrow.clockwise") {
+				logicLetters = LogicLetters.defaults
+				problem = nil
 			}
+			.buttonSizing(.flexible)
+			.buttonStyle(.glass)
+			.disabled(letters == LogicLetters.defaults)
+
+			if let descriptors {
+				Button("Clear Descriptors", role: .destructive) {
+					descriptors.wrappedValue = LogicLetters.emptyDescriptors
+				}
+				.disabled(LogicLetters.slots.allSatisfy { LogicLetters.descriptor(for: $0, in: descriptors.wrappedValue).isEmpty })
+			}
+
+			Spacer()
 		}
-		.navigationTitle("Logic Letters")
-		.navigationBarTitleDisplayMode(.inline)
+		.padding()
+		.toolbarTitleVire("Logic Letters", "textformat.alt")
 	}
 
 	private func setLetter(_ letter: String, in slot: Int) -> Bool {
@@ -155,7 +154,7 @@ private struct LetterSlotField: View {
 			.multilineTextAlignment(.center)
 			.textInputAutocapitalization(.characters)
 			.autocorrectionDisabled()
-			.font(.title2)
+			.font(.title2.monospaced())
 			.fontDesign(.monospaced)
 			.frame(height: 52)
 			.glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 16))
@@ -163,7 +162,7 @@ private struct LetterSlotField: View {
 				draft = letter
 			}
 			.onChange(of: letter) { _, letter in
-				draft = letter
+				draft = letter.capitalized
 			}
 			.onChange(of: draft) { _, value in
 				guard value != letter else { return }

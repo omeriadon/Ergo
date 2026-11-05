@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
 	name: "ErgoServer",
 	platforms: [
-		.macOS("27.0"),
+		.macOS("27.3"),
 	],
 	dependencies: [
 		.package(path: "../ErgoKit"),

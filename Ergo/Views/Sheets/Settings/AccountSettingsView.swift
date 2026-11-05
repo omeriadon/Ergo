@@ -25,20 +25,19 @@ struct AccountSettingsView: View {
 	}
 
 	var body: some View {
-		Section {
-			if sync.isSignedIn {
-				SignedInRows(problem: $problem)
-			} else {
-				SignInRow(problem: $problem)
-					.disabled(!hasServer)
+		List {
+			Section {
+				if sync.isSignedIn {
+					SignedInRows(problem: $problem)
+				} else {
+					SignInRow(problem: $problem)
+						.disabled(!hasServer)
+				}
+			} footer: {
+				AccountFooter(problem: problem, hasServer: hasServer)
 			}
-		} header: {
-			// On the header, since on the section it would replace the rows' own identifiers
-			Text("Account")
-				.accessibilityIdentifier("settings.account")
-		} footer: {
-			AccountFooter(problem: problem, hasServer: hasServer)
 		}
+		.toolbarTitleVire("Account", "person.crop.circle")
 	}
 }
 

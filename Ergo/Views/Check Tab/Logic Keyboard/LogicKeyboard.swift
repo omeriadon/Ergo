@@ -113,7 +113,7 @@ struct LogicKeyboard: View {
 					.containerRelativeFrame(.horizontal)
 					.scrollTransition(.interactive) { content, phase in
 						content
-							.scaleEffect(phase.isIdentity ? 1 : 0.5)
+							.scaleEffect(phase.isIdentity ? 1 : 0.4)
 							.blur(radius: phase.isIdentity ? 0 : 5)
 					}
 				}

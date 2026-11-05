@@ -73,7 +73,7 @@ struct TranslationSettingsView: View {
 			}
 			.disabled(server == nil)
 		}
-		.navigationTitle("Translation")
+		.toolbarTitleVire("Logic Translation", "translate")
 		.confirmationDialog(
 			disconnecting.map { "Disconnect \($0.name)?" } ?? "",
 			isPresented: Binding(

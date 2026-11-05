@@ -54,13 +54,6 @@ struct AboutView: View {
 				}
 			}
 			.fontDesign(.rounded)
-			.toolbar {
-				ToolbarItem(placement: .topBarTrailing) {
-					Button(role: .close) {
-						navigation.dismissSheet()
-					}
-				}
-			}
 		}
 		.interactiveDismissDisabled()
 	}

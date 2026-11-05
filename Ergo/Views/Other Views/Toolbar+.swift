@@ -1,5 +1,5 @@
 //
-//  TitleToolbarItem.swift
+//  Toolbar+.swift
 //  Ergo
 //
 //  Created by Adon Omeri on 1/11/2026.
@@ -22,9 +22,6 @@ private struct ToolbarTitleItemModifier: ViewModifier {
 				ToolbarTitleItem(
 					openSettings: {
 						navigation.presentSheet(.settings(id: "3refd"))
-					},
-					openAbout: {
-						navigation.presentSheet(.about(id: "3refd"))
 					}
 				)
 			}
@@ -33,23 +30,11 @@ private struct ToolbarTitleItemModifier: ViewModifier {
 
 struct ToolbarTitleItem: ToolbarContent {
 	let openSettings: () -> Void
-	let openAbout: () -> Void
 
 	var body: some ToolbarContent {
 		ToolbarItem(placement: .topBarLeading) {
-			Menu {
-				Button {
-					openSettings()
-				} label: {
-					Label("Settings", systemImage: "gearshape")
-				}
-
-				Button {
-					openAbout()
-				} label: {
-					Label("About", systemImage: "info")
-				}
-
+			Button {
+				openSettings()
 			} label: {
 				ToolbarTitleView()
 			}
@@ -63,5 +48,36 @@ struct ToolbarTitleView: View {
 	var body: some View {
 		Image("Ergo")
 			.foregroundStyle(.accent)
+	}
+}
+
+extension View {
+	func toolbarTitleVire(_ title: String, _ symbol: String) -> some View {
+		modifier(ToolbarTitleViewModifier(title: title, symbol: symbol))
+	}
+}
+
+private struct ToolbarTitleViewModifier: ViewModifier {
+	@Environment(NavigationManager.self) private var navigation
+
+	let title: String
+	let symbol: String
+
+	func body(content: Content) -> some View {
+		content
+			.navigationTitle(title)
+			.navigationBarTitleDisplayMode(.inline)
+			.scrollEdgeEffectStyle(.soft, for: .all)
+			.toolbar {
+				ToolbarItem(placement: .title) {
+					Label {
+						Text(title)
+					} icon: {
+						Image(systemName: symbol)
+							.foregroundStyle(.accent)
+					}
+					.labelStyle(.titleAndIcon)
+				}
+			}
 	}
 }
