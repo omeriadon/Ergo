@@ -16,7 +16,7 @@ struct RemoveItemFromBookmarksIntent: AppIntent {
 	var itemToRemoveFromBookmarks: LibraryEntry
 
 	static var supportedModes: IntentModes = [
-		.background, .foreground,
+		.background,
 	]
 
 	@MainActor

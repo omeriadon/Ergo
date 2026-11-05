@@ -16,7 +16,7 @@ struct AddItemToBookmarksIntent: AppIntent {
 	var itemToBookmark: LibraryEntry
 
 	static var supportedModes: IntentModes = [
-		.background, .foreground,
+		.background,
 	]
 
 	@MainActor
