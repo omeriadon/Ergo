@@ -157,19 +157,23 @@ struct LibraryListView<Item: LibraryListItem>: View {
 
 	@ViewBuilder
 	private var resultsSections: some View {
-		let sections = LibraryListLogic.sections(visibleItems)
-
-		if sections.isEmpty, catalog.isLoaded {
+		if visibleItems.isEmpty, catalog.isLoaded {
 			ContentUnavailableView.search(text: state.searchText)
-		}
-
-		ForEach(sections) { section in
-			Section(section.title) {
-				ForEach(section.items) { item in
+		} else if isSearching {
+			Section {
+				ForEach(visibleItems) { item in
 					itemRow(item)
 				}
 			}
-			.sectionIndexLabel(section.title)
+		} else {
+			ForEach(LibraryListLogic.sections(visibleItems)) { section in
+				Section(section.title) {
+					ForEach(section.items) { item in
+						itemRow(item)
+					}
+				}
+				.sectionIndexLabel(section.title)
+			}
 		}
 	}
 
