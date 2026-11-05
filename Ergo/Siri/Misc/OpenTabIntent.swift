@@ -8,6 +8,7 @@
 import AppIntents
 import Foundation
 
+@AppIntent(.tool)
 struct OpenTabIntent: AppIntent {
 	static var title: LocalizedStringResource = "Open Tab"
 
@@ -15,7 +16,7 @@ struct OpenTabIntent: AppIntent {
 		"Opens a tab in Ergo."
 	)
 
-	@Parameter(title: "tab")
+	@Parameter(title: "tab", description: "The tab to open in Ergo")
 	var tab: AppTab
 
 	static var parameterSummary: some ParameterSummary {

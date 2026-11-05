@@ -11,7 +11,7 @@ import AppIntents
 struct OpenPhilosopherEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Philosopher"
 
-	@Parameter(title: "Philosopher")
+	@Parameter(title: "Philosopher", description: "The philosopher to open in Ergo")
 	var target: PhilosopherEntity
 
 	@Dependency

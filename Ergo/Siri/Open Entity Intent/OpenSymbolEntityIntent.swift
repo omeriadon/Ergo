@@ -11,7 +11,7 @@ import AppIntents
 struct OpenSymbolEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Symbol"
 
-	@Parameter(title: "Symbol")
+	@Parameter(title: "Symbol", description: "The symbol to open in Ergo")
 	var target: SymbolEntity
 
 	@Dependency

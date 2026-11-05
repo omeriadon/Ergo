@@ -11,7 +11,7 @@ import AppIntents
 struct OpenBiasEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Bias"
 
-	@Parameter(title: "Bias")
+	@Parameter(title: "Bias", description: "The bias to open in Ergo")
 	var target: BiasEntity
 
 	@Dependency

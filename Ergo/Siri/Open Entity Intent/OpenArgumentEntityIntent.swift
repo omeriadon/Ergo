@@ -11,7 +11,7 @@ import AppIntents
 struct OpenArgumentEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Argument"
 
-	@Parameter(title: "Argument")
+	@Parameter(title: "Argument", description: "The argument to open in Ergo")
 	var target: ArgumentEntity
 
 	@Dependency

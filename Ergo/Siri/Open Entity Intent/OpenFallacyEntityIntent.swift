@@ -11,7 +11,7 @@ import AppIntents
 struct OpenFallacyEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Fallacy"
 
-	@Parameter(title: "Fallacy")
+	@Parameter(title: "Fallacy", description: "The fallacy to open in Ergo")
 	var target: FallacyEntity
 
 	@Dependency

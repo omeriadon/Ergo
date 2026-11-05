@@ -11,7 +11,7 @@ import AppIntents
 struct OpenRazorEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Razor"
 
-	@Parameter(title: "Razor")
+	@Parameter(title: "Razor", description: "The razor to open in Ergo")
 	var target: RazorEntity
 
 	@Dependency

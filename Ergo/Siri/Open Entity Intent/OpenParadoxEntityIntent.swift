@@ -11,7 +11,7 @@ import AppIntents
 struct OpenParadoxEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Paradox"
 
-	@Parameter(title: "Paradox")
+	@Parameter(title: "Paradox", description: "The paradox to open in Ergo")
 	var target: ParadoxEntity
 
 	@Dependency
