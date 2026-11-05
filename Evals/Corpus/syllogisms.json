@@ -1,0 +1,83 @@
+[
+	{
+		"id": "hypothetical-bus-boss",
+		"english": "If I miss the bus, I'll be late for work. If I'm late for work, my boss will be annoyed. So if I miss the bus, my boss will be annoyed.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "Y→Z"], "conclusion": "X→Z" },
+		"verdict": "valid",
+		"tags": ["conditional", "chain"]
+	},
+	{
+		"id": "chain-power-food",
+		"english": "If the power goes out, the fridge stops working. If the fridge stops working, the food will spoil. If the food spoils, we'll have to throw it out. The power went out, so we'll have to throw the food out.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "Y→Z", "Z→P", "X"], "conclusion": "P" },
+		"verdict": "valid",
+		"tags": ["conditional", "chain"]
+	},
+	{
+		"id": "chain-tollens-mia",
+		"english": "If Mia gets the job, she'll move to Melbourne. If she moves to Melbourne, she'll sell her car. She hasn't sold her car, so she didn't get the job.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "Y→Z", "¬Z"], "conclusion": "¬X" },
+		"verdict": "valid",
+		"tags": ["conditional", "chain", "negation"]
+	},
+	{
+		"id": "disjunctive-keys",
+		"english": "My keys are either in my bag or on the kitchen table. They're not in my bag, so they're on the table.",
+		"kind": "argument",
+		"expected": { "premises": ["X∨Y", "¬X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["either-or", "disjunctive"]
+	},
+	{
+		"id": "disjunctive-dinner",
+		"english": "We're having pizza or pasta tonight. We're not having pasta, so it's pizza.",
+		"kind": "argument",
+		"expected": { "premises": ["X∨Y", "¬Y"], "conclusion": "X" },
+		"verdict": "valid",
+		"tags": ["either-or", "disjunctive"],
+		"note": "Plain 'or' without 'either' is inclusive too"
+	},
+	{
+		"id": "disjunctive-three-noise",
+		"english": "The noise is coming from the fridge, the dishwasher or the washing machine. It isn't the fridge. It isn't the dishwasher either, so it must be the washing machine.",
+		"kind": "argument",
+		"expected": { "premises": ["X∨Y∨Z", "¬X", "¬Y"], "conclusion": "Z" },
+		"verdict": "valid",
+		"tags": ["either-or", "disjunctive"]
+	},
+	{
+		"id": "constructive-dilemma-tired",
+		"english": "If I study tonight, I'll be tired tomorrow. If I go out tonight, I'll be tired tomorrow too. I'm either going to study or go out, so I'll be tired tomorrow either way.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "Z→Y", "X∨Z"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["either-or", "dilemma", "conditional"]
+	},
+	{
+		"id": "destructive-dilemma-train",
+		"english": "If the meeting runs long, I'll miss my train. If I stay for drinks, I'll miss the train too. I didn't miss the train, so the meeting didn't run long and I didn't stay for drinks.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "Z→Y", "¬Y"], "conclusion": "¬X∧¬Z" },
+		"verdict": "valid",
+		"tags": ["dilemma", "conditional", "negation"]
+	},
+	{
+		"id": "simplification-sunday",
+		"english": "The library and the gym are both closed on Sundays, so the gym is closed on Sundays.",
+		"kind": "argument",
+		"expected": { "premises": ["X∧Y"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["and"]
+	},
+	{
+		"id": "conjunctive-consequent-holiday",
+		"english": "If it's a public holiday, the banks are closed and the trains run less often. Today is a public holiday, so the trains are running less often.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y∧Z", "X"], "conclusion": "Z" },
+		"verdict": "valid",
+		"tags": ["conditional", "and"]
+	}
+]

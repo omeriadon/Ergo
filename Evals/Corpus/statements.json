@@ -1,0 +1,73 @@
+[
+	{
+		"id": "statement-library-hours",
+		"english": "The library closes at nine on weekdays.",
+		"kind": "statements",
+		"expected": { "premises": ["X"], "conclusion": "" },
+		"tags": ["statements"]
+	},
+	{
+		"id": "statement-milk-sour",
+		"english": "If you leave the milk out, it goes sour.",
+		"kind": "statements",
+		"expected": { "premises": ["X→Y"], "conclusion": "" },
+		"tags": ["statements", "conditional", "if-then"]
+	},
+	{
+		"id": "statements-train-boss",
+		"english": "The train was late this morning. My boss didn't notice.",
+		"kind": "statements",
+		"expected": { "premises": ["X", "¬Y"], "conclusion": "" },
+		"tags": ["statements", "negation"],
+		"note": "Two sentences in a row aren't an argument without something marking a conclusion"
+	},
+	{
+		"id": "statement-whenever-politics",
+		"english": "Whenever my brother visits, we end up arguing about politics.",
+		"kind": "statements",
+		"expected": { "premises": ["X→Y"], "conclusion": "" },
+		"tags": ["statements", "conditional", "whenever"]
+	},
+	{
+		"id": "statement-iff-heating",
+		"english": "The heating comes on if and only if the temperature drops below eighteen degrees.",
+		"kind": "statements",
+		"expected": { "premises": ["X↔Y"], "conclusion": "" },
+		"tags": ["statements", "iff"]
+	},
+	{
+		"id": "statement-unless-storm",
+		"english": "The concert will go ahead unless there's a storm.",
+		"kind": "statements",
+		"expected": { "premises": ["¬Y→X"], "conclusion": "" },
+		"tags": ["statements", "unless"]
+	},
+	{
+		"id": "statement-xor-meeting",
+		"english": "The meeting is either on Tuesday or on Wednesday, but not both.",
+		"kind": "statements",
+		"expected": { "premises": ["X⊕Y"], "conclusion": "" },
+		"tags": ["statements", "xor"]
+	},
+	{
+		"id": "statement-neither-charged",
+		"english": "Neither my phone nor my laptop is charged.",
+		"kind": "statements",
+		"expected": { "premises": ["¬X∧¬Y"], "conclusion": "" },
+		"tags": ["statements", "neither"]
+	},
+	{
+		"id": "statement-not-both-meeting",
+		"english": "Ana and Ben weren't both at the meeting.",
+		"kind": "statements",
+		"expected": { "premises": ["¬(X∧Y)"], "conclusion": "" },
+		"tags": ["statements", "not-both", "negation"]
+	},
+	{
+		"id": "statement-although-restaurant",
+		"english": "Although the restaurant was expensive, the food was amazing.",
+		"kind": "statements",
+		"expected": { "premises": ["X∧Y"], "conclusion": "" },
+		"tags": ["statements", "but"]
+	}
+]

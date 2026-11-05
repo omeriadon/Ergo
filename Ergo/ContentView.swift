@@ -93,10 +93,16 @@ struct ContentView: View {
 					Text("sheet here!")
 
 				case .settings:
-					Text("settings here!")
+					SettingsView()
 
 				case .about:
 					AboutView()
+
+				case .logicLetters:
+					LogicLettersSheet()
+
+				case .pages:
+					PagesSheet()
 			}
 		}
 		.fontDesign(.rounded)

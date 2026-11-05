@@ -9,16 +9,57 @@ import SwiftUI
 import UIKit
 
 @MainActor
+@Observable
 final class ScrollSync {
-	weak var top: UIScrollView?
-	weak var bottom: UIScrollView?
-
-	func moveTop(to progress: CGFloat) {
-		move(top, to: progress)
+	enum Source {
+		case top, bottom
 	}
 
-	func moveBottom(to progress: CGFloat) {
-		move(bottom, to: progress)
+	/// The only observed value, read by the page indicator
+	private(set) var progress: CGFloat = 0
+
+	@ObservationIgnored private weak var top: UIScrollView?
+	@ObservationIgnored private weak var bottom: UIScrollView?
+
+	/// Whichever row the finger is on, the other one follows
+	@ObservationIgnored private var source: Source?
+
+	static func progress(of geometry: ScrollGeometry) -> CGFloat {
+		let distance = max(
+			0,
+			geometry.contentSize.width - geometry.containerSize.width
+		)
+
+		return distance > 0
+			? min(max(geometry.contentOffset.x / distance, 0), 1)
+			: 0
+	}
+
+	func register(_ scroll: UIScrollView, for source: Source) {
+		switch source {
+			case .top:
+				top = scroll
+			case .bottom:
+				bottom = scroll
+		}
+	}
+
+	func phaseChanged(_ source: Source, to phase: ScrollPhase) {
+		if phase == .interacting {
+			self.source = source
+		} else if phase == .idle, self.source == source {
+			self.source = nil
+		}
+	}
+
+	func scrolled(_ source: Source, to progress: CGFloat) {
+		guard self.source == source else { return }
+
+		if abs(self.progress - progress) > 0.001 {
+			self.progress = progress
+		}
+
+		move(source == .top ? bottom : top, to: progress)
 	}
 
 	private func move(_ scroll: UIScrollView?, to progress: CGFloat) {
@@ -53,7 +94,6 @@ struct ScrollViewResolver: UIViewRepresentable {
 
 	func updateUIView(_ view: ResolverView, context _: Context) {
 		view.onResolve = onResolve
-		view.resolve()
 	}
 
 	final class ResolverView: UIView {
@@ -69,7 +109,7 @@ struct ScrollViewResolver: UIViewRepresentable {
 			resolve()
 		}
 
-		func resolve() {
+		private func resolve() {
 			var current = superview
 
 			while let view = current {

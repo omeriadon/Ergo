@@ -1,11 +1,23 @@
 import Defaults
+import ErgoLogic
 import SwiftUI
 import UIKit
 
-struct LogicInlineSymbolAppearance {
-	var font: UIFont = .preferredFont(forTextStyle: .body)
+nonisolated struct LogicInlineSymbolAppearance {
+	/// Monospaced, a step up from body, and scaled for Dynamic Type at launch
+	static let baseFont = UIFontMetrics(forTextStyle: .title3).scaledFont(
+		for: .monospacedSystemFont(ofSize: 20, weight: .regular)
+	)
+
+	/// The width of one space, so a comma can read as ", " without a real space in the text
+	static let spaceWidth = (" " as NSString).size(withAttributes: [.font: baseFont]).width
+
+	var font: UIFont = Self.baseFont
 	var foregroundColor: UIColor = .label
 	var backgroundColor: UIColor = .clear
+
+	/// Extra room drawn after the glyph, it isn't part of the text
+	var trailingSpace: CGFloat = 0
 
 	static var `default`: Self {
 		Self()
@@ -18,6 +30,8 @@ struct LogicInlineSymbolAppearance {
 				Self(foregroundColor: .systemBlue, backgroundColor: .systemBlue.withAlphaComponent(0.08))
 			case .symbol("∀"), .symbol("∃"):
 				Self(foregroundColor: .systemPurple)
+			case .delimiter(","):
+				Self(trailingSpace: spaceWidth)
 			default:
 				.default
 		}
@@ -25,123 +39,58 @@ struct LogicInlineSymbolAppearance {
 }
 
 struct LogicTextEditor: UIViewRepresentable {
-	@Binding var text: String
+	@Binding var entries: [LogicKeyboardEntry]
 	@Binding var isFocused: Bool
-	let symbolDefinitions: [LogicEditorSymbolDefinition]
-	@Default(.logicLetters) var logicLetters
-	var entryAppearance: (LogicKeyboardEntry) -> LogicInlineSymbolAppearance
+	var highlights: [LogicHighlight] = []
 
-	init(
-		text: Binding<String>,
-		isFocused: Binding<Bool>,
-		symbolDefinitions: [LogicEditorSymbolDefinition] = [],
-		entryAppearance: @escaping (LogicKeyboardEntry) -> LogicInlineSymbolAppearance
-	) {
-		_text = text
-		_isFocused = isFocused
-		self.symbolDefinitions = symbolDefinitions
-		self.entryAppearance = entryAppearance
-	}
+	/// The page's, so the letter keys can say what they stand for
+	var descriptors = LogicLetters.emptyDescriptors
 
-	@MainActor
-	init(
-		text: Binding<String>,
-		isFocused: Binding<Bool>,
-		symbolDefinitions: [LogicEditorSymbolDefinition] = []
-	) {
-		self.init(
-			text: text,
-			isFocused: isFocused,
-			symbolDefinitions: symbolDefinitions,
-			entryAppearance: LogicInlineSymbolAppearance.appearance
-		)
-	}
+	var entryAppearance: (LogicKeyboardEntry) -> LogicInlineSymbolAppearance = LogicInlineSymbolAppearance.appearance
+	var onEditLetters: () -> Void = {}
+
+	@Default(.logicLetters) private var logicLetters
 
 	func makeCoordinator() -> Coordinator {
 		Coordinator(self)
 	}
 
 	func makeUIView(context: Context) -> LogicEditorTextView {
-		let textView = LogicEditorTextView(usingTextLayoutManager: true)
-		textView.delegate = context.coordinator
-		textView.onSymbolTap = { [weak coordinator = context.coordinator, weak textView] range in
-			guard let textView else { return }
-			coordinator?.presentEntry(in: textView, range: range)
-		}
-		textView.installTapHandling()
-		textView.autocorrectionType = .no
-		textView.spellCheckingType = .no
-		textView.inlinePredictionType = .no
-		textView.autocapitalizationType = .none
-		textView.inputAssistantItem.leadingBarButtonGroups = []
-		textView.inputAssistantItem.trailingBarButtonGroups = []
-		textView.backgroundColor = .clear
-		textView.font = .preferredFont(forTextStyle: .body)
-		textView.textColor = .label
-		textView.adjustsFontForContentSizeCategory = true
-		textView.textContainerInset = .zero
-		textView.textContainer.lineFragmentPadding = 0
-		textView.allowsEditingTextAttributes = false
-		textView.accessibilityLabel = "Logic editor"
-		textView.accessibilityIdentifier = "check.logicEditor"
+		let coordinator = context.coordinator
+		let textView = LogicEditorTextView()
+		textView.configure()
+		textView.appearance = entryAppearance
+		textView.letters = logicLetters
 
-		let keyboardHost = UIHostingController(
-			rootView: LogicKeyboard(
-				onInsert: { [weak textView] value in
-					textView?.insertText(value)
-				},
-				onDelete: { [weak textView] in
-					textView?.deleteBackward()
-				},
-				onDismiss: { [weak textView] in
-					textView?.resignFirstResponder()
-				}
-			)
-		)
-		keyboardHost.safeAreaRegions = []
-		keyboardHost.view.backgroundColor = .clear
-		keyboardHost.view.translatesAutoresizingMaskIntoConstraints = false
-		let keyboardContainer = UIInputView(
-			frame: CGRect(x: 0, y: 0, width: 0, height: 250),
-			inputViewStyle: .keyboard
-		)
-		keyboardContainer.allowsSelfSizing = false
-		keyboardContainer.autoresizingMask = [.flexibleWidth]
-		keyboardContainer.addSubview(keyboardHost.view)
-		NSLayoutConstraint.activate([
-			keyboardHost.view.topAnchor.constraint(equalTo: keyboardContainer.topAnchor),
-			keyboardHost.view.bottomAnchor.constraint(equalTo: keyboardContainer.bottomAnchor),
-			keyboardHost.view.leadingAnchor.constraint(equalTo: keyboardContainer.leadingAnchor),
-			keyboardHost.view.trailingAnchor.constraint(equalTo: keyboardContainer.trailingAnchor),
-		])
-		context.coordinator.keyboardHost = keyboardHost
-		textView.inputView = keyboardContainer
-		if context.coordinator.vocabulary.accepts(text) {
-			textView.text = text
-		} else {
-			context.coordinator.rejectBinding(text, preserving: "")
+		textView.onEntriesChange = { [weak coordinator] entries in
+			coordinator?.parent.entries = entries
 		}
-		context.coordinator.style(textView)
+
+		textView.onFocusChange = { [weak coordinator] focused in
+			guard let coordinator else { return }
+			coordinator.lastRequestedFocus = focused
+			coordinator.focusRequestID += 1
+			coordinator.parent.isFocused = focused
+		}
+
+		textView.inputView = keyboard(for: textView, coordinator: coordinator)
+		textView.setEntries(entries)
+		textView.setHighlights(highlights)
 		return textView
 	}
 
 	func updateUIView(_ uiView: LogicEditorTextView, context: Context) {
 		let coordinator = context.coordinator
 		coordinator.parent = self
-		coordinator.vocabulary = LogicInputVocabulary(logicLetters: logicLetters)
-		if uiView.text != text {
-			if coordinator.vocabulary.accepts(text) {
-				let selection = uiView.selectedRange
-				uiView.text = text
-				let length = (text as NSString).length
-				let location = min(selection.location, length)
-				uiView.selectedRange = NSRange(location: location, length: min(selection.length, length - location))
-				uiView.undoManager?.removeAllActions()
-			} else {
-				coordinator.rejectBinding(text, preserving: uiView.text)
-			}
+		uiView.appearance = entryAppearance
+		uiView.letters = logicLetters
+		uiView.setEntries(entries)
+		uiView.setHighlights(highlights)
+
+		if let keyboardHost = coordinator.keyboardHost, keyboardHost.rootView.descriptors != descriptors {
+			keyboardHost.rootView.descriptors = descriptors
 		}
-		coordinator.style(uiView)
+
 		guard coordinator.lastRequestedFocus != isFocused else { return }
 		coordinator.lastRequestedFocus = isFocused
 		coordinator.focusRequestID += 1
@@ -159,126 +108,58 @@ struct LogicTextEditor: UIViewRepresentable {
 		}
 	}
 
-	final class Coordinator: NSObject, UITextViewDelegate, UIPopoverPresentationControllerDelegate {
+	private func keyboard(for textView: LogicEditorTextView, coordinator: Coordinator) -> UIInputView {
+		let keyboardHost = UIHostingController(
+			rootView: LogicKeyboard(
+				onInsert: { [weak textView] entry in
+					textView?.insert(entry)
+				},
+				onDelete: { [weak textView] in
+					textView?.deleteBackward()
+				},
+				onDismiss: { [weak textView] in
+					textView?.resignFirstResponder()
+				},
+				onEditLetters: { [weak textView, weak coordinator] in
+					// The keyboard goes first so it isn't fighting the sheet for the screen
+					textView?.resignFirstResponder()
+					coordinator?.parent.onEditLetters()
+				},
+				descriptors: descriptors
+			)
+		)
+		keyboardHost.safeAreaRegions = []
+		keyboardHost.view.backgroundColor = .clear
+		keyboardHost.view.clipsToBounds = false
+		keyboardHost.view.translatesAutoresizingMaskIntoConstraints = false
+
+		let keyboardContainer = UIInputView(
+			frame: CGRect(x: 0, y: 0, width: 0, height: 250),
+			inputViewStyle: .keyboard
+		)
+		keyboardContainer.allowsSelfSizing = false
+		keyboardContainer.clipsToBounds = false
+		keyboardContainer.autoresizingMask = [.flexibleWidth]
+		keyboardContainer.addSubview(keyboardHost.view)
+		NSLayoutConstraint.activate([
+			keyboardHost.view.topAnchor.constraint(equalTo: keyboardContainer.topAnchor),
+			keyboardHost.view.bottomAnchor.constraint(equalTo: keyboardContainer.bottomAnchor),
+			keyboardHost.view.leadingAnchor.constraint(equalTo: keyboardContainer.leadingAnchor),
+			keyboardHost.view.trailingAnchor.constraint(equalTo: keyboardContainer.trailingAnchor),
+		])
+
+		coordinator.keyboardHost = keyboardHost
+		return keyboardContainer
+	}
+
+	final class Coordinator {
 		var parent: LogicTextEditor
 		var keyboardHost: UIHostingController<LogicKeyboard>?
-		var vocabulary: LogicInputVocabulary
 		var lastRequestedFocus = false
 		var focusRequestID = 0
-		weak var presentedDetail: UIViewController?
 
 		init(_ parent: LogicTextEditor) {
 			self.parent = parent
-			vocabulary = LogicInputVocabulary(logicLetters: parent.logicLetters)
 		}
-
-		func rejectBinding(_ rejected: String, preserving previous: String) {
-			DispatchQueue.main.async { [weak self] in
-				guard let self, parent.text == rejected else { return }
-				parent.text = previous
-			}
-		}
-
-		func textView(
-			_: UITextView,
-			shouldChangeTextIn _: NSRange,
-			replacementText: String
-		) -> Bool {
-			vocabulary.accepts(replacementText)
-		}
-
-		func textViewDidChange(_ textView: UITextView) {
-			style(textView)
-			parent.text = textView.text
-		}
-
-		func style(_ textView: UITextView) {
-			let source = textView.text ?? ""
-			let storage = textView.textStorage
-			storage.beginEditing()
-			defer { storage.endEditing() }
-			var location = 0
-			for character in source {
-				let glyph = String(character)
-				let entry = vocabulary.entry(for: glyph) ?? .variable(glyph)
-				let appearance = parent.entryAppearance(entry)
-				let range = NSRange(location: location, length: (glyph as NSString).length)
-				let attributes: [NSAttributedString.Key: Any] = [
-					.font: appearance.font,
-					.foregroundColor: appearance.foregroundColor,
-					.backgroundColor: appearance.backgroundColor,
-				]
-				if !NSDictionary(dictionary: storage.attributes(at: location, effectiveRange: nil)).isEqual(to: attributes) {
-					storage.setAttributes(attributes, range: range)
-				}
-				location += range.length
-			}
-			textView.typingAttributes = [
-				.font: UIFont.preferredFont(forTextStyle: .body),
-				.foregroundColor: UIColor.label,
-			]
-		}
-
-		func presentEntry(in textView: UITextView, range: NSRange) {
-			guard presentedDetail == nil else { return }
-			let glyph = (textView.text as NSString).substring(with: range)
-			guard let entry = vocabulary.entry(for: glyph), glyph != "\n" else { return }
-			let definition = entry.isLetter ? nil : parent.symbolDefinitions.first { $0.glyph == glyph }
-			let title = definition?.name ?? (entry.isLetter ? "Variable \(glyph)" : glyph)
-			let detail = UIHostingController(rootView: LogicSymbolPopover(title: title, summary: definition?.summary ?? ""))
-			detail.sizingOptions = .preferredContentSize
-			detail.modalPresentationStyle = .popover
-			guard let popover = detail.popoverPresentationController,
-			      let start = textView.position(from: textView.beginningOfDocument, offset: range.location),
-			      let end = textView.position(from: start, offset: range.length),
-			      let textRange = textView.textRange(from: start, to: end) else { return }
-			popover.sourceView = textView
-			popover.sourceRect = textView.firstRect(for: textRange)
-			popover.permittedArrowDirections = [.up, .down]
-			popover.delegate = self
-			var responder: UIResponder? = textView
-			while let current = responder, !(current is UIViewController) {
-				responder = current.next
-			}
-			guard let presenter = responder as? UIViewController, presenter.presentedViewController == nil else { return }
-			presentedDetail = detail
-			presenter.present(detail, animated: true)
-		}
-
-		func adaptivePresentationStyle(for _: UIPresentationController) -> UIModalPresentationStyle {
-			.none
-		}
-
-		func textViewDidBeginEditing(_: UITextView) {
-			lastRequestedFocus = true
-			focusRequestID += 1
-			parent.isFocused = true
-		}
-
-		func textViewDidEndEditing(_: UITextView) {
-			lastRequestedFocus = false
-			focusRequestID += 1
-			parent.isFocused = false
-		}
-	}
-}
-
-private struct LogicSymbolPopover: View {
-	let title: String
-	let summary: String
-
-	var body: some View {
-		VStack(alignment: .leading, spacing: 8) {
-			Text(title)
-				.font(.headline)
-			if !summary.isEmpty {
-				Text(summary)
-					.foregroundStyle(.secondary)
-			}
-		}
-		.padding()
-		.frame(idealWidth: 260, maxWidth: 320, alignment: .leading)
-		.fixedSize(horizontal: false, vertical: true)
-		.accessibilityIdentifier("check.logicSymbolDetails")
 	}
 }

@@ -1,0 +1,104 @@
+[
+	{
+		"id": "affirming-consequent-grass",
+		"english": "If it rained last night, the grass is wet. The grass is wet, so it rained last night.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "Y"], "conclusion": "X" },
+		"verdict": "invalid",
+		"tags": ["conditional", "if-then", "fallacy", "affirming-the-consequent"]
+	},
+	{
+		"id": "affirming-consequent-flu",
+		"english": "If I have the flu, I'll have a fever. I've got a fever, so I must have the flu.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "Y"], "conclusion": "X" },
+		"verdict": "invalid",
+		"tags": ["conditional", "if-then", "fallacy", "affirming-the-consequent"],
+		"note": "A model that 'fixes' the argument into modus ponens gets this wrong"
+	},
+	{
+		"id": "affirming-consequent-only-if",
+		"english": "Sam will go to the concert only if Jess goes. Jess is going, so Sam will go.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "Y"], "conclusion": "X" },
+		"verdict": "invalid",
+		"tags": ["conditional", "only-if", "fallacy", "affirming-the-consequent"],
+		"note": "Reading 'only if' backwards would make this look valid"
+	},
+	{
+		"id": "affirming-consequent-whenever",
+		"english": "Whenever it's windy, the ferry gets cancelled. The ferry was cancelled today, so it must have been windy.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "Y"], "conclusion": "X" },
+		"verdict": "invalid",
+		"tags": ["conditional", "whenever", "fallacy", "affirming-the-consequent"]
+	},
+	{
+		"id": "denying-antecedent-study",
+		"english": "If I don't study, I won't pass. I studied, so I'll pass.",
+		"kind": "argument",
+		"expected": { "premises": ["¬X→¬Y", "X"], "conclusion": "Y" },
+		"verdict": "invalid",
+		"tags": ["conditional", "if-then", "negation", "fallacy", "denying-the-antecedent"]
+	},
+	{
+		"id": "denying-antecedent-petrol",
+		"english": "If the car's out of petrol, it won't start. It isn't out of petrol, so it'll start.",
+		"kind": "argument",
+		"expected": { "premises": ["X→¬Y", "¬X"], "conclusion": "Y" },
+		"verdict": "invalid",
+		"tags": ["conditional", "if-then", "negation", "fallacy", "denying-the-antecedent"]
+	},
+	{
+		"id": "affirming-disjunct-battery",
+		"english": "Either the battery is flat or the starter motor is broken. The battery is flat, so the starter motor isn't broken.",
+		"kind": "argument",
+		"expected": { "premises": ["X∨Y", "X"], "conclusion": "¬Y" },
+		"verdict": "invalid",
+		"tags": ["either-or", "fallacy", "affirming-a-disjunct"],
+		"note": "'Either … or' is inclusive by convention"
+	},
+	{
+		"id": "affirming-disjunct-lunch",
+		"english": "Lunch is either at Mum's or at the pub. It's at Mum's, so it isn't at the pub.",
+		"kind": "argument",
+		"expected": { "premises": ["X∨Y", "X"], "conclusion": "¬Y" },
+		"verdict": "invalid",
+		"tags": ["either-or", "fallacy", "affirming-a-disjunct"],
+		"note": "Reads as exclusive in everyday English, but the convention says inclusive unless 'but not both' is said"
+	},
+	{
+		"id": "unless-read-as-iff",
+		"english": "We'll play outside unless it rains. It's raining, so we won't play outside.",
+		"kind": "argument",
+		"expected": { "premises": ["¬Y→X", "Y"], "conclusion": "¬X" },
+		"verdict": "invalid",
+		"tags": ["unless", "fallacy"],
+		"note": "'A unless B' says nothing about what happens when B, so this only works if unless is read as exclusive"
+	},
+	{
+		"id": "not-both-printer",
+		"english": "The printer and the scanner aren't both working. The printer isn't working, so the scanner must be.",
+		"kind": "argument",
+		"expected": { "premises": ["¬(X∧Y)", "¬X"], "conclusion": "Y" },
+		"verdict": "invalid",
+		"tags": ["not-both", "negation", "fallacy"]
+	},
+	{
+		"id": "non-sequitur-sandwiches",
+		"english": "If the shop has bread, I'll make sandwiches. The shop has milk, so I'll make sandwiches.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "Z"], "conclusion": "Y" },
+		"verdict": "invalid",
+		"tags": ["conditional", "if-then", "fallacy", "non-sequitur"],
+		"note": "Bread and milk are different claims, so they get different letters"
+	},
+	{
+		"id": "chain-affirming-consequent",
+		"english": "If I get the promotion, I'll buy a new car. If I buy a new car, I'll sell my bike. I sold my bike, so I got the promotion.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "Y→Z", "Z"], "conclusion": "X" },
+		"verdict": "invalid",
+		"tags": ["conditional", "chain", "fallacy", "affirming-the-consequent"]
+	}
+]

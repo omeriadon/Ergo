@@ -1,0 +1,53 @@
+//
+//  AccountKeychain.swift
+//  Ergo
+//
+//  Created by Adon Omeri on 5/11/2026.
+//
+
+import Foundation
+import Security
+
+/// The Ergo account token, one per server.
+/// Everything else lives in Defaults, but this is a secret, so it's the one thing kept in the Keychain.
+enum AccountKeychain {
+	private static let service = "com.omeriadon.Ergo.translation"
+
+	static func token(for server: URL) -> String? {
+		var query = query(for: server)
+		query[kSecReturnData as String] = true
+		query[kSecMatchLimit as String] = kSecMatchLimitOne
+
+		var result: AnyObject?
+		guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess, let data = result as? Data else {
+			return nil
+		}
+		return String(data: data, encoding: .utf8)
+	}
+
+	/// Nil deletes it
+	static func setToken(_ token: String?, for server: URL) {
+		let query = query(for: server)
+		SecItemDelete(query as CFDictionary)
+
+		guard let token else { return }
+		var item = query
+		item[kSecValueData as String] = Data(token.utf8)
+		item[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
+		SecItemAdd(item as CFDictionary, nil)
+	}
+
+	private static func query(for server: URL) -> [String: Any] {
+		[
+			kSecClass as String: kSecClassGenericPassword,
+			kSecAttrService as String: service,
+			kSecAttrAccount as String: account(for: server),
+		]
+	}
+
+	/// Host and port, so `https://host` and `https://host:443` share an account
+	private static func account(for server: URL) -> String {
+		let port = server.port ?? (server.scheme == "http" ? 80 : 443)
+		return "\(server.host() ?? ""):\(port)"
+	}
+}

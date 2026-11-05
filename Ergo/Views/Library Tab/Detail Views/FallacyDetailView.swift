@@ -121,7 +121,7 @@ struct FallacyDetailView: View {
 					.toolbar {
 						ToolbarItem(placement: .topBarTrailing) {
 							Button {
-								navigation.libraryPath = [.category(.fallacies)]
+								navigation.libraryPath.removeLast()
 							} label: {
 								Label("Go Back", systemImage: "chevron.left")
 							}

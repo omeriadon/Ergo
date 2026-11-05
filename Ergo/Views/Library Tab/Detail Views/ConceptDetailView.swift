@@ -107,7 +107,7 @@ struct ConceptDetailView: View {
 					.toolbar {
 						ToolbarItem(placement: .topBarTrailing) {
 							Button {
-								navigation.libraryPath = [.category(.concepts)]
+								navigation.libraryPath.removeLast()
 							} label: {
 								Label("Go Back", systemImage: "chevron.left")
 							}

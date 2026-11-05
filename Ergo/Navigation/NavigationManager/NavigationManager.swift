@@ -97,7 +97,13 @@ final class NavigationManager {
 
 	func openLibraryEntry(category: LibraryContent, id: String) {
 		selectedTab = .library
-		libraryPath.append(.detail(category: category, id: id))
+		// A sheet left open would hide the page, so the link would look like it did nothing
+		presentedSheet = nil
+
+		let route = LibraryRoute.detail(category: category, id: id)
+		if libraryPath.last != route {
+			libraryPath.append(route)
+		}
 	}
 
 	// MARK: - reset()

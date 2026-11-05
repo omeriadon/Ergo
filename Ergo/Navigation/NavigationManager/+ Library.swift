@@ -54,10 +54,10 @@ extension NavigationManager {
 		filters: [LibraryFilter]? = nil
 	) {
 		selectedTab = .library
+		presentedSheet = nil
 
-		if let index = libraryPath.lastIndex(where: { $0.listCategory == category }) {
-			libraryPath.removeSubrange((index + 1)...)
-		} else {
+		// Pushes on top of wherever the user is, so going back returns there
+		if libraryPath.last?.listCategory != category {
 			libraryPath.append(.category(category))
 		}
 

@@ -158,7 +158,7 @@ struct SymbolDetailView: View {
 				Text("Symbol not found")
 
 				Button {
-					navigation.libraryPath = [.category(.symbols)]
+					navigation.libraryPath.removeLast()
 				} label: {
 					Text("Go Back")
 				}

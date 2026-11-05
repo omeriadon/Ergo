@@ -143,7 +143,7 @@ struct ParadoxDetailView: View {
 				Text("Paradox not found")
 
 				Button {
-					navigation.libraryPath = [.category(.paradoxes)]
+					navigation.libraryPath.removeLast()
 				} label: {
 					Text("Go Back")
 				}

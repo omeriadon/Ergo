@@ -1,0 +1,102 @@
+[
+	{
+		"id": "since-first-public-holiday",
+		"english": "The shop's shut whenever it's a public holiday. Since today is a public holiday, the shop is shut.",
+		"kind": "argument",
+		"expected": { "premises": ["Y→X", "Y"], "conclusion": "X" },
+		"verdict": "valid",
+		"tags": ["since-because", "conditional", "whenever"]
+	},
+	{
+		"id": "because-conclusion-first-dinner",
+		"english": "Ella won't make it to dinner, because she's working late. If she's working late, she can't come to dinner.",
+		"kind": "argument",
+		"expected": { "premises": ["Y", "Y→¬X"], "conclusion": "¬X" },
+		"verdict": "valid",
+		"tags": ["since-because", "conclusion-first", "reworded", "negation"],
+		"note": "The conclusion comes first, and 'make it to dinner' and 'come to dinner' are one claim"
+	},
+	{
+		"id": "because-enthymeme-beach",
+		"english": "We can't go to the beach because it's raining.",
+		"kind": "argument",
+		"expected": { "premises": ["Y"], "conclusion": "¬X" },
+		"tags": ["since-because", "conclusion-first", "enthymeme"],
+		"note": "The unstated premise must not be added. Invalid as written, so there's no verdict to grade against."
+	},
+	{
+		"id": "therefore-semicolon-smoke-alarm",
+		"english": "Dad cooked dinner tonight. The smoke alarm goes off whenever Dad cooks; therefore the smoke alarm went off tonight.",
+		"kind": "argument",
+		"expected": { "premises": ["X", "X→Y"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["since-because", "therefore", "conditional", "whenever"]
+	},
+	{
+		"id": "conclusion-first-no-marker-oven",
+		"english": "Someone must have used the oven recently. It's still warm. It only stays warm if someone's been using it.",
+		"kind": "argument",
+		"expected": { "premises": ["Y", "Y→X"], "conclusion": "X" },
+		"verdict": "valid",
+		"tags": ["conclusion-first", "only-if", "conditional", "reworded"],
+		"note": "Only 'must have' marks the conclusion, and it comes first"
+	},
+	{
+		"id": "double-negation-pool",
+		"english": "It's not true that the pool isn't open today. So the pool is open today.",
+		"kind": "argument",
+		"expected": { "premises": ["¬¬X"], "conclusion": "X" },
+		"verdict": "valid",
+		"tags": ["double-negation", "negation"]
+	},
+	{
+		"id": "negative-word-claim-lights",
+		"english": "If the lights aren't off, someone is still in the office. The lights aren't off, so someone's still in the office.",
+		"kind": "argument",
+		"expected": { "premises": ["¬X→Y", "¬X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["conditional", "negation"],
+		"note": "'The lights are off' is the claim as written, so it's negated rather than flipped to 'on'"
+	},
+	{
+		"id": "reworded-promotion",
+		"english": "If Josh gets the promotion, he'll buy a house. Josh was promoted, so he's buying a house.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["reworded", "conditional"]
+	},
+	{
+		"id": "reworded-baby-crying",
+		"english": "Whenever the baby cries, she's hungry. She's crying right now, so she's hungry.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["reworded", "conditional", "whenever"]
+	},
+	{
+		"id": "reworded-nobody-at-door",
+		"english": "If the dog's barking, there's someone at the door. There's nobody at the door, so the dog isn't barking.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "¬Y"], "conclusion": "¬X" },
+		"verdict": "valid",
+		"tags": ["reworded", "conditional", "negation"]
+	},
+	{
+		"id": "sloppy-lowercase-bus",
+		"english": "if its raining i take the bus. its raining so im taking the bus",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["sloppy", "conditional"],
+		"note": "No capitals or apostrophes, the way people actually type"
+	},
+	{
+		"id": "not-both-antecedent-commute",
+		"english": "If the trains and the buses aren't both running, I'll work from home. The buses aren't running, so I'm working from home.",
+		"kind": "argument",
+		"expected": { "premises": ["¬(X∧Y)→Z", "¬Y"], "conclusion": "Z" },
+		"verdict": "valid",
+		"tags": ["not-both", "conditional", "negation"]
+	}
+]

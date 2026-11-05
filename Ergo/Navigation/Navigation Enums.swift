@@ -42,6 +42,8 @@ enum AppSheet: Hashable, Identifiable, Codable, Defaults.Serializable {
 	case createDebate
 	case settings(id: String)
 	case about(id: String)
+	case logicLetters
+	case pages
 
 	var id: Self {
 		self

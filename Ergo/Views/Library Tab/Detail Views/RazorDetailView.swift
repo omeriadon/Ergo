@@ -143,7 +143,7 @@ struct RazorDetailView: View {
 				Text("Razor not found")
 
 				Button {
-					navigation.libraryPath = [.category(.razors)]
+					navigation.libraryPath.removeLast()
 				} label: {
 					Text("Go Back")
 				}

@@ -1,0 +1,104 @@
+[
+	{
+		"id": "modus-ponens-rain",
+		"english": "If it rains, the ground gets wet. It's raining, so the ground is wet.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["conditional", "if-then"],
+		"note": "'gets wet' and 'is wet' are the same claim reworded"
+	},
+	{
+		"id": "modus-tollens-alarm",
+		"english": "If the alarm had gone off, the neighbours would have heard it. The neighbours didn't hear anything, so the alarm didn't go off.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "¬Y"], "conclusion": "¬X" },
+		"verdict": "valid",
+		"tags": ["conditional", "if-then", "negation"]
+	},
+	{
+		"id": "if-negated-antecedent-phone",
+		"english": "If you don't charge your phone, it'll die before lunch. You didn't charge it, so it's going to die before lunch.",
+		"kind": "argument",
+		"expected": { "premises": ["¬X→Y", "¬X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["conditional", "if-then", "negation"],
+		"note": "The claim is 'you charge your phone', negated, never a separate letter for not charging it"
+	},
+	{
+		"id": "if-compound-antecedent-milk",
+		"english": "If the shop's open and I've got cash, I'll buy milk. The shop is open. I've got cash too, so I'm buying milk.",
+		"kind": "argument",
+		"expected": { "premises": ["X∧Y→Z", "X", "Y"], "conclusion": "Z" },
+		"verdict": "valid",
+		"tags": ["conditional", "if-then"],
+		"note": "Separate sentences, so separate premises"
+	},
+	{
+		"id": "b-if-a-dog",
+		"english": "The dog barks if someone knocks. Someone knocked, so the dog barked.",
+		"kind": "argument",
+		"expected": { "premises": ["Y→X", "Y"], "conclusion": "X" },
+		"verdict": "valid",
+		"tags": ["conditional", "b-if-a"],
+		"note": "Letters go by first appearance, so the consequent is X"
+	},
+	{
+		"id": "b-if-a-plants",
+		"english": "My plants die if I forget to water them. I forgot to water them this week, so they're going to die.",
+		"kind": "argument",
+		"expected": { "premises": ["Y→X", "Y"], "conclusion": "X" },
+		"verdict": "valid",
+		"tags": ["conditional", "b-if-a"]
+	},
+	{
+		"id": "b-if-a-refund",
+		"english": "You get a refund if you return it within 30 days. You didn't get a refund, so you can't have returned it within 30 days.",
+		"kind": "argument",
+		"expected": { "premises": ["Y→X", "¬X"], "conclusion": "¬Y" },
+		"verdict": "valid",
+		"tags": ["conditional", "b-if-a", "negation"]
+	},
+	{
+		"id": "only-if-vote",
+		"english": "You can vote only if you're registered. You can vote, so you must be registered.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["conditional", "only-if"],
+		"note": "'A only if B' is A→B, not B→A"
+	},
+	{
+		"id": "only-if-exam",
+		"english": "I'll pass the exam only if I study. I'm not going to study, so I won't pass.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "¬Y"], "conclusion": "¬X" },
+		"verdict": "valid",
+		"tags": ["conditional", "only-if", "negation"]
+	},
+	{
+		"id": "whenever-snow-buses",
+		"english": "Whenever it snows, the buses run late. It snowed this morning, so the buses were late.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["conditional", "whenever"]
+	},
+	{
+		"id": "whenever-tuna-cat",
+		"english": "Whenever I open a can of tuna the cat comes running. The cat didn't come running, so I didn't open any tuna.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y", "¬Y"], "conclusion": "¬X" },
+		"verdict": "valid",
+		"tags": ["conditional", "whenever", "negation"]
+	},
+	{
+		"id": "whenever-after-breakfast",
+		"english": "I get a headache whenever I skip breakfast. I skipped breakfast today, so I'm going to get a headache.",
+		"kind": "argument",
+		"expected": { "premises": ["Y→X", "Y"], "conclusion": "X" },
+		"verdict": "valid",
+		"tags": ["conditional", "whenever"],
+		"note": "'B whenever A', with the consequent first"
+	}
+]

@@ -14,7 +14,7 @@ struct AboutView: View {
 	var body: some View {
 		NavigationStack {
 			ZStack {
-				DitherView(configuration: configuration)
+				DitherView(configuration: configuration, alwaysEnabled: true)
 					.ignoresSafeArea()
 
 				VStack {

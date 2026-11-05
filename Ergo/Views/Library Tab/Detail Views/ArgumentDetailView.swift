@@ -122,7 +122,7 @@ struct ArgumentDetailView: View {
 					.toolbar {
 						ToolbarItem(placement: .topBarTrailing) {
 							Button {
-								navigation.libraryPath = [.category(.arguments)]
+								navigation.libraryPath.removeLast()
 							} label: {
 								Label("Go Back", systemImage: "chevron.left")
 							}

@@ -1,0 +1,136 @@
+[
+	{
+		"id": "iff-lights-home",
+		"english": "The lights are on if and only if someone is home. The lights aren't on, so nobody's home.",
+		"kind": "argument",
+		"expected": { "premises": ["X↔Y", "¬X"], "conclusion": "¬Y" },
+		"verdict": "valid",
+		"tags": ["iff", "negation"],
+		"note": "'Nobody's home' is the negation of 'someone is home'"
+	},
+	{
+		"id": "iff-exactly-when-alarm",
+		"english": "The alarm goes off exactly when the door is opened. The alarm went off, so the door was opened.",
+		"kind": "argument",
+		"expected": { "premises": ["X↔Y", "X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["iff", "exactly-when"],
+		"note": "Valid only because it's a biconditional, as a plain conditional this would affirm the consequent"
+	},
+	{
+		"id": "iff-match-rain",
+		"english": "The match goes ahead if and only if the rain stops. The rain hasn't stopped, so the match won't go ahead.",
+		"kind": "argument",
+		"expected": { "premises": ["X↔Y", "¬Y"], "conclusion": "¬X" },
+		"verdict": "valid",
+		"tags": ["iff", "negation"]
+	},
+	{
+		"id": "unless-picnic",
+		"english": "We'll have the picnic unless it rains. It's not raining, so we're having the picnic.",
+		"kind": "argument",
+		"expected": { "premises": ["¬Y→X", "¬Y"], "conclusion": "X" },
+		"verdict": "valid",
+		"tags": ["unless"]
+	},
+	{
+		"id": "unless-train-delayed",
+		"english": "I'll be on time unless the train is delayed. I wasn't on time, so the train must have been delayed.",
+		"kind": "argument",
+		"expected": { "premises": ["X∨Y", "¬X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["unless"],
+		"note": "'A unless B' written as A∨B here, to check scoring accepts either form"
+	},
+	{
+		"id": "unless-library-card",
+		"english": "I can't borrow books unless I have a library card. I don't have one, so I can't borrow any books.",
+		"kind": "argument",
+		"expected": { "premises": ["¬Y→¬X", "¬Y"], "conclusion": "¬X" },
+		"verdict": "valid",
+		"tags": ["unless", "negation"],
+		"note": "A is the negative 'I can't borrow books', so ¬B→A is ¬Y→¬X"
+	},
+	{
+		"id": "either-or-airport",
+		"english": "Either Jake or Priya will pick you up from the airport. Jake can't make it, so Priya will.",
+		"kind": "argument",
+		"expected": { "premises": ["X∨Y", "¬X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["either-or"]
+	},
+	{
+		"id": "xor-coin",
+		"english": "The coin landed on either heads or tails, but not both. It didn't land on heads, so it landed on tails.",
+		"kind": "argument",
+		"expected": { "premises": ["X⊕Y", "¬X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["xor"]
+	},
+	{
+		"id": "xor-exactly-one-lying",
+		"english": "Exactly one of Ben and Chloe is lying. Ben isn't lying, so Chloe is.",
+		"kind": "argument",
+		"expected": { "premises": ["X⊕Y", "¬X"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["xor", "exactly-one"]
+	},
+	{
+		"id": "xor-dessert",
+		"english": "I'm ordering either the cake or the ice cream, but not both. I'm ordering the cake, so I'm not getting the ice cream.",
+		"kind": "argument",
+		"expected": { "premises": ["X⊕Y", "X"], "conclusion": "¬Y" },
+		"verdict": "valid",
+		"tags": ["xor"],
+		"note": "Affirming a disjunct is valid for exclusive or, compare 'affirming-disjunct-battery'"
+	},
+	{
+		"id": "neither-party",
+		"english": "Neither Alex nor Sam came to the party. So Sam didn't come.",
+		"kind": "argument",
+		"expected": { "premises": ["¬X∧¬Y"], "conclusion": "¬Y" },
+		"verdict": "valid",
+		"tags": ["neither"]
+	},
+	{
+		"id": "neither-weekday",
+		"english": "If it's a weekday, either the bakery or the café is open. Neither the bakery nor the café is open, so it isn't a weekday.",
+		"kind": "argument",
+		"expected": { "premises": ["X→Y∨Z", "¬Y∧¬Z"], "conclusion": "¬X" },
+		"verdict": "valid",
+		"tags": ["neither", "either-or", "conditional"]
+	},
+	{
+		"id": "not-both-jobs",
+		"english": "I won't take both the Sydney job and the Perth job. I'm taking the Sydney one, so I won't take the Perth one.",
+		"kind": "argument",
+		"expected": { "premises": ["¬(X∧Y)", "X"], "conclusion": "¬Y" },
+		"verdict": "valid",
+		"tags": ["not-both"]
+	},
+	{
+		"id": "but-sunny-freezing",
+		"english": "It's sunny but freezing. So it's freezing.",
+		"kind": "argument",
+		"expected": { "premises": ["X∧Y"], "conclusion": "Y" },
+		"verdict": "valid",
+		"tags": ["but"]
+	},
+	{
+		"id": "yet-still-tired",
+		"english": "I slept nine hours, yet I'm still tired. If I'm tired, I'm skipping the gym. So I'm skipping the gym.",
+		"kind": "argument",
+		"expected": { "premises": ["X∧Y", "Y→Z"], "conclusion": "Z" },
+		"verdict": "valid",
+		"tags": ["but", "conditional"],
+		"note": "'Still tired' and 'tired' are the same claim"
+	},
+	{
+		"id": "although-lost-race",
+		"english": "Although Leo trained every day, he lost the race. If Leo lost the race, he won't make the team. So he won't make the team.",
+		"kind": "argument",
+		"expected": { "premises": ["X∧Y", "Y→¬Z"], "conclusion": "¬Z" },
+		"verdict": "valid",
+		"tags": ["but", "conditional", "negation"]
+	}
+]

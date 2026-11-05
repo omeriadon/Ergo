@@ -168,7 +168,7 @@ struct PhilosopherDetailView: View {
 				Text("Philosopher not found")
 
 				Button {
-					navigation.libraryPath = [.category(.philosophers)]
+					navigation.libraryPath.removeLast()
 				} label: {
 					Text("Go Back")
 				}

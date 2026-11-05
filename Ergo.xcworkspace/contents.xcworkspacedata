@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:Ergo.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:ErgoKit">
+   </FileRef>
+   <FileRef
+      location = "group:ErgoServer">
+   </FileRef>
+   <FileRef
+      location = "group:Evals">
+   </FileRef>
+   <FileRef
+      location = "group:Plans">
+   </FileRef>
+</Workspace>

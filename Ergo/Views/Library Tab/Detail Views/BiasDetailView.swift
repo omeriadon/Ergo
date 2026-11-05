@@ -153,7 +153,7 @@ struct BiasDetailView: View {
 				Text("Bias not found")
 
 				Button {
-					navigation.libraryPath = [.category(.biases)]
+					navigation.libraryPath.removeLast()
 				} label: {
 					Text("Go Back")
 				}
