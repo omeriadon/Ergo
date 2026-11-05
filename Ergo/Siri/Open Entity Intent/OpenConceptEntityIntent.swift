@@ -7,7 +7,7 @@
 
 import AppIntents
 
-/// What runs when a Concept link from Siri or Spotlight is tapped
+@AppIntent(.tool)
 struct OpenConceptEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Concept"
 

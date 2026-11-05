@@ -230,6 +230,17 @@ struct LibraryListView<Item: LibraryListItem>: View {
 					.environment(navigation)
 			}
 		}
+		.swipeActions(edge: .trailing) {
+			Button {
+				toggleBookmark(target, isBookmarked: isBookmarked)
+			} label: {
+				Label(
+					isBookmarked ? "Remove Bookmark" : "Bookmark",
+					systemImage: isBookmarked ? "bookmark.fill" : "bookmark"
+				)
+			}
+			.tint(.accentColor)
+		}
 		.listedEntity(Item.Entity.self, id: item.id)
 		.transition(.opacity)
 	}

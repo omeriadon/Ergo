@@ -7,7 +7,7 @@
 
 import AppIntents
 
-/// What runs when a Bias link from Siri or Spotlight is tapped
+@AppIntent(.tool)
 struct OpenBiasEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Bias"
 

@@ -7,7 +7,7 @@
 
 import AppIntents
 
-/// What runs when a Symbol link from Siri or Spotlight is tapped
+@AppIntent(.tool)
 struct OpenSymbolEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Symbol"
 

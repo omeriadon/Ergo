@@ -77,4 +77,32 @@ extension LibraryEntry {
 				entity.id
 		}
 	}
+
+	var name: String {
+		switch self {
+			case let .bias(entity):
+				entity.name
+
+			case let .concept(entity):
+				entity.name
+
+			case let .fallacy(entity):
+				entity.name
+
+			case let .paradox(entity):
+				entity.name
+
+			case let .razor(entity):
+				entity.name
+
+			case let .argument(entity):
+				entity.name
+
+			case let .philosopher(entity):
+				entity.name
+
+			case let .symbol(entity):
+				entity.name
+		}
+	}
 }

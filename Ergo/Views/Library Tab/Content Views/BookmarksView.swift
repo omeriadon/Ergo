@@ -115,6 +115,16 @@ struct BookmarksView: View {
 								.environment(navigation)
 						}
 					}
+					.swipeActions(edge: .trailing) {
+						Button {
+							withAnimation(.easeInOut) {
+								bookmarks.remove(bookmark)
+							}
+						} label: {
+							Label("Remove Bookmark", systemImage: "bookmark.fill")
+						}
+						.tint(.accentColor)
+					}
 					.transition(.opacity)
 				}
 			}

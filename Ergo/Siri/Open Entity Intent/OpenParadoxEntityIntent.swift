@@ -7,7 +7,7 @@
 
 import AppIntents
 
-/// What runs when a Paradox link from Siri or Spotlight is tapped
+@AppIntent(.tool)
 struct OpenParadoxEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Paradox"
 

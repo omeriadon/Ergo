@@ -7,7 +7,7 @@
 
 import AppIntents
 
-/// What runs when a Fallacy link from Siri or Spotlight is tapped
+@AppIntent(.tool)
 struct OpenFallacyEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Fallacy"
 

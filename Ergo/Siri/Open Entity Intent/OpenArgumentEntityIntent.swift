@@ -7,7 +7,7 @@
 
 import AppIntents
 
-/// What runs when a Argument link from Siri or Spotlight is tapped
+@AppIntent(.tool)
 struct OpenArgumentEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Argument"
 
