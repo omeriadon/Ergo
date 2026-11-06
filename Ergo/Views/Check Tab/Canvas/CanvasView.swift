@@ -259,6 +259,7 @@ struct CanvasView: View {
 		.padding(.bottom, 8)
 		.background(alignment: .bottom) {
 			BackdropBlur(radius: 1, fade: .top)
+				.frame(maxWidth: .infinity)
 				.ignoresSafeArea(edges: .bottom)
 				.allowsHitTesting(false)
 		}

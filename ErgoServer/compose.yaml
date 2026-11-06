@@ -43,6 +43,10 @@ services:
       ERGO_APPLE_APP_ID: ${ERGO_APPLE_APP_ID:-com.adonis.Ergo}
       ERGO_MAX_PROCESSES: ${ERGO_MAX_PROCESSES:-8}
       ERGO_STAGE_TIMEOUT: ${ERGO_STAGE_TIMEOUT:-120}
+      # Empty keeps the defaults in StageModels. Set, each applies to every stage.
+      ERGO_CLAUDE_MODEL: ${ERGO_CLAUDE_MODEL:-}
+      ERGO_CODEX_MODEL: ${ERGO_CODEX_MODEL:-}
+      ERGO_MODEL_EFFORT: ${ERGO_MODEL_EFFORT:-}
       # Only for a proxy on this machine or Docker network, and never when the port is reachable without it
       ERGO_TRUST_PROXY: ${ERGO_TRUST_PROXY:-1}
     # The entrypoint starts as root and drops itself with setpriv, which needs these to do it (setpcap to shrink

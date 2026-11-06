@@ -5,15 +5,6 @@
 //  Created by Adon Omeri on 6/11/2026.
 //
 
-// Usage:
-//
-// BackdropBlur(radius: 12)
-// BackdropBlur(radius: 20, fade: .bottom)   // full blur at the top, none at the bottom
-//
-// Private QuartzCore API (CAFilter on the backdrop layer of a UIVisualEffectView);
-// runtime compatibility is not guaranteed. Every private step is checked, and if any
-// of them fails the view is .ultraThinMaterial instead.
-
 import OSLog
 import SwiftUI
 import UIKit

@@ -82,11 +82,26 @@ struct ServerConfigTests {
 struct StageModelsTests {
 	@Test func defaults() {
 		let models = StageModels.defaults
-		#expect(models.choice(for: .claude, stage: GateStage.name) == StageModels.Choice(model: "haiku", effort: "low"))
-		#expect(models.choice(for: .claude, stage: FormalizeStage.name) == StageModels.Choice(model: "opus", effort: "high"))
-		#expect(models.choice(for: .codex, stage: BreakdownStage.name) == StageModels.Choice(effort: "medium"))
+		for stage in StageModels.stages {
+			#expect(models.choice(for: .claude, stage: stage) == StageModels.Choice(model: "claude-haiku-5-5", effort: "medium"))
+			#expect(models.choice(for: .codex, stage: stage) == StageModels.Choice(model: "gpt-6-luna", effort: "medium"))
+		}
 		#expect(models.policy.attempts == 3)
 		#expect(models.policy.verifies)
+	}
+
+	@Test func theEnvironmentSetsEveryStage() throws {
+		let key = Data(repeating: 1, count: 32).base64EncodedString()
+		let models = try ServerConfig.load(
+			from: ["ERGO_VAULT_KEY": key, "ERGO_CLAUDE_MODEL": "claude-sonnet-5-5", "ERGO_CODEX_MODEL": "", "ERGO_MODEL_EFFORT": "high"],
+			production: true,
+			logger: Logger(label: "test")
+		).models
+
+		for stage in StageModels.stages {
+			#expect(models.choice(for: .claude, stage: stage) == StageModels.Choice(model: "claude-sonnet-5-5", effort: "high"))
+			#expect(models.choice(for: .codex, stage: stage) == StageModels.Choice(model: "gpt-6-luna", effort: "high"))
+		}
 	}
 
 	@Test func overridesReplaceCells() throws {

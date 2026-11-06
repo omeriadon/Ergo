@@ -144,6 +144,11 @@ struct ServerConfig: Sendable {
 		if let path = environment["ERGO_MODELS_FILE"] {
 			config.models = try StageModels.load(from: URL(filePath: path))
 		}
+		config.models = config.models.overriding(
+			claudeModel: environment["ERGO_CLAUDE_MODEL"].flatMap { $0.isEmpty ? nil : $0 },
+			codexModel: environment["ERGO_CODEX_MODEL"].flatMap { $0.isEmpty ? nil : $0 },
+			effort: environment["ERGO_MODEL_EFFORT"].flatMap { $0.isEmpty ? nil : $0 }
+		)
 		if let id = environment["ERGO_APPLE_APP_ID"] {
 			guard !id.trimmingCharacters(in: .whitespaces).isEmpty else {
 				throw Problem(description: "ERGO_APPLE_APP_ID: Expected the app's bundle id, found nothing")

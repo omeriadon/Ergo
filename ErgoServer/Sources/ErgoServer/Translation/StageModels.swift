@@ -9,8 +9,7 @@ import ErgoProtocol
 import ErgoTranslation
 import Foundation
 
-/// Which model answers each stage for each provider. Users only pick the provider, so the server decides,
-/// using aliases where it can so new releases are picked up without a deploy.
+/// Which model answers each stage for each provider. Users only pick the provider, so the server decides.
 struct StageModels: Codable, Sendable, Hashable {
 	struct Choice: Codable, Sendable, Hashable {
 		/// Nil leaves the CLI's own default
@@ -40,23 +39,21 @@ struct StageModels: Codable, Sendable, Hashable {
 	static let stages = [GateStage.name, BreakdownStage.name, FormalizeStage.name, VerifyStage.name]
 
 	static let defaults = StageModels(
-		claude: [
-			GateStage.name: Choice(model: "haiku", effort: "low"),
-			BreakdownStage.name: Choice(model: "sonnet", effort: "medium"),
-			FormalizeStage.name: Choice(model: "opus", effort: "high"),
-			VerifyStage.name: Choice(model: "opus", effort: "high"),
-		],
-		codex: [
-			GateStage.name: Choice(effort: "low"),
-			BreakdownStage.name: Choice(effort: "medium"),
-			FormalizeStage.name: Choice(effort: "high"),
-			VerifyStage.name: Choice(effort: "high"),
-		],
+		claude: Dictionary(uniqueKeysWithValues: stages.map { ($0, Choice(model: "claude-haiku-5-5", effort: "medium")) }),
+		codex: Dictionary(uniqueKeysWithValues: stages.map { ($0, Choice(model: "gpt-6-luna", effort: "medium")) }),
 		attempts: 3,
 		verifies: true
 	)
 
 	// MARK: - Overrides
+
+	/// The same model or effort on every stage, for whichever of these is set
+	func overriding(claudeModel: String?, codexModel: String?, effort: String?) -> StageModels {
+		var models = self
+		models.claude = claude.mapValues { Choice(model: claudeModel ?? $0.model, effort: effort ?? $0.effort) }
+		models.codex = codex.mapValues { Choice(model: codexModel ?? $0.model, effort: effort ?? $0.effort) }
+		return models
+	}
 
 	/// Every field optional, and a cell replaces the default cell whole
 	private struct Overrides: Decodable {

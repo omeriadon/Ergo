@@ -121,16 +121,14 @@ Production is `serve --env production`. It refuses to start without a vault key,
 
 ### Models
 
-Each stage uses its own model per provider. Users only choose the provider.
+Users only choose the provider. By default every stage (gate, breakdown, formalize, verify) uses the same model and effort, and checking a new connection uses the gate stage's:
 
-| Stage | Claude (`--model`, `--effort`) | Codex (`-m`, `model_reasoning_effort`) |
+| Provider | Model | Effort |
 |---|---|---|
-| gate | `haiku`, `low` | default, `low` |
-| breakdown | `sonnet`, `medium` | default, `medium` |
-| formalize | `opus`, `high` | default, `high` |
-| verify | `opus`, `high` | default, `high` |
+| Claude (`--model`, `--effort`) | `claude-haiku-5-5` | `medium` |
+| Codex (`-m`, `model_reasoning_effort`) | `gpt-6-luna` | `medium` |
 
-Checking a new connection uses the gate row. `ERGO_MODELS_FILE` replaces any cell, and the retry policy:
+`ERGO_CLAUDE_MODEL`, `ERGO_CODEX_MODEL` and `ERGO_MODEL_EFFORT` change that for every stage, and take effect at the next restart. For different models per stage, `ERGO_MODELS_FILE` replaces any cell, and the retry policy. The three variables win over the file:
 
 ```json
 {
