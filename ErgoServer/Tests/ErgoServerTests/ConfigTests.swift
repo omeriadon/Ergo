@@ -41,7 +41,7 @@ struct ServerConfigTests {
 		#expect(config.maxProcesses == 3)
 		#expect(config.stageTimeout == .seconds(45))
 		#expect(config.appleApplicationID == "com.example.Ergo")
-		#expect(try ServerConfig.load(from: ["ERGO_VAULT_KEY": key], production: true, logger: logger).appleApplicationID == "com.omeriadon.Ergo")
+		#expect(try ServerConfig.load(from: ["ERGO_VAULT_KEY": key], production: true, logger: logger).appleApplicationID == "com.adonis.Ergo")
 	}
 
 	@Test(arguments: [("1", true), ("true", true), ("TRUE", true), ("0", false), ("false", false), ("", false)])
@@ -61,6 +61,7 @@ struct ServerConfigTests {
 
 	@Test(arguments: [
 		["ERGO_DATABASE_URL": "not a url"],
+		["ERGO_CLI_DIRECTORY": "/opt/ergo-cli"],
 		["ERGO_TRUST_PROXY": "yes"],
 		["ERGO_VAULT_KEY": "short"],
 		["ERGO_VAULT_KEY_FILE": "/nowhere/key"],

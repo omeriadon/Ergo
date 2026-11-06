@@ -270,7 +270,7 @@ struct AppleNotificationVerifyTests {
 		func claims(issued: Date) -> AppleNotificationClaims {
 			AppleNotificationClaims(
 				iss: IssuerClaim(value: AppleNotification.issuer),
-				aud: AudienceClaim(value: ["com.omeriadon.Ergo"]),
+				aud: AudienceClaim(value: ["com.adonis.Ergo"]),
 				iat: IssuedAtClaim(value: issued),
 				jti: IDClaim(value: "id"),
 				events: #"{"type":"account-delete","sub":"apple-user","event_time":1,"is_private_email":true}"#
@@ -281,14 +281,14 @@ struct AppleNotificationVerifyTests {
 		let refused = [-25 * 60 * 60, 6 * 60] as [TimeInterval]
 
 		for offset in accepted {
-			let notification = try AppleNotification(claims(issued: now.addingTimeInterval(offset)), applicationIdentifier: "com.omeriadon.Ergo", now: now)
+			let notification = try AppleNotification(claims(issued: now.addingTimeInterval(offset)), applicationIdentifier: "com.adonis.Ergo", now: now)
 			#expect(notification.id == "id")
 			#expect(notification.event == .accountDelete)
 			#expect(notification.subject == "apple-user")
 		}
 		for offset in refused {
 			#expect(throws: AppleNotification.Refusal.self) {
-				try AppleNotification(claims(issued: now.addingTimeInterval(offset)), applicationIdentifier: "com.omeriadon.Ergo", now: now)
+				try AppleNotification(claims(issued: now.addingTimeInterval(offset)), applicationIdentifier: "com.adonis.Ergo", now: now)
 			}
 		}
 	}
@@ -301,12 +301,12 @@ struct AppleNotificationVerifyTests {
 		] {
 			let claims = AppleNotificationClaims(
 				iss: IssuerClaim(value: AppleNotification.issuer),
-				aud: AudienceClaim(value: ["com.omeriadon.Ergo"]),
+				aud: AudienceClaim(value: ["com.adonis.Ergo"]),
 				iat: IssuedAtClaim(value: now),
 				jti: IDClaim(value: "id"),
 				events: events
 			)
-			#expect(try AppleNotification(claims, applicationIdentifier: "com.omeriadon.Ergo", now: now).subject == "apple-user")
+			#expect(try AppleNotification(claims, applicationIdentifier: "com.adonis.Ergo", now: now).subject == "apple-user")
 		}
 	}
 

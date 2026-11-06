@@ -40,7 +40,7 @@ services:
       # postgres://user:password@host:5432/database, with the password percent-encoded. Empty uses SQLite in the data volume.
       ERGO_DATABASE_URL: ${ERGO_DATABASE_URL:-}
       # The audience Sign in with Apple tokens must have
-      ERGO_APPLE_APP_ID: ${ERGO_APPLE_APP_ID:-com.omeriadon.Ergo}
+      ERGO_APPLE_APP_ID: ${ERGO_APPLE_APP_ID:-com.adonis.Ergo}
       ERGO_MAX_PROCESSES: ${ERGO_MAX_PROCESSES:-8}
       ERGO_STAGE_TIMEOUT: ${ERGO_STAGE_TIMEOUT:-120}
       # Only for a proxy on this machine or Docker network, and never when the port is reachable without it

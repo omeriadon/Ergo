@@ -462,7 +462,7 @@ struct LogInTests {
 			let request = try body(FakeApple.request(subject: "apple-user"))
 			try await app.testing().test(.POST, ErgoProtocol.Path.appleSignIn, headers: .signedIn(byEmail.token), body: request) { response async throws in
 				#expect(response.status == .badRequest)
-				#expect(try response.decoded(ServiceError.self).message == "Already signed in with an email, sign out first")
+				#expect(try response.decoded(ServiceError.self).message == "Expected an Apple ID without an Ergo account, found one with its own, sign out to use it")
 			}
 			#expect(try await Account.find(byEmail.id, on: app.db)?.email == "ada@example.com")
 

@@ -43,6 +43,11 @@ final class SyncController {
 		account.signedIn?.email
 	}
 
+	/// Signed in with an email on this device, and not with Apple yet
+	var canAddApple: Bool {
+		email != nil && account.signedIn?.hasApple != true
+	}
+
 	@ObservationIgnored private let account: TranslationAccount
 	@ObservationIgnored private let pageStore: PageStore
 	@ObservationIgnored private let catalog: CatalogStore

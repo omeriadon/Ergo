@@ -98,7 +98,7 @@ enum AccountController {
 			}
 			// Another account's Apple ID, while this one is already someone by email
 			guard caller.email == nil else {
-				throw ServiceError(code: .invalidRequest, message: "Already signed in with an email, sign out first")
+				throw ServiceError(code: .invalidRequest, message: "Expected an Apple ID without an Ergo account, found one with its own, sign out to use it")
 			}
 
 			let targetID = try existing.requireID()

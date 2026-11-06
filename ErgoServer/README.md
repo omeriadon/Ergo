@@ -108,12 +108,13 @@ Everything comes from the environment.
 | `ERGO_VAULT_KEY` or `ERGO_VAULT_KEY_FILE` | required in production | 32 bytes, base64. Seals credentials at rest. Make one with `head -c 32 /dev/urandom \| base64`. |
 | `ERGO_RUNS_DIRECTORY` | temp + `/ergo-runs` | One scratch directory per CLI call, always removed afterwards |
 | `ERGO_CLAUDE_PATH` / `ERGO_CODEX_PATH` | found on `PATH` | The CLIs |
+| `ERGO_CLI_DIRECTORY` | none | Set, a CLI that doesn't run at launch gets installed here with npm, and launch waits for it. Needs `ERGO_CLAUDE_CODE_VERSION` and `ERGO_CODEX_VERSION`. The Dockerfile sets all three. |
 | `ERGO_RUNNER_PREFIX` | empty | Put before every CLI call, e.g. `setpriv --reuid=ergo-runner …` |
 | `ERGO_RUNNER_USER` | none | Who each run directory is handed to while a CLI runs in it, when the prefix switches users |
 | `ERGO_MAX_PROCESSES` | 8 | CLI processes at once, across all users |
 | `ERGO_STAGE_TIMEOUT` | 120 | Seconds per CLI call |
 | `ERGO_MODELS_FILE` | none | JSON overriding the models, see below |
-| `ERGO_APPLE_APP_ID` | `com.omeriadon.Ergo` | The audience Sign in with Apple tokens must have, the app's bundle id |
+| `ERGO_APPLE_APP_ID` | `com.adonis.Ergo` | The audience Sign in with Apple tokens must have, the app's bundle id |
 | `ERGO_TRUST_PROXY` | off | `1` or `true` behind a proxy on the same machine or Docker network, such as nginx or Traefik. `compose.yaml` turns it on. Then the per-address limits use the client address the proxy put in `X-Forwarded-For`, see below. Anything but `1`, `true`, `0`, `false` or empty refuses to start. |
 
 Production is `serve --env production`. It refuses to start without a vault key, an unreadable models file, or an unknown runner user.
@@ -156,7 +157,7 @@ docker run --rm -v ergo-data:/data --entrypoint sh ergo-server -c \
 docker run -d -p 8080:8080 -v ergo-data:/data ergo-server
 ```
 
-- Claude Code and Codex are pinned with the build arguments `CLAUDE_CODE_VERSION` and `CODEX_VERSION`. Bump them deliberately: the server relies on their flags and output formats.
+- Claude Code and Codex are pinned with the build arguments `CLAUDE_CODE_VERSION` and `CODEX_VERSION`. Bump them deliberately: the server relies on their flags and output formats. The image build fails if either doesn't run, and if one stops running anyway, the server installs that version again at launch. Neither CLI is ever interactive, so there's no onboarding: each call is `claude -p` or `codex exec` in an empty home, with only that account's credential.
 - Put it behind a TLS-terminating proxy. Sockets ping every 20 seconds so a proxy doesn't drop a slow translation or a quiet sync socket.
 - New accounts are limited per client address, 5 an hour, and so are registrations (10 an hour) and failed logins. Behind a proxy every request comes from the proxy's own address, so without `ERGO_TRUST_PROXY=1` all clients would share one limit. With it, the right-most `X-Forwarded-For` entry that isn't a local address is the client: the proxy appended it, and everything to its left is the client's to make up. nginx needs `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`. It only applies when the connection itself comes from this machine or a private network (`127.0.0.0/8`, `::1`, `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `fc00::/7`), so a client on the internet that reaches the server directly can't set it. Anything else on that private network can, so never set it on a server that is reachable without the proxy.
 - Run one instance. The sync socket's broadcaster is in memory, so a push on one instance wouldn't reach devices connected to another. More than one would need Redis pub/sub (or similar) between them, and Postgres rather than SQLite.
@@ -223,7 +224,7 @@ Apple posts to `POST v1/apple/notifications` when someone changes their Hide My 
 
 The log says only the event type and whether an account matched. Never the `sub`, an email, a token or the JWT, and the route's queries use the quiet database handle, so Fluent's debug log can't print the `sub` either.
 
-**Registering it**, once the server is hosted: in the developer portal, open Certificates, Identifiers & Profiles → Identifiers → the App ID `com.omeriadon.Ergo` → Sign in with Apple → Configure (or Edit), and set **Server-to-Server Notification Endpoint** to `https://<production host>/v1/apple/notifications`. It must be an absolute HTTPS URL with TLS 1.2 or later, and there's one per primary App ID group. Then save the App ID.
+**Registering it**, once the server is hosted: in the developer portal, open Certificates, Identifiers & Profiles → Identifiers → the App ID `com.adonis.Ergo` → Sign in with Apple → Configure (or Edit), and set **Server-to-Server Notification Endpoint** to `https://<production host>/v1/apple/notifications`. It must be an absolute HTTPS URL with TLS 1.2 or later, and there's one per primary App ID group. Then save the App ID.
 
 ## Known gaps
 

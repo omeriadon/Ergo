@@ -122,7 +122,7 @@ enum FakeApple {
 		subject: String = "apple-user",
 		id: String = UUID().uuidString,
 		issuer: String = AppleNotification.issuer,
-		audience: String = "com.omeriadon.Ergo",
+		audience: String = "com.adonis.Ergo",
 		issued: Date = .now,
 		events: String? = nil,
 		signedWith signer: ES256PrivateKey = key

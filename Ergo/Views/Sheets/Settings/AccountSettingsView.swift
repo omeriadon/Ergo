@@ -59,10 +59,12 @@ private struct SignInRow: View {
 
 	@Binding var problem: String?
 
+	var label = SignInWithAppleButton.Label.signIn
+
 	@State private var attempt = AppleSignIn()
 
 	var body: some View {
-		SignInWithAppleButton(.signIn) { request in
+		SignInWithAppleButton(label) { request in
 			attempt = AppleSignIn()
 			attempt.prepare(request)
 		} onCompletion: { result in
@@ -111,6 +113,10 @@ private struct SignedInRows: View {
 		.accessibilityIdentifier("account.syncStatus")
 
 		EmailLink(hasEmail: sync.email != nil)
+
+		if sync.canAddApple {
+			SignInRow(problem: $problem, label: .continue)
+		}
 
 		Button("Sign Out") {
 			confirmingSignOut = true
@@ -215,6 +221,8 @@ private struct AccountFooter: View {
 				Text("Set the Mac's address in Translation → Server to sign in.")
 			} else if !sync.isSignedIn {
 				Text("Sync pages, bookmarks and letters across your devices. Translation works without an account.")
+			} else if sync.canAddApple {
+				Text("Continue with Apple to sign in with either your Apple ID or this email.")
 			}
 		}
 	}

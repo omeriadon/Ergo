@@ -13,11 +13,12 @@ import Vapor
 
 /// Reads the environment, then sets everything up
 func configure(_ app: Application) async throws {
-	let config = try ServerConfig.load(
+	var config = try ServerConfig.load(
 		from: ProcessInfo.processInfo.environment,
 		production: app.environment == .production,
 		logger: app.logger
 	)
+	await CLIInstaller.ensure(&config, logger: app.logger)
 	try await configure(app, config: config)
 }
 

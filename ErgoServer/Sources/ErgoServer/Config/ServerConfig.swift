@@ -27,6 +27,16 @@ struct ServerConfig: Sendable {
 	var claudePath: String?
 	var codexPath: String?
 
+	struct CLIInstall: Sendable {
+		var directory: URL
+		var npmPath: String
+		var claudeCodeVersion: String
+		var codexVersion: String
+	}
+
+	/// Where a CLI that doesn't run gets installed at launch, and at which version. Nil never installs.
+	var cliInstall: CLIInstall?
+
 	/// Put before every CLI, so the CLIs can run as a user that can't read the database or the key
 	var runnerPrefix: [String] = []
 
@@ -38,7 +48,7 @@ struct ServerConfig: Sendable {
 	var models = StageModels.defaults
 
 	/// The audience Sign in with Apple tokens must have: the app's bundle id
-	var appleApplicationID = "com.omeriadon.Ergo"
+	var appleApplicationID = "com.adonis.Ergo"
 
 	/// Whether `X-Forwarded-For` says who is asking, for the per-address limits. Only for a server behind a proxy
 	/// on the same machine or private network, since otherwise anyone could write it.
@@ -98,6 +108,21 @@ struct ServerConfig: Sendable {
 		let searchPath = environment["PATH"] ?? "/usr/local/bin:/usr/bin:/bin"
 		config.claudePath = environment["ERGO_CLAUDE_PATH"] ?? executable(named: "claude", in: searchPath)
 		config.codexPath = environment["ERGO_CODEX_PATH"] ?? executable(named: "codex", in: searchPath)
+
+		if let directory = environment["ERGO_CLI_DIRECTORY"], !directory.isEmpty {
+			guard let npm = executable(named: "npm", in: searchPath) else {
+				throw Problem(description: "ERGO_CLI_DIRECTORY: Expected npm on PATH to install the CLIs, found none")
+			}
+			guard let claudeCode = environment["ERGO_CLAUDE_CODE_VERSION"], let codex = environment["ERGO_CODEX_VERSION"] else {
+				throw Problem(description: "ERGO_CLI_DIRECTORY: Expected ERGO_CLAUDE_CODE_VERSION and ERGO_CODEX_VERSION to go with it")
+			}
+			config.cliInstall = CLIInstall(
+				directory: URL(filePath: directory, directoryHint: .isDirectory),
+				npmPath: npm,
+				claudeCodeVersion: claudeCode,
+				codexVersion: codex
+			)
+		}
 
 		if let prefix = environment["ERGO_RUNNER_PREFIX"] {
 			config.runnerPrefix = prefix.split(whereSeparator: \.isWhitespace).map(String.init)

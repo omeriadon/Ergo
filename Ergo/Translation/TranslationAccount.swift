@@ -244,8 +244,8 @@ final class TranslationAccount {
 		return ErgoClient(server: signedIn.server, token: token)
 	}
 
-	/// Attaches this device's account to the Apple ID, or joins the account that already has it.
-	/// `nonce` is the raw one; the Apple request carried its hash.
+	/// Attaches this device's account to the Apple ID, or joins the account that already has it. Signed in with an
+	/// email, it gains a second way in. `nonce` is the raw one; the Apple request carried its hash.
 	func signInWithApple(identityToken: String, nonce: String) async throws {
 		guard let server else {
 			throw Self.noServer
@@ -253,7 +253,7 @@ final class TranslationAccount {
 
 		let reply = try await withClient { try await $0.signInWithApple(identityToken: identityToken, nonce: nonce) }
 		AccountKeychain.setToken(reply.token, for: server)
-		signedIn = SignedInAccount(server: server, id: reply.accountID)
+		signedIn = SignedInAccount(server: server, id: reply.accountID, email: signedIn?.email, hasApple: true)
 
 		// Joining another device's account brings its connections
 		await refresh()
@@ -269,7 +269,7 @@ final class TranslationAccount {
 		let email = try AccountEmail.normalized(email)
 		try await withClient { try await $0.register(email: email, password: password) }
 		// The reply is empty, so a signed-out account's id stays unknown
-		signedIn = SignedInAccount(server: server, id: signedIn?.id, email: email)
+		signedIn = SignedInAccount(server: server, id: signedIn?.id, email: email, hasApple: signedIn?.hasApple)
 	}
 
 	/// Joins the account that has this email, merging this device's account into it on the server.
@@ -432,6 +432,9 @@ struct SignedInAccount: Codable, Hashable, Defaults.Serializable {
 	/// Only for showing, and only known when this device signed in or registered with it.
 	/// Set means the account has an email, so its password can be changed.
 	var email: String?
+
+	/// True once this device has used Sign in with Apple. Nil says nothing: another device may have added it.
+	var hasApple: Bool?
 
 	/// The email is only shown, so gaining one isn't a change of account
 	var withoutEmail: SignedInAccount {

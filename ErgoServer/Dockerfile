@@ -35,22 +35,36 @@ RUN --mount=type=cache,id=ergo-server-build,target=/src/ErgoServer/.build \
 FROM ${RUN_IMAGE}
 ARG CLAUDE_CODE_VERSION=2.1.311
 ARG CODEX_VERSION=0.166.0
+ARG NODE_VERSION=22.23.4
 
-# util-linux is setpriv
+# util-linux is setpriv. Node comes from nodejs.org since Claude Code needs 22 and Ubuntu's is 18.
+# The last two commands fail the build if npm left a CLI that doesn't run, which it can do without an error.
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends ca-certificates tzdata util-linux nodejs npm \
+	&& apt-get install -y --no-install-recommends ca-certificates tzdata util-linux curl xz-utils \
+	&& case "$(dpkg --print-architecture)" in \
+		amd64) node_arch=x64 node_sha=1805bcd35e6815559bd2eb97db438d3fdb0eb3a5e6a977b7c1badca76337e9ce ;; \
+		arm64) node_arch=arm64 node_sha=6287aa46b6c375d816e63ae66d024fbbfd70404825aabdfdf898a970871d2f4b ;; \
+		*) echo "No Node checksum for this architecture" >&2; exit 1 ;; \
+	esac \
+	&& curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${node_arch}.tar.xz" -o /tmp/node.tar.xz \
+	&& echo "${node_sha}  /tmp/node.tar.xz" | sha256sum -c - \
+	&& tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 --no-same-owner \
+	&& rm /tmp/node.tar.xz \
 	&& npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}" "@openai/codex@${CODEX_VERSION}" \
 	&& npm cache clean --force \
-	&& rm -rf /var/lib/apt/lists/*
+	&& rm -rf /var/lib/apt/lists/* \
+	&& claude --version \
+	&& codex --version
 
 RUN groupadd --system ergo \
 	&& useradd --system --gid ergo --home-dir /data --shell /usr/sbin/nologin ergo \
 	&& groupadd --system ergo-runner \
 	&& useradd --system --gid ergo-runner --home-dir /nonexistent --no-create-home --shell /usr/sbin/nologin ergo-runner \
-	&& mkdir -p /data /runs \
-	&& chown ergo:ergo /data /runs \
+	&& mkdir -p /data /runs /opt/ergo-cli \
+	&& chown ergo:ergo /data /runs /opt/ergo-cli \
 	&& chmod 0700 /data \
-	&& chmod 0711 /runs
+	&& chmod 0711 /runs \
+	&& chmod 0755 /opt/ergo-cli
 
 WORKDIR /app
 COPY --from=build /staging /app
@@ -62,6 +76,9 @@ ENV ERGO_DATABASE_PATH=/data/ergo.sqlite \
 	ERGO_RUNS_DIRECTORY=/runs \
 	ERGO_CLAUDE_PATH=/usr/local/bin/claude \
 	ERGO_CODEX_PATH=/usr/local/bin/codex \
+	ERGO_CLI_DIRECTORY=/opt/ergo-cli \
+	ERGO_CLAUDE_CODE_VERSION=${CLAUDE_CODE_VERSION} \
+	ERGO_CODEX_VERSION=${CODEX_VERSION} \
 	ERGO_RUNNER_USER=ergo-runner \
 	ERGO_RUNNER_PREFIX="/usr/bin/setpriv --reuid=ergo-runner --regid=ergo-runner --clear-groups --inh-caps=-all --ambient-caps=-all --no-new-privs --"
 

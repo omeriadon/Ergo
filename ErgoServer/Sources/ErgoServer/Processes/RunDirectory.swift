@@ -38,8 +38,10 @@ struct RunDirectory: Sendable {
 		try files.setAttributes([.posixPermissions: 0o711], ofItemAtPath: parent.path)
 
 		let run = RunDirectory(root: parent.appending(path: UUID().uuidString, directoryHint: .isDirectory))
-		for directory in [run.root, run.home, run.temporary, run.work] {
-			try files.createDirectory(at: directory, withIntermediateDirectories: false, attributes: [.posixPermissions: 0o700])
+		// The server enters `work` for a CLI before the prefix switches users, after the run was handed over, so the
+		// way there can be passed through. What's secret is in `home`.
+		for (directory, permissions) in [(run.root, 0o711), (run.home, 0o700), (run.temporary, 0o700), (run.work, 0o711)] {
+			try files.createDirectory(at: directory, withIntermediateDirectories: false, attributes: [.posixPermissions: permissions])
 		}
 		return run
 	}
