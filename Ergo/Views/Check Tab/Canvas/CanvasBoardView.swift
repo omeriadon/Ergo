@@ -37,8 +37,8 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 	var connectEnded: (Statement.ID, ConnectionDrop) -> Void = { _, _ in }
 	var deleteLink: (Link.ID) -> Void = { _ in }
 
-	var boxContent: (CanvasBoxModel, _ isNew: Bool) -> any UIContentConfiguration = { _, _ in UIListContentConfiguration.cell() }
-	var handleContent: (_ pointsUp: Bool) -> any UIContentConfiguration = { _ in UIListContentConfiguration.cell() }
+	var boxContent: (CanvasBoxModel, _ isNew: Bool) -> AnyView = { _, _ in AnyView(EmptyView()) }
+	var handleContent: (_ pointsUp: Bool) -> AnyView = { _ in AnyView(EmptyView()) }
 
 	private(set) var canvasTransform = CanvasTransform()
 	private(set) var hasBeenMoved = false
@@ -57,6 +57,14 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 
 	/// An arrow being dragged out of a handle, and whether the box it's from is the conclusion
 	private var connection: (source: Statement.ID, target: Statement.ID?, arrow: CanvasArrow, asConclusion: Bool)?
+
+	/// Under the finger while letting go of that arrow would make a new box. Over the boxes and arrows, made the first
+	/// time it's needed.
+	private lazy var dropLens: CanvasDropLensView = {
+		let lens = CanvasDropLensView()
+		insertSubview(lens, aboveSubview: content)
+		return lens
+	}()
 
 	private lazy var panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panned))
 	private lazy var pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(pinched))
@@ -357,6 +365,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 				let drop = recognizer.state == .ended ? connectionDrop(of: finished.source, over: finished.target, at: recognizer.location(in: self)) : .nowhere
 				connection = nil
 				gridPoint = nil
+				dropLens.setShown(false)
 				finished.arrow.removeFromSuperlayer()
 				updateHandles()
 				connectEnded(finished.source, drop)
@@ -374,6 +383,15 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 		let isOnSource = cells[source].map { CanvasRect.box(at: CanvasPoint($0.center)).contains(point) } ?? true
 		let isOnHandle = handles.contains { $0.frame.contains(location) }
 		return isOnSource || isOnHandle ? .nowhere : .space(point)
+	}
+
+	private func wouldMakeBox(from source: Statement.ID, over target: Statement.ID?, at location: CGPoint) -> Bool {
+		guard cells.count < ArgumentMapValidator.defaultMaximumStatements,
+		      case .space = connectionDrop(of: source, over: target, at: location)
+		else {
+			return false
+		}
+		return true
 	}
 
 	/// The arrow reaches for the box under the finger, and follows the finger when there isn't one
@@ -396,6 +414,10 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 		} else {
 			gridPoint = nil
 		}
+
+		let location = convert(point, from: content)
+		dropLens.center = location
+		dropLens.setShown(wouldMakeBox(from: current.source, over: targetID, at: location))
 
 		let curve: ArrowCurve? = if let target {
 			current.asConclusion
@@ -721,13 +743,26 @@ private final class CanvasHaptics {
 	}
 }
 
+// MARK: - Hosting
+
+/// SwiftUI for the canvas, in a hosting controller because a hosting configuration can't be told to leave the safe area
+/// out. Everything here moves under the bars, and with the safe area in play its content would be laid out again on every
+/// frame it's crossing them, which shows as glass moving around. Where things go is `CanvasBoardView`'s business.
+private func canvasHost<Content: View>(_ content: Content) -> UIHostingController<Content> {
+	let host = UIHostingController(rootView: content)
+	host.safeAreaRegions = []
+	host.view.backgroundColor = .clear
+	host.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+	return host
+}
+
 // MARK: - A box
 
 /// Holds one box's SwiftUI. Its content is only replaced when what it shows changes.
 private final class CanvasBoxCell: UIView {
 	private(set) var model: CanvasBoxModel
 	private let isNew: Bool
-	private let hosted: any UIView & UIContentView
+	private let hosted: UIHostingController<AnyView>
 
 	/// Picked up by a finger
 	var isLifted = false {
@@ -737,16 +772,15 @@ private final class CanvasBoxCell: UIView {
 	}
 
 	/// Starts at its position, so there's never a moment when it's anywhere else
-	init(model: CanvasBoxModel, isNew: Bool, content: (CanvasBoxModel, _ isNew: Bool) -> any UIContentConfiguration) {
+	init(model: CanvasBoxModel, isNew: Bool, content: (CanvasBoxModel, _ isNew: Bool) -> AnyView) {
 		self.model = model
 		self.isNew = isNew
-		hosted = content(model, isNew).makeContentView()
+		hosted = canvasHost(content(model, isNew))
 		let box = CanvasRect.box(at: model.statement.position)
 		super.init(frame: CGRect(x: box.minX, y: box.minY, width: box.size.width, height: box.size.height))
 
-		hosted.frame = bounds
-		hosted.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-		addSubview(hosted)
+		hosted.view.frame = bounds
+		addSubview(hosted.view)
 
 		layer.shadowColor = UIColor.black.cgColor
 		layer.shadowOpacity = 0
@@ -760,10 +794,10 @@ private final class CanvasBoxCell: UIView {
 		fatalError("Use init(model:isNew:content:)")
 	}
 
-	func show(_ new: CanvasBoxModel, content: (CanvasBoxModel, _ isNew: Bool) -> any UIContentConfiguration) {
+	func show(_ new: CanvasBoxModel, content: (CanvasBoxModel, _ isNew: Bool) -> AnyView) {
 		guard new != model else { return }
 		model = new
-		hosted.configuration = content(new, isNew)
+		hosted.rootView = content(new, isNew)
 	}
 }
 
@@ -772,22 +806,60 @@ private final class CanvasBoxCell: UIView {
 /// Holds `CanvasConnectHandle`'s SwiftUI
 private final class CanvasHandleView: UIView {
 	let isAbove: Bool
-	private let hosted: any UIView & UIContentView
+	private let hosted: UIHostingController<AnyView>
 
-	init(isAbove: Bool, content: (_ pointsUp: Bool) -> any UIContentConfiguration) {
+	init(isAbove: Bool, content: (_ pointsUp: Bool) -> AnyView) {
 		self.isAbove = isAbove
-		hosted = content(isAbove).makeContentView()
+		hosted = canvasHost(content(isAbove))
 		let size = CanvasConnectHandle.size
 		super.init(frame: CGRect(x: 0, y: 0, width: size, height: size))
 
-		hosted.frame = bounds
-		hosted.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-		addSubview(hosted)
+		hosted.view.frame = bounds
+		addSubview(hosted.view)
 	}
 
 	@available(*, unavailable)
 	required init?(coder _: NSCoder) {
 		fatalError("Use init(isAbove:content:)")
+	}
+}
+
+// MARK: - The lens
+
+/// Holds `CanvasDropLens`'s SwiftUI, and grows it in and shrinks it away. Following the finger is only `center`, so
+/// SwiftUI only hears about it coming and going.
+private final class CanvasDropLensView: UIView {
+	private let hosted = canvasHost(CanvasDropLens(isLifted: false))
+	private var isShown = false
+
+	/// Fading is all that's left under Reduce Motion
+	private var hiddenTransform: CGAffineTransform {
+		UIAccessibility.isReduceMotionEnabled ? .identity : CGAffineTransform(scaleX: 0.5, y: 0.5)
+	}
+
+	init() {
+		super.init(frame: CGRect(origin: .zero, size: CanvasDropLens.size))
+		isUserInteractionEnabled = false
+		alpha = 0
+		transform = hiddenTransform
+
+		hosted.view.frame = bounds
+		addSubview(hosted.view)
+	}
+
+	@available(*, unavailable)
+	required init?(coder _: NSCoder) {
+		fatalError("Use init()")
+	}
+
+	func setShown(_ shown: Bool) {
+		guard shown != isShown else { return }
+		isShown = shown
+		hosted.rootView = CanvasDropLens(isLifted: shown)
+		UIView.animate(springDuration: 0.35, bounce: shown ? 0.3 : 0) {
+			alpha = shown ? 1 : 0
+			transform = shown ? .identity : hiddenTransform
+		}
 	}
 }
 

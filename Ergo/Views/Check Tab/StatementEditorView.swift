@@ -41,19 +41,19 @@ struct StatementEditorView: View {
 	@State private var analysis: LogicAnalysis?
 	@State private var analyzedLogic: [LogicKeyboardEntry] = []
 
-	@State private var translating: Task<Void, Never>?
-
-	/// Nil when not translating
-	@State private var progress: TranslationProgress?
-
-	/// The claims found so far, shown on the keyboard before the logic arrives
-	@State private var liveDescriptors: [String]?
-
-	/// The server couldn't translate. Not kept on the board, since it says nothing about the English.
-	@State private var translationError: ServiceError?
+	/// A failure isn't kept on the board, since it says nothing about the English
+	@State private var run = TranslationRun<Never>.idle
 
 	private var board: LogicBoard {
 		boardStore.current
+	}
+
+	/// The claims found so far stand in on the keyboard, until the logic arrives, while the board names none
+	private var keyboardDescriptors: [String] {
+		if let claims = run.progress?.claims, board.descriptors.allSatisfy(\.isEmpty) {
+			return claims
+		}
+		return board.descriptors
 	}
 
 	/// Empty once the statement is gone (deleted on another device), until the screen moves on
@@ -104,17 +104,17 @@ struct StatementEditorView: View {
 
 					EnglishStatusView(
 						issues: statement.currentIssues,
-						error: translationError?.message,
+						error: run.failure?.message,
 						setUp: setUp,
 						isLogicOutdated: statement.isLogicOutdated && !statement.logic.isEmpty,
-						progress: progress,
+						progress: run.progress,
 						canTranslate: !statement.english.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
 						translate: translate,
 						stop: stopTranslating
 					)
 				}
 				.animation(.smooth, value: statement.currentIssues)
-				.animation(.smooth, value: translationError)
+				.animation(.smooth, value: run.failure)
 				.padding(15)
 				.glassEffect(
 					.regular.interactive(),
@@ -133,7 +133,7 @@ struct StatementEditorView: View {
 						entries: statementBinding.logic,
 						isFocused: logicFocus,
 						highlights: currentAnalysis?.highlights ?? [],
-						descriptors: liveDescriptors ?? board.descriptors,
+						descriptors: keyboardDescriptors,
 						onEditLetters: {
 							navigation.presentSheet(.logicLetters)
 						}
@@ -169,8 +169,8 @@ struct StatementEditorView: View {
 		.onChange(of: statementID) {
 			// A statement that's opened has already been written, no need to wait
 			stopTranslating()
+			run = .idle
 			englishSelection = nil
-			translationError = nil
 			analyze()
 		}
 		.onChange(of: boardStore.remoteEdits) {
@@ -178,7 +178,10 @@ struct StatementEditorView: View {
 			englishSelection = nil
 		}
 		.onChange(of: statement.english) {
-			translationError = nil
+			// Only a failure goes, a translation that's running carries on
+			if run.failure != nil {
+				run = .idle
+			}
 			if englishFocused {
 				statementBinding.wrappedValue.source = .english
 			}
@@ -255,7 +258,7 @@ struct StatementEditorView: View {
 
 	private func translate() {
 		let english = statement.english
-		translationError = nil
+		run = .idle
 
 		// Obviously bad input never reaches the server, and reads like any other translation issue
 		if let problem = EnglishValidator.problem(with: english) {
@@ -268,40 +271,30 @@ struct StatementEditorView: View {
 
 		let id = statementID
 		let descriptors = board.descriptors
-		let showsClaims = descriptors.allSatisfy(\.isEmpty)
-		progress = TranslationProgress()
 
-		translating = Task {
+		let task = Task {
 			do {
 				let translation = try await account.translate(english: english, letters: letters, descriptors: descriptors) { event in
 					guard !Task.isCancelled else { return }
-					progress?.apply(event)
-					if showsClaims, case let .foundClaims(_, _, descriptors) = event {
-						liveDescriptors = descriptors
-					}
+					run.apply(event)
 				}
 				guard !Task.isCancelled else { return }
-				finishTranslating()
+				run = .idle
 				apply(translation, english: english, to: id)
 			} catch {
 				guard !Task.isCancelled, !(error is CancellationError) else { return }
-				finishTranslating()
-				translationError = error as? ServiceError
-					?? ServiceError(code: .internalError, message: error.localizedDescription)
+				run = .failed(
+					error as? ServiceError
+						?? ServiceError(code: .internalError, message: error.localizedDescription)
+				)
 			}
 		}
+		run = .running(TranslationProgress(), task)
 	}
 
 	/// Closing the socket makes the server stop too
 	private func stopTranslating() {
-		translating?.cancel()
-		finishTranslating()
-	}
-
-	private func finishTranslating() {
-		translating = nil
-		progress = nil
-		liveDescriptors = nil
+		run.cancel()
 	}
 
 	private func apply(_ translation: Translation, english: String, to id: Statement.ID) {
@@ -310,7 +303,7 @@ struct StatementEditorView: View {
 
 		// Never trust the server's logic blindly
 		guard LogicParser.parse(translation.entries).diagnostics.isEmpty else {
-			translationError = ServiceError(code: .internalError, message: "Server sent logic that doesn't parse")
+			run = .failed(ServiceError(code: .internalError, message: "Server sent logic that doesn't parse"))
 			return
 		}
 
@@ -319,7 +312,7 @@ struct StatementEditorView: View {
 
 	/// Only for errors fixed by connecting a provider in Settings
 	private var setUp: (() -> Void)? {
-		switch translationError?.code {
+		switch run.failure?.code {
 			case .notConnected, .credentialRejected:
 				openSettings
 			default:

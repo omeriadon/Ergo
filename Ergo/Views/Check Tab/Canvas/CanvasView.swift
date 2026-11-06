@@ -80,12 +80,10 @@ struct CanvasView: View {
 	}
 
 	private enum Sheet: Identifiable {
-		case editAsText
 		case check(Statement.ID)
 
 		var id: String {
 			switch self {
-				case .editAsText: "editAsText"
 				case let .check(id): "check.\(id.uuidString)"
 			}
 		}
@@ -146,8 +144,6 @@ struct CanvasView: View {
 	@State private var notice: String?
 	@State private var verdicts: [Statement.ID: BoxVerdict] = [:]
 	@State private var sheet: Sheet?
-	@State private var sheetStart: CanvasHistory.Snapshot?
-	@State private var sheetName = ""
 
 	// Undo
 	@State private var canUndo = false
@@ -177,7 +173,7 @@ struct CanvasView: View {
 		}
 		.safeAreaInset(edge: .bottom, spacing: 0) { bottomStack }
 		.toolbar { toolbar }
-		.sheet(item: $sheet, onDismiss: sheetClosed) { sheet in
+		.sheet(item: $sheet) { sheet in
 			sheetContent(sheet)
 		}
 		.modifier(lifecycle)
@@ -247,10 +243,11 @@ struct CanvasView: View {
 		}
 		.padding(.horizontal, 16)
 		.padding(.bottom, 8)
+		// The stack is only as wide as what's in it, and the blur goes all the way across
+		.frame(maxWidth: .infinity)
 		.background(alignment: .bottom) {
 			BackdropBlur(radius: 1, fade: .top)
-				.frame(maxWidth: .infinity)
-				.ignoresSafeArea(edges: .bottom)
+				.ignoresSafeArea(edges: [.horizontal, .bottom])
 				.allowsHitTesting(false)
 		}
 		.opacity(isCovered ? 0 : 1)
@@ -324,7 +321,6 @@ struct CanvasView: View {
 		}
 
 		Section {
-			Button("Edit as Text", systemImage: "text.alignleft") { present(.editAsText, named: "Edit as Text") }
 			Button("Letters and Descriptors", systemImage: "textformat.alt") { navigation.presentSheet(.logicLetters) }
 		}
 	}
@@ -334,28 +330,8 @@ struct CanvasView: View {
 	@ViewBuilder
 	private func sheetContent(_ sheet: Sheet) -> some View {
 		switch sheet {
-			case .editAsText:
-				EditAsTextSheet()
 			case let .check(id):
 				ArgumentCheckSheet(statementID: id)
-		}
-	}
-
-	/// The text sheet edits the board itself, so what it did becomes one undo step on the way out
-	private func present(_ sheet: Sheet, named name: String) {
-		sheetStart = history.snapshot()
-		sheetName = name
-		self.sheet = sheet
-	}
-
-	private func sheetClosed() {
-		defer { sheetStart = nil }
-		guard let before = sheetStart else { return }
-
-		let grew = (history.snapshot()?.statements.count ?? 0) != before.statements.count
-		history.register(before, name: sheetName)
-		if grew {
-			fit(animated: true)
 		}
 	}
 
@@ -552,9 +528,29 @@ struct CanvasView: View {
 			}
 		}
 		if let problem {
-			show(problem.message)
+			show(linkMessage(for: problem, premise: premise, conclusion: conclusion))
 		}
 		return problem == nil
+	}
+
+	/// Why an arrow wasn't drawn, the way a person would say it rather than in the validator's words. An arrow back
+	/// along an existing one counts as a loop to the validator, but all anyone sees is two cards already connected.
+	private func linkMessage(for problem: ArgumentMapProblem, premise: Statement.ID, conclusion: Statement.ID) -> String {
+		let isReversed = board.links.contains { $0.premise == conclusion && $0.conclusion == premise }
+		return switch problem {
+			case .duplicateLink:
+				"These cards are already connected"
+			case .cycle where isReversed:
+				"These cards are already connected"
+			case .cycle:
+				"That would make a loop, so these cards can't be connected"
+			case .selfLink:
+				"A card can't connect to itself"
+			case .danglingLink:
+				"That card isn't on this board anymore"
+			default:
+				problem.message
+		}
 	}
 
 	// MARK: - Picking
@@ -625,10 +621,7 @@ struct CanvasView: View {
 	}
 
 	private var statementLimitMessage: String {
-		ArgumentMapProblem.tooManyStatements(
-			limit: ArgumentMapValidator.defaultMaximumStatements,
-			found: board.statements.count + 1
-		).message
+		"This board is full, it can only hold \(ArgumentMapValidator.defaultMaximumStatements) cards"
 	}
 
 	private func delete(_ id: Statement.ID) {

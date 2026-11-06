@@ -13,16 +13,39 @@ import Security
 enum AccountKeychain {
 	private static let service = "com.omeriadon.Ergo.translation"
 
-	static func token(for server: URL) -> String? {
+	enum Lookup {
+		case found(String)
+		/// Nothing stored, as opposed to the Keychain not answering
+		case missing
+		/// The Keychain couldn't be read, so this says nothing about whether there's a token
+		case unavailable
+	}
+
+	static func lookup(for server: URL) -> Lookup {
 		var query = query(for: server)
 		query[kSecReturnData as String] = true
 		query[kSecMatchLimit as String] = kSecMatchLimitOne
 
 		var result: AnyObject?
-		guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess, let data = result as? Data else {
-			return nil
+		switch SecItemCopyMatching(query as CFDictionary, &result) {
+			case errSecSuccess:
+				guard let data = result as? Data, let token = String(data: data, encoding: .utf8) else {
+					return .unavailable
+				}
+				return .found(token)
+			case errSecItemNotFound:
+				return .missing
+			default:
+				return .unavailable
 		}
-		return String(data: data, encoding: .utf8)
+	}
+
+	/// Nil for missing and unavailable alike, for callers that don't care which
+	static func token(for server: URL) -> String? {
+		if case let .found(token) = lookup(for: server) {
+			return token
+		}
+		return nil
 	}
 
 	/// Nil deletes it

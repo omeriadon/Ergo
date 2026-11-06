@@ -42,40 +42,56 @@ final class TranslationAccount {
 
 	// MARK: - connections
 
-	/// Missing means not connected
-	private(set) var connections: [Provider: ConnectionStatus] = [:]
+	/// Nil until the server has been asked, or it's known there's no account to ask
+	private var knownConnections: [Provider: ConnectionStatus]?
+
+	/// Missing means not connected, or not known yet
+	var connections: [Provider: ConnectionStatus] {
+		knownConnections ?? [:]
+	}
 
 	/// Why the last refresh or disconnect failed
 	private(set) var problem: String?
 
-	/// False until the server has been asked, or it's known there's no account to ask
-	private(set) var connectionsKnown = false
-
 	/// Whether `provider` has a connection on the current server. Nil until that's known, since asking costs a request.
 	func isConnected(_ provider: Provider) -> Bool? {
 		guard let server else { return nil }
-		if AccountKeychain.token(for: server) == nil {
-			return false
+		switch AccountKeychain.lookup(for: server) {
+			case .missing:
+				return false
+			case .unavailable:
+				return nil
+			case .found:
+				return knownConnections.map { $0[provider] != nil }
 		}
-		return connectionsKnown ? connections[provider] != nil : nil
 	}
 
 	func refresh() async {
 		adoptServer()
-		guard let server, AccountKeychain.token(for: server) != nil else {
-			// No account yet, so nothing can be connected
-			connections = [:]
-			connectionsKnown = server != nil
+		guard let server else {
+			knownConnections = nil
 			problem = nil
 			return
+		}
+		switch AccountKeychain.lookup(for: server) {
+			case .missing:
+				// No account yet, so nothing can be connected
+				knownConnections = [:]
+				problem = nil
+				return
+			case .unavailable:
+				// Can't tell, so what was known stays as it was
+				problem = Self.keychainUnavailable.message
+				return
+			case .found:
+				break
 		}
 
 		do {
 			let statuses = try await withClient { try await $0.connections() }
 			// The server was switched while asking, so this is the old one's answer
 			guard self.server == server else { return }
-			connections = Dictionary(statuses.map { ($0.provider, $0) }) { _, last in last }
-			connectionsKnown = true
+			knownConnections = Dictionary(statuses.map { ($0.provider, $0) }) { _, last in last }
 			problem = nil
 		} catch is CancellationError {
 		} catch {
@@ -90,21 +106,40 @@ final class TranslationAccount {
 		let server = server
 		let status = try await withClient { try await $0.connect(provider, upload) }
 		if self.server == server {
-			connections[provider] = status
+			await recordConnection(status)
 		}
 		return status
 	}
 
+	/// Settings won't ask again on its own, so connections that weren't known are asked for now
+	private func recordConnection(_ status: ConnectionStatus) async {
+		if knownConnections != nil {
+			knownConnections?[status.provider] = status
+		} else {
+			await refresh()
+		}
+	}
+
 	func disconnect(_ provider: Provider) async {
-		guard let server, AccountKeychain.token(for: server) != nil else {
-			connections[provider] = nil
+		guard let server else {
+			knownConnections?[provider] = nil
 			return
+		}
+		switch AccountKeychain.lookup(for: server) {
+			case .missing:
+				knownConnections?[provider] = nil
+				return
+			case .unavailable:
+				problem = Self.keychainUnavailable.message
+				return
+			case .found:
+				break
 		}
 
 		do {
 			try await withClient { try await $0.disconnect(provider) }
 			guard self.server == server else { return }
-			connections[provider] = nil
+			knownConnections?[provider] = nil
 			problem = nil
 		} catch is CancellationError {
 		} catch {
@@ -131,7 +166,7 @@ final class TranslationAccount {
 			throw Self.disconnected
 		}
 		if self.server == server {
-			connections[.codex] = status
+			await recordConnection(status)
 		}
 		return status
 	}
@@ -198,10 +233,14 @@ final class TranslationAccount {
 		guard let server else {
 			throw Self.notSetUp
 		}
-		guard let token = AccountKeychain.token(for: server) else {
-			throw Self.notConnected(provider)
+		switch AccountKeychain.lookup(for: server) {
+			case let .found(token):
+				return (server, token)
+			case .missing:
+				throw Self.notConnected(provider)
+			case .unavailable:
+				throw Self.keychainUnavailable
 		}
-		return (server, token)
 	}
 
 	/// `scope` is set by the client method that sends it
@@ -234,6 +273,15 @@ final class TranslationAccount {
 		didSet {
 			Defaults[.signedInAccount] = signedIn
 		}
+	}
+
+	/// Signed in on the current server, but the Keychain couldn't be read. Sync backs off rather than signing out.
+	var syncTokenUnavailable: Bool {
+		guard let signedIn, signedIn.server == server else { return false }
+		if case .unavailable = AccountKeychain.lookup(for: signedIn.server) {
+			return true
+		}
+		return false
 	}
 
 	/// Nil unless signed in on the current server
@@ -315,10 +363,16 @@ final class TranslationAccount {
 
 	/// The server already forgot a token it calls unknown, so that counts as done
 	private func forgettingToken(of account: SignedInAccount, _ work: (ErgoClient) async throws -> Void) async throws {
-		if let token = AccountKeychain.token(for: account.server) {
-			do {
-				try await work(ErgoClient(server: account.server, token: token))
-			} catch let error as ServiceError where error.code == .unauthorized {}
+		switch AccountKeychain.lookup(for: account.server) {
+			case let .found(token):
+				do {
+					try await work(ErgoClient(server: account.server, token: token))
+				} catch let error as ServiceError where error.code == .unauthorized {}
+			case .missing:
+				break
+			case .unavailable:
+				// Forgetting now would leave the account on the server with no way back to it
+				throw Self.keychainUnavailable
 		}
 		forgetToken(for: account.server)
 	}
@@ -348,8 +402,7 @@ final class TranslationAccount {
 	private func adoptServer() {
 		guard connectionsServer != server else { return }
 		connectionsServer = server
-		connections = [:]
-		connectionsKnown = false
+		knownConnections = nil
 		problem = nil
 		creatingAccount?.task.cancel()
 		creatingAccount = nil
@@ -357,8 +410,8 @@ final class TranslationAccount {
 
 	private func forgetToken(for server: URL) {
 		AccountKeychain.setToken(nil, for: server)
-		connections = [:]
-		connectionsKnown = false
+		knownConnections = nil
+		problem = nil
 		if signedIn?.server == server {
 			signedIn = nil
 		}
@@ -384,8 +437,14 @@ final class TranslationAccount {
 	}
 
 	private func token(for server: URL) async throws -> String {
-		if let token = AccountKeychain.token(for: server) {
-			return token
+		switch AccountKeychain.lookup(for: server) {
+			case let .found(token):
+				return token
+			case .missing:
+				break
+			case .unavailable:
+				// Making an account now would strand the one this token belongs to
+				throw Self.keychainUnavailable
 		}
 		// Two calls at once share one account, if they're for the same server
 		if let creatingAccount, creatingAccount.server == server {
@@ -413,6 +472,7 @@ final class TranslationAccount {
 	static let notSetUp = ServiceError(code: .notConnected, message: "Translation isn't set up")
 	static let noServer = ServiceError(code: .notConnected, message: "Expected a server, set one in Translation")
 	static let notSignedIn = ServiceError(code: .signInRequired, message: "Expected to be signed in, sign in first")
+	static let keychainUnavailable = ServiceError(code: .internalError, message: "Couldn't read the account token from the Keychain")
 	static let disconnected = ServiceError(code: .providerUnavailable, message: "Lost connection to the Ergo server")
 
 	static func notConnected(_ provider: Provider) -> ServiceError {

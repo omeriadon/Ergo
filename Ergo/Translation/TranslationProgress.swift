@@ -13,6 +13,9 @@ struct TranslationProgress: Hashable {
 	var title = "Connecting"
 	var detail: String?
 
+	/// The claims found so far, shown on the keyboard before the logic arrives
+	var claims: [String]?
+
 	mutating func apply(_ event: TranslationEvent) {
 		switch event {
 			case .started(.gate, _):
@@ -24,10 +27,11 @@ struct TranslationProgress: Hashable {
 				detail = nil
 
 			case let .foundClaims(premises, conclusion, descriptors):
-				let claims = descriptors.count(where: { !$0.isEmpty })
+				claims = descriptors
+				let claimCount = descriptors.count(where: { !$0.isEmpty })
 				detail = [
 					Self.count(premises.count, "premise"),
-					Self.count(claims, "claim"),
+					Self.count(claimCount, "claim"),
 					conclusion.isEmpty ? "no conclusion" : "conclusion found",
 				].joined(separator: ", ")
 

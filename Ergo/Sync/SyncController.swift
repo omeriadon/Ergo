@@ -29,7 +29,30 @@ final class SyncController {
 		case failed(String)
 	}
 
-	private(set) var status = Status.notSynced
+	/// How the last sync ended, until the account changes
+	private enum Outcome: Equatable {
+		case succeeded(Date)
+		case failed(String, unreachable: Bool)
+	}
+
+	private var schedule = SyncSchedule()
+	private var outcome: Outcome?
+
+	var status: Status {
+		if case .running = schedule.phase {
+			return .syncing
+		}
+		guard isSignedIn else { return .notSynced }
+		guard isOnline else { return .waitingForNetwork }
+		switch outcome {
+			case let .failed(message, unreachable):
+				return unreachable ? .waitingForNetwork : .failed(message)
+			case let .succeeded(date):
+				return .upToDate(date)
+			case nil:
+				return .notSynced
+		}
+	}
 
 	/// Boards that stay on this device because they're over the server's size limit
 	private(set) var oversizedBoards: [String] = []
@@ -136,7 +159,7 @@ final class SyncController {
 		}
 	}
 
-	@ObservationIgnored private var isOnline = true
+	private var isOnline = true
 
 	private func watchNetwork() async {
 		for await path in NWPathMonitor() {
@@ -144,8 +167,6 @@ final class SyncController {
 			isOnline = path.status == .satisfied
 			if isOnline, !wasOnline {
 				syncNow()
-			} else if !isOnline, status != .syncing, isSignedIn {
-				status = .waitingForNetwork
 			}
 		}
 	}
@@ -179,7 +200,7 @@ final class SyncController {
 		// Keeps what's merged and pending, so signing in again, to any account, loses nothing
 		replica.reset()
 		saveReplica()
-		status = .notSynced
+		outcome = nil
 
 		// Before it's ready, `run()` does this once it is
 		if isSignedIn, isReady {
@@ -224,7 +245,6 @@ final class SyncController {
 	private func leaving(_ work: () async throws -> Void) async throws {
 		stop()
 		isLeaving = true
-		defer { isLeaving = false }
 		do {
 			try await work()
 		} catch {
@@ -233,12 +253,11 @@ final class SyncController {
 			startListening()
 			throw error
 		}
+		isLeaving = false
 		accountChanged()
 	}
 
 	// MARK: - Local changes
-
-	@ObservationIgnored private var debounce: Task<Void, Never>?
 
 	private func record(_ boards: [LogicBoard], deleted: Set<LogicBoard.ID>) {
 		guard isSignedIn else { return }
@@ -435,63 +454,105 @@ final class SyncController {
 	// MARK: - Syncing
 
 	@ObservationIgnored private var syncing: Task<Void, Never>?
-	@ObservationIgnored private var syncAgain = false
+
+	/// The one timer `schedule` asks for: the pause after a local change, or a backoff
+	@ObservationIgnored private var timer: Task<Void, Never>?
 
 	/// Goes up whenever syncing stops for an account change, so a reply that arrives afterwards is dropped
 	@ObservationIgnored private var generation = 0
 
+	private var canSync: Bool {
+		isSignedIn && isReady && !isLeaving
+	}
+
 	/// Local changes wait for a pause, like `BoardStore`'s save
 	private func scheduleSync() {
-		debounce?.cancel()
-		debounce = Task {
-			try? await Task.sleep(for: .seconds(2))
-			guard !Task.isCancelled else { return }
-			sync()
-		}
+		handle(.localChange)
 	}
 
 	/// Starts over from no failures, for when things just got better: active again, back online, or signed in
 	func syncNow() {
-		failures = 0
-		retry?.cancel()
-		retry = nil
-		sync()
+		handle(.requestedNow)
 	}
 
 	/// Waits out a backoff rather than adding to it
 	private func sync() {
-		guard isSignedIn, isReady, !isLeaving, retry == nil else { return }
-		debounce?.cancel()
-		if syncing != nil {
-			syncAgain = true
+		handle(.requested)
+	}
+
+	private func handle(_ event: SyncSchedule.Event) {
+		switch schedule.apply(event) {
+			case .nothing:
+				break
+			case let .startTimer(delay):
+				timer?.cancel()
+				timer = Task {
+					try? await Task.sleep(for: delay)
+					guard !Task.isCancelled else { return }
+					handle(.timerFired)
+				}
+			case .cancelTimer:
+				cancelTimer()
+			case .run:
+				cancelTimer()
+				startSyncing()
+		}
+	}
+
+	private func cancelTimer() {
+		timer?.cancel()
+		timer = nil
+	}
+
+	private func startSyncing() {
+		// Dropped, as when signed out. What's pending stays in the replica for the next sync.
+		guard canSync else {
+			handle(.succeeded)
 			return
 		}
 
 		let generation = generation
 		syncing = Task {
-			await syncUntilDone()
+			let ending = await syncUntilDone()
 			// Stopped meanwhile, and maybe already replaced
 			guard generation == self.generation else { return }
 			syncing = nil
-			if syncAgain {
-				syncAgain = false
-				sync()
+			switch ending {
+				case .finished:
+					outcome = .succeeded(.now)
+					handle(.succeeded)
+				case let .failed(error):
+					// The client reports an unreachable server as `providerUnavailable`, and sync never runs a provider
+					outcome = .failed(error.message, unreachable: error.code == .providerUnavailable)
+					handle(.failed)
+				case .abandoned:
+					handle(.succeeded)
 			}
 		}
 	}
 
-	private func syncUntilDone() async {
+	private enum Ending {
+		case finished
+		case failed(ServiceError)
+		/// Signed out, or stopped. Neither a success nor a failure.
+		case abandoned
+	}
+
+	private func syncUntilDone() async -> Ending {
 		let generation = generation
 		var recovered: Set<ServiceError.Code> = []
-		status = .syncing
 
 		// Each round trip either has more to pull or more to push, so this ends; the cap is only a guard
 		for _ in 0 ..< 100 {
 			guard let client = account.syncClient else {
+				// The Keychain couldn't be read, which says nothing about the token
+				if account.syncTokenUnavailable {
+					return .failed(TranslationAccount.keychainUnavailable)
+				}
 				// Signed in without a token, after restoring a backup without the Keychain
 				account.forgetSignIn()
 				accountChanged()
-				return
+				return .abandoned
 			}
 			// Typing that's waiting for its save goes in this request
 			boardStore.save()
@@ -499,7 +560,7 @@ final class SyncController {
 
 			do {
 				let response = try await client.sync(request)
-				guard generation == self.generation else { return }
+				guard generation == self.generation else { return .abandoned }
 
 				// Records typing from during the request first, so a remote edit that beats it becomes a copy
 				boardStore.save()
@@ -508,10 +569,10 @@ final class SyncController {
 				write(applied, pullComplete: !response.more)
 				saveReplica()
 				if !applied.syncAgain {
-					break
+					return .finished
 				}
 			} catch let error as ServiceError {
-				guard generation == self.generation else { return }
+				guard generation == self.generation else { return .abandoned }
 				switch error.code {
 					case .syncResetRequired where recovered.insert(error.code).inserted:
 						replica.reset()
@@ -523,58 +584,30 @@ final class SyncController {
 					case .unauthorized:
 						account.forgetToken()
 						accountChanged()
-						return
+						return .abandoned
 					case .signInRequired:
 						account.forgetSignIn()
 						accountChanged()
-						return
+						return .abandoned
 					default:
-						fail(error)
-						return
+						return .failed(error)
 				}
 			} catch {
 				// Cancelled by `stop()`, which moves the generation on
-				guard generation == self.generation else { return }
-				fail(ServiceError(code: .internalError, message: error.localizedDescription))
-				return
+				guard generation == self.generation else { return .abandoned }
+				return .failed(ServiceError(code: .internalError, message: error.localizedDescription))
 			}
 		}
 
-		status = .upToDate(.now)
-	}
-
-	// MARK: - Failures
-
-	@ObservationIgnored private var failures = 0
-	@ObservationIgnored private var retry: Task<Void, Never>?
-
-	private func fail(_ error: ServiceError) {
-		// The client reports an unreachable server as `providerUnavailable`, and sync never runs a provider
-		status = error.code == .providerUnavailable || !isOnline ? .waitingForNetwork : .failed(error.message)
-
-		failures += 1
-		retry = Task {
-			try? await Task.sleep(for: Self.backoff(failures))
-			guard !Task.isCancelled else { return }
-			retry = nil
-			sync()
-		}
-	}
-
-	/// 2, 4, 8 … seconds, up to 5 minutes
-	static func backoff(_ failures: Int) -> Duration {
-		.seconds(min(2 << min(max(failures - 1, 0), 8), 300))
+		return .failed(ServiceError(code: .internalError, message: "Expected sync to finish within 100 requests"))
 	}
 
 	/// Stops everything in flight, and drops replies that are still on their way
 	private func stop() {
+		handle(.stopped)
 		generation += 1
 		syncing?.cancel()
 		syncing = nil
-		syncAgain = false
-		debounce?.cancel()
-		retry?.cancel()
-		retry = nil
 		stopListening()
 	}
 
@@ -612,7 +645,7 @@ final class SyncController {
 
 	/// Only while active: a closed app hears about changes when it opens
 	private func startListening() {
-		guard listening == nil, isActive, isSignedIn, isReady, !isLeaving else { return }
+		guard listening == nil, isActive, canSync else { return }
 		listening = Task {
 			await listen()
 		}
@@ -645,7 +678,7 @@ final class SyncController {
 
 			// A socket that stayed up a while was fine; one that keeps dropping straight away backs off
 			drops = Date.now.timeIntervalSince(opened) > 60 ? 1 : drops + 1
-			try? await Task.sleep(for: Self.backoff(drops))
+			try? await Task.sleep(for: SyncSchedule.backoff(drops))
 			guard !Task.isCancelled else { return }
 
 			// Whatever was pushed while it was down
@@ -666,7 +699,23 @@ extension SyncController {
 			signedIn: signedIn ? SignedInAccount(server: ServerEnvironment.productionURL, id: UUID(), email: email) : nil
 		)
 		let sync = SyncController(account: account, boardStore: BoardStore(), catalog: CatalogStore())
-		sync.status = status
+		sync.seed(status)
 		return sync
+	}
+
+	/// Shows `status` without syncing
+	private func seed(_ status: Status) {
+		switch status {
+			case .notSynced:
+				break
+			case .syncing:
+				_ = schedule.apply(.requested)
+			case let .upToDate(date):
+				outcome = .succeeded(date)
+			case .waitingForNetwork:
+				outcome = .failed("", unreachable: true)
+			case let .failed(message):
+				outcome = .failed(message, unreachable: false)
+		}
 	}
 }

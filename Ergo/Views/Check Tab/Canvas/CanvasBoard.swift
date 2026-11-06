@@ -102,24 +102,16 @@ struct CanvasBoard: UIViewRepresentable {
 		}
 	}
 
-	/// Hosted content pulls itself out of whatever safe area its view overlaps, which would slide a box around inside its
-	/// own frame under the bars, so both kinds ignore it. Where things go on the canvas is `CanvasBoardView`'s business.
-	private func boxContent(_ model: CanvasBoxModel, isNew: Bool) -> any UIContentConfiguration {
-		UIHostingConfiguration {
+	private func boxContent(_ model: CanvasBoxModel, isNew: Bool) -> AnyView {
+		AnyView(
 			CanvasBox(model: model, actions: actions(model.statement))
 				.modifier(BoxEntrance(isNew: isNew))
 				.environment(catalog)
 				.fontDesign(.rounded)
-				.ignoresSafeArea()
-		}
-		.margins(.all, 0)
+		)
 	}
 
-	private func handleContent(pointsUp: Bool) -> any UIContentConfiguration {
-		UIHostingConfiguration {
-			CanvasConnectHandle(pointsUp: pointsUp)
-				.ignoresSafeArea()
-		}
-		.margins(.all, 0)
+	private func handleContent(pointsUp: Bool) -> AnyView {
+		AnyView(CanvasConnectHandle(pointsUp: pointsUp))
 	}
 }

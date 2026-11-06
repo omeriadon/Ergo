@@ -4,6 +4,8 @@ Where the product is heading. Nothing here is built or scheduled, and no code ch
 
 **Decided** means Adon has settled it. **Proposed** means it's on the table but not agreed.
 
+**Decided:** until v1, migrations and existing data are not a constraint. Don't let them limit any idea here.
+
 ## The tabs
 
 **Decided:** Board, Logic, Ask, Library.
@@ -19,7 +21,7 @@ A More tab is only for the distant future, if the app ever gets past four or fiv
 
 ## Board
 
-You paste in links, blocks of text and documents. They become arguments, diagrammed on the board.
+You paste in links, blocks of text and documents. They become arguments, diagrammed on the board. Those pieces of material sit on the board themselves, and the model or the user turns them into premises and analyses them.
 
 - Cards are claims, and arrows show inferential strength.
 - The conclusion gets extra analysis of its cogency.
@@ -34,9 +36,17 @@ You paste in links, blocks of text and documents. They become arguments, diagram
 - No canvas. It's a split view, English on one side and logic on the other.
 - The Board does not formalise cards or use logic to back its arrows. Real-world articles argue from evidence, analogy and best explanation, so very few of them would benefit from formal logic.
 
-**Open:**
-- `Statement` holds both a claim's English and its logic today. Once logic leaves the Board, what does a Logic tab document look like, and how does it sync?
-- What happens to logic already saved on existing canvas pages?
+**Open:** `Statement` holds both a claim's English and its logic today. Once logic leaves the Board, is the Logic tab a list of saved conversions, or one scratchpad?
+
+## Text into cards
+
+**Decided:** Edit as Text goes away. Turning a block of text into cards is Break Down's job, and writing logic is the Logic tab's. The sheet is removed from the app.
+
+`ArgumentText` and its related types in ErgoKit are still there, with no callers outside ErgoKit and its tests. The argument checks don't depend on them.
+
+**Proposed:** Break Down also adds to an existing board, not only a new one, because pasting more material into a board is the core of the Board's future. `ArgumentBreakdown.applied(to:replacing:)` already takes a `replacing` flag, though every caller passes `true` today. Adding never edits or deletes existing cards.
+
+Accepted cost: pasting a whole argument into cards now needs AI, and without it cards are added one at a time.
 
 ## AI grounding
 
@@ -55,11 +65,12 @@ Limits to design around:
 **Decided:**
 - AI features, Ask included, need an account, even though the user brings their own model login. Anonymous use is at most the non-AI parts of the app.
 - The model never gets fewer tools or less data because someone hasn't signed in, since everyone reaching it has an account.
-- Usage gets logged for analytics.
+- The app pushes its pending sync changes before starting an AI request, so the server's tools don't read a copy that's behind the device.
+- Analytics logs events, not content. It answers how much each feature is used, which capabilities get used, and the spread from heavy to light users, and it can tie logged errors back to what happened.
 
-**Proposed:** the app pushes its pending sync changes before starting an AI request, so the server's tools don't read a copy that's behind the device.
-
-**Open:** what analytics includes. Event and usage metadata is simple. Pasted documents and chat content are much more sensitive, and logging them would need clear disclosure, matching App Store privacy labels, and removal on account deletion.
+**Proposed:**
+- Events and errors share a random analytics ID rather than the account's identity, and it's removed on account deletion.
+- Error logs get checked for content, since an error message or CLI output could quote what the user pasted. Otherwise content reaches analytics through the back door.
 
 ## Tools
 
@@ -78,8 +89,10 @@ Limits to design around:
 
 **Decided:** responses are nicely structured markdown by default, with inline links to library items and buttons at the end. Both CLIs' models are capable of following this.
 
+**Decided:** an inline library link is not a separate system. It's the same invocation as `OpenLibraryEntryIntent`, an intent and its parameters. Links and buttons are one concept with two appearances.
+
 **Proposed:**
-- Library links are ordinary markdown links with a custom URL, such as `ergo://library/fallacies/a-priori-argument`. The app has no URL scheme yet.
+- Markdown has to carry a link as a URL, so that URL only encodes the intent and its parameters. The chat view intercepts it with an `OpenURLAction` and runs the intent. No registered URL scheme or deep link handling is needed.
 - Buttons come from an MCP tool such as `suggest_action(intent, parameters)`, not from a block of JSON in the text. The tool's schema validates them, and the text stays pure markdown while it streams.
 - The server still checks what comes back, because a capable model can still invent an ID. A link to an unknown entry becomes plain text, and an action outside the list is dropped.
 
@@ -87,26 +100,22 @@ Limits to design around:
 
 Today `ProtocolVersionMiddleware` requires an exact match with `ErgoProtocol.version`, and otherwise returns `outdatedApp`. So any bump cuts off every older app at that moment.
 
-**Decided:** spend longer getting the API right up front, so that when a new version is needed, adding one is fine. Don't bump it for every change.
+**Decided:**
+- Spend longer getting the API right up front, so that when a new version is needed, adding one is fine. Don't bump it for every change.
+- Old apps ignore what they don't recognise. Response blocks, button kinds and similar types decode to an `unknown` case instead of failing, so a new block type doesn't need a version.
+- The server checks a minimum supported version instead of an exact match. That leaves room for one version of overlap, and retiring an old version is a deliberate choice.
 
 **Proposed:**
 - Additions don't bump the version: new optional fields, new endpoints and new block types. Only breaking changes do.
-- Old apps ignore what they don't recognise. Response blocks, button kinds and similar types decode to an `unknown` case instead of failing, so a new block type doesn't need a version.
-- The server checks a minimum supported version instead of an exact match. That leaves room for one version of overlap, and retiring an old version is a deliberate choice.
 - `outdatedApp` becomes the friendly "please update to keep using cloud features" message.
 
 ## Catalog versions
 
-**Adon's starting idea, not final:** nag users to update, keep only the current and previous catalogs on the server, and show a clear update message past that.
+**Decided:** the catalog ships inside the app, and a new catalog goes out as an app update. There is no download from the server.
 
-**Proposed instead:** remove most of the mismatch, and keep the update message as the backstop.
+**Adon's leaning, not final:** the server keeps the newest catalog plus the previous one, and older apps get the "please update" message.
 
-1. **IDs are permanent.** Entries can be added and edited, but an ID is never renamed or removed. A replaced entry keeps its old ID as an alias. Bookmarks and old citations rely on this too.
-2. **The app downloads the catalog.** It ships with a bundled copy, so the Library always works offline, and fetches the newest one from something like `GET /v1/catalog` when it changes.
-3. **The catalog gets a schema version** that only changes when the shape of an entry changes. That's the only case that needs an app update.
-
-Fixing a typo or adding a fallacy then never needs an App Store release, and the server only keeps one catalog. An ordinary sync of the catalog closes the window in which the model could cite an entry the app doesn't have.
-
-**Open:**
-- Are the library's views ready for content changing after release?
-- `LogicFallacyForm` IDs have to match `fallacies.json`, so what happens when a downloaded catalog is newer than the app's code? Permanent IDs should cover it, but it needs checking.
+**Proposed:**
+- IDs are permanent. Entries can be added and edited, but an ID is never renamed or removed, so an older app only ever lacks new entries. Bookmarks rely on this too.
+- The app sends its catalog version with AI requests, and the server only offers the model entries that version has. Then the model can't cite something the app can't open.
+- The server's catalog updates only once the matching app release is live, not before.

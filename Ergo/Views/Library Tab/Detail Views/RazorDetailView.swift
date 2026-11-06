@@ -19,6 +19,7 @@ struct RazorDetailView: View {
 	@Default(.bookmarks) var bookmarks
 
 	@State private var hasScrolled = false
+	@State private var isOpening = true
 
 	var body: some View {
 		ZStack {

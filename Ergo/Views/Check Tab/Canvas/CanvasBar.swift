@@ -81,7 +81,7 @@ struct CanvasBar: View {
 
 // MARK: - Notice
 
-/// Why something was refused, in the validator's own words, until it's dismissed or a few seconds pass
+/// Why something was refused, until it's dismissed or a few seconds pass
 struct CanvasNoticeView: View {
 	let message: String
 	let dismiss: () -> Void

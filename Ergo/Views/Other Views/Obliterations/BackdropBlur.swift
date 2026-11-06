@@ -135,6 +135,17 @@ private final class BackdropBlurUIView: UIVisualEffectView {
 		super.init(effect: UIBlurEffect(style: .regular))
 		isUserInteractionEnabled = false
 		apply()
+		// UIKit rebuilds the effect's tint when the app returns to the foreground.
+		NotificationCenter.default.addObserver(
+			self, selector: #selector(reapply),
+			name: UIApplication.didBecomeActiveNotification, object: nil
+		)
+	}
+
+	@objc private func reapply() {
+		apply()
+		// UIKit may still be restoring the effect, so check again once it's done.
+		DispatchQueue.main.async { [weak self] in self?.apply() }
 	}
 
 	@available(*, unavailable)
@@ -166,6 +177,7 @@ private final class BackdropBlurUIView: UIVisualEffectView {
 		if let filter, let backdrop = BackdropBlurFilter.backdrop(of: self), backdrop.layer.filters?.first as? NSObject !== filter {
 			backdrop.layer.filters = [filter]
 		}
+		hideTint()
 	}
 
 	/// A layer doesn't reliably see changes to a filter it already has, so any change makes a new one.
@@ -179,9 +191,16 @@ private final class BackdropBlurUIView: UIVisualEffectView {
 		}
 		self.filter = filter
 		backdrop.layer.filters = [filter]
-		// `.regular`'s tint sits above the backdrop; hide it for a pure blur.
+		hideTint()
+	}
+
+	/// `.regular`'s tint sits above the backdrop; hide it for a pure blur. UIKit puts it back at times, so this is repeated.
+	private func hideTint() {
+		guard filter != nil else { return }
+		let backdrop = BackdropBlurFilter.backdrop(of: self)
 		for subview in subviews where subview !== backdrop {
 			subview.alpha = 0
+			subview.isHidden = true
 		}
 	}
 }

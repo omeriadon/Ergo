@@ -162,7 +162,7 @@ final class BoardStore {
 	// MARK: - links
 
 	/// Draws an arrow from `premise` to `conclusion`. Nothing is added when it would be wrong (the same arrow twice,
-	/// a statement to itself, a loop), and the reason comes back; its `message` is worded for showing.
+	/// a statement to itself, a loop), and the reason comes back.
 	@discardableResult
 	func link(premise: Statement.ID, conclusion: Statement.ID) -> ArgumentMapProblem? {
 		var board = current
@@ -191,48 +191,6 @@ final class BoardStore {
 		guard map.statements != board.statements else { return }
 		board.map = map
 		current = board
-	}
-
-	// MARK: - text
-
-	/// Edits the whole board as text, one statement a line: `ArgumentText.apply`. Lines that didn't change keep their
-	/// statement, position and links. New ones are added and linked as premises of the conclusion, removed ones are deleted.
-	///
-	/// A statement the text edited gets `source` for the kind written, loses its translation, and for logic gets its
-	/// English written back when the logic parses, as in the editor. Nothing changes when it throws.
-	@discardableResult
-	func applyText(_ text: String, kind: ArgumentTextKind) throws(ArgumentTextProblem) -> ArgumentTextChange<Statement, Link> {
-		var board = current
-		let letters = LogicLetters.resolved(Defaults[.logicLetters])
-		var change = try ArgumentText.apply(text: text, kind: kind, letters: letters, to: board.map)
-
-		for index in change.map.statements.indices {
-			let id = change.map.statements[index].id
-			guard change.added.contains(id) || change.edited.contains(id) else { continue }
-
-			change.map.statements[index].translation = nil
-			switch kind {
-				case .english:
-					change.map.statements[index].source = .english
-				case .logic:
-					change.map.statements[index].source = .logic
-					if let english = Self.english(of: change.map.statements[index].logic, letters: letters, descriptors: board.descriptors) {
-						change.map.statements[index].english = english
-					}
-			}
-		}
-
-		board.map = change.map
-		current = board
-		return change
-	}
-
-	/// The English for logic that parses cleanly, nil for logic that's empty or half written
-	private static func english(of logic: [LogicKeyboardEntry], letters: [String], descriptors: [String]) -> String? {
-		guard !logic.isEmpty else { return nil }
-		let parse = LogicParser.parse(logic)
-		guard parse.diagnostics.isEmpty else { return nil }
-		return LogicEnglish.text(for: parse.argument, letters: letters, descriptors: descriptors)
 	}
 
 	// MARK: - checking

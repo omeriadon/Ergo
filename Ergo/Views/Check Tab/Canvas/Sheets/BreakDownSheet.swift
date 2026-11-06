@@ -28,25 +28,14 @@ struct BreakDownSheet: View {
 	@State private var english = ""
 	@FocusState private var englishFocused: Bool
 
-	@State private var translating: Task<Void, Never>?
-
-	/// Nil when not breaking down
-	@State private var progress: TranslationProgress?
-
-	/// English that never reached the server, worded like a translation issue
-	@State private var validation: String?
-
-	/// The server couldn't break it down
-	@State private var error: ServiceError?
-
-	/// What the server found. Nil until it has, and again when you go back to edit the text.
-	@State private var breakdown: ArgumentBreakdown?
+	/// Finished holds what the server found, until you go back to edit the text
+	@State private var run = TranslationRun<ArgumentBreakdown>.idle
 
 	init() {}
 
 	/// A breakdown with nothing in it only has issues to show, so the text stays editable
 	private var found: ArgumentBreakdown? {
-		guard let breakdown, !breakdown.premises.isEmpty || !breakdown.conclusion.isEmpty else { return nil }
+		guard let breakdown = run.output, !breakdown.premises.isEmpty || !breakdown.conclusion.isEmpty else { return nil }
 		return breakdown
 	}
 
@@ -74,7 +63,7 @@ struct BreakDownSheet: View {
 		.presentationDetents([.large])
 		.presentationDragIndicator(.visible)
 		// A result is worth a model call, so swiping the sheet away doesn't throw it out. Cancel does.
-		.interactiveDismissDisabled(translating != nil || found != nil)
+		.interactiveDismissDisabled(run.isRunning || found != nil)
 		.onDisappear(perform: stop)
 	}
 
@@ -104,19 +93,17 @@ struct BreakDownSheet: View {
 			.glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 20))
 
 			BreakDownStatusView(
-				validation: validation,
-				error: error?.message,
+				error: run.failure?.message,
 				setUp: setUp,
-				issues: breakdown?.issues ?? [],
-				progress: progress,
+				issues: run.output?.issues ?? [],
+				progress: run.progress,
 				canBreakDown: canBreakDown,
 				breakDown: startBreakDown,
 				stop: stop
 			)
 		}
 		.padding(15)
-		.animation(.smooth, value: error)
-		.animation(.smooth, value: validation)
+		.animation(.smooth, value: run.failure)
 	}
 
 	@ToolbarContentBuilder
@@ -129,10 +116,10 @@ struct BreakDownSheet: View {
 			.accessibilityIdentifier("check.breakDown.cancel")
 		}
 
-		if let found {
+		if found != nil {
 			ToolbarItem(placement: .topBarLeading) {
 				Button("Edit Text", systemImage: "pencil") {
-					breakdown = nil
+					run = .idle
 				}
 				.accessibilityIdentifier("check.breakDown.editText")
 			}
@@ -156,7 +143,7 @@ struct BreakDownSheet: View {
 
 	/// Only for errors fixed by connecting a provider in Settings
 	private var setUp: (() -> Void)? {
-		switch error?.code {
+		switch run.failure?.code {
 			case .notConnected, .credentialRejected:
 				openSettings
 			default:
@@ -171,47 +158,38 @@ struct BreakDownSheet: View {
 	// MARK: - Breaking down
 
 	private func startBreakDown() {
-		error = nil
-		validation = nil
-		breakdown = nil
+		run = .idle
 		englishFocused = false
 
 		let english = english
 		// Obviously bad input never reaches the server, and reads like any other translation issue
 		if let problem = EnglishValidator.problem(with: english) {
-			validation = problem
+			run = .failed(ServiceError(code: .invalidRequest, message: problem))
 			return
 		}
 
-		progress = TranslationProgress()
-
-		translating = Task {
+		let task = Task {
 			do {
 				let result = try await account.breakDown(english: english, descriptors: LogicLetters.emptyDescriptors) { event in
 					guard !Task.isCancelled else { return }
-					progress?.apply(event)
+					run.apply(event)
 				}
 				guard !Task.isCancelled else { return }
-				finish()
-				breakdown = result
+				run = .finished(result)
 			} catch {
 				guard !Task.isCancelled, !(error is CancellationError) else { return }
-				finish()
-				self.error = error as? ServiceError
-					?? ServiceError(code: .internalError, message: error.localizedDescription)
+				run = .failed(
+					error as? ServiceError
+						?? ServiceError(code: .internalError, message: error.localizedDescription)
+				)
 			}
 		}
+		run = .running(TranslationProgress(), task)
 	}
 
 	/// Closing the socket makes the server stop too
 	private func stop() {
-		translating?.cancel()
-		finish()
-	}
-
-	private func finish() {
-		translating = nil
-		progress = nil
+		run.cancel()
 	}
 
 	// MARK: - Creating
@@ -228,7 +206,6 @@ struct BreakDownSheet: View {
 
 /// Under the text: how the breakdown is going, what went wrong, and the button to start or stop it
 private struct BreakDownStatusView: View {
-	let validation: String?
 	let error: String?
 
 	/// Shown with the error when it's fixed in Settings, like a provider that isn't connected
@@ -247,10 +224,6 @@ private struct BreakDownStatusView: View {
 		VStack(alignment: .leading, spacing: 10) {
 			if let progress {
 				ProgressRow(progress: progress)
-			}
-
-			if let validation {
-				MessageRow(symbol: "xmark.circle.fill", color: .red, title: validation)
 			}
 
 			if let error {

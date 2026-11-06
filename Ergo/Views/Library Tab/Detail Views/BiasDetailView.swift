@@ -19,6 +19,7 @@ struct BiasDetailView: View {
 	@Default(.bookmarks) var bookmarks
 
 	@State private var hasScrolled = false
+	@State private var isOpening = true
 
 	var body: some View {
 		ZStack {
@@ -33,6 +34,18 @@ struct BiasDetailView: View {
 				.ignoresSafeArea()
 
 			if let bias = catalog.biases.biases.first(where: { $0.id == id }) {
+				// Derive indices dynamically so they shift cleanly if something is missing
+				let hasEvidenceNote = bias.evidenceNote?.isEmpty == false
+				let hasCounters = !bias.counters.isEmpty
+
+				let evidenceNoteIndex = 3
+				let countersIndex = evidenceNoteIndex + (hasEvidenceNote ? 1 : 0)
+				let examplesIndex = countersIndex + (hasCounters ? 1 : 0)
+				let limitationsIndex = examplesIndex + 1
+				let lookalikesIndex = limitationsIndex + 1
+				let relatedIndex = lookalikesIndex + 1
+				let tagsIndex = relatedIndex + 1
+
 				ScrollView {
 					LazyVStack(alignment: .leading) {
 						AliasTitle(name: bias.name, aliases: bias.aliases)
@@ -43,6 +56,7 @@ struct BiasDetailView: View {
 						Text(bias.summary)
 							.textSelection(.enabled)
 							.lineLimit(10)
+							.bounceOnAppear(after: 1)
 
 						Text(bias.body)
 							.padding(12)
@@ -50,10 +64,12 @@ struct BiasDetailView: View {
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
+							.bounceOnAppear(after: 2)
 
 						if let evidenceNote = bias.evidenceNote, !evidenceNote.isEmpty {
 							NotesSection(list: [evidenceNote], title: "Evidence Note")
 								.padding(.top)
+								.bounceOnAppear(after: evidenceNoteIndex)
 						}
 
 						if !bias.counters.isEmpty {
@@ -72,19 +88,24 @@ struct BiasDetailView: View {
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
+							.bounceOnAppear(after: countersIndex)
 						}
 
 						ExamplesSection(list: bias.examples)
 							.padding(.top)
+							.bounceOnAppear(after: examplesIndex)
 
 						NotesSection(list: bias.limitations)
 							.padding(.top)
+							.bounceOnAppear(after: limitationsIndex)
 
 						LookalikeSection(list: bias.lookalikes)
 							.padding(.top)
+							.bounceOnAppear(after: lookalikesIndex)
 
 						RelatedSection(list: bias.related)
 							.padding(.top)
+							.bounceOnAppear(after: relatedIndex)
 
 						TagSection(list: bias.tags.map { tag in
 							CatalogTag(
@@ -94,12 +115,18 @@ struct BiasDetailView: View {
 							)
 						})
 						.padding(.top)
+						.bounceOnAppear(after: tagsIndex)
 
 						Spacer()
 							.frame(height: 40)
 					}
 					.padding(.horizontal)
 					.frame(maxWidth: .infinity, alignment: .leading)
+					.environment(\.isOpeningDetail, isOpening)
+				}
+				.task {
+					try? await Task.sleep(for: .milliseconds(200))
+					isOpening = false
 				}
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(bias.name.capitalized)

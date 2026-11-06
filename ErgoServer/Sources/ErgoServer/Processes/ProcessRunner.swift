@@ -138,13 +138,14 @@ final class ProcessRunner: Sendable {
 		try await slots.acquire()
 		defer { slots.release() }
 
-		if let owner {
-			try directory.handOver(to: owner)
-		}
+		// Registered before the handover, so one that fails partway still gives the directory back
 		defer {
 			if owner != nil {
 				directory.takeBack()
 			}
+		}
+		if let owner {
+			try directory.handOver(to: owner)
 		}
 
 		return try await body()
