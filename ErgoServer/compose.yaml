@@ -1,0 +1,57 @@
+# Ergo's translation server.
+#
+#   docker compose up -d --build
+#   docker compose logs -f ergo-server
+#   docker compose down        # keeps the data volume; add --volumes to wipe it
+#
+# Run one instance only: the sync socket's broadcaster is in memory and the database is SQLite.
+
+services:
+  # Makes the vault key in the data volume the first time, then exits. It never overwrites an existing key.
+  vault-key:
+    image: ergo-server:latest
+    build:
+      context: ..
+      dockerfile: ErgoServer/Dockerfile
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        if [ ! -f /data/vault.key ]; then
+          head -c 32 /dev/urandom | base64 > /data/vault.key
+          chown ergo:ergo /data/vault.key
+          chmod 600 /data/vault.key
+        fi
+    user: root
+    volumes:
+      - ergo-data:/data
+    restart: "no"
+
+  ergo-server:
+    image: ergo-server:latest
+    depends_on:
+      vault-key:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    volumes:
+      - ergo-data:/data
+    environment:
+      # The audience Sign in with Apple tokens must have
+      ERGO_APPLE_APP_ID: ${ERGO_APPLE_APP_ID:-com.omeriadon.Ergo}
+      ERGO_MAX_PROCESSES: ${ERGO_MAX_PROCESSES:-8}
+      ERGO_STAGE_TIMEOUT: ${ERGO_STAGE_TIMEOUT:-120}
+      # Set to 1 only behind a proxy on this machine, and never when the port is reachable without it
+      ERGO_TRUST_PROXY: ${ERGO_TRUST_PROXY:-0}
+    # The entrypoint starts as root and drops itself with setpriv, which needs these to do it (setpcap to shrink
+    # the bounding set, setuid and setgid to switch users, chown for the run directories). Nothing else is kept.
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETPCAP
+      - SETUID
+      - SETGID
+      - CHOWN
+    restart: unless-stopped
+
+volumes:
+  ergo-data:

@@ -48,6 +48,7 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -destination 'generic/platform=i
 - A Check tab page (`LogicPage`, in `PageStore`, persisted with Defaults) is a canvas: `statements` joined by `links` ("premise of"). It always holds at least one statement. Letters are app-wide, descriptors are per page and shared by every statement, which is what makes `P` in two boxes the same claim.
 - A `Statement` owns one claim's English, logic, `source`, `translation` and canvas `position` (the box's centre). `StatementEditorView` edits one statement of the current page, through `PageStore`.
 - `PageStore` is how statements and links change (add, update, move, delete, link, unlink, arrange, apply text). `LogicPage.map` is the `ArgumentMap` that ErgoLogic's validator, layout, text and checks take.
+- The canvas moves in UIKit (`CanvasBoardView`: pan, pinch, inertia, dragging, arrows), so nothing goes through SwiftUI while it moves. What a box looks like is SwiftUI (`StatementBoxView`), hosted per box, and the bars are SwiftUI (`CanvasBar`). Hosted boxes get no environment from the app: pass anything new in `CanvasBoard.boxContent`. Nothing on the canvas may be laid out from a measured size.
 - `Statement`, `Link`, `Translation`, `TranslationIssue` and `LogicKeyboardEntry` are saved in users' Defaults as synthesized Codable, and statements are also what sync records hold. Never rename their cases or stored properties. `LogicPage` itself is not frozen yet, only the statement inside it.
 
 ## Translation

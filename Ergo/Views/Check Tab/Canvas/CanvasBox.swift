@@ -10,10 +10,8 @@ import SwiftUI
 
 /// What a box can do, handed in by the canvas so the box doesn't know about the page or selection
 struct BoxActions {
-	/// Select it, or finish an arrow when connecting
 	var select: () -> Void
 	var edit: () -> Void
-	var connect: () -> Void
 	var delete: () -> Void
 
 	/// Nil without a verdict to show
@@ -23,26 +21,30 @@ struct BoxActions {
 	var nudge: (_ columns: Int, _ rows: Int) -> Void
 }
 
-/// A statement's box with everything the canvas needs around it: its place, gestures, the zoom transition's source
-/// and VoiceOver. Dragging reports in the canvas's own coordinate space, because the box itself moves.
+/// A statement's box with its taps and VoiceOver. Moving it is done around it by `CanvasBoardView`.
 struct CanvasBox: View {
-	let statement: Statement
-	let letters: [String]
-	let descriptors: [String]
-	let relations: BoxRelations
-	let verdict: BoxVerdict?
-	let appearance: BoxAppearance
-	let isDragging: Bool
-
-	/// Where the centre of the box is right now
-	let position: CanvasPoint
-
-	let zoomNamespace: Namespace.ID
+	let model: CanvasBoxModel
 	let actions: BoxActions
 
-	/// Translation so far in screen points, from the start of the drag
-	let dragChanged: (CGSize) -> Void
-	let dragEnded: (CGSize) -> Void
+	private var statement: Statement {
+		model.statement
+	}
+
+	private var letters: [String] {
+		model.letters
+	}
+
+	private var relations: BoxRelations {
+		model.relations
+	}
+
+	private var verdict: BoxVerdict? {
+		model.verdict
+	}
+
+	private var appearance: BoxAppearance {
+		model.appearance
+	}
 
 	@Environment(CatalogStore.self)
 	private var catalog
@@ -52,33 +54,21 @@ struct CanvasBox: View {
 			.modifier(BoxActionsModifier(actions: actions))
 			.modifier(BoxSpeech(text: spokenText, summary: spokenSummary, appearance: appearance, id: statement.id))
 			.modifier(BoxMovesModifier(nudge: actions.nudge))
-			// After the accessibility modifiers, so VoiceOver's frame is the box and not the whole canvas that `position` fills
-			.position(x: position.x, y: position.y)
 	}
 
 	private var box: some View {
 		StatementBoxView(
 			statement: statement,
 			letters: letters,
-			descriptors: descriptors,
+			descriptors: model.descriptors,
 			relations: relations,
 			verdict: verdict,
 			appearance: appearance,
 			showCheck: { actions.showCheck?() }
 		)
 		.equatable()
-		.shadow(color: .black.opacity(isDragging ? 0.3 : 0), radius: 12, y: 6)
-		.matchedTransitionSource(id: statement.id, in: zoomNamespace)
 		.onTapGesture(perform: actions.select)
 		.simultaneousGesture(TapGesture(count: 2).onEnded(actions.edit))
-		.gesture(drag)
-	}
-
-	/// In the canvas's space, which holds still while the box moves under the finger
-	private var drag: some Gesture {
-		DragGesture(minimumDistance: 6, coordinateSpace: .named(CanvasCoordinateSpace.name))
-			.onChanged { dragChanged($0.translation) }
-			.onEnded { dragEnded($0.translation) }
 	}
 
 	// MARK: - Reading aloud
@@ -141,7 +131,6 @@ private struct BoxActionsModifier: ViewModifier {
 		content
 			.accessibilityAction(.default, actions.select)
 			.accessibilityAction(named: Text("Edit"), actions.edit)
-			.accessibilityAction(named: Text("Connect to…"), actions.connect)
 			.accessibilityAction(named: Text("Delete"), actions.delete)
 			.accessibilityAction(named: Text("Show check"), showCheck)
 	}

@@ -12,17 +12,12 @@ enum CanvasBarMode: Equatable {
 	case idle
 	case statement
 	case link
-
-	/// Drawing an arrow from the statement with this title
-	case connecting(String)
 }
 
 struct CanvasBarActions {
 	var add: () -> Void
 	var edit: () -> Void
-	var connect: () -> Void
 	var delete: () -> Void
-	var cancel: () -> Void
 }
 
 /// The glass bar above the tab bar
@@ -42,14 +37,10 @@ struct CanvasBar: View {
 
 					case .statement:
 						barButton("Edit", symbol: "square.and.pencil", id: "edit", action: actions.edit)
-						barButton("Connect", symbol: "arrow.turn.down.right", id: "connect", action: actions.connect)
 						barButton("Delete", symbol: "trash", id: "delete", role: .destructive, action: actions.delete)
 
 					case .link:
 						barButton("Delete Arrow", symbol: "trash", id: "deleteLink", role: .destructive, action: actions.delete)
-
-					case let .connecting(title):
-						connectingHint(title)
 				}
 			}
 		}
@@ -72,28 +63,6 @@ struct CanvasBar: View {
 		.buttonStyle(.glass)
 		.tint(role == .destructive ? .red : nil)
 		.accessibilityIdentifier("check.bar.\(id)")
-	}
-
-	private func connectingHint(_ title: String) -> some View {
-		HStack(spacing: 12) {
-			VStack(alignment: .leading, spacing: 2) {
-				Text("Tap the conclusion")
-					.font(.subheadline.weight(.semibold))
-				Text("“\(title)” will be its premise")
-					.font(.caption)
-					.foregroundStyle(.secondary)
-					.lineLimit(1)
-			}
-
-			Button("Cancel", action: actions.cancel)
-				.buttonStyle(.glass)
-				.accessibilityIdentifier("check.bar.cancelConnect")
-		}
-		.padding(.leading, 16)
-		.padding(.trailing, 6)
-		.padding(.vertical, 6)
-		.glassEffect(.regular, in: Capsule())
-		.accessibilityElement(children: .contain)
 	}
 }
 

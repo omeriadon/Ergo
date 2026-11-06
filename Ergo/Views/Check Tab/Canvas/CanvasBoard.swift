@@ -8,105 +8,110 @@
 import ErgoLogic
 import SwiftUI
 
-/// The boxes and arrows of a page, in canvas units. A box being dragged is kept here, so each frame of a drag redraws
-/// only this view and not the canvas around it with its bars and toolbar. The page only hears about it when the finger lifts.
-struct CanvasBoard: View {
-	private struct BoxDrag {
-		let id: Statement.ID
-		let origin: CanvasPoint
-		let before: CanvasHistory.Snapshot?
-		var translation: CGSize
-	}
-
-	let page: LogicPage
+/// What one box shows. Compared before its SwiftUI is touched, so a box only redraws when this changes.
+struct CanvasBoxModel: Equatable {
+	let statement: Statement
 	let letters: [String]
-	let relations: [Statement.ID: BoxRelations]
-	let verdicts: [Statement.ID: BoxVerdict]
-	let selectedStatement: Statement.ID?
-	let selectedLink: Link.ID?
+	let descriptors: [String]
+	let relations: BoxRelations
+	let verdict: BoxVerdict?
+	let appearance: BoxAppearance
+}
 
-	/// Turns a finger's travel on screen into canvas units
-	let scale: CGFloat
-
-	let history: CanvasHistory
-	let zoomNamespace: Namespace.ID
-	let appearance: (Statement.ID) -> BoxAppearance
-	let actions: (Statement) -> BoxActions
-	let dragStarted: (Statement.ID) -> Void
-
-	/// The finger lifted, with where the box ended up and the page as it was before the drag
-	let moved: (Statement.ID, CanvasPoint, CanvasHistory.Snapshot?) -> Void
-
-	@State private var drag: BoxDrag?
-
-	/// Where each box is drawn: the page's position, or where its finger has taken it
-	private var positions: [Statement.ID: CanvasPoint] {
-		var positions = Dictionary(page.statements.map { ($0.id, $0.position) }, uniquingKeysWith: { first, _ in first })
-		if let drag {
-			positions[drag.id] = position(of: drag)
-		}
-		return positions
-	}
-
-	var body: some View {
-		let positions = positions
-
-		// Arrows first, so boxes sit on top
-		ZStack {
-			LinkLayer(links: page.links, positions: positions, selected: selectedLink)
-
-			ForEach(page.statements) { statement in
-				box(statement, at: positions[statement.id] ?? statement.position)
-					.zIndex(zIndex(of: statement.id))
-					.transition(.opacity)
+/// How SwiftUI reaches the pan and zoom, which live in `CanvasBoardView` so they never have to go through a SwiftUI update
+@MainActor
+final class CanvasBoardController {
+	var view: CanvasBoardView? {
+		didSet {
+			if let pending, let view {
+				view.move(to: pending, animation: nil)
+				self.pending = nil
 			}
 		}
 	}
 
-	private func box(_ statement: Statement, at position: CanvasPoint) -> some View {
-		CanvasBox(
-			statement: statement,
-			letters: letters,
-			descriptors: page.descriptors,
-			relations: relations[statement.id] ?? BoxRelations(),
-			verdict: verdicts[statement.id],
-			appearance: appearance(statement.id),
-			isDragging: drag?.id == statement.id,
-			position: position,
-			zoomNamespace: zoomNamespace,
-			actions: actions(statement),
-			dragChanged: { dragChanged(statement, $0) },
-			dragEnded: { dragEnded(statement.id, $0) }
-		)
+	/// A fit asked for before the view exists
+	private var pending: CanvasTransform?
+
+	var transform: CanvasTransform {
+		view?.canvasTransform ?? pending ?? CanvasTransform()
 	}
 
-	private func zIndex(of id: Statement.ID) -> Double {
-		if drag?.id == id {
-			return 2
-		}
-		return selectedStatement == id ? 1 : 0
+	/// Whether the person has panned or zoomed yet
+	var hasBeenMoved: Bool {
+		view?.hasBeenMoved ?? false
 	}
 
-	private func position(of drag: BoxDrag) -> CanvasPoint {
-		CanvasGrid.snapped(CanvasPoint(
-			x: drag.origin.x + drag.translation.width / scale,
-			y: drag.origin.y + drag.translation.height / scale
-		))
-	}
-
-	private func dragChanged(_ statement: Statement, _ translation: CGSize) {
-		if drag?.id == statement.id {
-			drag?.translation = translation
+	func move(to transform: CanvasTransform, animation: Animation?) {
+		if let view {
+			view.move(to: transform, animation: animation)
 		} else {
-			dragStarted(statement.id)
-			drag = BoxDrag(id: statement.id, origin: statement.position, before: history.snapshot(), translation: translation)
+			pending = transform
+		}
+	}
+}
+
+/// The page's boxes and arrows, with pan and zoom. `CanvasBoardView` does the moving in UIKit, and each box is
+/// still the SwiftUI `CanvasBox`, hosted on its own.
+struct CanvasBoard: UIViewRepresentable {
+	let boxes: [CanvasBoxModel]
+	let links: [Link]
+	let selectedStatement: Statement.ID?
+	let selectedLink: Link.ID?
+	let controller: CanvasBoardController
+
+	/// A hosted box has its own SwiftUI environment, so what it needs from the app's is passed in
+	let catalog: CatalogStore
+
+	let actions: (Statement) -> BoxActions
+	let dragStarted: (Statement.ID) -> Void
+	let moved: (Statement.ID, CanvasPoint) -> Void
+	let tapBackground: (CanvasPoint) -> Void
+	let connectStarted: (Statement.ID) -> Void
+	let connectTargetChanged: (Statement.ID?) -> Void
+	let connectEnded: (Statement.ID, Statement.ID?) -> Void
+
+	func makeUIView(context _: Context) -> CanvasBoardView {
+		let view = CanvasBoardView()
+		controller.view = view
+		return view
+	}
+
+	func updateUIView(_ view: CanvasBoardView, context: Context) {
+		view.dragStarted = dragStarted
+		view.moved = moved
+		view.tapBackground = tapBackground
+		view.connectStarted = connectStarted
+		view.connectTargetChanged = connectTargetChanged
+		view.connectEnded = connectEnded
+		view.boxContent = boxContent
+		view.handleContent = handleContent
+
+		let animated = context.transaction.animation != nil
+		context.animate {
+			view.update(
+				boxes: boxes,
+				links: links,
+				selectedStatement: selectedStatement,
+				selectedLink: selectedLink,
+				animated: animated
+			)
 		}
 	}
 
-	private func dragEnded(_ id: Statement.ID, _ translation: CGSize) {
-		guard var finished = drag, finished.id == id else { return }
-		finished.translation = translation
-		drag = nil
-		moved(id, position(of: finished), finished.before)
+	private func boxContent(_ model: CanvasBoxModel) -> any UIContentConfiguration {
+		UIHostingConfiguration {
+			CanvasBox(model: model, actions: actions(model.statement))
+				.environment(catalog)
+				.fontDesign(.rounded)
+		}
+		.margins(.all, 0)
+	}
+
+	private func handleContent(pointsUp: Bool) -> any UIContentConfiguration {
+		UIHostingConfiguration {
+			CanvasConnectHandle(pointsUp: pointsUp)
+		}
+		.margins(.all, 0)
 	}
 }

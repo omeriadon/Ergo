@@ -196,12 +196,7 @@ struct StatementEditorView: View {
 		}
 		.toolbar {
 			ToolbarItem(placement: .topBarTrailing) {
-				if focusedField == nil {
-					Button("Pages", systemImage: "text.page.and.line.vertical.and.text.page") {
-						navigation.presentSheet(.pages)
-					}
-					.accessibilityIdentifier("check.pagesButton")
-				} else {
+				if focusedField != nil {
 					Button(role: .confirm) {
 						englishFocused = false
 						focusedField = nil

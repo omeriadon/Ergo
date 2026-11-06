@@ -59,6 +59,11 @@ private nonisolated struct CanvasRoom: Equatable {
 /// with the selection. Everything is edited through `PageStore`; this view only holds what's on screen
 /// (pan, zoom, selection).
 struct CanvasView: View {
+	private struct ZoomSource {
+		let id: Statement.ID
+		let frame: CGRect
+	}
+
 	private enum Sheet: Identifiable {
 		case editAsText
 		case breakDown
@@ -96,14 +101,27 @@ struct CanvasView: View {
 	@Environment(\.undoManager)
 	private var undoManager
 
+	@Environment(CatalogStore.self)
+	private var catalog
+
 	@Default(.logicLetters) private var logicLetters
 
 	// What's on screen
-	@State private var transform = CanvasTransform()
+	@State private var board = CanvasBoardController()
 	@State private var room = CanvasRoom()
-	@State private var needsFit = true
+
+	/// Where the editor zooms out of. The box itself is hosted separately, out of reach of the zoom transition, so this
+	/// is an invisible stand-in over it.
+	@State private var zoomSource: ZoomSource?
+
+	/// The page as it was when a drag began, for its undo step
+	@State private var dragBefore: CanvasHistory.Snapshot?
+
 	@State private var selection: CanvasSelection?
+
+	/// An arrow being dragged out of this box, and the box it's over
 	@State private var connecting: Statement.ID?
+	@State private var connectTarget: Statement.ID?
 
 	// Messages, checks and sheets
 	@State private var notice: String?
@@ -150,7 +168,7 @@ struct CanvasView: View {
 		// Inside the inset, so the room it reads already has the bars taken off
 		.onGeometryChange(for: CanvasRoom.self, of: { CanvasRoom($0) }) { new in
 			room = new
-			fitFirstTime()
+			fitUntilMoved()
 		}
 		.safeAreaInset(edge: .bottom, spacing: 0) { bottomStack }
 		.toolbar { toolbar }
@@ -163,35 +181,48 @@ struct CanvasView: View {
 	// MARK: - Canvas
 
 	private var canvas: some View {
-		CanvasSurface(
-			transform: $transform,
-			tapBackground: backgroundTapped,
-			pinchedPastLimit: pinchedPastLimit
-		) {
-			canvasContent
+		let relations = boxRelations
+		let connectable = connectableStatements
+		let boxes = page.statements.map { statement in
+			CanvasBoxModel(
+				statement: statement,
+				letters: letters,
+				descriptors: page.descriptors,
+				relations: relations[statement.id] ?? BoxRelations(),
+				verdict: verdicts[statement.id],
+				appearance: appearance(of: statement.id, connectable: connectable)
+			)
 		}
+
+		return CanvasBoard(
+			boxes: boxes,
+			links: page.links,
+			selectedStatement: selectedStatement,
+			selectedLink: selectedLink,
+			controller: board,
+			catalog: catalog,
+			actions: actions(for:),
+			dragStarted: dragStarted,
+			moved: boxMoved,
+			tapBackground: backgroundTapped,
+			connectStarted: connectStarted,
+			connectTargetChanged: { connectTarget = $0 },
+			connectEnded: connectEnded
+		)
+		.overlay(alignment: .topLeading) { zoomSourceAnchor }
 		.ignoresSafeArea()
 	}
 
-	/// In canvas units, inside the surface's one transform
-	private var canvasContent: some View {
-		let connectable = connectableStatements
-
-		return CanvasBoard(
-			page: page,
-			letters: letters,
-			relations: boxRelations,
-			verdicts: verdicts,
-			selectedStatement: selectedStatement,
-			selectedLink: selectedLink,
-			scale: transform.scale,
-			history: history,
-			zoomNamespace: zoomNamespace,
-			appearance: { appearance(of: $0, connectable: connectable) },
-			actions: actions(for:),
-			dragStarted: dragStarted,
-			moved: boxMoved
-		)
+	@ViewBuilder
+	private var zoomSourceAnchor: some View {
+		if let zoomSource {
+			Color.clear
+				.frame(width: zoomSource.frame.width, height: zoomSource.frame.height)
+				.matchedTransitionSource(id: zoomSource.id, in: zoomNamespace)
+				.offset(x: zoomSource.frame.minX, y: zoomSource.frame.minY)
+				.allowsHitTesting(false)
+				.accessibilityHidden(true)
+		}
 	}
 
 	private var outline: some View {
@@ -233,13 +264,10 @@ struct CanvasView: View {
 	}
 
 	private var barMode: CanvasBarMode {
-		if let connecting, let statement = page.statement(connecting) {
-			return .connecting(StatementBoxView.title(of: statement, letters: letters))
-		}
 		switch activeSelection {
-			case .statement: return .statement
-			case .link: return .link
-			case nil: return .idle
+			case .statement: .statement
+			case .link: .link
+			case nil: .idle
 		}
 	}
 
@@ -251,19 +279,13 @@ struct CanvasView: View {
 					edit(id)
 				}
 			},
-			connect: {
-				if case let .statement(id)? = activeSelection {
-					startConnecting(from: id)
-				}
-			},
 			delete: {
 				switch activeSelection {
 					case let .statement(id)?: delete(id)
 					case let .link(id)?: deleteLink(id)
 					case nil: break
 				}
-			},
-			cancel: { connecting = nil }
+			}
 		)
 	}
 
@@ -368,7 +390,10 @@ struct CanvasView: View {
 			if id == connecting {
 				return .connectSource
 			}
-			return connectable.contains(id) ? .normal : .unavailable
+			guard connectable.contains(id) else {
+				return .unavailable
+			}
+			return id == connectTarget ? .selected : .normal
 		}
 		return activeSelection == .statement(id) ? .selected : .normal
 	}
@@ -415,7 +440,6 @@ struct CanvasView: View {
 		return BoxActions(
 			select: { select(id) },
 			edit: { edit(id) },
-			connect: { startConnecting(from: id) },
 			delete: { delete(id) },
 			showCheck: verdicts[id] == nil ? nil : { sheet = .check(id) },
 			nudge: { nudge(id, columns: $0, rows: $1) }
@@ -424,28 +448,39 @@ struct CanvasView: View {
 
 	private func select(_ id: Statement.ID) {
 		addFocused = false
-		if connecting != nil {
-			connect(to: id)
-		} else {
-			selection = .statement(id)
-		}
+		selection = .statement(id)
 	}
 
 	private func edit(_ id: Statement.ID) {
 		addFocused = false
-		connecting = nil
 		selection = .statement(id)
-		openEditor(id)
+
+		if let statement = page.statement(id) {
+			let box = CanvasRect.box(at: statement.position)
+			let transform = board.transform
+			let origin = transform.screen(CanvasPoint(x: box.minX, y: box.minY))
+			zoomSource = ZoomSource(
+				id: id,
+				frame: CGRect(x: origin.x, y: origin.y, width: box.size.width * transform.scale, height: box.size.height * transform.scale)
+			)
+		}
+
+		// The next turn, so the stand-in is on screen by the time the transition looks for it
+		Task {
+			openEditor(id)
+		}
 	}
 
 	private func dragStarted(_ id: Statement.ID) {
 		addFocused = false
 		selection = .statement(id)
+		dragBefore = history.snapshot()
 	}
 
-	private func boxMoved(_ id: Statement.ID, to position: CanvasPoint, before: CanvasHistory.Snapshot?) {
+	private func boxMoved(_ id: Statement.ID, to position: CanvasPoint) {
 		pageStore.moveStatement(id: id, to: position)
-		history.register(before, name: "Move Statement")
+		history.register(dragBefore, name: "Move Statement")
+		dragBefore = nil
 	}
 
 	/// For VoiceOver, which can't drag: a step of the grid at a time
@@ -462,21 +497,18 @@ struct CanvasView: View {
 
 	// MARK: - Connecting
 
-	private func startConnecting(from id: Statement.ID) {
+	private func connectStarted(_ id: Statement.ID) {
 		addFocused = false
 		selection = .statement(id)
 		connecting = id
-		if let statement = page.statement(id) {
-			AccessibilityNotification.Announcement("Connecting from \(StatementBoxView.title(of: statement, letters: letters)). Choose the conclusion.").post()
-		}
 	}
 
-	/// Draws the arrow from the box being connected. A refused arrow leaves connecting on, so another box can be tried.
-	private func connect(to target: Statement.ID) {
-		guard let source = connecting else { return }
-		if link(premise: source, conclusion: target) {
-			connecting = nil
-			selection = .statement(target)
+	/// Let go over a box, the arrow is drawn or the notice says why not. Let go anywhere else, nothing happens.
+	private func connectEnded(_ source: Statement.ID, target: Statement.ID?) {
+		connecting = nil
+		connectTarget = nil
+		if let target {
+			link(premise: source, conclusion: target)
 		}
 	}
 
@@ -559,9 +591,6 @@ struct CanvasView: View {
 				pageStore.deleteStatement(id: id)
 			}
 		}
-		if connecting == id {
-			connecting = nil
-		}
 	}
 
 	private func deleteLink(_ id: Link.ID) {
@@ -576,8 +605,8 @@ struct CanvasView: View {
 		history.perform("Arrange") {
 			withAnimation(motion) {
 				pageStore.arrange()
-				transform = fitted
 			}
+			board.move(to: fitted, animation: motion)
 		}
 	}
 
@@ -585,7 +614,7 @@ struct CanvasView: View {
 
 	/// The middle of the part of the canvas the bars leave free
 	private var viewCentre: CanvasPoint {
-		transform.canvas(CGPoint(x: room.free.midX, y: room.free.midY))
+		board.transform.canvas(CGPoint(x: room.free.midX, y: room.free.midY))
 	}
 
 	/// The grid point nearest `point` where a box fits, else the nearest gap
@@ -604,47 +633,30 @@ struct CanvasView: View {
 	}
 
 	private func fit(animated: Bool) {
-		withAnimation(animated ? motion : nil) {
-			transform = fitted
-		}
+		board.move(to: fitted, animation: animated ? motion : nil)
 	}
 
 	/// Pans just enough to bring the box into view
 	private func reveal(_ id: Statement.ID) {
 		guard let statement = page.statement(id) else { return }
-		let target = transform.revealing(.box(at: statement.position), in: room.viewport, insets: room.insets)
-		if target != transform {
-			withAnimation(motion) {
-				transform = target
-			}
+		let target = board.transform.revealing(.box(at: statement.position), in: room.viewport, insets: room.insets)
+		if target != board.transform {
+			board.move(to: target, animation: motion)
 		}
 	}
 
 	// MARK: - Background
 
-	private func backgroundTapped(at point: CGPoint) {
+	private func backgroundTapped(at point: CanvasPoint) {
 		addFocused = false
-		if connecting != nil {
-			connecting = nil
-			return
-		}
 
 		let link = LinkHitTest.link(
-			near: transform.canvas(point),
-			tolerance: 24 / transform.scale,
+			near: point,
+			tolerance: 24 / board.transform.scale,
 			in: page.links,
 			positions: Dictionary(page.statements.map { ($0.id, $0.position) }, uniquingKeysWith: { first, _ in first })
 		)
 		selection = link.map { .link($0) }
-	}
-
-	/// Pinching in on a box after the zoom has run out opens it, the way tapping it would
-	private func pinchedPastLimit(at point: CGPoint) {
-		let canvasPoint = transform.canvas(point)
-		let touched = page.statements.last { CanvasRect.box(at: $0.position).contains(canvasPoint) }?.id
-		if let target = touched ?? selectedStatement {
-			edit(target)
-		}
 	}
 
 	private var selectedStatement: Statement.ID? {
@@ -688,10 +700,11 @@ struct CanvasView: View {
 		)
 	}
 
-	/// The first time there's room to lay out, show the whole page
-	private func fitFirstTime() {
-		guard needsFit, room.viewport.width > 0, room.viewport.height > 0 else { return }
-		needsFit = false
+	/// Keeps the whole page in view until the person moves the canvas themselves. The first measurements come in before
+	/// the screen has finished laying out, so fitting only once would fit to the wrong room. Not while the keyboard or the
+	/// editor is what changed the room.
+	private func fitUntilMoved() {
+		guard !board.hasBeenMoved, !addFocused, !isCovered, room.viewport.width > 0, room.viewport.height > 0 else { return }
 		fit(animated: false)
 	}
 

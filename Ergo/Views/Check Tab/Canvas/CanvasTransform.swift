@@ -18,16 +18,10 @@ extension CanvasPoint {
 	}
 }
 
-/// The coordinate space of the canvas's viewport. It holds still while the content pans and zooms,
-/// so drags of boxes are measured in it.
-enum CanvasCoordinateSpace {
-	static let name = "canvas.surface"
-}
-
 /// Where the canvas sits on screen. A point on the canvas lands at `canvas * scale + offset`.
 /// Pan and zoom both change this one value, so nothing else needs to know about either.
 struct CanvasTransform: Equatable {
-	static let zoomRange: ClosedRange<CGFloat> = 0.3 ... 3
+	static let zoomRange: ClosedRange<CGFloat> = 0.3 ... 1.6
 
 	var offset = CGSize.zero
 	var scale: CGFloat = 1
