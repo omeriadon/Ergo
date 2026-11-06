@@ -11,7 +11,8 @@ import SQLKit
 
 /// Moves each account's one token into `account_tokens`, then rebuilds `accounts` without `token_hash` and with
 /// what sync needs. SQLite can't drop a unique column, and dropping a table while foreign keys are on deletes
-/// every credential through the cascade, so the rebuild runs on one connection with them off.
+/// every credential through the cascade, so the rebuild runs on one connection with them off. Postgres can just alter
+/// the table, and has no tokens to move: its database has only ever run these migrations together, from empty.
 struct MoveAccountTokens: AsyncMigration {
 	private static let rebuilt = "accounts_rebuilt"
 
@@ -19,6 +20,13 @@ struct MoveAccountTokens: AsyncMigration {
 		try await database.withConnection { connection in
 			guard let sql = connection as? any SQLDatabase else {
 				throw ServerConfig.Problem(description: "Expected an SQL database to move account tokens")
+			}
+
+			guard sql.dialect.name == "sqlite" else {
+				try await connection.transaction { database in
+					try await alter(database)
+				}
+				return
 			}
 
 			// Only changes outside a transaction, and only for this connection
@@ -34,6 +42,16 @@ struct MoveAccountTokens: AsyncMigration {
 			}
 			try await sql.raw("PRAGMA foreign_keys = \(unsafeRaw: String(foreignKeys))").run()
 		}
+	}
+
+	private func alter(_ database: any Database) async throws {
+		guard let sql = database as? any SQLDatabase else { return }
+
+		try await sql.raw("ALTER TABLE accounts DROP COLUMN token_hash").run()
+		try await sql.raw("ALTER TABLE accounts ADD COLUMN apple_subject TEXT").run()
+		try await sql.raw("ALTER TABLE accounts ADD COLUMN seq BIGINT NOT NULL DEFAULT 0").run()
+		try await sql.raw("ALTER TABLE accounts ADD COLUMN pruned_through BIGINT NOT NULL DEFAULT 0").run()
+		try await sql.raw("ALTER TABLE accounts ADD CONSTRAINT \(ident: "uq:accounts.apple_subject") UNIQUE (apple_subject)").run()
 	}
 
 	private func rebuild(_ database: any Database) async throws {

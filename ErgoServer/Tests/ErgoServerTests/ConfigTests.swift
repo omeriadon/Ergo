@@ -53,7 +53,14 @@ struct ServerConfigTests {
 		#expect(try ServerConfig.load(from: ["ERGO_VAULT_KEY": key], production: true, logger: logger).trustProxy == false)
 	}
 
+	@Test func postgresIsOnlyUsedWhenSet() throws {
+		#expect(try ServerConfig.load(from: ["ERGO_VAULT_KEY": key], production: true, logger: logger).postgres == nil)
+		#expect(try ServerConfig.load(from: ["ERGO_VAULT_KEY": key, "ERGO_DATABASE_URL": ""], production: true, logger: logger).postgres == nil)
+		#expect(try ServerConfig.load(from: ["ERGO_VAULT_KEY": key, "ERGO_DATABASE_URL": "postgres://ergo:p%40ss@db:5432/ergo"], production: true, logger: logger).postgres != nil)
+	}
+
 	@Test(arguments: [
+		["ERGO_DATABASE_URL": "not a url"],
 		["ERGO_TRUST_PROXY": "yes"],
 		["ERGO_VAULT_KEY": "short"],
 		["ERGO_VAULT_KEY_FILE": "/nowhere/key"],

@@ -24,7 +24,7 @@ An iOS app for learning logic and critical thinking (library of fallacies, biase
 | `Ergo/` | iOS app, folder-synced into `Ergo.xcodeproj` (new `project.xcproj` format) |
 | `Ergo.xcworkspace` | opens the app, ErgoKit, ErgoServer, Evals and Plans together |
 | `ErgoKit/` | shared package: `ErgoLogic`, `ErgoTranslation`, `ErgoSync`, `ErgoProtocol`, `ErgoClient` |
-| `ErgoServer/` | Vapor 4 server (SQLite via Fluent, swift-crypto vault, vapor/jwt, swift-subprocess) |
+| `ErgoServer/` | Vapor 4 server (Postgres in production and SQLite otherwise, via Fluent, swift-crypto vault, vapor/jwt, swift-subprocess) |
 | `Evals/` | 92-case corpus and a runner that goes through a running server |
 | `Plans/` | design docs: README, 01-ErgoKit, 02-Server, 03-App, 04-Evals, 05-Sync, Fixtures, and this file |
 | `Checks/` | only the dither/catalog/library precondition scripts |

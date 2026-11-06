@@ -7,12 +7,16 @@
 
 import Crypto
 import ErgoProtocol
+import FluentPostgresDriver
 import Foundation
 import Logging
 
 /// Everything the environment can change, read once at launch
 struct ServerConfig: Sendable {
 	var databasePath = "./ergo.sqlite"
+
+	/// The Postgres database to use. Nil uses the SQLite file at `databasePath`.
+	var postgres: SQLPostgresConfiguration?
 
 	/// Seals credentials at rest
 	var vaultKey: SymmetricKey
@@ -37,7 +41,7 @@ struct ServerConfig: Sendable {
 	var appleApplicationID = "com.omeriadon.Ergo"
 
 	/// Whether `X-Forwarded-For` says who is asking, for the per-address limits. Only for a server behind a proxy
-	/// on the same machine, since otherwise anyone could write it.
+	/// on the same machine or private network, since otherwise anyone could write it.
 	var trustProxy = false
 
 	// MARK: - Fixed, but shortened by tests
@@ -79,6 +83,13 @@ struct ServerConfig: Sendable {
 
 		if let path = environment["ERGO_DATABASE_PATH"] {
 			config.databasePath = path
+		}
+		if let url = environment["ERGO_DATABASE_URL"], !url.isEmpty {
+			// The driver's own error quotes the URL, which holds the password, and this one gets logged
+			guard let postgres = try? SQLPostgresConfiguration(url: url) else {
+				throw Problem(description: "ERGO_DATABASE_URL: Expected postgres://user:password@host:port/database")
+			}
+			config.postgres = postgres
 		}
 		if let path = environment["ERGO_RUNS_DIRECTORY"] {
 			config.runsDirectory = URL(filePath: path, directoryHint: .isDirectory)

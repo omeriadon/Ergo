@@ -6,6 +6,7 @@
 //
 
 import Fluent
+import FluentPostgresDriver
 import FluentSQLiteDriver
 import Foundation
 import Vapor
@@ -37,7 +38,10 @@ func configure(
 	app.ergo = try ErgoServices(config: config, verifier: verifier, apple: apple)
 	app.passwords.use(.bcrypt(cost: config.passwordCost))
 
-	if config.databasePath == ":memory:" {
+	if let postgres = config.postgres {
+		// Trace, as this driver can't turn it off: SQL logs print the bound values, as below
+		app.databases.use(.postgres(configuration: postgres, sqlLogLevel: .trace), as: .psql)
+	} else if config.databasePath == ":memory:" {
 		app.databases.use(.sqlite(.memory, sqlLogLevel: nil), as: .sqlite)
 	} else {
 		try createPrivately(config.databasePath)

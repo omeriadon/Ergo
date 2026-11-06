@@ -225,7 +225,7 @@ struct SyncService: Sendable {
 
 	// MARK: - Locking
 
-	/// Starts the transaction with a write, so SQLite takes the write lock before anything is read. Another sync
+	/// Starts the transaction with a write, so the database locks the account before anything is read. Another sync
 	/// of the same account then waits for this one to commit, instead of reading the same seq.
 	static func lock(_ id: UUID, on database: any Database) async throws -> Account {
 		if let sql = database as? any SQLDatabase {

@@ -103,6 +103,7 @@ Everything comes from the environment.
 
 | Variable | Default | |
 |---|---|---|
+| `ERGO_DATABASE_URL` | none | Postgres, as `postgres://user:password@host:5432/database` with the password percent-encoded. Empty or unset uses SQLite. Migrations run at every launch either way. |
 | `ERGO_DATABASE_PATH` | `./ergo.sqlite` | SQLite file, created `0600` |
 | `ERGO_VAULT_KEY` or `ERGO_VAULT_KEY_FILE` | required in production | 32 bytes, base64. Seals credentials at rest. Make one with `head -c 32 /dev/urandom \| base64`. |
 | `ERGO_RUNS_DIRECTORY` | temp + `/ergo-runs` | One scratch directory per CLI call, always removed afterwards |
@@ -113,7 +114,7 @@ Everything comes from the environment.
 | `ERGO_STAGE_TIMEOUT` | 120 | Seconds per CLI call |
 | `ERGO_MODELS_FILE` | none | JSON overriding the models, see below |
 | `ERGO_APPLE_APP_ID` | `com.omeriadon.Ergo` | The audience Sign in with Apple tokens must have, the app's bundle id |
-| `ERGO_TRUST_PROXY` | off | `1` or `true` behind a proxy on the same machine, such as nginx. Then the per-address limits use the client address the proxy put in `X-Forwarded-For`, see below. Anything but `1`, `true`, `0`, `false` or empty refuses to start. |
+| `ERGO_TRUST_PROXY` | off | `1` or `true` behind a proxy on the same machine or Docker network, such as nginx or Traefik. `compose.yaml` turns it on. Then the per-address limits use the client address the proxy put in `X-Forwarded-For`, see below. Anything but `1`, `true`, `0`, `false` or empty refuses to start. |
 
 Production is `serve --env production`. It refuses to start without a vault key, an unreadable models file, or an unknown runner user.
 
@@ -157,8 +158,8 @@ docker run -d -p 8080:8080 -v ergo-data:/data ergo-server
 
 - Claude Code and Codex are pinned with the build arguments `CLAUDE_CODE_VERSION` and `CODEX_VERSION`. Bump them deliberately: the server relies on their flags and output formats.
 - Put it behind a TLS-terminating proxy. Sockets ping every 20 seconds so a proxy doesn't drop a slow translation or a quiet sync socket.
-- New accounts are limited per client address, 5 an hour, and so are registrations (10 an hour) and failed logins. Behind a proxy every request comes from the proxy's own address, so without `ERGO_TRUST_PROXY=1` all clients would share one limit. With it, the right-most `X-Forwarded-For` entry that isn't a local address is the client: the proxy appended it, and everything to its left is the client's to make up. nginx needs `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`. It only applies when the connection itself comes from this machine (`127.0.0.0/8`, `::1`), so a client that reaches the server directly can't set it, and a proxy on another machine isn't supported. Never set it on a server that is reachable without the proxy.
-- Run one instance. The sync socket's broadcaster is in memory, so a push on one instance wouldn't reach devices connected to another. More than one would need Redis pub/sub (or similar) between them, and SQLite would have to become a shared database anyway.
+- New accounts are limited per client address, 5 an hour, and so are registrations (10 an hour) and failed logins. Behind a proxy every request comes from the proxy's own address, so without `ERGO_TRUST_PROXY=1` all clients would share one limit. With it, the right-most `X-Forwarded-For` entry that isn't a local address is the client: the proxy appended it, and everything to its left is the client's to make up. nginx needs `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`. It only applies when the connection itself comes from this machine or a private network (`127.0.0.0/8`, `::1`, `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `fc00::/7`), so a client on the internet that reaches the server directly can't set it. Anything else on that private network can, so never set it on a server that is reachable without the proxy.
+- Run one instance. The sync socket's broadcaster is in memory, so a push on one instance wouldn't reach devices connected to another. More than one would need Redis pub/sub (or similar) between them, and Postgres rather than SQLite.
 - Sign in with Apple fetches Apple's public keys from `appleid.apple.com` and caches them, so the server needs outbound HTTPS.
 
 ## Security model

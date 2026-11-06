@@ -759,6 +759,17 @@ struct ClientAddressTests {
 		#expect(ClientAddress.resolve(peer: "127.0.0.1", forwardedFor: ["198.51.100.1, 127.0.0.1"], trustProxy: true) == "198.51.100.1")
 	}
 
+	@Test(arguments: ["10.0.1.7", "172.18.0.3", "192.168.1.2", "fd12:3456::1", "::ffff:10.0.1.7"])
+	func aProxyInAnotherContainerIsTrusted(peer: String) {
+		#expect(ClientAddress.resolve(peer: peer, forwardedFor: ["198.51.100.1"], trustProxy: true) == "198.51.100.1")
+		#expect(ClientAddress.resolve(peer: peer, forwardedFor: ["198.51.100.1"], trustProxy: false) == peer)
+	}
+
+	@Test(arguments: ["172.32.0.1", "192.169.0.1", "11.0.0.1", "2001:db8::7"])
+	func aPublicPeerIsntTrusted(peer: String) {
+		#expect(ClientAddress.resolve(peer: peer, forwardedFor: ["198.51.100.1"], trustProxy: true) == peer)
+	}
+
 	@Test func aMissingOrGarbledHeaderFallsBackToTheSocket() {
 		#expect(ClientAddress.resolve(peer: "127.0.0.1", forwardedFor: [], trustProxy: true) == "127.0.0.1")
 		#expect(ClientAddress.resolve(peer: "127.0.0.1", forwardedFor: ["1.2.3.4, not-an-address"], trustProxy: true) == "127.0.0.1")
