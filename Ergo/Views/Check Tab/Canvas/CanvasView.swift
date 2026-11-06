@@ -123,6 +123,9 @@ struct CanvasView: View {
 	@State private var connecting: Statement.ID?
 	@State private var connectTarget: Statement.ID?
 
+	/// Whether the arrow dragged from the handle makes the selected box a conclusion rather than a premise
+	@State private var connectsAsConclusion = false
+
 	// Messages, checks and sheets
 	@State private var notice: String?
 	@State private var verdicts: [Statement.ID: BoxVerdict] = [:]
@@ -207,7 +210,9 @@ struct CanvasView: View {
 			tapBackground: backgroundTapped,
 			connectStarted: connectStarted,
 			connectTargetChanged: { connectTarget = $0 },
-			connectEnded: connectEnded
+			connectEnded: connectEnded,
+			connectsAsConclusion: connectsAsConclusion,
+			toggleConnectRole: { connectsAsConclusion.toggle() }
 		)
 		.overlay(alignment: .topLeading) { zoomSourceAnchor }
 		.ignoresSafeArea()
@@ -257,6 +262,11 @@ struct CanvasView: View {
 		}
 		.padding(.horizontal, 16)
 		.padding(.bottom, 8)
+		.background(alignment: .bottom) {
+			BackdropBlur(radius: 1, fade: .top)
+				.ignoresSafeArea(edges: .bottom)
+				.allowsHitTesting(false)
+		}
 		.opacity(isCovered ? 0 : 1)
 		.allowsHitTesting(!isCovered)
 		.animation(motion, value: notice)
@@ -417,7 +427,7 @@ struct CanvasView: View {
 		guard let connecting else { return nil }
 		let map = page.map
 		return Set(page.statements.map(\.id).filter { target in
-			ArgumentMapValidator.problem(adding: Link(premise: connecting, conclusion: target), to: map) == nil
+			ArgumentMapValidator.problem(adding: newLink(from: connecting, to: target), to: map) == nil
 		})
 	}
 
@@ -508,8 +518,16 @@ struct CanvasView: View {
 		connecting = nil
 		connectTarget = nil
 		if let target {
-			link(premise: source, conclusion: target)
+			let new = newLink(from: source, to: target)
+			link(premise: new.premise, conclusion: new.conclusion)
 		}
+	}
+
+	/// The arrow for dragging from `source` to `target`, which way round depending on the handle's role
+	private func newLink(from source: Statement.ID, to target: Statement.ID) -> Link {
+		connectsAsConclusion
+			? Link(premise: target, conclusion: source)
+			: Link(premise: source, conclusion: target)
 	}
 
 	/// True when the arrow was drawn, otherwise says why not

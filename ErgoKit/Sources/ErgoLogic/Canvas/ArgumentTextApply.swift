@@ -85,7 +85,7 @@ extension ArgumentText {
 		let old = order.statements.map { ArgumentContent(of: byID[$0]!, kind).normalized }
 		let new = lines.map(\.normalized)
 
-		var match: [Int?] = if conclusionLine != nil, order.conclusion != nil {
+		let match: [Int?] = if conclusionLine != nil, order.conclusion != nil {
 			align(old: Array(old.dropLast()), new: Array(new.dropLast())) + [old.count - 1]
 		} else {
 			align(old: old, new: new)

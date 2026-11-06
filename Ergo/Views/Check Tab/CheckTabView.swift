@@ -21,10 +21,28 @@ struct CheckTabView: View {
 	/// Undo steps belong to the page they were made on, so they live here and are dropped when the page changes
 	@State private var history = CanvasHistory()
 
+	@State private var topInset: CGFloat = 70
+
 	var body: some View {
 		ZStack {
 			// A different page starts with its own pan, zoom and selection
 			CanvasView(zoomNamespace: zoom, history: history, isCovered: editing != nil) { editing = $0 }
+				.overlay(alignment: .top) {
+					BackdropBlur(radius: 3, fade: .bottom)
+						.frame(height: topInset)
+						.ignoresSafeArea()
+				}
+				.background(
+					GeometryReader { geometry in
+						Color.clear
+							.onAppear {
+								topInset = geometry.safeAreaInsets.top
+							}
+							.onChange(of: geometry.safeAreaInsets.top) { _, newValue in
+								topInset = newValue
+							}
+					}
+				)
 				.id(pageStore.current.id)
 		}
 		.containerBackground(for: .navigation) { CanvasBackdrop() }

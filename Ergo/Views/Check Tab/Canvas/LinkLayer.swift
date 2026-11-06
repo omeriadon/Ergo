@@ -29,6 +29,12 @@ struct ArrowCurve {
 		control = CanvasGeometry.controlPoint(for: segment)
 	}
 
+	/// From a point that isn't on a box to a box, for the arrow following a finger the other way round
+	init(from start: CanvasPoint, into target: CanvasPoint) {
+		segment = CanvasSegment(start: start, end: CanvasGeometry.exit(of: .box(at: target), toward: start))
+		control = CanvasGeometry.controlPoint(for: segment)
+	}
+
 	func distance(from point: CanvasPoint) -> Double {
 		CanvasGeometry.distance(from: point, toCurve: segment, control: control)
 	}

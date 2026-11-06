@@ -56,6 +56,7 @@ struct CanvasOutlineView: View {
 			}
 		}
 		.scrollContentBackground(.hidden)
+		.scrollEdgeEffectStyle(.none, for: .all)
 		.contentMargins(.bottom, 150, for: .scrollContent)
 		.confirmationDialog(
 			heading(for: question),
