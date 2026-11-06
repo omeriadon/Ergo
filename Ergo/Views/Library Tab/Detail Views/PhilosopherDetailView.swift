@@ -21,6 +21,7 @@ struct PhilosopherDetailView: View {
 	@State private var showAliases = false
 
 	@State private var hasScrolled = false
+	@State private var isOpening = true
 
 	var body: some View {
 		ZStack {
@@ -36,7 +37,7 @@ struct PhilosopherDetailView: View {
 
 			if let philosopher = catalog.philosophers.philosophers.first(where: { $0.id == id }) {
 				ScrollView {
-					VStack(alignment: .leading) {
+					LazyVStack(alignment: .leading) {
 						GeometryReader { geo in
 							ZStack {
 								Image(philosopher.id)
@@ -99,6 +100,7 @@ struct PhilosopherDetailView: View {
 						Text(philosopher.summary)
 							.textSelection(.enabled)
 							.lineLimit(10)
+							.bounceOnAppear(after: 1)
 
 						Text(philosopher.body)
 							.padding(12)
@@ -106,15 +108,22 @@ struct PhilosopherDetailView: View {
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
+							.bounceOnAppear(after: 2)
 
 						RelatedSection(list: philosopher.related)
 							.padding(.top)
+							.bounceOnAppear(after: 3)
 
 						Spacer()
 							.frame(height: 40)
 					}
 					.padding(.horizontal)
 					.frame(maxWidth: .infinity, alignment: .leading)
+					.environment(\.isOpeningDetail, isOpening)
+				}
+				.task {
+					try? await Task.sleep(for: .milliseconds(200))
+					isOpening = false
 				}
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(philosopher.name.capitalized)

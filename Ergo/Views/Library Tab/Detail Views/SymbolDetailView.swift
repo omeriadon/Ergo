@@ -21,6 +21,7 @@ struct SymbolDetailView: View {
 	@Default(.bookmarks) var bookmarks
 
 	@State private var hasScrolled = false
+	@State private var isOpening = true
 
 	var body: some View {
 		ZStack {
@@ -36,7 +37,7 @@ struct SymbolDetailView: View {
 
 			if let symbol = catalog.logicSymbols.symbols.first(where: { $0.id == id }) {
 				ScrollView {
-					VStack(alignment: .leading) {
+					LazyVStack(alignment: .leading) {
 						HStack(alignment: .top) {
 							headerButton
 
@@ -75,21 +76,27 @@ struct SymbolDetailView: View {
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
+							.bounceOnAppear(after: 1)
 
 						NotesSection(list: symbol.englishReadings, title: "English Readings")
 							.padding(.top)
+							.bounceOnAppear(after: 2)
 
 						ExamplesSection(list: symbol.examples)
 							.padding(.top)
+							.bounceOnAppear(after: 3)
 
 						NotesSection(list: symbol.limitations)
 							.padding(.top)
+							.bounceOnAppear(after: 4)
 
 						LookalikeSection(list: symbol.lookalikes)
 							.padding(.top)
+							.bounceOnAppear(after: 5)
 
 						RelatedSection(list: symbol.related)
 							.padding(.top)
+							.bounceOnAppear(after: 6)
 
 						TagSection(list: symbol.tags.map { tag in
 							CatalogTag(
@@ -99,12 +106,18 @@ struct SymbolDetailView: View {
 							)
 						})
 						.padding(.top)
+						.bounceOnAppear(after: 7)
 
 						Spacer()
 							.frame(height: 40)
 					}
 					.padding(.horizontal)
 					.frame(maxWidth: .infinity, alignment: .leading)
+					.environment(\.isOpeningDetail, isOpening)
+				}
+				.task {
+					try? await Task.sleep(for: .milliseconds(200))
+					isOpening = false
 				}
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(symbol.name.capitalized)

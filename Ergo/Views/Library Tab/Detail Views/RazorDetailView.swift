@@ -35,7 +35,7 @@ struct RazorDetailView: View {
 
 			if let razor = catalog.razors.razors.first(where: { $0.id == id }) {
 				ScrollView {
-					VStack(alignment: .leading) {
+					LazyVStack(alignment: .leading) {
 						AliasTitle(name: razor.name, aliases: razor.aliases)
 
 						Spacer()
@@ -44,6 +44,7 @@ struct RazorDetailView: View {
 						Text(razor.summary)
 							.textSelection(.enabled)
 							.lineLimit(10)
+							.bounceOnAppear(after: 1)
 
 						VStack {
 							Image(systemName: "quote.opening")
@@ -62,21 +63,26 @@ struct RazorDetailView: View {
 						.frame(maxWidth: .infinity, alignment: .leading)
 						.glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 20))
 						.padding(.vertical, 20)
+						.bounceOnAppear(after: 2)
 
 						Text(razor.body)
 							.padding(12)
 							.textSelection(.enabled)
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+							.bounceOnAppear(after: 3)
 
 						ExamplesSection(list: razor.examples)
 							.padding(.top)
+							.bounceOnAppear(after: 4)
 
 						NotesSection(list: razor.limitations)
 							.padding(.top)
+							.bounceOnAppear(after: 5)
 
 						RelatedSection(list: razor.related)
 							.padding(.top)
+							.bounceOnAppear(after: 6)
 
 						TagSection(list: razor.tags.map { tag in
 							CatalogTag(
@@ -86,12 +92,18 @@ struct RazorDetailView: View {
 							)
 						})
 						.padding(.top)
+						.bounceOnAppear(after: 7)
 
 						Spacer()
 							.frame(height: 40)
 					}
 					.padding(.horizontal)
 					.frame(maxWidth: .infinity, alignment: .leading)
+					.environment(\.isOpeningDetail, isOpening)
+				}
+				.task {
+					try? await Task.sleep(for: .milliseconds(200))
+					isOpening = false
 				}
 				.onScrollGeometryChange(for: Bool.self) { geometry in
 					geometry.contentOffset.y + geometry.contentInsets.top > 70
