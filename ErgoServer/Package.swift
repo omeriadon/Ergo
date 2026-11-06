@@ -2,7 +2,6 @@
 
 import PackageDescription
 
-/// Runs English → logic translation for the app, through each user's own Claude Code or Codex login
 let package = Package(
 	name: "ErgoServer",
 	platforms: [

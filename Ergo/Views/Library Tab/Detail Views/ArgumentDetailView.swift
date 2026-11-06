@@ -7,6 +7,7 @@ struct ArgumentDetailView: View {
 	@Environment(NavigationManager.self) private var navigation
 
 	@State private var hasScrolled = false
+	@State private var isOpening = true
 
 	var body: some View {
 		ZStack {
@@ -32,7 +33,7 @@ struct ArgumentDetailView: View {
 				let tagsIndex = relatedIndex + 1
 
 				ScrollView {
-					VStack(alignment: .leading) {
+					LazyVStack(alignment: .leading) {
 						AliasTitle(name: argument.name, aliases: argument.aliases)
 
 						Spacer()
@@ -111,6 +112,11 @@ struct ArgumentDetailView: View {
 					}
 					.padding(.horizontal)
 					.frame(maxWidth: .infinity, alignment: .leading)
+					.environment(\.isOpeningDetail, isOpening)
+				}
+				.task {
+					try? await Task.sleep(for: .milliseconds(200))
+					isOpening = false
 				}
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.onScrollGeometryChange(for: Bool.self) { geometry in

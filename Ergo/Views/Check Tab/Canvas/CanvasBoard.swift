@@ -67,13 +67,9 @@ struct CanvasBoard: UIViewRepresentable {
 	let dragStarted: (Statement.ID) -> Void
 	let moved: (Statement.ID, CanvasPoint) -> Void
 	let tapBackground: (CanvasPoint) -> Void
-	let connectStarted: (Statement.ID) -> Void
+	let connectStarted: (Statement.ID, _ asConclusion: Bool) -> Void
 	let connectTargetChanged: (Statement.ID?) -> Void
 	let connectEnded: (Statement.ID, Statement.ID?) -> Void
-
-	/// Whether the selected box is the conclusion of the arrow being drawn, rather than its premise
-	let connectsAsConclusion: Bool
-	let toggleConnectRole: () -> Void
 
 	func makeUIView(context _: Context) -> CanvasBoardView {
 		let view = CanvasBoardView()
@@ -88,8 +84,6 @@ struct CanvasBoard: UIViewRepresentable {
 		view.connectStarted = connectStarted
 		view.connectTargetChanged = connectTargetChanged
 		view.connectEnded = connectEnded
-		view.toggleConnectRole = toggleConnectRole
-		view.connectsAsConclusion = connectsAsConclusion
 		view.boxContent = boxContent
 		view.handleContent = handleContent
 
@@ -114,9 +108,9 @@ struct CanvasBoard: UIViewRepresentable {
 		.margins(.all, 0)
 	}
 
-	private func handleContent(pointsUp: Bool, asConclusion: Bool) -> any UIContentConfiguration {
+	private func handleContent(pointsUp: Bool) -> any UIContentConfiguration {
 		UIHostingConfiguration {
-			CanvasConnectHandle(pointsUp: pointsUp, asConclusion: asConclusion)
+			CanvasConnectHandle(pointsUp: pointsUp)
 		}
 		.margins(.all, 0)
 	}

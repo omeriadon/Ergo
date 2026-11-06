@@ -106,13 +106,16 @@ struct CanvasGeometryTests {
 		#expect(CanvasGeometry.distance(from: CanvasPoint(x: 8, y: 9), to: segment) == 5)
 	}
 
-	@Test func controlPointBowsToOneSide() {
+	@Test func controlPointHangsDownEitherWay() {
 		let segment = CanvasSegment(start: CanvasPoint(x: 0, y: 0), end: CanvasPoint(x: 100, y: 0))
-		expectClose(CanvasGeometry.controlPoint(for: segment, bend: 0.2), CanvasPoint(x: 50, y: -20))
-		expectClose(CanvasGeometry.controlPoint(for: segment, bend: 0), CanvasPoint(x: 50, y: 0))
+		expectClose(CanvasGeometry.controlPoint(for: segment, droop: 0.1), CanvasPoint(x: 50, y: 10))
+		expectClose(CanvasGeometry.controlPoint(for: segment, droop: 0), CanvasPoint(x: 50, y: 0))
 
 		let back = CanvasSegment(start: segment.end, end: segment.start)
-		expectClose(CanvasGeometry.controlPoint(for: back, bend: 0.2), CanvasPoint(x: 50, y: 20))
+		expectClose(CanvasGeometry.controlPoint(for: back, droop: 0.1), CanvasPoint(x: 50, y: 10))
+
+		let upright = CanvasSegment(start: CanvasPoint(x: 0, y: 0), end: CanvasPoint(x: 0, y: 100))
+		#expect(CanvasGeometry.controlPoint(for: upright).x == 0, "An upright arrow stays straight")
 	}
 
 	@Test func curvePointsRunFromStartToEnd() {
@@ -120,14 +123,14 @@ struct CanvasGeometryTests {
 		let control = CanvasGeometry.controlPoint(for: segment)
 		expectClose(CanvasGeometry.point(on: segment, control: control, at: 0), segment.start)
 		expectClose(CanvasGeometry.point(on: segment, control: control, at: 1), segment.end)
-		expectClose(CanvasGeometry.point(on: segment, control: control, at: 0.5), CanvasPoint(x: 50, y: -10))
+		expectClose(CanvasGeometry.point(on: segment, control: control, at: 0.5), CanvasPoint(x: 50, y: 5))
 	}
 
 	@Test func distanceToACurve() {
 		let segment = CanvasSegment(start: CanvasPoint(x: 0, y: 0), end: CanvasPoint(x: 100, y: 0))
 		let control = CanvasGeometry.controlPoint(for: segment)
-		#expect(CanvasGeometry.distance(from: CanvasPoint(x: 50, y: -10), toCurve: segment, control: control) < 0.1)
-		#expect(CanvasGeometry.distance(from: CanvasPoint(x: 50, y: 0), toCurve: segment, control: control) > 5, "The straight line is off the curve")
+		#expect(CanvasGeometry.distance(from: CanvasPoint(x: 50, y: 5), toCurve: segment, control: control) < 0.1)
+		#expect(CanvasGeometry.distance(from: CanvasPoint(x: 50, y: 0), toCurve: segment, control: control) > 4, "The straight line is off the curve")
 		#expect(CanvasGeometry.distance(from: CanvasPoint(x: 50, y: -40), toCurve: segment, control: control) > 25)
 	}
 

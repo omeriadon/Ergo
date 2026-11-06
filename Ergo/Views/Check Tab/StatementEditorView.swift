@@ -209,9 +209,13 @@ struct StatementEditorView: View {
 					}
 				} label: {
 					// Toolbar items don't pick up the animation on the body, so it has to be here
-					Image(systemName: focusedField != nil ? "checkmark" : "app.badge.checkmark")
-						.contentTransition(.symbolEffect(.replace))
-						.animation(.smooth, value: focusedField == nil)
+					ZStack {
+						let symbol = focusedField != nil ? "checkmark" : "app.badge.checkmark"
+						Image(systemName: symbol)
+							.id(symbol)
+							.transition(.blurReplace)
+					}
+					.animation(.smooth, value: focusedField == nil)
 				}
 				.buttonStyle(.glassProminent)
 				.accessibilityLabel("Done")

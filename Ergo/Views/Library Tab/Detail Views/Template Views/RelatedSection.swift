@@ -23,7 +23,7 @@ struct RelatedSection: View {
 		if !list.isEmpty {
 			if list.allSatisfy({ $0.category == .philosophers }) {
 				VStack(alignment: .leading, spacing: 20) {
-					Text("Key Figures")
+					Text(title)
 						.textCase(.uppercase)
 						.font(.title3)
 						.foregroundStyle(.secondary)

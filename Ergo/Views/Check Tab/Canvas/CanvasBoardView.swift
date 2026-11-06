@@ -19,25 +19,14 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 	var dragStarted: (Statement.ID) -> Void = { _ in }
 	var moved: (Statement.ID, CanvasPoint) -> Void = { _, _ in }
 	var tapBackground: (CanvasPoint) -> Void = { _ in }
-	var connectStarted: (Statement.ID) -> Void = { _ in }
+	var connectStarted: (Statement.ID, _ asConclusion: Bool) -> Void = { _, _ in }
 	var connectTargetChanged: (Statement.ID?) -> Void = { _ in }
 
 	/// The arrow was let go, over this box if it's over one
 	var connectEnded: (Statement.ID, Statement.ID?) -> Void = { _, _ in }
 
 	var boxContent: (CanvasBoxModel) -> any UIContentConfiguration = { _ in UIListContentConfiguration.cell() }
-	var handleContent: (_ pointsUp: Bool, _ asConclusion: Bool) -> any UIContentConfiguration = { _, _ in UIListContentConfiguration.cell() }
-
-	/// The handle was tapped, which swaps premise and conclusion for the arrow it draws
-	var toggleConnectRole: () -> Void = {}
-
-	/// Whether the selected box is the conclusion of the arrow the handle draws
-	var connectsAsConclusion = false {
-		didSet {
-			guard connectsAsConclusion != oldValue else { return }
-			handle?.show(pointsUp: handle?.pointsUp ?? false, asConclusion: connectsAsConclusion, content: handleContent)
-		}
-	}
+	var handleContent: (_ pointsUp: Bool) -> any UIContentConfiguration = { _ in UIListContentConfiguration.cell() }
 
 	private(set) var canvasTransform = CanvasTransform()
 	private(set) var hasBeenMoved = false
@@ -51,13 +40,11 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 	private var selectedStatement: Statement.ID?
 	private var selectedLink: Link.ID?
 
-	private var handle: CanvasHandleView?
+	/// One above the selected box and one below it, made the first time they're needed
+	private var handles: [CanvasHandleView] = []
 
-	/// The box the handle's side was picked for, so it keeps that side for as long as the box stays selected
-	private var handleSideFor: Statement.ID?
-
-	/// An arrow being dragged out of the handle
-	private var connection: (source: Statement.ID, target: Statement.ID?, arrow: CanvasArrow)?
+	/// An arrow being dragged out of a handle, and whether the box it's from is the conclusion
+	private var connection: (source: Statement.ID, target: Statement.ID?, arrow: CanvasArrow, asConclusion: Bool)?
 
 	private lazy var panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panned))
 	private lazy var pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(pinched))
@@ -118,8 +105,10 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 		if glideLink != nil {
 			return self
 		}
-		if let handle, handle.alpha > 0.5, let hit = handle.hitTest(convert(point, to: handle), with: event) {
-			return hit
+		for handle in handles where handle.alpha > 0.5 {
+			if let hit = handle.hitTest(convert(point, to: handle), with: event) {
+				return hit
+			}
 		}
 		for cell in content.subviews.reversed() {
 			if let hit = cell.hitTest(convert(point, to: cell), with: event) {
@@ -162,7 +151,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 		self.selectedStatement = selectedStatement
 		self.selectedLink = selectedLink
 		updateArrows(animation: animated ? 0.5 : nil)
-		updateHandle()
+		updateHandles()
 	}
 
 	func move(to transform: CanvasTransform, animation: Animation?) {
@@ -171,11 +160,11 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 		if let animation {
 			UIView.animate(animation) {
 				applyTransform()
-				updateHandle()
+				updateHandles()
 			}
 		} else {
 			applyTransform()
-			updateHandle()
+			updateHandles()
 		}
 	}
 
@@ -185,7 +174,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 			c: 0, d: canvasTransform.scale,
 			tx: canvasTransform.offset.width, ty: canvasTransform.offset.height
 		)
-		positionHandle()
+		positionHandles()
 	}
 
 	// MARK: - Boxes
@@ -230,7 +219,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 				draggedBox = (id, cell.center)
 				content.bringSubviewToFront(cell)
 				cell.isLifted = true
-				updateHandle()
+				updateHandles()
 				dragStarted(id)
 
 			case .changed:
@@ -248,7 +237,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 				let target = finished ? CanvasGrid.snapped(CanvasPoint(cell.center)) : CanvasPoint(draggedBox.origin)
 				UIView.animate(springDuration: 0.25, bounce: 0) {
 					cell.center = target.point
-					updateHandle()
+					updateHandles()
 				}
 				updateArrows(touching: id, animation: 0.25)
 				if finished {
@@ -262,14 +251,11 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 
 	// MARK: - Connecting
 
-	/// Shows the handle on the selected box, on the side with more room, judged when the box is selected.
-	/// It stays on that side however the canvas moves, and only picks again for another box.
-	private func updateHandle() {
-		guard let id = selectedStatement, let box = cells[id], cells.count > 1, draggedBox == nil, connection == nil else {
-			if selectedStatement == nil {
-				handleSideFor = nil
-			}
-			if let handle, handle.alpha > 0 {
+	/// Shows the handles on the selected box. Dragging the one above makes the box a conclusion of what it's dragged to,
+	/// and dragging the one below makes it a premise.
+	private func updateHandles() {
+		guard let id = selectedStatement, cells[id] != nil, cells.count > 1, draggedBox == nil, connection == nil else {
+			for handle in handles where handle.alpha > 0 {
 				UIView.animate(withDuration: 0.12) {
 					handle.alpha = 0
 				}
@@ -277,34 +263,35 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 			return
 		}
 
-		let handle = handle ?? makeHandle()
-		if handleSideFor != id {
-			handleSideFor = id
-			let up = canvasTransform.screen(CanvasPoint(box.center)).y > bounds.midY
-			handle.show(pointsUp: up, asConclusion: connectsAsConclusion, content: handleContent)
+		if handles.isEmpty {
+			handles = [makeHandle(isAbove: true), makeHandle(isAbove: false)]
 		}
 
-		if handle.alpha == 0 {
+		if handles.allSatisfy({ $0.alpha == 0 }) {
 			UIView.performWithoutAnimation {
-				positionHandle()
+				positionHandles()
 			}
 		} else {
-			positionHandle()
+			positionHandles()
 		}
 		UIView.animate(withDuration: 0.12) {
-			handle.alpha = 1
+			for handle in handles {
+				handle.alpha = 1
+			}
 		}
 	}
 
-	private func positionHandle() {
-		guard let handle, let id = selectedStatement, let box = cells[id] else { return }
+	private func positionHandles() {
+		guard let id = selectedStatement, let box = cells[id] else { return }
 		let center = canvasTransform.screen(CanvasPoint(box.center))
 		let reach = CanvasLayout.boxSize.height / 2 * canvasTransform.scale + 8 + CanvasConnectHandle.size / 2
-		handle.center = CGPoint(x: center.x, y: center.y + (handle.pointsUp ? -reach : reach))
+		for handle in handles {
+			handle.center = CGPoint(x: center.x, y: center.y + (handle.isAbove ? -reach : reach))
+		}
 	}
 
-	private func makeHandle() -> CanvasHandleView {
-		let handle = CanvasHandleView(content: handleContent)
+	private func makeHandle(isAbove: Bool) -> CanvasHandleView {
+		let handle = CanvasHandleView(isAbove: isAbove, content: handleContent)
 		handle.alpha = 0
 
 		let drag = UIPanGestureRecognizer(target: self, action: #selector(handlePanned))
@@ -312,28 +299,19 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 		drag.delegate = self
 		handle.addGestureRecognizer(drag)
 
-		let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapped))
-		tap.delegate = self
-		handle.addGestureRecognizer(tap)
-
 		addSubview(handle)
-		self.handle = handle
 		return handle
-	}
-
-	@objc private func handleTapped() {
-		toggleConnectRole()
 	}
 
 	@objc private func handlePanned(_ recognizer: UIPanGestureRecognizer) {
 		switch recognizer.state {
 			case .began:
-				guard let source = selectedStatement else { return }
+				guard let source = selectedStatement, let handle = recognizer.view as? CanvasHandleView else { return }
 				let arrow = CanvasArrow(in: arrowLayer)
-				connection = (source, nil, arrow)
+				connection = (source, nil, arrow, handle.isAbove)
 				styleArrows()
-				updateHandle()
-				connectStarted(source)
+				updateHandles()
+				connectStarted(source, handle.isAbove)
 				followConnection(to: recognizer.location(in: content))
 
 			case .changed:
@@ -343,7 +321,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 				guard let finished = connection else { return }
 				connection = nil
 				finished.arrow.removeFromSuperlayer()
-				updateHandle()
+				updateHandles()
 				connectEnded(finished.source, recognizer.state == .ended ? finished.target : nil)
 
 			default:
@@ -365,12 +343,12 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 		}
 
 		let curve: ArrowCurve? = if let target {
-			connectsAsConclusion
+			current.asConclusion
 				? ArrowCurve(from: CanvasPoint(target.center), to: CanvasPoint(source))
 				: ArrowCurve(from: CanvasPoint(source), to: CanvasPoint(target.center))
 		} else if CanvasRect.box(at: CanvasPoint(source)).contains(CanvasPoint(point)) {
 			nil
-		} else if connectsAsConclusion {
+		} else if current.asConclusion {
 			ArrowCurve(from: CanvasPoint(point), into: CanvasPoint(source))
 		} else {
 			ArrowCurve(from: CanvasPoint(source), toward: CanvasPoint(point))
@@ -453,10 +431,10 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 
 			case .ended:
 				glide(velocity: recognizer.velocity(in: self))
-				updateHandle()
+				updateHandles()
 
 			case .cancelled, .failed:
-				updateHandle()
+				updateHandles()
 
 			default:
 				break
@@ -482,7 +460,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 				applyTransform()
 
 			case .ended, .cancelled, .failed:
-				updateHandle()
+				updateHandles()
 
 			default:
 				break
@@ -533,7 +511,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 		link.invalidate()
 		glideLink = nil
 		glideTime = nil
-		updateHandle()
+		updateHandles()
 	}
 
 	// MARK: - Gestures working together
@@ -641,12 +619,12 @@ private final class CanvasBoxCell: UIView {
 
 /// Holds `CanvasConnectHandle`'s SwiftUI
 private final class CanvasHandleView: UIView {
-	private(set) var pointsUp = false
-	private var asConclusion = false
+	let isAbove: Bool
 	private let hosted: any UIView & UIContentView
 
-	init(content: (_ pointsUp: Bool, _ asConclusion: Bool) -> any UIContentConfiguration) {
-		hosted = content(pointsUp, asConclusion).makeContentView()
+	init(isAbove: Bool, content: (_ pointsUp: Bool) -> any UIContentConfiguration) {
+		self.isAbove = isAbove
+		hosted = content(isAbove).makeContentView()
 		let size = CanvasConnectHandle.size
 		super.init(frame: CGRect(x: 0, y: 0, width: size, height: size))
 
@@ -657,14 +635,7 @@ private final class CanvasHandleView: UIView {
 
 	@available(*, unavailable)
 	required init?(coder _: NSCoder) {
-		fatalError("Use init(content:)")
-	}
-
-	func show(pointsUp newSide: Bool, asConclusion newRole: Bool, content: (_ pointsUp: Bool, _ asConclusion: Bool) -> any UIContentConfiguration) {
-		guard newSide != pointsUp || newRole != asConclusion else { return }
-		pointsUp = newSide
-		asConclusion = newRole
-		hosted.configuration = content(newSide, newRole)
+		fatalError("Use init(isAbove:content:)")
 	}
 }
 

@@ -39,13 +39,21 @@
         {
           "target": "Ergo",
           "exclusions": [
+            "Siri/ErgoSiriEvaluations/ErgoEvaluation.swift",
+            "Siri/ErgoSiriEvaluations/ErgoSiriEvaluationTests.swift",
+            "Siri/ErgoSiriEvaluations/README.md",
             "Special/Info.plist",
+          ],
+        }, {
+          "target": "ErgoSiriEvaluations",
+          "inclusions": [
+            "Siri/ErgoSiriEvaluations/ErgoEvaluation.swift",
+            "Siri/ErgoSiriEvaluations/ErgoSiriEvaluationTests.swift",
+            "Siri/ErgoSiriEvaluations/README.md",
           ],
         },
       ],
-    },
-    { "kind": "folder", "path": "ErgoSiriEvaluations", "target-membership": [ "ErgoSiriEvaluations" ] },
-    {
+    }, {
       "kind": "group",
       "name": "Products",
       "children": [

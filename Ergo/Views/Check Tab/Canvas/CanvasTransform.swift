@@ -81,31 +81,6 @@ struct CanvasTransform: Equatable {
 			scale: clamped
 		)
 	}
-
-	/// The smallest pan that brings `rect` fully into the free part of the screen. Unchanged when it is already there.
-	func revealing(_ rect: CanvasRect, in size: CGSize, insets: EdgeInsets, margin: CGFloat = 16) -> CanvasTransform {
-		let low = screen(CanvasPoint(x: rect.minX, y: rect.minY))
-		let high = screen(CanvasPoint(x: rect.maxX, y: rect.maxY))
-		let free = CGRect(
-			x: insets.leading + margin,
-			y: insets.top + margin,
-			width: size.width - insets.leading - insets.trailing - 2 * margin,
-			height: size.height - insets.top - insets.bottom - 2 * margin
-		)
-
-		var moved = self
-		if low.x < free.minX {
-			moved.offset.width += free.minX - low.x
-		} else if high.x > free.maxX {
-			moved.offset.width -= high.x - free.maxX
-		}
-		if low.y < free.minY {
-			moved.offset.height += free.minY - low.y
-		} else if high.y > free.maxY {
-			moved.offset.height -= high.y - free.maxY
-		}
-		return moved
-	}
 }
 
 // MARK: - Boxes

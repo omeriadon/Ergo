@@ -56,13 +56,11 @@ public enum CanvasGeometry {
 
 	// MARK: - Curves
 
-	/// The control point of a quadratic curve that bends the arrow sideways by `bend` times its length.
-	/// The bend is a quarter turn of the direction, `(dx, dy)` to `(dy, -dx)`, so arrows in opposite directions between
-	/// the same two boxes bow to opposite sides instead of lying on top of each other.
-	public static func controlPoint(for segment: CanvasSegment, bend: Double = 0.2) -> CanvasPoint {
-		let line = segment.end - segment.start
-		let middle = segment.start + line * 0.5
-		return middle + CanvasPoint(x: line.y, y: -line.x) * bend
+	/// The control point of a quadratic curve that lets the arrow hang down by `droop` times its length, like slack
+	/// string, whichever way it points. An arrow pointing straight up or down has nothing to hang from, so it stays straight.
+	public static func controlPoint(for segment: CanvasSegment, droop: Double = 0.1) -> CanvasPoint {
+		let middle = segment.start + (segment.end - segment.start) * 0.5
+		return middle + CanvasPoint(x: 0, y: segment.length * droop)
 	}
 
 	/// A point `t` of the way along the quadratic curve (0 is the start, 1 the end)

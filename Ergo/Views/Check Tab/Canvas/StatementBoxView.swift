@@ -84,6 +84,7 @@ struct StatementBoxView: View, Equatable {
 		.overlay { outline }
 		.opacity(appearance == .unavailable ? 0.4 : 1)
 		.contentShape(RoundedRectangle(cornerRadius: Self.corner))
+		.contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: Self.corner))
 	}
 
 	// MARK: - Content

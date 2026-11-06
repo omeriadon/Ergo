@@ -123,8 +123,12 @@ struct CanvasView: View {
 	@State private var connecting: Statement.ID?
 	@State private var connectTarget: Statement.ID?
 
-	/// Whether the arrow dragged from the handle makes the selected box a conclusion rather than a premise
+	/// Whether the arrow being drawn makes the selected box a conclusion rather than a premise
 	@State private var connectsAsConclusion = false
+
+	/// Whether the canvas still fits itself to the page as the room changes. Adding a box ends it, so the bar changing
+	/// for the new selection can't move the canvas again afterwards.
+	@State private var keepsFitting = true
 
 	// Messages, checks and sheets
 	@State private var notice: String?
@@ -133,10 +137,6 @@ struct CanvasView: View {
 	@State private var sheetStart: CanvasHistory.Snapshot?
 	@State private var sheetName = ""
 	@State private var outlineOverride: Bool?
-
-	// Type to add
-	@State private var newText = ""
-	@FocusState private var addFocused: Bool
 
 	// Undo
 	@State private var canUndo = false
@@ -210,9 +210,7 @@ struct CanvasView: View {
 			tapBackground: backgroundTapped,
 			connectStarted: connectStarted,
 			connectTargetChanged: { connectTarget = $0 },
-			connectEnded: connectEnded,
-			connectsAsConclusion: connectsAsConclusion,
-			toggleConnectRole: { connectsAsConclusion.toggle() }
+			connectEnded: connectEnded
 		)
 		.overlay(alignment: .topLeading) { zoomSourceAnchor }
 		.ignoresSafeArea()
@@ -254,11 +252,8 @@ struct CanvasView: View {
 				.transition(.move(edge: .bottom).combined(with: .opacity))
 			}
 
-			if !showsOutline {
-				CanvasBar(mode: barMode, actions: barActions)
-			}
-
-			AddStatementField(text: $newText, isFocused: $addFocused, prompt: addPrompt, submit: submitNewStatement)
+			// The outline has its own edit and delete on each row, so it only needs Add
+			CanvasBar(mode: showsOutline ? .idle : barMode, actions: barActions)
 		}
 		.padding(.horizontal, 16)
 		.padding(.bottom, 8)
@@ -299,14 +294,6 @@ struct CanvasView: View {
 		)
 	}
 
-	private var addPrompt: String {
-		if case .statement? = activeSelection {
-			"Add a premise of this statement"
-		} else {
-			"Add a statement"
-		}
-	}
-
 	// MARK: - Toolbar
 
 	@ToolbarContentBuilder
@@ -325,11 +312,8 @@ struct CanvasView: View {
 			.accessibilityIdentifier("check.pagesButton")
 		}
 
-		ToolbarItem(placement: .topBarTrailing) {
-			Menu("More", systemImage: "ellipsis") {
-				menuContent
-			}
-			.accessibilityIdentifier("check.moreMenu")
+		ToolbarOverflowMenu {
+			menuContent
 		}
 	}
 
@@ -376,7 +360,6 @@ struct CanvasView: View {
 
 	/// The text and breakdown sheets edit the page themselves, so what they did becomes one undo step on the way out
 	private func present(_ sheet: Sheet, named name: String) {
-		addFocused = false
 		sheetStart = history.snapshot()
 		sheetName = name
 		self.sheet = sheet
@@ -457,12 +440,10 @@ struct CanvasView: View {
 	}
 
 	private func select(_ id: Statement.ID) {
-		addFocused = false
 		selection = .statement(id)
 	}
 
 	private func edit(_ id: Statement.ID) {
-		addFocused = false
 		selection = .statement(id)
 
 		if let statement = page.statement(id) {
@@ -484,7 +465,6 @@ struct CanvasView: View {
 	}
 
 	private func dragStarted(_ id: Statement.ID) {
-		addFocused = false
 		selection = .statement(id)
 		dragBefore = history.snapshot()
 	}
@@ -509,9 +489,9 @@ struct CanvasView: View {
 
 	// MARK: - Connecting
 
-	private func connectStarted(_ id: Statement.ID) {
-		addFocused = false
+	private func connectStarted(_ id: Statement.ID, asConclusion: Bool) {
 		selection = .statement(id)
+		connectsAsConclusion = asConclusion
 		connecting = id
 	}
 
@@ -525,7 +505,7 @@ struct CanvasView: View {
 		}
 	}
 
-	/// The arrow for dragging from `source` to `target`, which way round depending on the handle's role
+	/// The arrow for dragging from `source` to `target`, which way round depending on the handle it came from
 	private func newLink(from source: Statement.ID, to target: Statement.ID) -> Link {
 		connectsAsConclusion
 			? Link(premise: target, conclusion: source)
@@ -551,7 +531,6 @@ struct CanvasView: View {
 
 	/// A new empty box where the person is looking
 	private func addStatement() {
-		addFocused = false
 		guard page.statements.count < ArgumentMapValidator.defaultMaximumStatements else {
 			show(statementLimitMessage)
 			return
@@ -562,40 +541,11 @@ struct CanvasView: View {
 				selection = pageStore.addStatement(at: freeSpot(near: viewCentre)).map { .statement($0) }
 			}
 		}
-	}
 
-	/// Return in the field: a statement beside the selected one and, if one is selected, a premise of it
-	private func submitNewStatement() {
-		let text = newText.trimmingCharacters(in: .whitespacesAndNewlines)
-		guard !text.isEmpty else { return }
-		guard page.statements.count < ArgumentMapValidator.defaultMaximumStatements else {
-			show(statementLimitMessage)
-			return
+		if keepsFitting, !board.hasBeenMoved {
+			fit(animated: true)
 		}
-
-		var anchor: Statement.ID?
-		if case let .statement(id)? = activeSelection {
-			anchor = id
-		}
-
-		history.perform("Add Statement") {
-			withAnimation(motion) {
-				if let anchor {
-					if let id = pageStore.addStatement(english: text, near: anchor, side: .left) {
-						pageStore.link(premise: id, conclusion: anchor)
-						selection = .statement(id)
-					}
-				} else if let id = pageStore.addStatement(english: text, at: freeSpot(near: viewCentre)) {
-					selection = .statement(id)
-				}
-			}
-		}
-
-		newText = ""
-		addFocused = true
-		if case let .statement(id)? = activeSelection {
-			reveal(id)
-		}
+		keepsFitting = false
 	}
 
 	private var statementLimitMessage: String {
@@ -656,20 +606,9 @@ struct CanvasView: View {
 		board.move(to: fitted, animation: animated ? motion : nil)
 	}
 
-	/// Pans just enough to bring the box into view
-	private func reveal(_ id: Statement.ID) {
-		guard let statement = page.statement(id) else { return }
-		let target = board.transform.revealing(.box(at: statement.position), in: room.viewport, insets: room.insets)
-		if target != board.transform {
-			board.move(to: target, animation: motion)
-		}
-	}
-
 	// MARK: - Background
 
 	private func backgroundTapped(at point: CanvasPoint) {
-		addFocused = false
-
 		let link = LinkHitTest.link(
 			near: point,
 			tolerance: 24 / board.transform.scale,
@@ -720,11 +659,11 @@ struct CanvasView: View {
 		)
 	}
 
-	/// Keeps the whole page in view until the person moves the canvas themselves. The first measurements come in before
-	/// the screen has finished laying out, so fitting only once would fit to the wrong room. Not while the keyboard or the
-	/// editor is what changed the room.
+	/// Keeps the whole page in view until the person moves the canvas or adds a box. The first measurements come in before
+	/// the screen has finished laying out, so fitting only once would fit to the wrong room. Not while the editor is what
+	/// changed the room.
 	private func fitUntilMoved() {
-		guard !board.hasBeenMoved, !addFocused, !isCovered, room.viewport.width > 0, room.viewport.height > 0 else { return }
+		guard keepsFitting, !board.hasBeenMoved, !isCovered, room.viewport.width > 0, room.viewport.height > 0 else { return }
 		fit(animated: false)
 	}
 

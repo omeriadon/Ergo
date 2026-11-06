@@ -20,7 +20,7 @@ func routes(_ app: Application) throws {
 	)
 
 	let signedIn = app.grouped(AccountAuthenticator())
-	let connection = ErgoProtocol.Path.connections.pathComponents + [":provider"]
+	let connection: [PathComponent] = ErgoProtocol.Path.connections.pathComponents + [":provider"]
 
 	signedIn.delete(ErgoProtocol.Path.account.pathComponents, use: AccountController.delete)
 	signedIn.delete(ErgoProtocol.Path.accountToken.pathComponents, use: AccountController.signOut)

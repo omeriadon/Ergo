@@ -69,6 +69,10 @@ struct CanvasBox: View {
 		.equatable()
 		.onTapGesture(perform: actions.select)
 		.simultaneousGesture(TapGesture(count: 2).onEnded(actions.edit))
+		.contextMenu {
+			Button("Edit", systemImage: "square.and.pencil", action: actions.edit)
+			Button("Delete", systemImage: "trash", role: .destructive, action: actions.delete)
+		}
 	}
 
 	// MARK: - Reading aloud

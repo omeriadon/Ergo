@@ -116,44 +116,14 @@ final class PageStore {
 		)
 	}
 
-	/// Adds a statement to the current page, nil when the page is full (`ArgumentMapValidator.defaultMaximumStatements`).
-	/// It goes in a free spot beside `anchor` (`side` says which: `.left` for a premise, `.right` for a conclusion,
-	/// `.below` for a sibling), or beside the origin without one. Text given makes it start with that content.
+	/// Adds an empty statement with its centre at `position`, for the canvas dropping one where the person is looking.
+	/// Nil when the page is full (`ArgumentMapValidator.defaultMaximumStatements`).
 	@discardableResult
-	func addStatement(
-		english: String = "",
-		logic: [LogicKeyboardEntry] = [],
-		near anchor: Statement.ID? = nil,
-		side: CanvasLayout.Side = .left
-	) -> Statement.ID? {
+	func addStatement(at position: CanvasPoint) -> Statement.ID? {
 		var page = current
 		guard page.statements.count < ArgumentMapValidator.defaultMaximumStatements else { return nil }
 
-		let position = if let anchor {
-			CanvasLayout.place(newNodeNear: anchor, in: page.map, side: side)
-		} else {
-			CanvasLayout.place(near: .zero, side: side, occupied: page.statements.map(\.position))
-		}
-		var statement = Statement(position: position, english: english, logic: logic)
-		if !english.isEmpty, logic.isEmpty {
-			statement.source = .english
-		}
-		page.statements.append(statement)
-		current = page
-		return statement.id
-	}
-
-	/// Adds a statement with its centre at `position`, for the canvas dropping one where the person is looking.
-	/// Nil when the page is full.
-	@discardableResult
-	func addStatement(english: String = "", at position: CanvasPoint) -> Statement.ID? {
-		var page = current
-		guard page.statements.count < ArgumentMapValidator.defaultMaximumStatements else { return nil }
-
-		var statement = Statement(position: position, english: english)
-		if !english.isEmpty {
-			statement.source = .english
-		}
+		let statement = Statement(position: position)
 		page.statements.append(statement)
 		current = page
 		return statement.id

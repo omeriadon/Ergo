@@ -34,7 +34,7 @@ struct BiasDetailView: View {
 
 			if let bias = catalog.biases.biases.first(where: { $0.id == id }) {
 				ScrollView {
-					VStack(alignment: .leading) {
+					LazyVStack(alignment: .leading) {
 						AliasTitle(name: bias.name, aliases: bias.aliases)
 
 						Spacer()

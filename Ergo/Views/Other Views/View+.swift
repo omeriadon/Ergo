@@ -64,8 +64,15 @@ extension Color {
 	}
 }
 
+extension EnvironmentValues {
+	/// True while a detail view is opening. Sections first built after this are ones the user scrolled to, so they don't bounce.
+	@Entry var isOpeningDetail = false
+}
+
 struct BounceOnAppearModifier: ViewModifier {
 	let index: Int
+
+	@Environment(\.isOpeningDetail) private var isOpening
 
 	@State private var scale: CGFloat = 0.8
 	@State private var opacity = 0.0
@@ -74,9 +81,11 @@ struct BounceOnAppearModifier: ViewModifier {
 		let calculatedDelay = 0.1 + (Double(max(0, index - 1)) * 0.1)
 
 		return content
-			.scaleEffect(scale)
-			.opacity(opacity)
+			.scaleEffect(isOpening ? scale : 1)
+			.opacity(isOpening ? opacity : 1)
 			.onAppear {
+				guard isOpening else { return }
+
 				withAnimation(.spring(response: 0.4, dampingFraction: 0.5, blendDuration: 0).delay(calculatedDelay)) {
 					scale = 1.0
 				}
