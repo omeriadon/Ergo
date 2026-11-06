@@ -70,21 +70,35 @@ struct RunDirectory: Sendable {
 
 	/// Gives everything inside to the runner user, so a CLI running as that user can use it
 	func handOver(to owner: ProcessRunner.Owner) throws {
-		try chown(owner)
+		try chown(root.path, to: owner, contentsFirst: true)
 	}
 
 	/// Takes it back afterwards, so the server can read what the CLI left and delete it
 	func takeBack() {
-		try? chown(ProcessRunner.Owner(user: getuid(), group: getgid()))
+		try? chown(root.path, to: ProcessRunner.Owner(user: getuid(), group: getgid()), contentsFirst: false)
 	}
 
-	private func chown(_ owner: ProcessRunner.Owner) throws {
-		let attributes: [FileAttributeKey: Any] = [.ownerAccountID: owner.user, .groupOwnerAccountID: owner.group]
+	/// The server can only list a directory it owns, so handing over does the contents before the directory, and
+	/// taking back the directory before the contents. A CLI's symlink is changed itself and never followed.
+	private func chown(_ path: String, to owner: ProcessRunner.Owner, contentsFirst: Bool) throws {
 		let files = FileManager.default
-		try files.setAttributes(attributes, ofItemAtPath: root.path)
-		guard let contents = files.enumerator(at: root, includingPropertiesForKeys: nil) else { return }
-		for case let file as URL in contents {
-			try files.setAttributes(attributes, ofItemAtPath: file.path)
+
+		if !contentsFirst {
+			try changeOwner(of: path, to: owner)
+		}
+		if try files.attributesOfItem(atPath: path)[.type] as? FileAttributeType == .typeDirectory {
+			for name in try files.contentsOfDirectory(atPath: path) {
+				try chown("\(path)/\(name)", to: owner, contentsFirst: contentsFirst)
+			}
+		}
+		if contentsFirst {
+			try changeOwner(of: path, to: owner)
+		}
+	}
+
+	private func changeOwner(of path: String, to owner: ProcessRunner.Owner) throws {
+		guard lchown(path, owner.user, owner.group) == 0 else {
+			throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EPERM)
 		}
 	}
 }

@@ -25,4 +25,18 @@ struct RunDirectoryTests {
 		#expect(try permissions(of: run.home) == 0o700)
 		#expect(try permissions(of: run.temporary) == 0o700)
 	}
+
+	/// To its own user, since only Docker has another one. A symlink leaving the run must not stop it.
+	@Test func handingOverAndBackWalksTheWholeRun() throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+
+		let run = try RunDirectory.make(in: URL(filePath: scratch.path("runs"), directoryHint: .isDirectory))
+		try run.write("{}", to: run.home.appending(path: ".codex/auth.json"))
+		try FileManager.default.createSymbolicLink(atPath: run.work.appending(path: "outside").path, withDestinationPath: "/nowhere")
+
+		try run.handOver(to: ProcessRunner.Owner(user: getuid(), group: getgid()))
+		run.takeBack()
+		#expect(run.read(run.home.appending(path: ".codex/auth.json")) == "{}")
+	}
 }
