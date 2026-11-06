@@ -15,7 +15,7 @@ enum ServerEnvironment: String, CaseIterable, Codable, Defaults.Serializable {
 	case thisMac
 
 	/// The hosted server, and the only server address written in the app
-	static let productionURL = URL(string: "https://ergo.example.com")!
+	static let productionURL = URL(string: "https://ergo-15.235.184.129.sslip.io")!
 
 	/// The server to talk to now. Nil only in a debug build set to This Mac without a usable address.
 	static var current: URL? {

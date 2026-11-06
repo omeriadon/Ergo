@@ -74,5 +74,5 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -destination 'generic/platform=i
 - Revoking a user's Apple sign-in on account deletion is not built (needs a `.p8` key on the server and the app sending the `authorizationCode`).
 
 ## Server environment
-- Release builds always use `ServerEnvironment.productionURL`, which is still a placeholder (`https://ergo.example.com`). Set it when there is a real host.
+- Release builds always use `ServerEnvironment.productionURL` (`https://ergo-15.235.184.129.sslip.io`, hosted on Dokploy).
 - Debug builds can switch between Production and This Mac (Settings → Translation → Server, which also has a Test Server row). For a phone, run the Mac server with `--hostname 0.0.0.0`.
