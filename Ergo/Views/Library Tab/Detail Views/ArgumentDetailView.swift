@@ -18,6 +18,19 @@ struct ArgumentDetailView: View {
 				.ignoresSafeArea()
 
 			if let argument = catalog.arguments.arguments.first(where: { $0.id == id }) {
+				// 1. Check which optional sections actually exist
+				let hasOrigin = argument.origin?.isEmpty == false
+				let hasConclusion = !argument.conclusion.isEmpty
+
+				// 2. Derive indices dynamically so they shift cleanly if something is missing
+				let premisesIndex = hasOrigin ? 5 : 4
+				let conclusionIndex = premisesIndex + 1
+				let assumptionsIndex = conclusionIndex + (hasConclusion ? 1 : 0)
+				let objectionsIndex = assumptionsIndex + 1
+				let examplesIndex = objectionsIndex + 1
+				let relatedIndex = examplesIndex + 1
+				let tagsIndex = relatedIndex + 1
+
 				ScrollView {
 					VStack(alignment: .leading) {
 						AliasTitle(name: argument.name, aliases: argument.aliases)
@@ -28,9 +41,11 @@ struct ArgumentDetailView: View {
 						Text(argument.summary)
 							.textSelection(.enabled)
 							.lineLimit(10)
+							.bounceOnAppear(after: 1)
 
 						RelatedSection(list: argument.keyFigures, title: "Key Figures")
 							.padding(.top)
+							.bounceOnAppear(after: 2)
 
 						Text(argument.body)
 							.padding(12)
@@ -38,22 +53,27 @@ struct ArgumentDetailView: View {
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
+							.bounceOnAppear(after: 3)
 
 						if let origin = argument.origin, !origin.isEmpty {
 							NotesSection(list: [origin], title: "Origin")
 								.padding(.top)
+								.bounceOnAppear(after: 4)
 						}
 
 						NotesSection(list: argument.premises, title: "Premises")
 							.padding(.top)
+							.bounceOnAppear(after: premisesIndex)
 
 						if !argument.conclusion.isEmpty {
 							NotesSection(list: [argument.conclusion], title: "Conclusion")
 								.padding(.top)
+								.bounceOnAppear(after: conclusionIndex)
 						}
 
 						NotesSection(list: argument.assumptions, title: "Assumptions")
 							.padding(.top)
+							.bounceOnAppear(after: assumptionsIndex)
 
 						let objections = argument.objections.map { objection in
 							Example(
@@ -61,14 +81,18 @@ struct ArgumentDetailView: View {
 								note: "Reply: \(objection.reply)"
 							)
 						}
+
 						ExamplesSection(list: objections, title: "Objections & Replies")
 							.padding(.top)
+							.bounceOnAppear(after: objectionsIndex)
 
 						ExamplesSection(list: argument.examples)
 							.padding(.top)
+							.bounceOnAppear(after: examplesIndex)
 
 						RelatedSection(list: argument.related)
 							.padding(.top)
+							.bounceOnAppear(after: relatedIndex)
 
 						let tags = argument.tags.map { tag in
 							CatalogTag(
@@ -77,8 +101,10 @@ struct ArgumentDetailView: View {
 								route: .arguments(filter: tag)
 							)
 						}
+
 						TagSection(list: tags)
 							.padding(.top)
+							.bounceOnAppear(after: tagsIndex)
 
 						Spacer()
 							.frame(height: 40)

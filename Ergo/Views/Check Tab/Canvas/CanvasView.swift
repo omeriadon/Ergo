@@ -475,8 +475,10 @@ struct CanvasView: View {
 			)
 		}
 
-		// The next turn, so the stand-in is on screen by the time the transition looks for it
+		// A turn isn't enough: the stand-in has to be laid out in the window, which takes a frame or two,
+		// or the transition finds no source view and falls back to a plain push
 		Task {
+			try? await Task.sleep(for: .milliseconds(50))
 			openEditor(id)
 		}
 	}

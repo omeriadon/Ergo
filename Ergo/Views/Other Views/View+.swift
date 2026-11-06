@@ -63,3 +63,32 @@ extension Color {
 		#endif
 	}
 }
+
+struct BounceOnAppearModifier: ViewModifier {
+	let index: Int
+
+	@State private var scale: CGFloat = 0.8
+	@State private var opacity = 0.0
+
+	func body(content: Content) -> some View {
+		let calculatedDelay = 0.1 + (Double(max(0, index - 1)) * 0.1)
+
+		return content
+			.scaleEffect(scale)
+			.opacity(opacity)
+			.onAppear {
+				withAnimation(.spring(response: 0.4, dampingFraction: 0.5, blendDuration: 0).delay(calculatedDelay)) {
+					scale = 1.0
+				}
+				withAnimation(.easeInOut.delay(calculatedDelay)) {
+					opacity = 1
+				}
+			}
+	}
+}
+
+extension View {
+	func bounceOnAppear(after index: Int) -> some View {
+		modifier(BounceOnAppearModifier(index: index))
+	}
+}

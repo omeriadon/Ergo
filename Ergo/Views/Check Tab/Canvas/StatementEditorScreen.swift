@@ -7,8 +7,7 @@
 
 import SwiftUI
 
-/// The statement editor as the canvas shows it: the box zooms into it, and a pinch out (or the back button, or
-/// the edge swipe) zooms back out to the canvas. The pinch is a shortcut only, nothing needs it.
+/// The statement editor as the canvas shows it: the box zooms into it, and a pinch out (or the done button) zooms back out to the canvas. The pinch is a shortcut only, nothing needs it.
 struct StatementEditorScreen: View {
 	/// Fingers coming together past this means "back out"
 	private static let dismissScale: CGFloat = 0.7
@@ -32,7 +31,7 @@ struct StatementEditorScreen: View {
 
 	var body: some View {
 		StatementEditorView(statementID: statementID)
-			.containerBackground(for: .navigation) { CanvasBackdrop() }
+			.navigationBarBackButtonHidden()
 			.navigationTransition(.zoom(sourceID: statementID, in: zoomNamespace))
 			.simultaneousGesture(
 				MagnifyGesture()

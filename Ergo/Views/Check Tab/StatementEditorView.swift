@@ -18,6 +18,9 @@ struct StatementEditorView: View {
 		case english, logic
 	}
 
+	@Environment(\.dismiss)
+	private var dismiss
+
 	@Environment(NavigationManager.self)
 	private var navigation
 
@@ -196,17 +199,23 @@ struct StatementEditorView: View {
 		}
 		.toolbar {
 			ToolbarItem(placement: .topBarTrailing) {
-				if focusedField != nil {
-					Button(role: .confirm) {
+				// With the keyboard up the button puts it away, and then it closes the editor
+				Button(role: .confirm) {
+					if focusedField != nil {
 						englishFocused = false
 						focusedField = nil
-					} label: {
-						Label("Done", systemImage: "checkmark")
+					} else {
+						dismiss()
 					}
-					.buttonStyle(.glassProminent)
-					.accessibilityLabel("Done")
-					.accessibilityIdentifier("check.doneButton")
+				} label: {
+					// Toolbar items don't pick up the animation on the body, so it has to be here
+					Image(systemName: focusedField != nil ? "checkmark" : "app.badge.checkmark")
+						.contentTransition(.symbolEffect(.replace))
+						.animation(.smooth, value: focusedField == nil)
 				}
+				.buttonStyle(.glassProminent)
+				.accessibilityLabel("Done")
+				.accessibilityIdentifier("check.doneButton")
 			}
 		}
 		.animation(.easeInOut, value: focusedField == nil)

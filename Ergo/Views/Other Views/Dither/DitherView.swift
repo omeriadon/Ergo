@@ -1888,20 +1888,31 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 		}
 	}
 
+	/// The largest radius the probe has reported. It reads 0 while the view sits in a transition, so this only ever goes up.
+	private static var knownDeviceCornerRadius: CGFloat = 0
+
 	/// Passes the screen's rounded rectangle, in this view's coordinates, so the
 	/// shader can skip cells that would sit under the device's corners.
 	private func applyDeviceCorners(to inputs: inout DitherRenderInputs) {
 		#if os(iOS)
-			guard configuration.clipsToDeviceCorners,
-			      let screen = window?.windowScene?.screen
-			else {
+			guard configuration.clipsToDeviceCorners else {
 				return
 			}
-			let radius = cornerProbe.effectiveRadius(corner: .allCorners)
+			let measured = cornerProbe.effectiveRadius(corner: .allCorners)
+			if measured > Self.knownDeviceCornerRadius {
+				Self.knownDeviceCornerRadius = measured
+			}
+			let radius = Self.knownDeviceCornerRadius
 			guard radius > 0 else {
 				return
 			}
-			let rect = screen.coordinateSpace.convert(screen.bounds, to: self)
+			// A screen-sized view is clipped to its own bounds. Asking where the screen is mid-transition, while an
+			// ancestor is moved or scaled, puts the corners somewhere other than the view's own and they stop clipping.
+			let rect = if let screen = window?.windowScene?.screen, bounds.size != screen.bounds.size {
+				screen.coordinateSpace.convert(screen.bounds, to: self)
+			} else {
+				bounds
+			}
 			inputs.screenOrigin = SIMD2<Float>(Float(rect.minX), Float(rect.minY))
 			inputs.screenSize = SIMD2<Float>(Float(rect.width), Float(rect.height))
 			inputs.screenCornerRadius = Float(radius)
