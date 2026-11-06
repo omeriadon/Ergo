@@ -52,6 +52,8 @@ extension SyncedSetting {
 				.ditherEnabled
 			case .translationProvider:
 				.translationProvider
+			case .hapticsEnabled:
+				.hapticsEnabled
 		}
 	}
 
@@ -63,6 +65,8 @@ extension SyncedSetting {
 				try? SyncCoding.value(Defaults[.ditherEnabled])
 			case .translationProvider:
 				try? SyncCoding.value(Defaults[.translationProvider])
+			case .hapticsEnabled:
+				try? SyncCoding.value(Defaults[.hapticsEnabled])
 		}
 	}
 
@@ -75,6 +79,8 @@ extension SyncedSetting {
 				(try? SyncCoding.decode(Bool.self, from: value)) != nil
 			case .translationProvider:
 				(try? SyncCoding.decode(Provider.self, from: value)) != nil
+			case .hapticsEnabled:
+				(try? SyncCoding.decode(Bool.self, from: value)) != nil
 		}
 	}
 
@@ -92,6 +98,10 @@ extension SyncedSetting {
 			case .translationProvider:
 				if let provider = try? SyncCoding.decode(Provider.self, from: value), provider != Defaults[.translationProvider] {
 					Defaults[.translationProvider] = provider
+				}
+			case .hapticsEnabled:
+				if let enabled = try? SyncCoding.decode(Bool.self, from: value), enabled != Defaults[.hapticsEnabled] {
+					Defaults[.hapticsEnabled] = enabled
 				}
 		}
 	}

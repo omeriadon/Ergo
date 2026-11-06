@@ -18,6 +18,8 @@ struct BoardsSheet: View {
 
 	@Default(.logicLetters) var logicLetters
 
+	@State private var breakingDown = false
+
 	private var letters: [String] {
 		LogicLetters.resolved(logicLetters)
 	}
@@ -62,14 +64,27 @@ struct BoardsSheet: View {
 				}
 
 				ToolbarItem(placement: .topBarTrailing) {
-					Button("New Board", systemImage: "square.and.pencil") {
-						boardStore.newBoard()
-						navigation.dismissSheet()
+					Menu("New Board", systemImage: "square.and.pencil") {
+						Button("Blank", systemImage: "square.dashed") {
+							boardStore.newBoard()
+							navigation.dismissSheet()
+						}
+						.accessibilityIdentifier("boards.newBoard.blank")
+
+						Divider()
+
+						Button("Break Down", systemImage: "list.bullet.indent") {
+							breakingDown = true
+						}
+						.accessibilityIdentifier("boards.newBoard.breakDown")
 					}
 					.buttonStyle(.glassProminent)
 					.scrollEdgeEffectStyle(.soft, for: .all)
 					.accessibilityIdentifier("boards.newBoard")
 				}
+			}
+			.sheet(isPresented: $breakingDown) {
+				BreakDownSheet()
 			}
 		}
 	}

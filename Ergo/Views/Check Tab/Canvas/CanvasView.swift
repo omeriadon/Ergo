@@ -15,6 +15,21 @@ enum CanvasSelection: Hashable {
 	case link(Link.ID)
 }
 
+/// A box's menu asked for another box, and the next one tapped is the answer
+private enum BoxPick: Equatable {
+	/// A new arrow, which way round depending on `connectsAsConclusion`
+	case connect(Statement.ID)
+
+	/// Removing the arrow between this box and the one tapped
+	case unlink(Statement.ID)
+
+	var source: Statement.ID {
+		switch self {
+			case let .connect(id), let .unlink(id): id
+		}
+	}
+}
+
 /// What the checker's answers depend on, so they're only worked out again when one of these changes
 private struct CanvasCheckKey: Equatable {
 	struct Item: Equatable {
@@ -66,13 +81,11 @@ struct CanvasView: View {
 
 	private enum Sheet: Identifiable {
 		case editAsText
-		case breakDown
 		case check(Statement.ID)
 
 		var id: String {
 			switch self {
 				case .editAsText: "editAsText"
-				case .breakDown: "breakDown"
 				case let .check(id): "check.\(id.uuidString)"
 			}
 		}
@@ -95,9 +108,6 @@ struct CanvasView: View {
 	@Environment(\.accessibilityReduceMotion)
 	private var reduceMotion
 
-	@Environment(\.accessibilityVoiceOverEnabled)
-	private var voiceOverEnabled
-
 	@Environment(\.undoManager)
 	private var undoManager
 
@@ -107,7 +117,7 @@ struct CanvasView: View {
 	@Default(.logicLetters) private var logicLetters
 
 	// What's on screen
-	@State private var board = CanvasBoardController()
+	@State private var canvasBoard = CanvasBoardController()
 	@State private var room = CanvasRoom()
 
 	/// Where the editor zooms out of. The box itself is hosted separately, out of reach of the zoom transition, so this
@@ -126,6 +136,8 @@ struct CanvasView: View {
 	/// Whether the arrow being drawn makes the selected box a conclusion rather than a premise
 	@State private var connectsAsConclusion = false
 
+	@State private var pick: BoxPick?
+
 	/// Whether the canvas still fits itself to the board as the room changes. Adding a box ends it, so the bar changing
 	/// for the new selection can't move the canvas again afterwards.
 	@State private var keepsFitting = true
@@ -136,7 +148,6 @@ struct CanvasView: View {
 	@State private var sheet: Sheet?
 	@State private var sheetStart: CanvasHistory.Snapshot?
 	@State private var sheetName = ""
-	@State private var outlineOverride: Bool?
 
 	// Undo
 	@State private var canUndo = false
@@ -155,18 +166,9 @@ struct CanvasView: View {
 		reduceMotion ? nil : .smooth
 	}
 
-	/// VoiceOver gets the outline unless it's switched off, everyone else gets the canvas unless it's switched on
-	private var showsOutline: Bool {
-		outlineOverride ?? voiceOverEnabled
-	}
-
 	var body: some View {
 		ZStack {
-			if showsOutline {
-				outline
-			} else {
-				canvas
-			}
+			canvas
 		}
 		// Inside the inset, so the room it reads already has the bars taken off
 		.onGeometryChange(for: CanvasRoom.self, of: { CanvasRoom($0) }) { new in
@@ -200,9 +202,10 @@ struct CanvasView: View {
 		return CanvasBoard(
 			boxes: boxes,
 			links: board.links,
-			selectedStatement: selectedStatement,
+			// While picking, a box is tapped rather than dragged from, so its handles stay away
+			selectedStatement: activePick == nil ? selectedStatement : nil,
 			selectedLink: selectedLink,
-			controller: board,
+			controller: canvasBoard,
 			catalog: catalog,
 			actions: actions(for:),
 			dragStarted: dragStarted,
@@ -210,7 +213,8 @@ struct CanvasView: View {
 			tapBackground: backgroundTapped,
 			connectStarted: connectStarted,
 			connectTargetChanged: { connectTarget = $0 },
-			connectEnded: connectEnded
+			connectEnded: connectEnded,
+			deleteLink: deleteLink
 		)
 		.overlay(alignment: .topLeading) { zoomSourceAnchor }
 		.ignoresSafeArea()
@@ -228,19 +232,6 @@ struct CanvasView: View {
 		}
 	}
 
-	private var outline: some View {
-		CanvasOutlineView(
-			board: board,
-			verdicts: verdicts,
-			edit: edit,
-			delete: delete,
-			showCheck: { sheet = .check($0) },
-			link: { link(premise: $0, conclusion: $1) },
-			unlink: deleteLink
-		)
-		.ignoresSafeArea(.keyboard)
-	}
-
 	// MARK: - Bottom
 
 	private var bottomStack: some View {
@@ -252,8 +243,7 @@ struct CanvasView: View {
 				.transition(.move(edge: .bottom).combined(with: .opacity))
 			}
 
-			// The outline has its own edit and delete on each row, so it only needs Add
-			CanvasBar(mode: showsOutline ? .idle : barMode, actions: barActions)
+			CanvasBar(mode: barMode, actions: barActions)
 		}
 		.padding(.horizontal, 16)
 		.padding(.bottom, 8)
@@ -270,7 +260,10 @@ struct CanvasView: View {
 	}
 
 	private var barMode: CanvasBarMode {
-		switch activeSelection {
+		if let activePick {
+			return .picking(prompt(for: activePick))
+		}
+		return switch activeSelection {
 			case .statement: .statement
 			case .link: .link
 			case nil: .idle
@@ -291,7 +284,8 @@ struct CanvasView: View {
 					case let .link(id)?: deleteLink(id)
 					case nil: break
 				}
-			}
+			},
+			cancelPick: { pick = nil }
 		)
 	}
 
@@ -300,12 +294,10 @@ struct CanvasView: View {
 	@ToolbarContentBuilder
 	private var toolbar: some ToolbarContent {
 		ToolbarItemGroup(placement: .topBarTrailing) {
-			if !showsOutline {
-				Button("Fit", systemImage: "arrow.up.left.and.down.right.magnifyingglass") {
-					fit(animated: true)
-				}
-				.accessibilityIdentifier("check.fitButton")
+			Button("Fit", systemImage: "arrow.up.left.and.down.right.magnifyingglass") {
+				fit(animated: true)
 			}
+			.accessibilityIdentifier("check.fitButton")
 
 			Button("Boards", systemImage: "text.page.and.line.vertical.and.text.page") {
 				navigation.presentSheet(.boards)
@@ -333,13 +325,7 @@ struct CanvasView: View {
 
 		Section {
 			Button("Edit as Text", systemImage: "text.alignleft") { present(.editAsText, named: "Edit as Text") }
-			Button("Break Down", systemImage: "list.bullet.indent") { present(.breakDown, named: "Break Down") }
-		}
-
-		Section {
-			Button(showsOutline ? "Show Canvas" : "Show Outline", systemImage: showsOutline ? "square.grid.3x3" : "list.bullet") {
-				outlineOverride = !showsOutline
-			}
+			Button("Letters and Descriptors", systemImage: "textformat.alt") { navigation.presentSheet(.logicLetters) }
 		}
 	}
 
@@ -350,14 +336,12 @@ struct CanvasView: View {
 		switch sheet {
 			case .editAsText:
 				EditAsTextSheet()
-			case .breakDown:
-				BreakDownSheet()
 			case let .check(id):
 				ArgumentCheckSheet(statementID: id)
 		}
 	}
 
-	/// The text and breakdown sheets edit the board themselves, so what they did becomes one undo step on the way out
+	/// The text sheet edits the board itself, so what it did becomes one undo step on the way out
 	private func present(_ sheet: Sheet, named name: String) {
 		sheetStart = history.snapshot()
 		sheetName = name
@@ -379,7 +363,7 @@ struct CanvasView: View {
 
 	private func appearance(of id: Statement.ID, connectable: Set<Statement.ID>?) -> BoxAppearance {
 		if let connectable {
-			if id == connecting {
+			if id == linkSource {
 				return .connectSource
 			}
 			guard connectable.contains(id) else {
@@ -404,13 +388,27 @@ struct CanvasView: View {
 		return relations
 	}
 
-	/// While drawing an arrow, the boxes it could end at. Nil when not drawing one.
+	/// While drawing an arrow, the boxes it could end at, and while removing one, the boxes it could be going to.
+	/// Nil when doing neither.
 	private var connectableStatements: Set<Statement.ID>? {
-		guard let connecting else { return nil }
+		if case let .unlink(id) = activePick {
+			return Set(board.links.filter { $0.premise == id }.map(\.conclusion) + board.links.filter { $0.conclusion == id }.map(\.premise))
+		}
+		guard let linkSource else { return nil }
 		let map = board.map
 		return Set(board.statements.map(\.id).filter { target in
-			ArgumentMapValidator.problem(adding: newLink(from: connecting, to: target), to: map) == nil
+			ArgumentMapValidator.problem(adding: newLink(from: linkSource, to: target), to: map) == nil
 		})
+	}
+
+	/// The box an arrow is coming out of, by dragging or by picking
+	private var linkSource: Statement.ID? {
+		connecting ?? activePick?.source
+	}
+
+	/// A pick whose box is gone (deleted here, or on another device) is no pick
+	private var activePick: BoxPick? {
+		pick.flatMap { board.statement($0.source) == nil ? nil : $0 }
 	}
 
 	/// A selection that's gone (deleted here, or on another device) is no selection
@@ -433,21 +431,28 @@ struct CanvasView: View {
 			select: { select(id) },
 			edit: { edit(id) },
 			delete: { delete(id) },
+			connect: { pickToConnect(id, asConclusion: $0) },
+			removeLink: { pickToUnlink(id) },
 			showCheck: verdicts[id] == nil ? nil : { sheet = .check(id) },
 			nudge: { nudge(id, columns: $0, rows: $1) }
 		)
 	}
 
 	private func select(_ id: Statement.ID) {
-		selection = .statement(id)
+		if let activePick {
+			finish(activePick, with: id)
+		} else {
+			selection = .statement(id)
+		}
 	}
 
 	private func edit(_ id: Statement.ID) {
+		pick = nil
 		selection = .statement(id)
 
 		if let statement = board.statement(id) {
 			let box = CanvasRect.box(at: statement.position)
-			let transform = board.transform
+			let transform = canvasBoard.transform
 			let origin = transform.screen(CanvasPoint(x: box.minX, y: box.minY))
 			zoomSource = ZoomSource(
 				id: id,
@@ -464,6 +469,7 @@ struct CanvasView: View {
 	}
 
 	private func dragStarted(_ id: Statement.ID) {
+		pick = nil
 		selection = .statement(id)
 		dragBefore = history.snapshot()
 	}
@@ -494,14 +500,39 @@ struct CanvasView: View {
 		connecting = id
 	}
 
-	/// Let go over a box, the arrow is drawn or the notice says why not. Let go anywhere else, nothing happens.
-	private func connectEnded(_ source: Statement.ID, target: Statement.ID?) {
+	/// Let go over a box, the arrow is drawn or the notice says why not. Let go on empty canvas, a new box goes there.
+	private func connectEnded(_ source: Statement.ID, drop: ConnectionDrop) {
 		connecting = nil
 		connectTarget = nil
-		if let target {
-			let new = newLink(from: source, to: target)
-			link(premise: new.premise, conclusion: new.conclusion)
+		switch drop {
+			case let .box(target):
+				let new = newLink(from: source, to: target)
+				link(premise: new.premise, conclusion: new.conclusion)
+			case let .space(point):
+				addLinked(to: source, near: point)
+			case .nowhere:
+				break
 		}
+	}
+
+	/// A new empty box where the arrow was let go, which is a premise of `source` when the arrow came out of the top of
+	/// it, and a conclusion when it came out of the bottom
+	private func addLinked(to source: Statement.ID, near point: CanvasPoint) {
+		guard board.statements.count < ArgumentMapValidator.defaultMaximumStatements else {
+			show(statementLimitMessage)
+			return
+		}
+
+		let side: CanvasLayout.Side = connectsAsConclusion ? .above : .below
+		history.perform(connectsAsConclusion ? "Add Premise" : "Add Conclusion") {
+			withAnimation(motion) {
+				guard let new = boardStore.addStatement(at: freeSpot(near: point, side: side)) else { return }
+				let arrow = newLink(from: source, to: new)
+				boardStore.link(premise: arrow.premise, conclusion: arrow.conclusion)
+				selection = .statement(new)
+			}
+		}
+		keepsFitting = false
 	}
 
 	/// The arrow for dragging from `source` to `target`, which way round depending on the handle it came from
@@ -526,6 +557,52 @@ struct CanvasView: View {
 		return problem == nil
 	}
 
+	// MARK: - Picking
+
+	private func pickToConnect(_ id: Statement.ID, asConclusion: Bool) {
+		connectsAsConclusion = asConclusion
+		start(.connect(id))
+	}
+
+	private func pickToUnlink(_ id: Statement.ID) {
+		start(.unlink(id))
+	}
+
+	private func start(_ new: BoxPick) {
+		selection = .statement(new.source)
+		pick = new
+		AccessibilityNotification.Announcement(prompt(for: new)).post()
+	}
+
+	private func prompt(for pick: BoxPick) -> String {
+		switch pick {
+			case .connect: connectsAsConclusion ? "Tap its premise" : "Tap its conclusion"
+			case .unlink: "Tap the linked statement"
+		}
+	}
+
+	/// The box itself cancels. A box that can't be the answer leaves the pick open, so another can be tapped.
+	private func finish(_ pick: BoxPick, with id: Statement.ID) {
+		guard id != pick.source else {
+			self.pick = nil
+			return
+		}
+
+		switch pick {
+			case let .connect(source):
+				let new = newLink(from: source, to: id)
+				if link(premise: new.premise, conclusion: new.conclusion) {
+					self.pick = nil
+				}
+			case let .unlink(source):
+				let arrow = board.links.first { ($0.premise == source && $0.conclusion == id) || ($0.premise == id && $0.conclusion == source) }
+				if let arrow {
+					deleteLink(arrow.id)
+					self.pick = nil
+				}
+		}
+	}
+
 	// MARK: - Adding and deleting
 
 	/// A new empty box where the person is looking
@@ -541,7 +618,7 @@ struct CanvasView: View {
 			}
 		}
 
-		if keepsFitting, !board.hasBeenMoved {
+		if keepsFitting, !canvasBoard.hasBeenMoved {
 			fit(animated: true)
 		}
 		keepsFitting = false
@@ -575,7 +652,7 @@ struct CanvasView: View {
 			withAnimation(motion) {
 				boardStore.arrange()
 			}
-			board.move(to: fitted, animation: motion)
+			canvasBoard.move(to: fitted, animation: motion)
 		}
 	}
 
@@ -583,18 +660,18 @@ struct CanvasView: View {
 
 	/// The middle of the part of the canvas the bars leave free
 	private var viewCentre: CanvasPoint {
-		board.transform.canvas(CGPoint(x: room.free.midX, y: room.free.midY))
+		canvasBoard.transform.canvas(CGPoint(x: room.free.midX, y: room.free.midY))
 	}
 
-	/// The grid point nearest `point` where a box fits, else the nearest gap
-	private func freeSpot(near point: CanvasPoint) -> CanvasPoint {
+	/// The grid point nearest `point` where a box fits, else the nearest gap on that `side` of it
+	private func freeSpot(near point: CanvasPoint, side: CanvasLayout.Side = .below) -> CanvasPoint {
 		let target = CanvasGrid.snapped(point)
 		let occupied = board.statements.map(\.position)
 		let box = CanvasRect.box(at: target)
 		if !occupied.contains(where: { box.intersects(.box(at: $0), margin: CanvasLayout.minimumGap) }) {
 			return target
 		}
-		return CanvasLayout.place(near: target, side: .below, occupied: occupied)
+		return CanvasLayout.place(near: target, side: side, occupied: occupied)
 	}
 
 	private var fitted: CanvasTransform {
@@ -602,15 +679,20 @@ struct CanvasView: View {
 	}
 
 	private func fit(animated: Bool) {
-		board.move(to: fitted, animation: animated ? motion : nil)
+		canvasBoard.move(to: fitted, animation: animated ? motion : nil)
 	}
 
 	// MARK: - Background
 
 	private func backgroundTapped(at point: CanvasPoint) {
+		guard activePick == nil else {
+			pick = nil
+			return
+		}
+
 		let link = LinkHitTest.link(
 			near: point,
-			tolerance: 24 / board.transform.scale,
+			tolerance: 24 / canvasBoard.transform.scale,
 			in: board.links,
 			positions: Dictionary(board.statements.map { ($0.id, $0.position) }, uniquingKeysWith: { first, _ in first })
 		)
@@ -662,7 +744,7 @@ struct CanvasView: View {
 	/// the screen has finished laying out, so fitting only once would fit to the wrong room. Not while the editor is what
 	/// changed the room.
 	private func fitUntilMoved() {
-		guard keepsFitting, !board.hasBeenMoved, !isCovered, room.viewport.width > 0, room.viewport.height > 0 else { return }
+		guard keepsFitting, !canvasBoard.hasBeenMoved, !isCovered, room.viewport.width > 0, room.viewport.height > 0 else { return }
 		fit(animated: false)
 	}
 

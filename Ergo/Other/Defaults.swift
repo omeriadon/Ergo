@@ -29,6 +29,8 @@ extension Defaults.Keys {
 
 	static let ditherEnabled = Key<Bool>("ditherEnabled", default: true)
 
+	static let hapticsEnabled = Key<Bool>("hapticsEnabled", default: true)
+
 	static let translationProvider = Key<Provider>("translationProvider", default: .claude)
 }
 

@@ -26,6 +26,11 @@ struct CanvasLayoutTests {
 		}
 	}
 
+	/// Which row a box belongs to, whatever its jiggle
+	func row(_ statement: ArgumentStatement) -> Int {
+		Int(((statement.position.y - CanvasLayout.boxSize.height / 2) / CanvasLayout.rowPitch).rounded())
+	}
+
 	/// A deterministic spread of edges that only point forwards, so it is always acyclic
 	func randomMap(count: Int, seed: UInt64) -> TestMap {
 		var state = seed
@@ -52,43 +57,56 @@ struct CanvasLayoutTests {
 		#expect(single.statements[0].position == CanvasPoint(x: CanvasLayout.boxSize.width / 2, y: CanvasLayout.boxSize.height / 2))
 	}
 
-	@Test func premisesAreLeftOfTheirConclusion() throws {
+	@Test func premisesAreAboveTheirConclusion() throws {
 		let map = CanvasLayout.arranged(ArgumentFixtures.map(5, links: [(1, 3), (2, 3), (3, 4), (1, 5)]))
 		for link in map.links {
 			let premise = try #require(map.statement(link.premise)?.position)
 			let conclusion = try #require(map.statement(link.conclusion)?.position)
-			#expect(premise.x < conclusion.x)
+			#expect(premise.y < conclusion.y)
 		}
 	}
 
 	@Test func layersAreTheLongestPathFromARoot() {
-		// 1 → 2 → 3, and 1 → 3 directly: 3 is still two layers across
+		// 1 → 2 → 3, and 1 → 3 directly: 3 is still two layers down
 		let map = CanvasLayout.arranged(ArgumentFixtures.map(3, links: [(1, 2), (2, 3), (1, 3)]))
-		let x = map.statements.map(\.position.x)
-		#expect(x[1] - x[0] == CanvasLayout.columnPitch)
-		#expect(x[2] - x[1] == CanvasLayout.columnPitch)
+		#expect(map.statements.map(row) == [0, 1, 2])
 	}
 
 	@Test func aConclusionSitsBetweenItsPremises() {
 		let map = CanvasLayout.arranged(ArgumentFixtures.map(3, links: [(1, 3), (2, 3)]))
-		let y = map.statements.map(\.position.y)
-		#expect(y[2] == (y[0] + y[1]) / 2)
+		let x = map.statements.map(\.position.x)
+		#expect(abs(x[2] - (x[0] + x[1]) / 2) <= 2 * CanvasLayout.jiggle)
 	}
 
 	@Test func diamondHasNoOverlap() {
 		let map = CanvasLayout.arranged(ArgumentFixtures.map(4, links: [(1, 2), (1, 3), (2, 4), (3, 4)]))
 		noOverlaps(map, margin: CanvasLayout.minimumGap)
-		let pitch = CanvasLayout.columnPitch
-		let first = CanvasLayout.boxSize.width / 2
-		let expected: [Double] = [first, first + pitch, first + pitch, first + 2 * pitch]
-		#expect(map.statements.map(\.position.x).sorted() == expected)
+		#expect(map.statements.map(row).sorted() == [0, 1, 1, 2])
 	}
 
-	@Test func unlinkedStatementsStackInTheFirstColumn() {
-		let map = CanvasLayout.arranged(ArgumentFixtures.map(4))
-		#expect(Set(map.statements.map(\.position.x)).count == 1)
-		#expect(Set(map.statements.map(\.position.y)).count == 4)
-		noOverlaps(map)
+	@Test func unlinkedStatementsWrapIntoRows() {
+		let map = CanvasLayout.arranged(ArgumentFixtures.map(CanvasLayout.maximumRowLength + 1))
+		let rows = Dictionary(grouping: map.statements, by: row)
+		#expect(rows.count == 2)
+		#expect(rows.values.map(\.count).max() == CanvasLayout.maximumRowLength)
+		noOverlaps(map, margin: CanvasLayout.minimumGap)
+	}
+
+	@Test func boxesSitOffTheirRowsButTheSameWayEveryTime() {
+		let map = CanvasLayout.arranged(ArgumentFixtures.map(CanvasLayout.maximumRowLength))
+		#expect(Set(map.statements.map(\.position.y)).count > 1, "A row isn't ruled straight")
+		#expect(CanvasLayout.positions(for: map) == CanvasLayout.positions(for: map))
+
+		// Still a column apart, give or take
+		let pitch = map.statements[1].position.x - map.statements[0].position.x
+		#expect(abs(pitch - CanvasLayout.columnPitch) <= 2 * CanvasLayout.jiggle)
+	}
+
+	@Test func aWrappedLayerStaysAboveWhatItFeeds() throws {
+		let map = CanvasLayout.arranged(ArgumentFixtures.map(8, links: (1 ..< 8).map { ($0, 8) }))
+		noOverlaps(map, margin: CanvasLayout.minimumGap)
+		let conclusion = try #require(map.statement(id(8))?.position.y)
+		#expect(map.statements.dropLast().allSatisfy { $0.position.y < conclusion })
 	}
 
 	@Test func noOverlapUpToSixtyNodes() throws {
@@ -98,7 +116,7 @@ struct CanvasLayoutTests {
 				noOverlaps(map, margin: CanvasLayout.minimumGap)
 				#expect(map.statements.allSatisfy { $0.position.x >= CanvasLayout.boxSize.width / 2 && $0.position.y >= CanvasLayout.boxSize.height / 2 })
 				for link in map.links {
-					#expect(try #require(map.statement(link.premise)?.position.x) < #require(map.statement(link.conclusion)?.position.x))
+					#expect(try #require(map.statement(link.premise)?.position.y) < #require(map.statement(link.conclusion)?.position.y))
 				}
 			}
 		}
@@ -139,12 +157,12 @@ struct CanvasLayoutTests {
 
 	// MARK: - place
 
-	@Test func placesPremisesLeftAtTheSameHeight() {
+	@Test func placesPremisesAboveInLine() {
 		let map = TestMap(statements: [ArgumentFixtures.statement(1, x: 1000, y: 200)])
 		let spot = CanvasLayout.place(newNodeNear: id(1), in: map)
-		#expect(spot == CanvasPoint(x: 1000 - CanvasLayout.columnPitch, y: 200))
-		#expect(CanvasLayout.place(newNodeNear: id(1), in: map, side: .right) == CanvasPoint(x: 1000 + CanvasLayout.columnPitch, y: 200))
+		#expect(spot == CanvasPoint(x: 1000, y: 200 - CanvasLayout.rowPitch))
 		#expect(CanvasLayout.place(newNodeNear: id(1), in: map, side: .below) == CanvasPoint(x: 1000, y: 200 + CanvasLayout.rowPitch))
+		#expect(CanvasLayout.place(newNodeNear: id(1), in: map, side: .beside) == CanvasPoint(x: 1000 + CanvasLayout.columnPitch, y: 200))
 	}
 
 	@Test func placeSkipsTakenSpots() {
@@ -157,9 +175,9 @@ struct CanvasLayoutTests {
 			map.statements.append(ArgumentFixtures.statement(number, x: spot.x, y: spot.y))
 			noOverlaps(map, margin: CanvasLayout.minimumGap)
 		}
-		#expect(spots.first == CanvasPoint(x: 1000 - CanvasLayout.columnPitch, y: 200))
-		#expect(spots[1].x == spots[0].x, "Fills the column next to it before moving out")
-		#expect(spots.allSatisfy { $0.x < 1000 })
+		#expect(spots.first == CanvasPoint(x: 1000, y: 200 - CanvasLayout.rowPitch))
+		#expect(spots[1].y == spots[0].y, "Fills the row next to it before moving out")
+		#expect(spots.allSatisfy { $0.y < 200 })
 	}
 
 	@Test func placeWorksNextToLaidOutBoxes() {
@@ -178,7 +196,7 @@ struct CanvasLayoutTests {
 
 	@Test func placeFallsBackWhenTheStatementIsMissing() {
 		let spot = CanvasLayout.place(newNodeNear: id(9), in: TestMap())
-		#expect(spot == CanvasPoint(x: -CanvasLayout.columnPitch, y: 0))
+		#expect(spot == CanvasPoint(x: 0, y: -CanvasLayout.rowPitch))
 	}
 
 	@Test func placeWorksInACrowd() {

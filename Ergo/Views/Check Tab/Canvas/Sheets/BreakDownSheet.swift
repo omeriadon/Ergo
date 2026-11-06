@@ -10,8 +10,8 @@ import ErgoProtocol
 import ErgoTranslation
 import SwiftUI
 
-/// Pastes English and lets the server split it into premises and a conclusion, with no logic written. What it finds goes
-/// on the board as statements joined by arrows (`BoardStore.applyBreakdown`), and each one is translated on its own afterwards.
+/// Pastes English and lets the server split it into premises and a conclusion, with no logic written. What it finds becomes
+/// a new board of statements joined by arrows (`BoardStore.newBoard(from:)`), and each one is translated on its own afterwards.
 struct BreakDownSheet: View {
 	@Environment(\.dismiss)
 	private var dismiss
@@ -42,9 +42,6 @@ struct BreakDownSheet: View {
 	/// What the server found. Nil until it has, and again when you go back to edit the text.
 	@State private var breakdown: ArgumentBreakdown?
 
-	@State private var replacing = false
-	@State private var confirmingReplace = false
-
 	init() {}
 
 	/// A breakdown with nothing in it only has issues to show, so the text stays editable
@@ -57,19 +54,13 @@ struct BreakDownSheet: View {
 		!english.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
 	}
 
-	/// Nothing on the board yet but the empty box every board starts with
-	private var boardHasContent: Bool {
-		boardStore.current.statements.contains { !$0.isEmpty }
-	}
-
 	var body: some View {
 		NavigationStack {
 			ZStack {
 				if let found {
 					BreakdownResultView(
 						breakdown: found,
-						application: found.applied(to: boardStore.current.map, replacing: replacing),
-						replacing: $replacing
+						application: found.applied(to: LogicBoard().map, replacing: true)
 					)
 				} else {
 					input
@@ -85,11 +76,6 @@ struct BreakDownSheet: View {
 		// A result is worth a model call, so swiping the sheet away doesn't throw it out. Cancel does.
 		.interactiveDismissDisabled(translating != nil || found != nil)
 		.onDisappear(perform: stop)
-		.confirmationDialog(replaceTitle, isPresented: $confirmingReplace, titleVisibility: .visible) {
-			Button("Replace Statements", role: .destructive, action: commit)
-		} message: {
-			Text("Every statement and arrow on this board is deleted first.")
-		}
 	}
 
 	// MARK: - Parts
@@ -152,12 +138,11 @@ struct BreakDownSheet: View {
 			}
 
 			ToolbarItem(placement: .topBarTrailing) {
-				Button(role: .confirm, action: apply) {
-					Label(replacing ? "Replace" : "Add", systemImage: "checkmark")
+				Button(role: .confirm, action: create) {
+					Label("Create", systemImage: "checkmark")
 				}
 				.buttonStyle(.glassProminent)
-				.disabled(found.applied(to: boardStore.current.map, replacing: replacing).added.isEmpty)
-				.accessibilityLabel(replacing ? "Replace statements" : "Add to this board")
+				.accessibilityLabel("Create board")
 				.accessibilityIdentifier("check.breakDown.apply")
 			}
 		} else {
@@ -167,13 +152,6 @@ struct BreakDownSheet: View {
 				}
 			}
 		}
-	}
-
-	private var replaceTitle: String {
-		let board = boardStore.current
-		let statements = board.statements.count
-		let links = board.links.count
-		return "Replace \(statements) statement\(statements == 1 ? "" : "s")\(links == 0 ? "" : " and \(links) link\(links == 1 ? "" : "s")")?"
 	}
 
 	/// Only for errors fixed by connecting a provider in Settings
@@ -205,18 +183,17 @@ struct BreakDownSheet: View {
 			return
 		}
 
-		let descriptors = boardStore.current.descriptors
 		progress = TranslationProgress()
 
 		translating = Task {
 			do {
-				let result = try await account.breakDown(english: english, descriptors: descriptors) { event in
+				let result = try await account.breakDown(english: english, descriptors: LogicLetters.emptyDescriptors) { event in
 					guard !Task.isCancelled else { return }
 					progress?.apply(event)
 				}
 				guard !Task.isCancelled else { return }
 				finish()
-				show(result)
+				breakdown = result
 			} catch {
 				guard !Task.isCancelled, !(error is CancellationError) else { return }
 				finish()
@@ -237,26 +214,13 @@ struct BreakDownSheet: View {
 		progress = nil
 	}
 
-	private func show(_ result: ArgumentBreakdown) {
-		breakdown = result
-		// Adding is the safe default, and a board with nothing on it has nothing to add to
-		replacing = !boardHasContent
-	}
+	// MARK: - Creating
 
-	// MARK: - Applying
-
-	private func apply() {
-		if replacing, boardHasContent {
-			confirmingReplace = true
-		} else {
-			commit()
-		}
-	}
-
-	private func commit() {
+	/// Closes the boards sheet too, since the new board is what's open now
+	private func create() {
 		guard let found else { return }
-		boardStore.applyBreakdown(found, replacing: replacing)
-		dismiss()
+		boardStore.newBoard(from: found)
+		navigation.dismissSheet()
 	}
 }
 
@@ -349,11 +313,10 @@ private struct IssueRows: View {
 
 // MARK: - Result
 
-/// What was found, and whether it goes on the board or replaces what's there
+/// What was found, which is what the new board will hold
 private struct BreakdownResultView: View {
 	let breakdown: ArgumentBreakdown
 	let application: ArgumentBreakdownApplication<Statement, Link>
-	@Binding var replacing: Bool
 
 	var body: some View {
 		List {
@@ -379,30 +342,21 @@ private struct BreakdownResultView: View {
 				}
 			}
 
-			Section {
-				Picker("Apply", selection: $replacing) {
-					Text("Add to this board").tag(false)
-					Text("Replace this board's statements").tag(true)
+			if application.skipped > 0 {
+				Section {
+					fit
 				}
-				.pickerStyle(.inline)
-				.labelsHidden()
-				.accessibilityIdentifier("check.breakDown.mode")
-			} footer: {
-				fit
 			}
 		}
 		.accessibilityIdentifier("check.breakDown.result")
 	}
 
-	/// Said before applying, so a board that's nearly full doesn't surprise anyone
-	@ViewBuilder
+	/// Said before creating, so an argument too long for one board doesn't surprise anyone
 	private var fit: some View {
-		if application.skipped > 0 {
-			let limit = ArgumentMapValidator.defaultMaximumStatements
-			let found = application.map.statements.count + application.skipped
-			Text("Expected at most \(limit) statements, found \(found). \(application.skipped) won't be added, starting from the last premise.")
-				.foregroundStyle(.orange)
-				.accessibilityIdentifier("check.breakDown.limit")
-		}
+		let limit = ArgumentMapValidator.defaultMaximumStatements
+		let found = application.map.statements.count + application.skipped
+		return Text("Expected at most \(limit) statements, found \(found). \(application.skipped) won't be added, starting from the last premise.")
+			.foregroundStyle(.orange)
+			.accessibilityIdentifier("check.breakDown.limit")
 	}
 }

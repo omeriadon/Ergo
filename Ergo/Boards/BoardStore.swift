@@ -286,25 +286,21 @@ final class BoardStore {
 
 	// MARK: - breaking down
 
-	/// Puts a server breakdown on the current board: a statement per premise and one for the conclusion, every premise linked
-	/// to it (`ArgumentBreakdown.applied`). Adding lays the new statements out under what's there without moving it;
-	/// replacing drops every statement and link and lays the board out again. The breakdown's claims fill the board's free
-	/// descriptor slots. Statements past the limit are left out, and the result says how many.
+	/// Opens a new board holding a server breakdown: a statement per premise and one for the conclusion, every premise linked
+	/// to it (`ArgumentBreakdown.applied`). The breakdown's claims fill the descriptors. Statements past the limit are left out.
 	///
-	/// New statements start as English with nothing translated, like any typed statement. Nothing changes when nothing is added.
-	@discardableResult
-	func applyBreakdown(_ breakdown: ArgumentBreakdown, replacing: Bool) -> ArgumentBreakdownApplication<Statement, Link> {
-		var board = current
-		var application = breakdown.applied(to: board.map, replacing: replacing)
-		guard !application.added.isEmpty else { return application }
+	/// New statements start as English with nothing translated, like any typed statement.
+	func newBoard(from breakdown: ArgumentBreakdown) {
+		newBoard()
 
+		var board = current
+		var application = breakdown.applied(to: board.map, replacing: true)
 		for index in application.map.statements.indices where application.added.contains(application.map.statements[index].id) {
 			application.map.statements[index].source = .english
 		}
 		board.map = application.map
 		board.merge(descriptors: breakdown.descriptors)
 		current = board
-		return application
 	}
 
 	// MARK: - save

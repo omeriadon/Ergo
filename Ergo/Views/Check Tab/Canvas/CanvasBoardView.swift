@@ -5,9 +5,21 @@
 //  Created by Adon Omeri on 6/11/2026.
 //
 
+import Defaults
 import ErgoLogic
 import SwiftUI
 import UIKit
+
+/// Where an arrow being drawn was let go
+enum ConnectionDrop {
+	case box(Statement.ID)
+
+	/// On empty canvas, here
+	case space(CanvasPoint)
+
+	/// Cancelled, or back on the box or handle it came from
+	case nowhere
+}
 
 /// The canvas in UIKit, because following a finger through SwiftUI redraws too much for every frame. Pan, pinch, inertia,
 /// dragging a box and the arrows all move layers directly, so SwiftUI isn't involved at all while something moves.
@@ -15,17 +27,17 @@ import UIKit
 ///
 /// `content` is a zero-sized view that carries the pan and zoom as its transform. Boxes sit in it at their canvas
 /// positions, so moving the whole canvas is one transform however many boxes there are.
-final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
+final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuInteractionDelegate {
 	var dragStarted: (Statement.ID) -> Void = { _ in }
 	var moved: (Statement.ID, CanvasPoint) -> Void = { _, _ in }
 	var tapBackground: (CanvasPoint) -> Void = { _ in }
 	var connectStarted: (Statement.ID, _ asConclusion: Bool) -> Void = { _, _ in }
 	var connectTargetChanged: (Statement.ID?) -> Void = { _ in }
 
-	/// The arrow was let go, over this box if it's over one
-	var connectEnded: (Statement.ID, Statement.ID?) -> Void = { _, _ in }
+	var connectEnded: (Statement.ID, ConnectionDrop) -> Void = { _, _ in }
+	var deleteLink: (Link.ID) -> Void = { _ in }
 
-	var boxContent: (CanvasBoxModel) -> any UIContentConfiguration = { _ in UIListContentConfiguration.cell() }
+	var boxContent: (CanvasBoxModel, _ isNew: Bool) -> any UIContentConfiguration = { _, _ in UIListContentConfiguration.cell() }
 	var handleContent: (_ pointsUp: Bool) -> any UIContentConfiguration = { _ in UIListContentConfiguration.cell() }
 
 	private(set) var canvasTransform = CanvasTransform()
@@ -54,6 +66,11 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 	/// A box under the finger, and where it was picked up
 	private var draggedBox: (id: Statement.ID, origin: CGPoint)?
 
+	private lazy var haptics = CanvasHaptics(view: self)
+
+	/// The grid point nearest what's being dragged, to tell when it reaches the next one
+	private var gridPoint: CanvasPoint?
+
 	private var pinchStart = CanvasTransform()
 	private var pinchAnchor = CGPoint.zero
 	private var glideLink: CADisplayLink?
@@ -79,6 +96,8 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 			recognizer.delegate = self
 			addGestureRecognizer(recognizer)
 		}
+
+		addInteraction(UIContextMenuInteraction(delegate: self))
 
 		registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (view: Self, _) in
 			view.styleArrows()
@@ -120,6 +139,14 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 
 	// MARK: - From SwiftUI
 
+	/// Makes the boxes that aren't on the canvas yet. Called outside `update`'s animation, so a new box is simply at its
+	/// position from the start, with nowhere to slide in from.
+	func addBoxes(_ boxes: [CanvasBoxModel], animated: Bool) {
+		for model in boxes where cells[model.statement.id] == nil {
+			addCell(for: model, isNew: animated)
+		}
+	}
+
 	func update(
 		boxes: [CanvasBoxModel],
 		links: [Link],
@@ -135,12 +162,11 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 
 		for model in boxes {
 			let id = model.statement.id
-			let cell = cells[id] ?? addCell(for: model)
+			guard let cell = cells[id] else { continue }
 			cell.show(model, content: boxContent)
 			if draggedBox?.id != id {
 				cell.center = model.statement.position.point
 			}
-			cell.alpha = 1
 		}
 
 		if let selectedStatement, draggedBox == nil, let cell = cells[selectedStatement] {
@@ -179,13 +205,9 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 
 	// MARK: - Boxes
 
-	private func addCell(for model: CanvasBoxModel) -> CanvasBoxCell {
-		let cell = CanvasBoxCell(model: model, content: boxContent)
-		UIView.performWithoutAnimation {
-			cell.center = model.statement.position.point
-			cell.alpha = 0
-			content.addSubview(cell)
-		}
+	private func addCell(for model: CanvasBoxModel, isNew: Bool) {
+		let cell = CanvasBoxCell(model: model, isNew: isNew, content: boxContent)
+		content.addSubview(cell)
 
 		let drag = UIPanGestureRecognizer(target: self, action: #selector(boxPanned))
 		drag.maximumNumberOfTouches = 1
@@ -193,7 +215,6 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 		cell.addGestureRecognizer(drag)
 
 		cells[model.statement.id] = cell
-		return cell
 	}
 
 	private func remove(_ cell: CanvasBoxCell, animated: Bool) {
@@ -219,6 +240,8 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 				draggedBox = (id, cell.center)
 				content.bringSubviewToFront(cell)
 				cell.isLifted = true
+				gridPoint = CanvasGrid.snapped(CanvasPoint(cell.center))
+				haptics.prepare()
 				updateHandles()
 				dragStarted(id)
 
@@ -227,10 +250,12 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 				let travel = recognizer.translation(in: content)
 				cell.center = CGPoint(x: draggedBox.origin.x + travel.x, y: draggedBox.origin.y + travel.y)
 				updateArrows(touching: id, animation: nil)
+				feelGrid(at: cell.center)
 
 			case .ended, .cancelled, .failed:
 				guard let draggedBox, draggedBox.id == id else { return }
 				self.draggedBox = nil
+				gridPoint = nil
 				cell.isLifted = false
 
 				let finished = recognizer.state == .ended
@@ -249,12 +274,21 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 		}
 	}
 
+	/// A tap each time what's being dragged reaches the next grid point, which is where it would settle if let go
+	private func feelGrid(at point: CGPoint) {
+		let nearest = CanvasGrid.snapped(CanvasPoint(point))
+		if let gridPoint, gridPoint != nearest {
+			haptics.crossedGridLine()
+		}
+		gridPoint = nearest
+	}
+
 	// MARK: - Connecting
 
 	/// Shows the handles on the selected box. Dragging the one above makes the box a conclusion of what it's dragged to,
-	/// and dragging the one below makes it a premise.
+	/// and dragging the one below makes it a premise. Let go on empty canvas, that other box is made there.
 	private func updateHandles() {
-		guard let id = selectedStatement, cells[id] != nil, cells.count > 1, draggedBox == nil, connection == nil else {
+		guard let id = selectedStatement, cells[id] != nil, draggedBox == nil, connection == nil else {
 			for handle in handles where handle.alpha > 0 {
 				UIView.animate(withDuration: 0.12) {
 					handle.alpha = 0
@@ -310,6 +344,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 				let arrow = CanvasArrow(in: arrowLayer)
 				connection = (source, nil, arrow, handle.isAbove)
 				styleArrows()
+				haptics.prepare()
 				updateHandles()
 				connectStarted(source, handle.isAbove)
 				followConnection(to: recognizer.location(in: content))
@@ -319,14 +354,26 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 
 			case .ended, .cancelled, .failed:
 				guard let finished = connection else { return }
+				let drop = recognizer.state == .ended ? connectionDrop(of: finished.source, over: finished.target, at: recognizer.location(in: self)) : .nowhere
 				connection = nil
+				gridPoint = nil
 				finished.arrow.removeFromSuperlayer()
 				updateHandles()
-				connectEnded(finished.source, recognizer.state == .ended ? finished.target : nil)
+				connectEnded(finished.source, drop)
 
 			default:
 				break
 		}
+	}
+
+	private func connectionDrop(of source: Statement.ID, over target: Statement.ID?, at location: CGPoint) -> ConnectionDrop {
+		if let target {
+			return .box(target)
+		}
+		let point = canvasTransform.canvas(location)
+		let isOnSource = cells[source].map { CanvasRect.box(at: CanvasPoint($0.center)).contains(point) } ?? true
+		let isOnHandle = handles.contains { $0.frame.contains(location) }
+		return isOnSource || isOnHandle ? .nowhere : .space(point)
 	}
 
 	/// The arrow reaches for the box under the finger, and follows the finger when there isn't one
@@ -340,6 +387,14 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 		if targetID != current.target {
 			connection?.target = targetID
 			connectTargetChanged(targetID)
+			if targetID != nil {
+				haptics.reachedBox()
+			}
+		}
+		if target == nil {
+			feelGrid(at: point)
+		} else {
+			gridPoint = nil
 		}
 
 		let curve: ArrowCurve? = if let target {
@@ -400,6 +455,71 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate {
 			arrow.style(isSelected: id == selectedLink, accent: accent, plain: plain)
 		}
 		connection?.arrow.style(isSelected: true, accent: accent, plain: plain)
+	}
+
+	// MARK: - Arrow menu
+
+	/// A box has its own menu, so this only answers on the background, near an arrow
+	func contextMenuInteraction(_: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+		guard hitTest(location, with: nil) === self, let id = LinkHitTest.link(
+			near: canvasTransform.canvas(location),
+			tolerance: 24 / canvasTransform.scale,
+			in: links,
+			positions: cells.mapValues { CanvasPoint($0.center) }
+		) else {
+			return nil
+		}
+		return UIContextMenuConfiguration(identifier: id as NSUUID, previewProvider: nil) { [weak self] _ in
+			UIMenu(children: [
+				UIAction(title: "Delete Arrow", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+					self?.deleteLink(id)
+				},
+			])
+		}
+	}
+
+	func contextMenuInteraction(
+		_: UIContextMenuInteraction,
+		configuration _: UIContextMenuConfiguration,
+		highlightPreviewForItemWithIdentifier identifier: any NSCopying
+	) -> UITargetedPreview? {
+		arrowPreview(identifier)
+	}
+
+	func contextMenuInteraction(
+		_: UIContextMenuInteraction,
+		configuration _: UIContextMenuConfiguration,
+		dismissalPreviewForItemWithIdentifier identifier: any NSCopying
+	) -> UITargetedPreview? {
+		arrowPreview(identifier)
+	}
+
+	/// Just the arrow, drawn on its own. UIKit's preview of a view would lift the whole canvas.
+	private func arrowPreview(_ identifier: any NSCopying) -> UITargetedPreview? {
+		guard let id = identifier as? NSUUID, let path = arrows[id as UUID]?.path else { return nil }
+
+		var toScreen = content.transform
+		guard let onScreen = path.copy(using: &toScreen) else { return nil }
+		let frame = onScreen.boundingBoxOfPath.insetBy(dx: -12, dy: -12)
+
+		var toPreview = CGAffineTransform(translationX: -frame.minX, y: -frame.minY)
+		let shape = CAShapeLayer()
+		shape.path = onScreen.copy(using: &toPreview)
+		shape.fillColor = nil
+		shape.strokeColor = UIColor(Color.accentColor).resolvedColor(with: traitCollection).cgColor
+		shape.lineWidth = 3.5
+		shape.lineCap = .round
+
+		let preview = UIView(frame: CGRect(origin: .zero, size: frame.size))
+		preview.layer.addSublayer(shape)
+
+		let parameters = UIPreviewParameters()
+		parameters.backgroundColor = .clear
+		return UITargetedPreview(
+			view: preview,
+			parameters: parameters,
+			target: UIPreviewTarget(container: self, center: CGPoint(x: frame.midX, y: frame.midY))
+		)
 	}
 
 	// MARK: - Pan and zoom
@@ -572,11 +692,41 @@ private enum Glide {
 	static let stillSpeed: CGFloat = 8
 }
 
+// MARK: - Haptics
+
+/// What the canvas feels like, read at each tap so the Settings toggle applies at once
+private final class CanvasHaptics {
+	private let gridLine: UIImpactFeedbackGenerator
+	private let box: UIImpactFeedbackGenerator
+
+	init(view: UIView) {
+		gridLine = UIImpactFeedbackGenerator(style: .medium, view: view)
+		box = UIImpactFeedbackGenerator(style: .heavy, view: view)
+	}
+
+	func prepare() {
+		guard Defaults[.hapticsEnabled] else { return }
+		gridLine.prepare()
+		box.prepare()
+	}
+
+	func crossedGridLine() {
+		guard Defaults[.hapticsEnabled] else { return }
+		gridLine.impactOccurred()
+	}
+
+	func reachedBox() {
+		guard Defaults[.hapticsEnabled] else { return }
+		box.impactOccurred()
+	}
+}
+
 // MARK: - A box
 
 /// Holds one box's SwiftUI. Its content is only replaced when what it shows changes.
 private final class CanvasBoxCell: UIView {
 	private(set) var model: CanvasBoxModel
+	private let isNew: Bool
 	private let hosted: any UIView & UIContentView
 
 	/// Picked up by a finger
@@ -586,11 +736,13 @@ private final class CanvasBoxCell: UIView {
 		}
 	}
 
-	init(model: CanvasBoxModel, content: (CanvasBoxModel) -> any UIContentConfiguration) {
+	/// Starts at its position, so there's never a moment when it's anywhere else
+	init(model: CanvasBoxModel, isNew: Bool, content: (CanvasBoxModel, _ isNew: Bool) -> any UIContentConfiguration) {
 		self.model = model
-		hosted = content(model).makeContentView()
-		let size = CanvasLayout.boxSize
-		super.init(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+		self.isNew = isNew
+		hosted = content(model, isNew).makeContentView()
+		let box = CanvasRect.box(at: model.statement.position)
+		super.init(frame: CGRect(x: box.minX, y: box.minY, width: box.size.width, height: box.size.height))
 
 		hosted.frame = bounds
 		hosted.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -605,13 +757,13 @@ private final class CanvasBoxCell: UIView {
 
 	@available(*, unavailable)
 	required init?(coder _: NSCoder) {
-		fatalError("Use init(model:content:)")
+		fatalError("Use init(model:isNew:content:)")
 	}
 
-	func show(_ new: CanvasBoxModel, content: (CanvasBoxModel) -> any UIContentConfiguration) {
+	func show(_ new: CanvasBoxModel, content: (CanvasBoxModel, _ isNew: Bool) -> any UIContentConfiguration) {
 		guard new != model else { return }
 		model = new
-		hosted.configuration = content(new)
+		hosted.configuration = content(new, isNew)
 	}
 }
 
@@ -654,6 +806,10 @@ private final class CanvasArrow {
 			parent.addSublayer(layer)
 		}
 		glow.lineWidth = 12
+	}
+
+	var path: CGPath? {
+		line.path
 	}
 
 	func removeFromSuperlayer() {

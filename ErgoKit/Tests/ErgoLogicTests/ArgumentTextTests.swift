@@ -295,7 +295,7 @@ struct ArgumentTextTests {
 		#expect(change.added == [id(5001)])
 		#expect(change.map.links.map { [$0.premise, $0.conclusion] } == [[id(1), id(5001)], [id(2), id(5001)]])
 		let target = try #require(change.map.statement(id(5001)))
-		#expect(target.position.x > change.map.statements[0].position.x, "Placed right of what feeds it")
+		#expect(target.position.y > change.map.statements[0].position.y, "Placed below what feeds it")
 	}
 
 	@Test func promotingAnOldLineToConclusionLinksTheRest() throws {
@@ -329,7 +329,7 @@ struct ArgumentTextTests {
 
 		let conclusion = try #require(change.map.statements.last)
 		for premise in change.map.statements.dropLast() {
-			#expect(premise.position.x < conclusion.position.x)
+			#expect(premise.position.y < conclusion.position.y)
 		}
 	}
 

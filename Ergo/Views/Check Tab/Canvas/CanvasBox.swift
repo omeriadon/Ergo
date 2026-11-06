@@ -14,6 +14,12 @@ struct BoxActions {
 	var edit: () -> Void
 	var delete: () -> Void
 
+	/// The next box tapped is the other end of a new arrow
+	var connect: (_ asConclusion: Bool) -> Void
+
+	/// The next box tapped loses its arrow to or from this one
+	var removeLink: () -> Void
+
 	/// Nil without a verdict to show
 	var showCheck: (() -> Void)?
 
@@ -71,6 +77,11 @@ struct CanvasBox: View {
 		.simultaneousGesture(TapGesture(count: 2).onEnded(actions.edit))
 		.contextMenu {
 			Button("Edit", systemImage: "square.and.pencil", action: actions.edit)
+			Button("Make Premise of…", systemImage: "arrow.down") { actions.connect(false) }
+			Button("Make Conclusion of…", systemImage: "arrow.up") { actions.connect(true) }
+			if !relations.premises.isEmpty || !relations.conclusions.isEmpty {
+				Button("Remove Link…", systemImage: "link.badge.minus", action: actions.removeLink)
+			}
 			Button("Delete", systemImage: "trash", role: .destructive, action: actions.delete)
 		}
 	}
@@ -100,6 +111,31 @@ struct CanvasBox: View {
 			parts.append("Connecting from this statement")
 		}
 		return parts.joined(separator: ". ")
+	}
+}
+
+// MARK: - Arriving
+
+/// A box that was just added comes into focus. One that was already on the board just shows.
+struct BoxEntrance: ViewModifier {
+	let isNew: Bool
+
+	@State private var hasArrived = false
+
+	private var isHidden: Bool {
+		isNew && !hasArrived
+	}
+
+	func body(content: Content) -> some View {
+		content
+			.blur(radius: isHidden ? 10 : 0)
+			.opacity(isHidden ? 0 : 1)
+			.onAppear {
+				guard isNew else { return }
+				withAnimation(.smooth) {
+					hasArrived = true
+				}
+			}
 	}
 }
 
@@ -135,6 +171,9 @@ private struct BoxActionsModifier: ViewModifier {
 		content
 			.accessibilityAction(.default, actions.select)
 			.accessibilityAction(named: Text("Edit"), actions.edit)
+			.accessibilityAction(named: Text("Make premise of…")) { actions.connect(false) }
+			.accessibilityAction(named: Text("Make conclusion of…")) { actions.connect(true) }
+			.accessibilityAction(named: Text("Remove link…"), actions.removeLink)
 			.accessibilityAction(named: Text("Delete"), actions.delete)
 			.accessibilityAction(named: Text("Show check"), showCheck)
 	}

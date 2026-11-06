@@ -158,8 +158,8 @@ extension ArgumentText {
 		return change
 	}
 
-	/// Where each new statement goes. A new conclusion goes right of the rightmost statement above it,
-	/// and new premises go left of the conclusion.
+	/// Where each new statement goes. A new conclusion goes below the lowest statement,
+	/// and new premises go above the conclusion.
 	private static func positions(
 		forNew fresh: [Int],
 		target: (id: UUID, isNew: Bool)?,
@@ -180,16 +180,16 @@ extension ArgumentText {
 		}
 
 		let survivors = order.statements.compactMap { map.statement($0)?.position }
-		var anchor = survivors.max { $0.x < $1.x } ?? survivors.last ?? .zero
+		var anchor = survivors.max { $0.y < $1.y } ?? survivors.last ?? .zero
 
 		if let target, target.isNew {
-			place(near: anchor, .right, for: target.id)
+			place(near: anchor, .below, for: target.id)
 			anchor = result[target.id] ?? anchor
 		} else if let target, let position = map.statement(target.id)?.position {
 			anchor = position
 		}
 
-		let side: CanvasLayout.Side = target == nil ? .below : .left
+		let side: CanvasLayout.Side = target == nil ? .beside : .above
 		for line in fresh where lineIDs[line] != target?.id {
 			place(near: anchor, side, for: lineIDs[line])
 		}

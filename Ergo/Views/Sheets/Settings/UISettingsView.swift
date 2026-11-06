@@ -11,6 +11,7 @@ import SwiftUI
 
 struct UISettingsView: View {
 	@Default(.ditherEnabled) var ditherEnabled
+	@Default(.hapticsEnabled) var hapticsEnabled
 	@Default(.logicLetters) var logicLetters
 
 	var body: some View {
@@ -19,6 +20,12 @@ struct UISettingsView: View {
 				Toggle("Background Effects", systemImage: "rectangle.badge.sparkles", isOn: $ditherEnabled)
 			} footer: {
 				Text("The animated backgrounds behind detail pages and Check. Turning this off removes them entirely.")
+			}
+
+			Section {
+				Toggle("Haptics", systemImage: "hand.tap", isOn: $hapticsEnabled)
+			} footer: {
+				Text("A tap as you drag a box or arrow across the canvas grid, and a stronger one when an arrow reaches a box.")
 			}
 
 			Section {

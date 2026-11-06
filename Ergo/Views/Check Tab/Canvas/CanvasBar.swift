@@ -12,12 +12,16 @@ enum CanvasBarMode: Equatable {
 	case idle
 	case statement
 	case link
+
+	/// Waiting for a box to be tapped, with what to tap
+	case picking(String)
 }
 
 struct CanvasBarActions {
 	var add: () -> Void
 	var edit: () -> Void
 	var delete: () -> Void
+	var cancelPick: () -> Void
 }
 
 /// The glass bar above the tab bar
@@ -41,6 +45,15 @@ struct CanvasBar: View {
 
 					case .link:
 						barButton("Delete Arrow", symbol: "trash", id: "deleteLink", role: .destructive, action: actions.delete)
+
+					case let .picking(prompt):
+						Text(prompt)
+							.font(.subheadline.weight(.medium))
+							.padding(.horizontal, 14)
+							.padding(.vertical, 10)
+							.glassEffect(.regular, in: Capsule())
+
+						barButton("Cancel", symbol: "xmark", id: "cancelPick", action: actions.cancelPick)
 				}
 			}
 		}

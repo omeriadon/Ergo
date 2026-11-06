@@ -71,7 +71,7 @@ Two statements edited on two devices must not conflict, and dragging a box must 
 
 SwiftUI's `Canvas` can't take gestures, accessibility or text per element, so: boxes are normal views inside one container carrying the pan offset and zoom scale, arrows are drawn behind them in a single `Canvas`, and the grid behind both. `body`s stay small (the 500 ms type-check limit): `CanvasView`, `StatementBoxView`, `LinkLayer`, `CanvasGrid`, `CanvasToolbar`. Arrows are made by selecting a box, tapping **Connect**, and tapping the target; dragging from a handle can come later. A floating bar offers Connect, Delete and the statement's checks. One undo step per drag or edit.
 
-Accessibility: each box is an element reading its text, whether it is a conclusion and what it connects to, with custom actions Edit, Connect to, Delete; arrows are described from the boxes. An outline list of statements and their premises is the VoiceOver-friendly fallback and is cheap once the model exists. Reduce Motion is honoured for layout animation.
+Accessibility: each box is an element reading its text, whether it is a conclusion and what it connects to, with custom actions Edit, Connect to, Delete; arrows are described from the boxes. Reduce Motion is honoured for layout animation.
 
 ## Files
 
@@ -123,12 +123,12 @@ Decisions where the plan was open:
 - **`position` is the centre of the box**, so arrows run centre to centre. `CanvasLayout.boxSize` (220 × 96) is what layout and free-space search assume; the app should draw boxes that size.
 - **Order for text and matching:** topological, ties by position (top to bottom, then left to right, then listing order). The map's last final conclusion moves to the end and is the `∴` line. Statements with no content for the chosen kind are left out of the text and left alone by `apply`.
 - **Matching is not purely positional.** `apply` first anchors lines that equal an existing statement exactly (longest common subsequence), so deleting a line in the middle doesn't rewrite everything below it; leftover lines and statements between anchors are paired in order (edits). A conclusion line is paired with the map's conclusion directly. Moving a line counts as delete plus add.
-- **New statements** are placed beside the conclusion (left of it, right of the rightmost premise when the conclusion itself is new) and linked to it. When the conclusion had no premises yet, every line above it is linked. With no `∴` line nothing is linked. On an empty map the whole result is auto laid out. A link that would form a cycle is skipped.
+- **New statements** are placed around the conclusion (above it, below the lowest statement when the conclusion itself is new) and linked to it. When the conclusion had no premises yet, every line above it is linked. With no `∴` line nothing is linked. On an empty map the whole result is auto laid out. A link that would form a cycle is skipped.
 - **English conclusion lines** start with `∴`, `Therefore`, `Hence` or `Thus` (any case, comma optional). The text after the marker is stored as written, with no case change, so `Therefore, The ground is wet.` round trips. Limits: a premise whose English starts with one of those words, and logic holding its own comma, new line or `∴`, read back as something else.
 - **Logic text** splits like `LogicParser` but keeps lines that don't parse, so a typo never deletes a box. `∵` is refused (`ArgumentTextProblem.unsupportedMarker`).
 - **`apply` returns `ArgumentTextChange`** (`map`, `edited`, `added`, `removed`) rather than a bare map, so the app can mark the other field of an edited statement stale and drop its translation.
 - **Checking** (`ArgumentEntries`) lists premises in the same reading order as `ArgumentText`, and returns their ids so `LogicFallacyMatch.premises` indices map back to boxes. A statement must be exactly one parsing formula, else `doesNotParse` or `notOneStatement`; empty logic anywhere gives nil rather than an error.
-- **Layout** ignores current positions (tie-break is listing order), so it is deterministic and idempotent. Premises are in layers by longest path; each layer is centred on the average height of its premises.
+- **Layout** ignores current positions (tie-break is listing order), so it is deterministic and idempotent. Premises are in layers by longest path, running top to bottom; each row is centred on the average of its premises, and a layer wider than three boxes wraps onto more rows. Each box then sits a little off its spot, by an amount hashed from its id, so it looks organic but comes out the same every time and on every device.
 
 ## As built (phase 2): sync, server and protocol
 
