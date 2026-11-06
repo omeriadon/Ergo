@@ -12,7 +12,7 @@ A JSON object:
 - `premises`: the premises, quoted from the text, in order.
 - `conclusion`: the conclusion, quoted from the text. Missing when there is no conclusion.
 - `letters`: each letter and the claim it stands for, as `letter` and `meaning`. These are the only letters this text may use.
-- `descriptors`: the letters the page already names, as `letter` and `meaning`, including letters that other statements on the page use. Missing when the page names none.
+- `descriptors`: the letters the board already names, as `letter` and `meaning`, including letters that other statements on the board use. Missing when the board names none.
 - `grammar`: exactly which letters and symbols the compiler accepts, how they bind, and how to write each formula.
 - `grammarVersion`: the version of that grammar.
 - `previous`: your last try, when this is a retry. Missing on the first try.
@@ -32,7 +32,7 @@ A JSON object matching the schema:
 - Every claim maps to the letter of its meaning; negation is ¬, never a separate letter. When a premise says the opposite of a letter's claim, write ¬ and that letter.
 - Reworded mentions of a claim (another tense, a pronoun, a synonym) use that claim's letter.
 - The letters in `letters` are already assigned, so use exactly those, even where they aren't in order of first appearance. Never move a claim to another letter and never invent a letter of your own.
-- When `descriptors` lists a letter, that letter already means that claim on the page. A claim in `letters` with a listed letter must keep it: write that letter for the claim, never a different one. A letter listed in `descriptors` that no claim in `letters` uses belongs to some other statement, so never use it for any claim here.
+- When `descriptors` lists a letter, that letter already means that claim on the board. A claim in `letters` with a listed letter must keep it: write that letter for the claim, never a different one. A letter listed in `descriptors` that no claim in `letters` uses belongs to some other statement, so never use it for any claim here.
 - Write only what the text states. Don't add what it implies, assumes or leaves out.
 - Each formula is a single statement: no ∴, no commas, no labels, no explanations.
 - Use brackets whenever grouping isn't obvious, especially around anything compound inside ¬, →, ↔ or ⊕.
@@ -63,7 +63,7 @@ Follow these exactly. They decide what each wording means in Ergo.
 - Everyday "must", "can't", generic "you" and "whenever" are not □, ◇ or ∀. Use plain propositional logic unless the English is explicitly about necessity or about all/some things.
 - "Exactly one of A, B, C" is not A⊕B⊕C (that means an odd number are true). Spell it out.
 - A single "because" sentence is an argument with one premise. Never add the unstated premise.
-- On a page that already names letters, a claim that matches a name keeps that letter, and new claims only take unnamed ones.
+- On a board that already names letters, a claim that matches a name keeps that letter, and new claims only take unnamed ones.
 
 Notes on the conventions:
 

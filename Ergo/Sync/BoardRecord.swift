@@ -1,5 +1,5 @@
 //
-//  PageRecord.swift
+//  BoardRecord.swift
 //  Ergo
 //
 //  Created by Adon Omeri on 5/11/2026.
@@ -10,32 +10,32 @@ import ErgoProtocol
 import ErgoTranslation
 import Foundation
 
-/// A `LogicPage` as a page record's fields: `created` and one field per descriptor, so naming different letters on
+/// A `LogicBoard` as a board record's fields: `created` and one field per descriptor, so naming different letters on
 /// two devices keeps both. Statements and links are records of their own (`StatementRecord`, `LinkRecord`), so typing
 /// in one box, dragging another and drawing an arrow never clash.
 ///
-/// `modified` isn't a field: it's the newest stamp in the page's records, so every device sorts pages the same way.
-enum PageRecord {
-	static func id(_ id: LogicPage.ID) -> String {
+/// `modified` isn't a field: it's the newest stamp in the board's records, so every device sorts boards the same way.
+enum BoardRecord {
+	static func id(_ id: LogicBoard.ID) -> String {
 		id.uuidString
 	}
 
 	// MARK: - Local → record
 
 	/// Every field but `deleted`, which is only ever sent when deleting
-	static func fields(of page: LogicPage) throws -> [String: JSONValue] {
+	static func fields(of board: LogicBoard) throws -> [String: JSONValue] {
 		var fields: [String: JSONValue] = try [
-			SyncFieldName.created: SyncCoding.value(page.created),
+			SyncFieldName.created: SyncCoding.value(board.created),
 		]
 		for slot in 0 ..< SyncFieldName.descriptorSlots {
-			fields[SyncFieldName.descriptor(slot)] = .string(page.descriptors.indices.contains(slot) ? page.descriptors[slot] : "")
+			fields[SyncFieldName.descriptor(slot)] = .string(board.descriptors.indices.contains(slot) ? board.descriptors[slot] : "")
 		}
 		return fields
 	}
 
 	// MARK: - Record → local
 
-	/// Whether this version can show the page, so one it can't (from a newer app, or damaged) is never deleted from here
+	/// Whether this version can show the board, so one it can't (from a newer app, or damaged) is never deleted from here
 	static func canRead(_ record: SyncRecord) -> Bool {
 		guard UUID(uuidString: record.id) != nil else { return false }
 		if let created = record.fields[SyncFieldName.created], (try? SyncCoding.decode(Date.self, from: created.value)) == nil {
@@ -48,83 +48,83 @@ enum PageRecord {
 		return true
 	}
 
-	/// Pages the replica has changed, and the ones it deleted
+	/// Boards the replica has changed, and the ones it deleted
 	struct Rebuilt {
-		var pages: [LogicPage] = []
-		var deleted: Set<LogicPage.ID> = []
+		var boards: [LogicBoard] = []
+		var deleted: Set<LogicBoard.ID> = []
 	}
 
-	/// The pages with these ids as the replica now has them, built on `local` so what the replica lacks or can't read
+	/// The boards with these ids as the replica now has them, built on `local` so what the replica lacks or can't read
 	/// keeps its value here. The replica holds the merged state including local edits, so this is the local state plus
 	/// what other devices changed.
 	///
-	/// Statements and links the replica reports as ignored (their page is deleted or missing, or a link's statement is)
+	/// Statements and links the replica reports as ignored (their board is deleted or missing, or a link's statement is)
 	/// are left out, and so are links that would repeat or loop an arrow, in the order of their ids so every device drops the same one.
-	/// A page without statements gets an empty one, since a page is never without.
-	static func rebuild(_ ids: Set<LogicPage.ID>, from replica: SyncReplica, local: [LogicPage]) -> Rebuilt {
+	/// A board without statements gets an empty one, since a board is never without.
+	static func rebuild(_ ids: Set<LogicBoard.ID>, from replica: SyncReplica, local: [LogicBoard]) -> Rebuilt {
 		let wanted = Set(ids.map { id($0) })
 		var statements: [String: [SyncRecord]] = [:]
 		var links: [String: [SyncRecord]] = [:]
 		for record in replica.records.values {
-			guard let page = record.owningPage, wanted.contains(page) else { continue }
+			guard let board = record.owningBoard, wanted.contains(board) else { continue }
 			switch record.kind {
 				case .statement:
-					statements[page, default: []].append(record)
+					statements[board, default: []].append(record)
 				case .link:
-					links[page, default: []].append(record)
+					links[board, default: []].append(record)
 				default:
 					break
 			}
 		}
 
 		var rebuilt = Rebuilt()
-		for pageID in ids {
-			guard let record = replica[.page, id(pageID)] else { continue }
+		for boardID in ids {
+			guard let record = replica[.board, id(boardID)] else { continue }
 			if record.isDeleted {
-				rebuilt.deleted.insert(pageID)
+				rebuilt.deleted.insert(boardID)
 				continue
 			}
-			let records = Records(page: record, statements: statements[id(pageID)] ?? [], links: links[id(pageID)] ?? [])
-			if let page = page(from: records, replica: replica, local: local.first { $0.id == pageID }) {
-				rebuilt.pages.append(page)
+			let records = Records(board: record, statements: statements[id(boardID)] ?? [], links: links[id(boardID)] ?? [])
+			if let board = board(from: records, replica: replica, local: local.first { $0.id == boardID }) {
+				rebuilt.boards.append(board)
 			}
 		}
 		return rebuilt
 	}
 
 	private struct Records {
-		var page: SyncRecord
+		var board: SyncRecord
 		var statements: [SyncRecord]
 		var links: [SyncRecord]
 
 		/// Deleted ones count too: deleting is a change
 		var newestStamp: SyncStamp? {
-			([page] + statements + links).compactMap(\.newestStamp).max()
+			([board] + statements + links).compactMap(\.newestStamp).max()
 		}
 	}
 
-	/// Nil if the page's own fields fail to decode: then nothing local is touched
-	private static func page(from records: Records, replica: SyncReplica, local: LogicPage?) -> LogicPage? {
-		guard let pageID = UUID(uuidString: records.page.id), canRead(records.page) else { return nil }
-		var page = local ?? LogicPage(id: pageID)
+	/// Nil if the board's own fields fail to decode: then nothing local is touched
+	private static func board(from records: Records, replica: SyncReplica, local: LogicBoard?) -> LogicBoard? {
+		guard let boardID = UUID(uuidString: records.board.id), canRead(records.board) else { return nil }
+		var board = local ?? LogicBoard(id: boardID)
 
-		if let created = records.page.fields[SyncFieldName.created], let date = try? SyncCoding.decode(Date.self, from: created.value) {
-			page.created = date
+		if let created = records.board.fields[SyncFieldName.created], let date = try? SyncCoding.decode(Date.self, from: created.value) {
+			board.created = date
 		}
 		for slot in 0 ..< SyncFieldName.descriptorSlots {
-			guard case let .string(descriptor)? = records.page.fields[SyncFieldName.descriptor(slot)]?.value else { continue }
-			while page.descriptors.count <= slot {
-				page.descriptors.append("")
+			guard case let .string(descriptor)? = records.board.fields[SyncFieldName.descriptor(slot)]?.value else { continue }
+			while board.descriptors.count <= slot {
+				board.descriptors.append("")
 			}
-			page.descriptors[slot] = descriptor
+			board.descriptors[slot] = descriptor
 		}
 		if let newest = records.newestStamp {
-			page.modified = newest.date
+			board.modified = newest.date
 		}
 
-		page.statements = statements(of: records.statements, replica: replica, local: local?.statements ?? [])
-		page.links = links(of: records.links, replica: replica, local: local?.links ?? [], among: page.statements)
-		return page
+		board.statements = statements(of: records.statements, replica: replica, local: local?.statements ?? [])
+		board.links = links(of: records.links, replica: replica, local: local?.links ?? [], among: board.statements)
+		return board
 	}
 
 	/// What the replica has, in this device's order, then new ones from the top left

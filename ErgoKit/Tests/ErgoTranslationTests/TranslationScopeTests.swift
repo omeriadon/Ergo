@@ -10,7 +10,7 @@ import ErgoTranslation
 import Foundation
 import Testing
 
-/// Pages that already name some letters, and breaking down a pasted argument without formalizing it
+/// Boards that already name some letters, and breaking down a pasted argument without formalizing it
 struct TranslationScopeTests {
 	let letters = LogicLetters.defaults
 	let vocabulary = LogicInputVocabulary(letters: LogicLetters.defaults)
@@ -100,7 +100,7 @@ struct TranslationScopeTests {
 		#expect(translated.entries.isEmpty)
 		#expect(translated.issues == [TranslationIssue(
 			severity: .error,
-			message: "Expected at most 1 new claim, found 2, the page's other letters are taken"
+			message: "Expected at most 1 new claim, found 2, the board's other letters are taken"
 		)])
 		#expect(backend.count("formalize") == 0)
 	}
@@ -180,7 +180,7 @@ struct TranslationScopeTests {
 
 		#expect(result.premises.isEmpty)
 		#expect(result.descriptors == ["a", "b", "c", "d", "e", ""])
-		#expect(result.issues.first?.message == "Expected at most 1 new claim, found 2, the page's other letters are taken")
+		#expect(result.issues.first?.message == "Expected at most 1 new claim, found 2, the board's other letters are taken")
 	}
 
 	@Test func breakingDownCancels() async throws {

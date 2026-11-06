@@ -47,23 +47,23 @@ func content(_ english: String) -> JSONValue {
 	["english": .string(english), "logic": [], "source": "english"]
 }
 
-func pageChange(_ id: String, _ fields: [String: SyncField], bases: [String: SyncStamp] = [:]) -> SyncChange {
-	SyncChange(kind: .page, id: id, fields: fields, bases: bases)
+func boardChange(_ id: String, _ fields: [String: SyncField], bases: [String: SyncStamp] = [:]) -> SyncChange {
+	SyncChange(kind: .board, id: id, fields: fields, bases: bases)
 }
 
 func statementChange(_ id: String, _ fields: [String: SyncField], bases: [String: SyncStamp] = [:]) -> SyncChange {
 	SyncChange(kind: .statement, id: id, fields: fields, bases: bases)
 }
 
-func linkChange(_ id: String, page: String, premise: String, conclusion: String, at stamp: SyncStamp = stamp()) -> SyncChange {
+func linkChange(_ id: String, board: String, premise: String, conclusion: String, at stamp: SyncStamp = stamp()) -> SyncChange {
 	SyncChange(kind: .link, id: id, fields: [
-		"page": SyncField(value: .string(page), stamp: stamp),
+		"board": SyncField(value: .string(board), stamp: stamp),
 		"premise": SyncField(value: .string(premise), stamp: stamp),
 		"conclusion": SyncField(value: .string(conclusion), stamp: stamp),
 	])
 }
 
-func newPageID() -> String {
+func newBoardID() -> String {
 	UUID().uuidString
 }
 
@@ -81,14 +81,14 @@ struct SyncTests {
 			#expect(!pad.isNewAccount)
 
 			// The phone writes a statement, the iPad pulls it
-			let page = newPageID()
+			let board = newBoardID()
 			let first = SyncField(value: content("It's raining, so the ground is wet."), stamp: stamp(device: "phone"))
-			let pushed = try await app.sync(SyncRequest(cursor: nil, changes: [statementChange(page, ["content": first])]), token: phone.token)
+			let pushed = try await app.sync(SyncRequest(cursor: nil, changes: [statementChange(board, ["content": first])]), token: phone.token)
 			#expect(pushed.cursor == 1)
 			#expect(pushed.superseded == [])
 
 			let pulled = try await app.sync(SyncRequest(cursor: nil, changes: []), token: pad.token)
-			#expect(pulled.changes == [SyncRecord(kind: .statement, id: page, fields: ["content": first])])
+			#expect(pulled.changes == [SyncRecord(kind: .statement, id: board, fields: ["content": first])])
 			#expect(pulled.cursor == 1)
 			#expect(!pulled.more)
 			#expect(abs(pulled.serverTime.timeIntervalSinceNow) < 5)
@@ -97,16 +97,16 @@ struct SyncTests {
 			let phoneEdit = SyncField(value: content("Phone"), stamp: stamp(1, device: "phone"))
 			let padEdit = SyncField(value: content("iPad"), stamp: stamp(2, device: "pad"))
 			let fromPhone = try await app.sync(
-				SyncRequest(cursor: 1, changes: [statementChange(page, ["content": phoneEdit], bases: ["content": first.stamp])]),
+				SyncRequest(cursor: 1, changes: [statementChange(board, ["content": phoneEdit], bases: ["content": first.stamp])]),
 				token: phone.token
 			)
 			#expect(fromPhone.superseded == [])
 
 			let fromPad = try await app.sync(
-				SyncRequest(cursor: 1, changes: [statementChange(page, ["content": padEdit], bases: ["content": first.stamp])]),
+				SyncRequest(cursor: 1, changes: [statementChange(board, ["content": padEdit], bases: ["content": first.stamp])]),
 				token: pad.token
 			)
-			#expect(fromPad.superseded == [SupersededField(kind: .statement, id: page, field: "content", lost: phoneEdit)])
+			#expect(fromPad.superseded == [SupersededField(kind: .statement, id: board, field: "content", lost: phoneEdit)])
 			#expect(fromPad.changes.map(\.fields) == [["content": padEdit]])
 			#expect(fromPad.cursor == 3)
 
@@ -132,7 +132,7 @@ struct SyncTests {
 		}
 	}
 
-	@Test func pagesWithMore() async throws {
+	@Test func boardsWithMore() async throws {
 		let scratch = try Scratch()
 		defer { scratch.remove() }
 
@@ -144,21 +144,21 @@ struct SyncTests {
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: changes), token: device.token)
 
 			var cursor: Int?
-			var pages: [[String]] = []
+			var boards: [[String]] = []
 			var cursors: [Int] = []
 			while true {
 				let response = try await app.sync(SyncRequest(cursor: cursor, changes: [], limit: 2), token: device.token)
-				pages.append(response.changes.map(\.id))
+				boards.append(response.changes.map(\.id))
 				cursors.append(response.cursor)
 				cursor = response.cursor
 				if !response.more {
 					break
 				}
 			}
-			#expect(pages == [["fallacy-0", "fallacy-1"], ["fallacy-2", "fallacy-3"], ["fallacy-4"]])
+			#expect(boards == [["fallacy-0", "fallacy-1"], ["fallacy-2", "fallacy-3"], ["fallacy-4"]])
 			#expect(cursors == [2, 4, 5])
 
-			// Exactly a page left still says no more
+			// Exactly a board left still says no more
 			let last = try await app.sync(SyncRequest(cursor: 3, changes: [], limit: 2), token: device.token)
 			#expect(last.changes.map(\.id) == ["fallacy-3", "fallacy-4"])
 			#expect(!last.more)
@@ -184,32 +184,32 @@ struct SyncTests {
 	@Test(arguments: [
 		(
 			SyncChange(kind: "note", id: "1", fields: [:]),
-			"Unknown record kind 'note', expected 'page', 'bookmark', 'setting', 'statement' or 'link'"
+			"Unknown record kind 'note', expected 'board', 'bookmark', 'setting', 'statement' or 'link'"
 		),
 		(
-			SyncChange(kind: .page, id: "not-a-uuid", fields: [:]),
-			"Expected a page id to be an uppercase UUID, found 'not-a-uuid'"
+			SyncChange(kind: .board, id: "not-a-uuid", fields: [:]),
+			"Expected a board id to be an uppercase UUID, found 'not-a-uuid'"
 		),
 		(
-			SyncChange(kind: .page, id: UUID().uuidString.lowercased(), fields: [:]),
-			"Expected a page id to be an uppercase UUID"
+			SyncChange(kind: .board, id: UUID().uuidString.lowercased(), fields: [:]),
+			"Expected a board id to be an uppercase UUID"
 		),
 		(
 			SyncChange(kind: .setting, id: "translationServer", fields: [:]),
 			"Unknown setting 'translationServer'"
 		),
 		(
-			SyncChange(kind: .page, id: UUID().uuidString, fields: ["title": SyncField(value: "Hi", stamp: stamp())]),
-			"Unknown field 'title' in a page record"
+			SyncChange(kind: .board, id: UUID().uuidString, fields: ["title": SyncField(value: "Hi", stamp: stamp())]),
+			"Unknown field 'title' in a board record"
 		),
 		(
 			SyncChange(kind: .bookmark, id: "", fields: [:]),
 			"Expected a bookmark id of 1 to 256 bytes, found 0"
 		),
-		// Pages no longer carry content, statements do
+		// Boards no longer carry content, statements do
 		(
-			SyncChange(kind: .page, id: UUID().uuidString, fields: ["content": SyncField(value: content("Hi"), stamp: stamp())]),
-			"Unknown field 'content' in a page record"
+			SyncChange(kind: .board, id: UUID().uuidString, fields: ["content": SyncField(value: content("Hi"), stamp: stamp())]),
+			"Unknown field 'content' in a board record"
 		),
 		(
 			SyncChange(kind: .statement, id: UUID().uuidString, fields: ["english": SyncField(value: "Hi", stamp: stamp())]),
@@ -256,14 +256,14 @@ struct SyncTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
 			let ahead = stamp(SyncLimit.futureStamp + 60000)
-			let change = statementChange(newPageID(), ["content": SyncField(value: content("From the future"), stamp: ahead)])
+			let change = statementChange(newBoardID(), ["content": SyncField(value: content("From the future"), stamp: ahead)])
 
 			let (status, error) = try await app.syncRefusal(SyncRequest(cursor: nil, changes: [change]), token: device.token)
 			#expect(status == .badRequest)
 			#expect(error == ServiceError(code: .invalidRequest, message: "Expected a time within 10 minutes of the server, found 11 minutes ahead"))
 
 			// A little ahead is just clock skew
-			let skewed = statementChange(newPageID(), ["content": SyncField(value: content("Fine"), stamp: stamp(60000))])
+			let skewed = statementChange(newBoardID(), ["content": SyncField(value: content("Fine"), stamp: stamp(60000))])
 			#expect(try await app.sync(SyncRequest(cursor: nil, changes: [skewed]), token: device.token).cursor == 1)
 		}
 	}
@@ -275,20 +275,20 @@ struct SyncTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
 			let english = String(repeating: "a", count: 300 * 1024)
-			let change = statementChange(newPageID(), ["content": SyncField(value: content(english), stamp: stamp())])
+			let change = statementChange(newBoardID(), ["content": SyncField(value: content(english), stamp: stamp())])
 
 			let (status, error) = try await app.syncRefusal(SyncRequest(cursor: nil, changes: [change]), token: device.token)
 			#expect(status == .payloadTooLarge)
 			#expect(error == ServiceError(code: .tooLarge, message: "Expected a statement under 256 KB, found 301 KB"))
 
 			// Over the limit is over the limit for every field
-			let position = pageChange(newPageID(), ["descriptor.0": SyncField(value: .string(english), stamp: stamp())])
+			let position = boardChange(newBoardID(), ["descriptor.0": SyncField(value: .string(english), stamp: stamp())])
 			let (_, descriptorError) = try await app.syncRefusal(SyncRequest(cursor: nil, changes: [position]), token: device.token)
 			#expect(descriptorError.code == .tooLarge)
 
 			// Just under is fine
 			let small = String(repeating: "a", count: 200 * 1024)
-			let fits = statementChange(newPageID(), ["content": SyncField(value: content(small), stamp: stamp())])
+			let fits = statementChange(newBoardID(), ["content": SyncField(value: content(small), stamp: stamp())])
 			#expect(try await app.sync(SyncRequest(cursor: nil, changes: [fits]), token: device.token).cursor == 1)
 		}
 	}
@@ -300,7 +300,7 @@ struct SyncTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
 			let changes = (0 ..< 5).map { _ in
-				statementChange(newPageID(), ["content": SyncField(value: content(String(repeating: "a", count: 250 * 1024)), stamp: stamp())])
+				statementChange(newBoardID(), ["content": SyncField(value: content(String(repeating: "a", count: 250 * 1024)), stamp: stamp())])
 			}
 
 			let (status, error) = try await app.syncRefusal(SyncRequest(cursor: nil, changes: changes), token: device.token)
@@ -378,20 +378,20 @@ struct SyncTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
 			let old: Int64 = -100 * 24 * 60 * 60 * 1000
-			let deleted = newPageID()
-			let recent = newPageID()
-			let alive = newPageID()
+			let deleted = newBoardID()
+			let recent = newBoardID()
+			let alive = newBoardID()
 
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-				pageChange(deleted, [
+				boardChange(deleted, [
 					"descriptor.0": SyncField(value: "gone", stamp: stamp(old)),
 					"deleted": SyncField(value: true, stamp: stamp(old + 1)),
 				]),
-				pageChange(recent, [
+				boardChange(recent, [
 					"descriptor.0": SyncField(value: "just deleted", stamp: stamp(-1000)),
 					"deleted": SyncField(value: true, stamp: stamp()),
 				]),
-				pageChange(alive, ["descriptor.0": SyncField(value: "here", stamp: stamp(old))]),
+				boardChange(alive, ["descriptor.0": SyncField(value: "here", stamp: stamp(old))]),
 			]), token: device.token)
 
 			#expect(try await app.ergo.sync.prune(on: app.db) == 1)
@@ -431,9 +431,9 @@ struct SyncTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
 			let english = "Socrates is a man, and all men are mortal"
-			let page = newPageID()
+			let board = newBoardID()
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-				statementChange(page, ["content": SyncField(value: content(english), stamp: stamp()), "page": SyncField(value: .string(newPageID()), stamp: stamp())]),
+				statementChange(board, ["content": SyncField(value: content(english), stamp: stamp()), "board": SyncField(value: .string(newBoardID()), stamp: stamp())]),
 			]), token: device.token)
 
 			let sql = try #require(app.db as? any SQLDatabase)
@@ -445,10 +445,10 @@ struct SyncTests {
 			#expect(!raw.contains("mortal"))
 
 			// Opens only as its own row
-			let row = try #require(try await SyncRecordRow.find(SyncRecord.Key(kind: .statement, id: page), for: device.accountID, on: app.db))
+			let row = try #require(try await SyncRecordRow.find(SyncRecord.Key(kind: .statement, id: board), for: device.accountID, on: app.db))
 			#expect(try row.record(app.ergo.vault).fields["content"]?.value == content(english))
 			#expect(throws: CredentialVault.Unreadable.self) {
-				try app.ergo.vault.open(sealed, account: device.accountID, record: SyncRecord.Key(kind: .statement, id: newPageID()))
+				try app.ergo.vault.open(sealed, account: device.accountID, record: SyncRecord.Key(kind: .statement, id: newBoardID()))
 			}
 			#expect(throws: CredentialVault.Unreadable.self) {
 				try app.ergo.vault.open(sealed, account: UUID(), record: row.key)

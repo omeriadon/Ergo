@@ -17,20 +17,20 @@ import SwiftUI
 @MainActor
 final class CanvasHistory {
 	struct Snapshot: Equatable, Sendable {
-		let pageID: LogicPage.ID
+		let boardID: LogicBoard.ID
 		let statements: [Statement]
 		let links: [Link]
 	}
 
 	var undoManager: UndoManager?
-	weak var store: PageStore?
+	weak var store: BoardStore?
 
 	/// Told after every register, undo and redo, so the menu can enable or disable its items
 	var didChange: (() -> Void)?
 
 	func snapshot() -> Snapshot? {
-		guard let page = store?.current else { return nil }
-		return Snapshot(pageID: page.id, statements: page.statements, links: page.links)
+		guard let board = store?.current else { return nil }
+		return Snapshot(boardID: board.id, statements: board.statements, links: board.links)
 	}
 
 	/// Runs `change` and makes it one undo step, if it changed anything
@@ -52,23 +52,23 @@ final class CanvasHistory {
 		didChange?()
 	}
 
-	/// Forgets every step, for a page that's gone from the screen. Their snapshots are of the old page.
+	/// Forgets every step, for a board that's gone from the screen. Their snapshots are of the old board.
 	func clear() {
 		undoManager?.removeAllActions(withTarget: self)
 		didChange?()
 	}
 
 	private func restore(_ snapshot: Snapshot, name: String) {
-		guard let store, store.current.id == snapshot.pageID, let now = self.snapshot() else { return }
+		guard let store, store.current.id == snapshot.boardID, let now = self.snapshot() else { return }
 
-		var page = store.current
-		page.statements = snapshot.statements.map { old in
-			guard var kept = page.statements.first(where: { $0.id == old.id }) else { return old }
+		var board = store.current
+		board.statements = snapshot.statements.map { old in
+			guard var kept = board.statements.first(where: { $0.id == old.id }) else { return old }
 			kept.position = old.position
 			return kept
 		}
-		page.links = snapshot.links
-		store.current = page
+		board.links = snapshot.links
+		store.current = board
 
 		// Registered while undoing, so the manager files it as the redo (and the other way round)
 		undoManager?.registerUndo(withTarget: self) { history in

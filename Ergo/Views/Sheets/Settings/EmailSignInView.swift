@@ -171,9 +171,9 @@ struct EmailSignInView: View {
 		}
 		switch mode {
 			case .signIn:
-				return "Pages on this iPhone join the account's."
+				return "Boards on this iPhone join the account's."
 			case .createAccount:
-				return "Pages on this iPhone go into the new account. There's no password reset yet, so keep the password in Passwords."
+				return "Boards on this iPhone go into the new account. There's no password reset yet, so keep the password in Passwords."
 		}
 	}
 

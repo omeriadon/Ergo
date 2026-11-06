@@ -13,9 +13,9 @@ import Testing
 /// once everyone has synced twice they must all hold the same records.
 struct SyncConvergenceTests {
 	static let keys: [SyncRecord.Key] = [
-		SyncRecord.Key(kind: .page, id: "6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B"),
-		SyncRecord.Key(kind: .page, id: "0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D"),
-		SyncRecord.Key(kind: .page, id: "11111111-2222-4333-8444-555555555555"),
+		SyncRecord.Key(kind: .board, id: "6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B"),
+		SyncRecord.Key(kind: .board, id: "0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D"),
+		SyncRecord.Key(kind: .board, id: "11111111-2222-4333-8444-555555555555"),
 		SyncRecord.Key(kind: .setting, id: SyncedSetting.logicLetters.rawValue),
 		SyncRecord.Key(kind: .setting, id: SyncedSetting.ditherEnabled.rawValue),
 		SyncRecord.Key(kind: .bookmark, id: "fallacy.ad-hominem"),
@@ -63,14 +63,14 @@ struct SyncConvergenceTests {
 
 		mutating func edit(_ index: Int) {
 			let key = SyncConvergenceTests.keys.randomElement(using: &random)!
-			let names = key.kind == .page
+			let names = key.kind == .board
 				? ["content", "created", "descriptor.0", "descriptor.1"]
 				: key.kind.fieldNames.sorted()
 			var fields: [String: JSONValue] = [:]
 			for name in names.shuffled(using: &random).prefix(Int.random(in: 1 ... 2, using: &random)) {
 				fields[name] = randomValue(for: name)
 			}
-			if key.kind == .page, Int.random(in: 0 ..< 6, using: &random) == 0 {
+			if key.kind == .board, Int.random(in: 0 ..< 6, using: &random) == 0 {
 				fields = ["deleted": .bool(.random(using: &random))]
 			}
 
@@ -121,7 +121,7 @@ struct SyncConvergenceTests {
 
 	/// After pruning, a tombstone the server dropped can still be on a device. Deleted and gone look the same to the
 	/// user, so only then are they compared as the same.
-	/// Pruning also drops the statements and links of a pruned page, which a device keeps until it prunes too.
+	/// Pruning also drops the statements and links of a pruned board, which a device keeps until it prunes too.
 	/// They're ignored on every device, so they count as gone as well.
 	static func expectConverged(_ world: World, seed: UInt64, ignoringTombstones: Bool = false) {
 		for device in world.devices {

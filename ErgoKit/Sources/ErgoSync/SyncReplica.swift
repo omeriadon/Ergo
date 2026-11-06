@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// The device's side of sync. A plain value the app saves; it knows nothing about pages.
+/// The device's side of sync. A plain value the app saves; it knows nothing about boards.
 ///
 /// The app hands `recordLocal` the current fields of a record after every change, sends `makeRequest()`,
 /// and gives the reply to `apply`, which says which records to write back and which values lost.
@@ -159,7 +159,7 @@ public struct SyncReplica: Sendable, Hashable {
 		}
 	}
 
-	/// A page before its statements, which key order gives, and a statement before its links, which it doesn't.
+	/// A board before its statements, which key order gives, and a statement before its links, which it doesn't.
 	/// Another device can pull part way through a big push, and it deletes a link whose statement looks gone.
 	private static func pushesBefore(_ a: SyncRecord.Key, _ b: SyncRecord.Key) -> Bool {
 		if (a.kind == .link) != (b.kind == .link) {
@@ -283,7 +283,7 @@ public struct SyncReplica: Sendable, Hashable {
 			}
 		}
 		for key in unconfirmed ?? [] {
-			// Ignored records are what the server pruned with their page, so they stay down
+			// Ignored records are what the server pruned with their board, so they stay down
 			guard let record = records[key], !record.isDeleted, !isIgnored(record) else { continue }
 			pushes[key, default: [:]].merge(record.fields) { a, _ in a }
 		}
@@ -329,9 +329,9 @@ public struct SyncReplica: Sendable, Hashable {
 	}
 
 	/// The server prunes tombstones after `SyncLimit.tombstoneDays`, so they're dropped here too, rather than keeping
-	/// deleted pages' text on the device forever
+	/// deleted boards' text on the device forever
 	///
-	/// A pruned page takes its statements and links with it, like on the server. Without that a reset would push
+	/// A pruned board takes its statements and links with it, like on the server. Without that a reset would push
 	/// them back up as orphans.
 	private mutating func pruneTombstones(at deviceNow: Date) {
 		let cutoff = clock.now(deviceNow) - Int64(SyncLimit.tombstoneDays) * 86_400_000
@@ -340,13 +340,13 @@ public struct SyncReplica: Sendable, Hashable {
 			return deleted.stamp.time < cutoff
 		}
 
-		let pages = Set(records.filter { key, record in key.kind == .page && isOld(key, record) }.keys.map(\.id))
+		let boards = Set(records.filter { key, record in key.kind == .board && isOld(key, record) }.keys.map(\.id))
 		records = records.filter { key, record in
 			if isOld(key, record) {
 				return false
 			}
-			guard !pages.isEmpty, pending[key] == nil, let page = record.owningPage else { return true }
-			return !pages.contains(page)
+			guard !boards.isEmpty, pending[key] == nil, let board = record.owningBoard else { return true }
+			return !boards.contains(board)
 		}
 	}
 
@@ -375,7 +375,7 @@ public struct SyncApplied: Sendable, Hashable {
 	public var changed: [SyncRecord]
 
 	/// The losing sides of concurrent edits this device made, found by the server or by this replica.
-	/// Each reaches exactly one device. The app copies a page's lost `content` into a new page and ignores the rest.
+	/// Each reaches exactly one device. The app copies a board's lost `content` into a new board and ignores the rest.
 	public var superseded: [SupersededField]
 
 	/// Sync again straight away: there's more to pull, or changes this request held back

@@ -42,7 +42,7 @@ enum AppSheet: Hashable, Identifiable, Codable, Defaults.Serializable {
 	case createDebate
 	case settings(id: String)
 	case logicLetters
-	case pages
+	case boards
 
 	var id: Self {
 		self

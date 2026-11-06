@@ -8,7 +8,7 @@
 import ErgoLogic
 import Foundation
 
-// Both are saved on pages as synthesized Codable, so never rename a case or stored property
+// Both are saved on boards as synthesized Codable, so never rename a case or stored property
 
 public struct TranslationIssue: Codable, Hashable, Sendable {
 	public enum Severity: String, Codable, Sendable {
@@ -24,9 +24,9 @@ public struct TranslationIssue: Codable, Hashable, Sendable {
 	}
 }
 
-/// What came out of translating some English, kept on the page
+/// What came out of translating some English, kept on the board
 public struct Translation: Codable, Hashable, Sendable {
-	/// The English this came from, so the page can tell when the logic is out of date
+	/// The English this came from, so the board can tell when the logic is out of date
 	public let english: String
 
 	/// Empty when it couldn't be translated

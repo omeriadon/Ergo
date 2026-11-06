@@ -43,7 +43,7 @@ struct LogicTextEditor: UIViewRepresentable {
 	@Binding var isFocused: Bool
 	var highlights: [LogicHighlight] = []
 
-	/// The page's, so the letter keys can say what they stand for
+	/// The board's, so the letter keys can say what they stand for
 	var descriptors = LogicLetters.emptyDescriptors
 
 	var entryAppearance: (LogicKeyboardEntry) -> LogicInlineSymbolAppearance = LogicInlineSymbolAppearance.appearance

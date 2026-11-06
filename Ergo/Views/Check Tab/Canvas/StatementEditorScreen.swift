@@ -18,15 +18,15 @@ struct StatementEditorScreen: View {
 	@Environment(\.dismiss)
 	private var dismiss
 
-	@Environment(PageStore.self)
-	private var pageStore
+	@Environment(BoardStore.self)
+	private var boardStore
 
 	/// The pinch keeps reporting after it has gone far enough, and backing out once is all it means
 	@State private var hasPinchedOut = false
 
 	/// Nil once the statement is gone (deleted on another device), and there's nothing left to edit
 	private var exists: Bool {
-		pageStore.statement(statementID) != nil
+		boardStore.statement(statementID) != nil
 	}
 
 	var body: some View {

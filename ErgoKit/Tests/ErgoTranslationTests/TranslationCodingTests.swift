@@ -10,7 +10,7 @@ import ErgoTranslation
 import Foundation
 import Testing
 
-/// Pages saved before ErgoKit existed have to keep decoding, so these are the synthesized formats as they were then
+/// Boards saved before ErgoKit existed have to keep decoding, so these are the synthesized formats as they were then
 struct TranslationCodingTests {
 	@Test func savedTranslationStillDecodes() throws {
 		let saved = #"{"english":"If it rains, it pours.","entries":[{"variable":{"_0":1}},{"symbol":{"_0":"→"}},{"variable":{"_0":2}}],"descriptors":["it rains","it pours","","","",""],"issues":[{"message":"Expected statement","severity":"error"}]}"#

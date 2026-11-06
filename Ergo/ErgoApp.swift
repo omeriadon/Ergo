@@ -13,7 +13,7 @@ import SwiftUI
 struct ErgoApp: App {
 	@State private var navigation = NavigationManager()
 	@State private var catalog = CatalogStore()
-	@State private var pageStore: PageStore
+	@State private var boardStore: BoardStore
 	@State private var translationAccount: TranslationAccount
 	@State private var sync: SyncController
 
@@ -23,14 +23,14 @@ struct ErgoApp: App {
 	init() {
 		let navigation = NavigationManager()
 		let catalog = CatalogStore()
-		let pageStore = PageStore()
+		let boardStore = BoardStore()
 		let translationAccount = TranslationAccount()
 
 		_navigation = State(initialValue: navigation)
 		_catalog = State(initialValue: catalog)
-		_pageStore = State(initialValue: pageStore)
+		_boardStore = State(initialValue: boardStore)
 		_translationAccount = State(initialValue: translationAccount)
-		_sync = State(initialValue: SyncController(account: translationAccount, pageStore: pageStore, catalog: catalog))
+		_sync = State(initialValue: SyncController(account: translationAccount, boardStore: boardStore, catalog: catalog))
 
 		AppDependencyManager.shared.add(
 			dependency: navigation
@@ -46,7 +46,7 @@ struct ErgoApp: App {
 			AppScene()
 				.environment(catalog)
 				.environment(navigation)
-				.environment(pageStore)
+				.environment(boardStore)
 				.environment(translationAccount)
 				.environment(sync)
 				.task {
@@ -70,7 +70,7 @@ struct ErgoApp: App {
 		.onChange(of: scenePhase) { _, phase in
 			// Saves usually wait for a pause in typing, don't lose that pause to the app closing
 			if phase != .active {
-				pageStore.save()
+				boardStore.save()
 			}
 			sync.scenePhaseChanged(phase)
 		}

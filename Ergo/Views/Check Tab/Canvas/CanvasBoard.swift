@@ -51,7 +51,7 @@ final class CanvasBoardController {
 	}
 }
 
-/// The page's boxes and arrows, with pan and zoom. `CanvasBoardView` does the moving in UIKit, and each box is
+/// The board's boxes and arrows, with pan and zoom. `CanvasBoardView` does the moving in UIKit, and each box is
 /// still the SwiftUI `CanvasBox`, hosted on its own.
 struct CanvasBoard: UIViewRepresentable {
 	let boxes: [CanvasBoxModel]

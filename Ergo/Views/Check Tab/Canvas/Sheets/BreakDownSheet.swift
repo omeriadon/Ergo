@@ -11,7 +11,7 @@ import ErgoTranslation
 import SwiftUI
 
 /// Pastes English and lets the server split it into premises and a conclusion, with no logic written. What it finds goes
-/// on the page as statements joined by arrows (`PageStore.applyBreakdown`), and each one is translated on its own afterwards.
+/// on the board as statements joined by arrows (`BoardStore.applyBreakdown`), and each one is translated on its own afterwards.
 struct BreakDownSheet: View {
 	@Environment(\.dismiss)
 	private var dismiss
@@ -19,8 +19,8 @@ struct BreakDownSheet: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
-	@Environment(PageStore.self)
-	private var pageStore
+	@Environment(BoardStore.self)
+	private var boardStore
 
 	@Environment(TranslationAccount.self)
 	private var account
@@ -57,9 +57,9 @@ struct BreakDownSheet: View {
 		!english.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
 	}
 
-	/// Nothing on the page yet but the empty box every page starts with
-	private var pageHasContent: Bool {
-		pageStore.current.statements.contains { !$0.isEmpty }
+	/// Nothing on the board yet but the empty box every board starts with
+	private var boardHasContent: Bool {
+		boardStore.current.statements.contains { !$0.isEmpty }
 	}
 
 	var body: some View {
@@ -68,7 +68,7 @@ struct BreakDownSheet: View {
 				if let found {
 					BreakdownResultView(
 						breakdown: found,
-						application: found.applied(to: pageStore.current.map, replacing: replacing),
+						application: found.applied(to: boardStore.current.map, replacing: replacing),
 						replacing: $replacing
 					)
 				} else {
@@ -88,7 +88,7 @@ struct BreakDownSheet: View {
 		.confirmationDialog(replaceTitle, isPresented: $confirmingReplace, titleVisibility: .visible) {
 			Button("Replace Statements", role: .destructive, action: commit)
 		} message: {
-			Text("Every statement and arrow on this page is deleted first.")
+			Text("Every statement and arrow on this board is deleted first.")
 		}
 	}
 
@@ -156,8 +156,8 @@ struct BreakDownSheet: View {
 					Label(replacing ? "Replace" : "Add", systemImage: "checkmark")
 				}
 				.buttonStyle(.glassProminent)
-				.disabled(found.applied(to: pageStore.current.map, replacing: replacing).added.isEmpty)
-				.accessibilityLabel(replacing ? "Replace statements" : "Add to this page")
+				.disabled(found.applied(to: boardStore.current.map, replacing: replacing).added.isEmpty)
+				.accessibilityLabel(replacing ? "Replace statements" : "Add to this board")
 				.accessibilityIdentifier("check.breakDown.apply")
 			}
 		} else {
@@ -170,9 +170,9 @@ struct BreakDownSheet: View {
 	}
 
 	private var replaceTitle: String {
-		let page = pageStore.current
-		let statements = page.statements.count
-		let links = page.links.count
+		let board = boardStore.current
+		let statements = board.statements.count
+		let links = board.links.count
 		return "Replace \(statements) statement\(statements == 1 ? "" : "s")\(links == 0 ? "" : " and \(links) link\(links == 1 ? "" : "s")")?"
 	}
 
@@ -205,7 +205,7 @@ struct BreakDownSheet: View {
 			return
 		}
 
-		let descriptors = pageStore.current.descriptors
+		let descriptors = boardStore.current.descriptors
 		progress = TranslationProgress()
 
 		translating = Task {
@@ -239,14 +239,14 @@ struct BreakDownSheet: View {
 
 	private func show(_ result: ArgumentBreakdown) {
 		breakdown = result
-		// Adding is the safe default, and a page with nothing on it has nothing to add to
-		replacing = !pageHasContent
+		// Adding is the safe default, and a board with nothing on it has nothing to add to
+		replacing = !boardHasContent
 	}
 
 	// MARK: - Applying
 
 	private func apply() {
-		if replacing, pageHasContent {
+		if replacing, boardHasContent {
 			confirmingReplace = true
 		} else {
 			commit()
@@ -255,7 +255,7 @@ struct BreakDownSheet: View {
 
 	private func commit() {
 		guard let found else { return }
-		pageStore.applyBreakdown(found, replacing: replacing)
+		boardStore.applyBreakdown(found, replacing: replacing)
 		dismiss()
 	}
 }
@@ -349,7 +349,7 @@ private struct IssueRows: View {
 
 // MARK: - Result
 
-/// What was found, and whether it goes on the page or replaces what's there
+/// What was found, and whether it goes on the board or replaces what's there
 private struct BreakdownResultView: View {
 	let breakdown: ArgumentBreakdown
 	let application: ArgumentBreakdownApplication<Statement, Link>
@@ -381,8 +381,8 @@ private struct BreakdownResultView: View {
 
 			Section {
 				Picker("Apply", selection: $replacing) {
-					Text("Add to this page").tag(false)
-					Text("Replace this page's statements").tag(true)
+					Text("Add to this board").tag(false)
+					Text("Replace this board's statements").tag(true)
 				}
 				.pickerStyle(.inline)
 				.labelsHidden()
@@ -394,7 +394,7 @@ private struct BreakdownResultView: View {
 		.accessibilityIdentifier("check.breakDown.result")
 	}
 
-	/// Said before applying, so a page that's nearly full doesn't surprise anyone
+	/// Said before applying, so a board that's nearly full doesn't surprise anyone
 	@ViewBuilder
 	private var fit: some View {
 		if application.skipped > 0 {

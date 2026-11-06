@@ -23,12 +23,12 @@ public struct ArgumentBreakdown: Codable, Hashable, Sendable {
 	/// The distinct simple claims every premise and the conclusion are built from, in order of first appearance
 	public var claims: [BreakdownStage.Output.Claim]
 
-	/// One per letter slot, sanitised: the page's own descriptors kept as they were, and each new claim in a free slot.
+	/// One per letter slot, sanitised: the board's own descriptors kept as they were, and each new claim in a free slot.
 	/// A claim that matched an existing descriptor reuses its slot, so formalizing a statement later gives it the same letter.
 	public var descriptors: [String]
 
 	/// An error when the English wasn't worth breaking down, in which case everything above is empty
-	/// (descriptors are the page's own, untouched)
+	/// (descriptors are the board's own, untouched)
 	public var issues: [TranslationIssue]
 
 	public init(

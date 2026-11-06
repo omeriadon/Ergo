@@ -11,7 +11,7 @@ import Foundation
 
 // Which Defaults keys sync, and how their values become record fields and back.
 //
-// Synced: `pages` (`PageRecord`, `StatementRecord`, `LinkRecord`), `bookmarks` (below) and the `SyncedSetting`s. Every other key stays on this
+// Synced: `boards` (`BoardRecord`, `StatementRecord`, `LinkRecord`), `bookmarks` (below) and the `SyncedSetting`s. Every other key stays on this
 // device, so a new key is local until it's added here.
 
 // MARK: - Coding

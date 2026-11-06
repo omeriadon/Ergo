@@ -17,8 +17,8 @@ struct ArgumentCheckSheet: View {
 	@Environment(\.dismiss)
 	private var dismiss
 
-	@Environment(PageStore.self)
-	private var pageStore
+	@Environment(BoardStore.self)
+	private var boardStore
 
 	@Default(.logicLetters) private var logicLetters
 
@@ -27,7 +27,7 @@ struct ArgumentCheckSheet: View {
 	}
 
 	private var map: ArgumentMap<Statement, Link> {
-		pageStore.current.map
+		boardStore.current.map
 	}
 
 	var body: some View {
@@ -98,10 +98,10 @@ struct ArgumentCheckSheet: View {
 
 	// MARK: - Verdict
 
-	/// Worked out when the sheet opens or the page changes: it's one argument, and it's only asked for when tapped
+	/// Worked out when the sheet opens or the board changes: it's one argument, and it's only asked for when tapped
 	@ViewBuilder
 	private var verdict: some View {
-		switch pageStore.check(statementID) {
+		switch boardStore.check(statementID) {
 			case let .success(analysis?):
 				if analysis.parse.diagnostics.isEmpty, let argument = try? ArgumentEntries.build(for: statementID, in: map) {
 					// A fix would edit the joined line, which isn't any one statement, so none is offered

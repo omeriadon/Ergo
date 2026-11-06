@@ -136,7 +136,7 @@ struct AppleSignInTests {
 			let device = try await app.createAccount()
 			try await app.storeCredential("sk-ant-api-device", provider: .claude, kind: .apiKey, account: device.id)
 
-			let shared = newPageID()
+			let shared = newBoardID()
 			let older = SyncField(value: content("Older"), stamp: stamp(-1000))
 			let newer = SyncField(value: content("Newer"), stamp: stamp())
 			let position = SyncField(value: ["x": 1, "y": 2], stamp: stamp(-2000))
@@ -144,7 +144,7 @@ struct AppleSignInTests {
 
 			// Records an anonymous account can't normally have, written straight in
 			let vault = app.ergo.vault
-			let onlyHere = newPageID()
+			let onlyHere = newBoardID()
 			for (seq, record) in [
 				SyncRecord(kind: .statement, id: shared, fields: ["content": newer, "position": position]),
 				SyncRecord(kind: .statement, id: onlyHere, fields: ["content": older]),
@@ -236,7 +236,7 @@ struct AppleSignInTests {
 			try await app.storeCredential("sk-ant-oat-fake", provider: .claude, kind: .subscription, account: phone.accountID)
 			for device in [phone, other] {
 				_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-					statementChange(newPageID(), ["content": SyncField(value: content("Mine"), stamp: stamp())]),
+					statementChange(newBoardID(), ["content": SyncField(value: content("Mine"), stamp: stamp())]),
 				]), token: device.token)
 			}
 

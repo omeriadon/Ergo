@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// What the editor holds, one per glyph. Saved on pages as synthesized Codable, so never rename a case.
+/// What the editor holds, one per glyph. Saved on boards as synthesized Codable, so never rename a case.
 public enum LogicKeyboardEntry: Hashable, Sendable, Codable {
 	/// One of the six configurable letters, stored by slot (1...6) so the letter itself can change without touching what's been written
 	case variable(Int)

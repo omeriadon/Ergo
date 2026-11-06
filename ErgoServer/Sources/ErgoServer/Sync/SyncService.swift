@@ -18,7 +18,7 @@ struct SyncService: Sendable {
 	let live: SyncLive
 	var recordsPerAccount = SyncLimit.recordsPerAccount
 
-	/// A response's records stop here, even under `limit`, so a page of big records stays a sensible size
+	/// A response's records stop here, even under `limit`, so a board of big records stays a sensible size
 	static let responseBytes = 4 << 20
 
 	// MARK: - Syncing
@@ -79,7 +79,7 @@ struct SyncService: Sendable {
 				try await account.save(on: database)
 			}
 
-			let (records, more) = try await page(of: account, after: request.cursor ?? 0, limit: limit, on: database, logger: logger)
+			let (records, more) = try await board(of: account, after: request.cursor ?? 0, limit: limit, on: database, logger: logger)
 			let response = SyncResponse(
 				cursor: more ? records.last?.seq ?? account.seq : account.seq,
 				changes: records.map(\.record),
@@ -103,7 +103,7 @@ struct SyncService: Sendable {
 	}
 
 	/// The rows after `cursor` in seq order, up to `limit` and `responseBytes`, and whether there are more
-	private func page(
+	private func board(
 		of account: Account,
 		after cursor: Int,
 		limit: Int,
@@ -145,11 +145,11 @@ struct SyncService: Sendable {
 	/// Deletes tombstones older than `SyncLimit.tombstoneDays`, and moves each account's `prunedThrough` past them,
 	/// so a device that might have missed one is told to start over. Returns how many records went.
 	///
-	/// It also deletes what a deleted page leaves behind, since the page's own record can't take them with it:
-	/// - the statements and links of every page whose tombstone is pruned, whatever their age
-	/// - statements and links with no page record at all (or no `page` field) that haven't changed in as long
+	/// It also deletes what a deleted board leaves behind, since the board's own record can't take them with it:
+	/// - the statements and links of every board whose tombstone is pruned, whatever their age
+	/// - statements and links with no board record at all (or no `board` field) that haven't changed in as long
 	///
-	/// Those don't move `prunedThrough`: a device that has them ignores them, because their page is deleted or missing.
+	/// Those don't move `prunedThrough`: a device that has them ignores them, because their board is deleted or missing.
 	@discardableResult
 	func prune(now: Date = .now, on database: any Database) async throws -> Int {
 		let cutoff = now - TimeInterval(SyncLimit.tombstoneDays) * 24 * 60 * 60
@@ -177,7 +177,7 @@ struct SyncService: Sendable {
 		return pruned
 	}
 
-	/// Statements and links, the kinds that belong to a page
+	/// Statements and links, the kinds that belong to a board
 	private static let childKinds = [SyncKind.statement.rawValue, SyncKind.link.rawValue]
 
 	private func prune(_ account: Account, before cutoff: Date, on database: any Database) async throws -> Int {
@@ -188,25 +188,25 @@ struct SyncService: Sendable {
 			.all()
 		var doomed = Set(tombstones.compactMap(\.id))
 
-		let prunedPages = Set(tombstones.filter { $0.kind == SyncKind.page.rawValue }.map(\.recordID))
-		let livePages = try await Set(SyncRecordRow.query(on: database)
+		let prunedBoards = Set(tombstones.filter { $0.kind == SyncKind.board.rawValue }.map(\.recordID))
+		let liveBoards = try await Set(SyncRecordRow.query(on: database)
 			.filter(\.$account.$id == id)
-			.filter(\.$kind == SyncKind.page.rawValue)
+			.filter(\.$kind == SyncKind.board.rawValue)
 			.field(\.$recordID)
 			.all()
-			.map(\.recordID)).subtracting(prunedPages)
+			.map(\.recordID)).subtracting(prunedBoards)
 		let children = try await SyncRecordRow.query(on: database)
 			.filter(\.$account.$id == id)
 			.filter(\.$kind ~~ Self.childKinds)
 			.field(\.$id)
-			.field(\.$page)
+			.field(\.$board)
 			.field(\.$updated)
 			.all()
 		for child in children {
 			guard let childID = child.id else { continue }
-			if let page = child.page, prunedPages.contains(page) {
+			if let board = child.board, prunedBoards.contains(board) {
 				doomed.insert(childID)
-			} else if child.updated < cutoff, child.page.map(livePages.contains) != true {
+			} else if child.updated < cutoff, child.board.map(liveBoards.contains) != true {
 				doomed.insert(childID)
 			}
 		}

@@ -10,19 +10,19 @@ import Foundation
 import Testing
 
 struct SyncReplicaTests {
-	static let pageID = "6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B"
-	static let otherPageID = "0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D"
-	static let page = SyncRecord.Key(kind: .page, id: pageID)
+	static let boardID = "6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B"
+	static let otherBoardID = "0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D"
+	static let board = SyncRecord.Key(kind: .board, id: boardID)
 	static let letters = SyncRecord.Key(kind: .setting, id: SyncedSetting.logicLetters.rawValue)
 
-	/// Two devices on one server, both caught up and holding the same page
+	/// Two devices on one server, both caught up and holding the same board
 	static func twoDevices(content: JSONValue = "base") -> (FakeSyncServer, FakeDevice, FakeDevice) {
 		var server = FakeSyncServer()
 		var a = FakeDevice("A")
 		var b = FakeDevice("B")
 		a.syncUntilDone(with: &server)
 		b.syncUntilDone(with: &server)
-		a.edit(.page, pageID, ["content": content], server)
+		a.edit(.board, boardID, ["content": content], server)
 		server.now += 1000
 		a.syncUntilDone(with: &server)
 		b.syncUntilDone(with: &server)
@@ -36,30 +36,30 @@ struct SyncReplicaTests {
 		var device = FakeDevice("A")
 		device.syncUntilDone(with: &server)
 
-		let recorded = device.edit(.page, Self.pageID, ["content": "a", "descriptor.0": "rain"], server)
+		let recorded = device.edit(.board, Self.boardID, ["content": "a", "descriptor.0": "rain"], server)
 		#expect(recorded)
-		let recordedAgain = device.edit(.page, Self.pageID, ["content": "a", "descriptor.0": "rain"], server)
+		let recordedAgain = device.edit(.board, Self.boardID, ["content": "a", "descriptor.0": "rain"], server)
 		#expect(!recordedAgain)
-		#expect(device.replica.pending[Self.page]?.fields.keys.sorted() == ["content", "descriptor.0"])
+		#expect(device.replica.pending[Self.board]?.fields.keys.sorted() == ["content", "descriptor.0"])
 
 		device.syncUntilDone(with: &server)
 		#expect(device.replica.pending.isEmpty)
-		let recordedAfterSync = device.edit(.page, Self.pageID, ["content": "a", "descriptor.0": "rain"], server)
+		let recordedAfterSync = device.edit(.board, Self.boardID, ["content": "a", "descriptor.0": "rain"], server)
 		#expect(!recordedAfterSync)
 
-		let base = device.replica[.page, Self.pageID]?.fields["content"]?.stamp
+		let base = device.replica[.board, Self.boardID]?.fields["content"]?.stamp
 		server.now += 1000
-		let recordedEdit = device.edit(.page, Self.pageID, ["content": "ab", "descriptor.0": "rain"], server)
+		let recordedEdit = device.edit(.board, Self.boardID, ["content": "ab", "descriptor.0": "rain"], server)
 		#expect(recordedEdit)
-		#expect(device.replica.pending[Self.page]?.fields.keys.sorted() == ["content"])
-		#expect(try device.replica.pending[Self.page]?.bases == ["content": #require(base)])
+		#expect(device.replica.pending[Self.board]?.fields.keys.sorted() == ["content"])
+		#expect(try device.replica.pending[Self.board]?.bases == ["content": #require(base)])
 	}
 
 	/// Writing a remote change back and reporting it again is what would cause an echo loop
 	@Test func reportingARemoteChangeBackRecordsNothing() throws {
 		var (server, a, b) = Self.twoDevices()
 		server.now += 1000
-		a.edit(.page, Self.pageID, ["content": "from A", "descriptor.1": "snow"], server)
+		a.edit(.board, Self.boardID, ["content": "from A", "descriptor.1": "snow"], server)
 		a.syncUntilDone(with: &server)
 
 		let synced = b.sync(with: &server)
@@ -67,7 +67,7 @@ struct SyncReplicaTests {
 		let record = try #require(applied.changed.first)
 		#expect(applied.changed.count == 1)
 		#expect(record.values == ["content": "from A", "descriptor.1": "snow"])
-		let echoed = b.edit(.page, Self.pageID, record.values, server)
+		let echoed = b.edit(.board, Self.boardID, record.values, server)
 		#expect(!echoed)
 		#expect(b.replica.pending.isEmpty)
 	}
@@ -94,22 +94,22 @@ struct SyncReplicaTests {
 		var server = FakeSyncServer()
 		var device = FakeDevice("A")
 		device.syncUntilDone(with: &server)
-		device.edit(.page, Self.pageID, ["content": "a"], server)
+		device.edit(.board, Self.boardID, ["content": "a"], server)
 
 		let request = device.replica.makeRequest()
 		let response = try server.sync(request)
 		server.now += 100
-		device.edit(.page, Self.pageID, ["content": "ab"], server)
+		device.edit(.board, Self.boardID, ["content": "ab"], server)
 		let applied = device.replica.apply(response, sent: request, at: device.now(server))
 
 		#expect(applied.changed.isEmpty)
 		#expect(applied.syncAgain)
-		#expect(device.replica.pending[Self.page]?.fields["content"]?.value == "ab")
-		#expect(device.replica.pending[Self.page]?.bases["content"] == request.changes.first?.fields["content"]?.stamp)
+		#expect(device.replica.pending[Self.board]?.fields["content"]?.value == "ab")
+		#expect(device.replica.pending[Self.board]?.bases["content"] == request.changes.first?.fields["content"]?.stamp)
 
 		device.syncUntilDone(with: &server)
 		#expect(device.replica.pending.isEmpty)
-		#expect(server.records[Self.page]?.values == ["content": "ab"])
+		#expect(server.records[Self.board]?.values == ["content": "ab"])
 		#expect(device.superseded.isEmpty)
 	}
 
@@ -117,16 +117,16 @@ struct SyncReplicaTests {
 		var server = FakeSyncServer()
 		var device = FakeDevice("A")
 		device.syncUntilDone(with: &server)
-		device.edit(.page, Self.pageID, ["content": .string(String(repeating: "a", count: SyncLimit.valueBytes))], server)
-		device.edit(.page, Self.otherPageID, ["content": "small"], server)
+		device.edit(.board, Self.boardID, ["content": .string(String(repeating: "a", count: SyncLimit.valueBytes))], server)
+		device.edit(.board, Self.otherBoardID, ["content": "small"], server)
 
 		let request = device.replica.makeRequest()
-		#expect(request.changes.map(\.id) == [Self.otherPageID])
-		#expect(device.replica.oversized == [Self.page])
+		#expect(request.changes.map(\.id) == [Self.otherBoardID])
+		#expect(device.replica.oversized == [Self.board])
 
 		device.syncUntilDone(with: &server)
-		#expect(server.records[Self.page] == nil)
-		#expect(device.replica.pending.keys.sorted() == [Self.page])
+		#expect(server.records[Self.board] == nil)
+		#expect(device.replica.pending.keys.sorted() == [Self.board])
 	}
 
 	@Test func bigPushesAreSplitUnderTheBodyLimit() throws {
@@ -135,7 +135,7 @@ struct SyncReplicaTests {
 		device.syncUntilDone(with: &server)
 		let ids = (0 ..< 6).map { _ in UUID().uuidString }
 		for id in ids {
-			device.edit(.page, id, ["content": .string(String(repeating: "a", count: 200_000))], server)
+			device.edit(.board, id, ["content": .string(String(repeating: "a", count: 200_000))], server)
 		}
 
 		var requests = 0
@@ -156,13 +156,13 @@ struct SyncReplicaTests {
 		var a = FakeDevice("A")
 		a.syncUntilDone(with: &server)
 		for _ in 0 ..< 10 {
-			a.edit(.page, UUID().uuidString, ["content": "a"], server)
+			a.edit(.board, UUID().uuidString, ["content": "a"], server)
 		}
 		a.syncUntilDone(with: &server)
 
 		var b = FakeDevice("B")
-		let firstPage = b.sync(with: &server, limit: 3)
-		#expect(firstPage?.syncAgain == true)
+		let firstBoard = b.sync(with: &server, limit: 3)
+		#expect(firstBoard?.syncAgain == true)
 		#expect(!b.replica.isCaughtUp)
 		b.syncUntilDone(with: &server, limit: 3)
 		#expect(b.replica.isCaughtUp)
@@ -183,19 +183,19 @@ struct SyncReplicaTests {
 
 	// MARK: - Conflicts
 
-	/// Two devices edit a page offline: one copy is made, by the device that pushed second, and nothing disappears
+	/// Two devices edit a board offline: one copy is made, by the device that pushed second, and nothing disappears
 	@Test(arguments: [false, true])
 	func concurrentContentEditsGiveOneSuperseded(firstPusherEditsLater: Bool) {
 		var (server, a, b) = Self.twoDevices()
 		server.now += 1000
 		if firstPusherEditsLater {
-			b.edit(.page, Self.pageID, ["content": "from B"], server)
+			b.edit(.board, Self.boardID, ["content": "from B"], server)
 			server.now += 1000
-			a.edit(.page, Self.pageID, ["content": "from A"], server)
+			a.edit(.board, Self.boardID, ["content": "from A"], server)
 		} else {
-			a.edit(.page, Self.pageID, ["content": "from A"], server)
+			a.edit(.board, Self.boardID, ["content": "from A"], server)
 			server.now += 1000
-			b.edit(.page, Self.pageID, ["content": "from B"], server)
+			b.edit(.board, Self.boardID, ["content": "from B"], server)
 		}
 		for _ in 0 ..< 2 {
 			a.syncUntilDone(with: &server)
@@ -207,7 +207,7 @@ struct SyncReplicaTests {
 		#expect(a.superseded.isEmpty)
 		#expect(b.superseded.map(\.lost.value) == [loser])
 		#expect(b.superseded.first?.field == "content")
-		#expect(server.records[Self.page]?.values == ["content": winner])
+		#expect(server.records[Self.board]?.values == ["content": winner])
 		#expect(a.replica.records == server.records)
 		#expect(b.replica.records == server.records)
 	}
@@ -217,9 +217,9 @@ struct SyncReplicaTests {
 		var (server, a, b) = Self.twoDevices()
 		let request = b.replica.makeRequest()
 		server.now += 1000
-		b.edit(.page, Self.pageID, ["content": "from B"], server)
+		b.edit(.board, Self.boardID, ["content": "from B"], server)
 		server.now += 1000
-		a.edit(.page, Self.pageID, ["content": "from A"], server)
+		a.edit(.board, Self.boardID, ["content": "from A"], server)
 		a.syncUntilDone(with: &server)
 
 		let applied = try b.replica.apply(server.sync(request), sent: request, at: b.now(server))
@@ -230,7 +230,7 @@ struct SyncReplicaTests {
 		b.syncUntilDone(with: &server)
 		a.syncUntilDone(with: &server)
 		#expect(a.superseded.isEmpty)
-		#expect(server.records[Self.page]?.values == ["content": "from A"])
+		#expect(server.records[Self.board]?.values == ["content": "from A"])
 	}
 
 	/// Typing during a push that lost: the newer typing grew from the lost value, so only one copy is made
@@ -238,19 +238,19 @@ struct SyncReplicaTests {
 	func typingDuringALosingPushMakesOneCopy(remoteIsNewest: Bool) throws {
 		var (server, a, b) = Self.twoDevices()
 		server.now += 1000
-		b.edit(.page, Self.pageID, ["content": "b1"], server)
+		b.edit(.board, Self.boardID, ["content": "b1"], server)
 		let request = b.replica.makeRequest()
 		server.now += 1000
 		if remoteIsNewest {
-			b.edit(.page, Self.pageID, ["content": "b2"], server)
+			b.edit(.board, Self.boardID, ["content": "b2"], server)
 			server.now += 1000
-			a.edit(.page, Self.pageID, ["content": "a1"], server)
+			a.edit(.board, Self.boardID, ["content": "a1"], server)
 			a.syncUntilDone(with: &server)
 		} else {
-			a.edit(.page, Self.pageID, ["content": "a1"], server)
+			a.edit(.board, Self.boardID, ["content": "a1"], server)
 			a.syncUntilDone(with: &server)
 			server.now += 1000
-			b.edit(.page, Self.pageID, ["content": "b2"], server)
+			b.edit(.board, Self.boardID, ["content": "b2"], server)
 		}
 		let response = try server.sync(request)
 		#expect(response.superseded.map(\.lost.value) == ["b1"])
@@ -262,57 +262,57 @@ struct SyncReplicaTests {
 
 		#expect(a.superseded.isEmpty)
 		#expect(b.superseded.map(\.lost.value) == [remoteIsNewest ? "b2" : "a1"])
-		#expect(server.records[Self.page]?.values == ["content": remoteIsNewest ? "a1" : "b2"])
+		#expect(server.records[Self.board]?.values == ["content": remoteIsNewest ? "a1" : "b2"])
 		#expect(b.replica.records == server.records)
 	}
 
 	// MARK: - Deleting
 
-	@Test func typingOnAnotherDeviceBringsADeletedPageBack() {
+	@Test func typingOnAnotherDeviceBringsADeletedBoardBack() {
 		var (server, a, b) = Self.twoDevices()
 		server.now += 1000
-		a.edit(.page, Self.pageID, ["deleted": true], server)
+		a.edit(.board, Self.boardID, ["deleted": true], server)
 		server.now += 1000
-		b.edit(.page, Self.pageID, ["content": "still typing"], server)
+		b.edit(.board, Self.boardID, ["content": "still typing"], server)
 		for _ in 0 ..< 2 {
 			a.syncUntilDone(with: &server)
 			b.syncUntilDone(with: &server)
 		}
 
-		#expect(a.replica[.page, Self.pageID]?.isDeleted == false)
+		#expect(a.replica[.board, Self.boardID]?.isDeleted == false)
 		#expect(b.replica.records == a.replica.records)
 	}
 
 	@Test func deletingThenUndoingIsAlive() {
 		var (server, a, b) = Self.twoDevices()
 		server.now += 1000
-		a.edit(.page, Self.pageID, ["deleted": true], server)
+		a.edit(.board, Self.boardID, ["deleted": true], server)
 		a.syncUntilDone(with: &server)
 		b.syncUntilDone(with: &server)
-		#expect(b.replica[.page, Self.pageID]?.isDeleted == true)
+		#expect(b.replica[.board, Self.boardID]?.isDeleted == true)
 
 		server.now += 1000
-		a.edit(.page, Self.pageID, ["deleted": false], server)
+		a.edit(.board, Self.boardID, ["deleted": false], server)
 		a.syncUntilDone(with: &server)
 		b.syncUntilDone(with: &server)
-		#expect(b.replica[.page, Self.pageID]?.isDeleted == false)
-		#expect(b.replica[.page, Self.pageID]?.values == ["content": "base", "deleted": false])
+		#expect(b.replica[.board, Self.boardID]?.isDeleted == false)
+		#expect(b.replica[.board, Self.boardID]?.values == ["content": "base", "deleted": false])
 	}
 
 	@Test func oldTombstonesLeaveTheDevice() {
 		var (server, a, _) = Self.twoDevices()
 		server.now += 1000
-		a.edit(.page, Self.pageID, ["deleted": true], server)
+		a.edit(.board, Self.boardID, ["deleted": true], server)
 		a.syncUntilDone(with: &server)
-		#expect(a.replica[.page, Self.pageID]?.isDeleted == true)
+		#expect(a.replica[.board, Self.boardID]?.isDeleted == true)
 
 		server.now += Int64(SyncLimit.tombstoneDays - 1) * 86_400_000
 		a.syncUntilDone(with: &server)
-		#expect(a.replica[.page, Self.pageID] != nil)
+		#expect(a.replica[.board, Self.boardID] != nil)
 
 		server.now += 2 * 86_400_000
 		a.syncUntilDone(with: &server)
-		#expect(a.replica[.page, Self.pageID] == nil)
+		#expect(a.replica[.board, Self.boardID] == nil)
 	}
 
 	// MARK: - Catching up
@@ -328,7 +328,7 @@ struct SyncReplicaTests {
 		server.now += 60000
 		var b = FakeDevice("B")
 		b.edit(.setting, SyncedSetting.logicLetters.rawValue, ["value": ["X", "Y"]], server)
-		b.edit(.page, Self.pageID, ["content": "made on B", "descriptor.0": "rain"], server)
+		b.edit(.board, Self.boardID, ["content": "made on B", "descriptor.0": "rain"], server)
 		let synced = b.sync(with: &server)
 		let applied = try #require(synced)
 		b.syncUntilDone(with: &server)
@@ -336,24 +336,24 @@ struct SyncReplicaTests {
 
 		#expect(applied.changed.map(\.key) == [Self.letters])
 		#expect(b.replica[.setting, SyncedSetting.logicLetters.rawValue]?.values == ["value": ["P", "Q"]])
-		#expect(server.records[Self.page]?.values == ["content": "made on B", "descriptor.0": "rain"])
+		#expect(server.records[Self.board]?.values == ["content": "made on B", "descriptor.0": "rain"])
 		#expect(a.replica.records == b.replica.records)
 		#expect(b.superseded.isEmpty)
 	}
 
-	/// After pruning, the device that never saw the tombstone brings the page back, and the device that did
+	/// After pruning, the device that never saw the tombstone brings the board back, and the device that did
 	/// deletes it again, so they still agree
 	@Test func resettingAfterPruningAgrees() {
 		var (server, a, b) = Self.twoDevices()
-		a.edit(.page, Self.otherPageID, ["content": "other"], server)
+		a.edit(.board, Self.otherBoardID, ["content": "other"], server)
 		a.syncUntilDone(with: &server)
 		b.syncUntilDone(with: &server)
 
 		server.now += 1000
-		a.edit(.page, Self.pageID, ["deleted": true], server)
+		a.edit(.board, Self.boardID, ["deleted": true], server)
 		a.syncUntilDone(with: &server)
 		server.prune()
-		#expect(server.records[Self.page] == nil)
+		#expect(server.records[Self.board] == nil)
 
 		let refused = b.sync(with: &server)
 		#expect(refused == nil)
@@ -366,8 +366,8 @@ struct SyncReplicaTests {
 		#expect(b.replica.isCaughtUp)
 		#expect(a.replica.records == server.records)
 		#expect(b.replica.records == server.records)
-		#expect(server.records[Self.page]?.isDeleted == true)
-		#expect(server.records[SyncRecord.Key(kind: .page, id: Self.otherPageID)]?.values == ["content": "other"])
+		#expect(server.records[Self.board]?.isDeleted == true)
+		#expect(server.records[SyncRecord.Key(kind: .board, id: Self.otherBoardID)]?.values == ["content": "other"])
 	}
 
 	/// Signing out keeps the data, and signing in to an account that has none of it pushes it all
@@ -392,21 +392,21 @@ struct SyncReplicaTests {
 		let day: Int64 = 86_400_000
 		var server = FakeSyncServer()
 		var device = FakeDevice("A", skew: day)
-		device.edit(.page, Self.pageID, ["content": "early"], server)
+		device.edit(.board, Self.boardID, ["content": "early"], server)
 		device.syncUntilDone(with: &server)
 
-		let early = server.records[Self.page]?.fields["content"]
+		let early = server.records[Self.board]?.fields["content"]
 		#expect(early?.value == "early")
 		#expect(early.map { $0.stamp.time <= server.now + SyncLimit.futureStamp } == true)
 
 		server.now += 1000
 		device.skew = 2 * day
-		device.edit(.page, Self.pageID, ["content": "later"], server)
+		device.edit(.board, Self.boardID, ["content": "later"], server)
 		let refused = device.sync(with: &server)
 		#expect(refused == nil)
 		device.syncUntilDone(with: &server)
 
-		let later = server.records[Self.page]?.fields["content"]
+		let later = server.records[Self.board]?.fields["content"]
 		#expect(later?.value == "later")
 		#expect(later.map { $0.stamp.time <= server.now + SyncLimit.futureStamp } == true)
 		#expect(device.replica.records == server.records)
@@ -414,9 +414,9 @@ struct SyncReplicaTests {
 
 		// Edits made after the correction still beat everything before it
 		server.now += 1000
-		device.edit(.page, Self.pageID, ["content": "latest"], server)
+		device.edit(.board, Self.boardID, ["content": "latest"], server)
 		device.syncUntilDone(with: &server)
-		#expect(server.records[Self.page]?.values == ["content": "latest"])
+		#expect(server.records[Self.board]?.values == ["content": "latest"])
 	}
 
 	// MARK: - Coding
@@ -426,7 +426,7 @@ struct SyncReplicaTests {
 		var device = FakeDevice("A")
 		device.edit(.setting, SyncedSetting.logicLetters.rawValue, ["value": ["P"]], server)
 		device.syncUntilDone(with: &server)
-		device.edit(.page, Self.pageID, ["content": ["english": "It rains."], "descriptor.0": "rain"], server)
+		device.edit(.board, Self.boardID, ["content": ["english": "It rains."], "descriptor.0": "rain"], server)
 		device.replica.reset()
 		var fresh = FakeDevice("B")
 		fresh.edit(.bookmark, "fallacy.ad-hominem", ["present": true], server)

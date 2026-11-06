@@ -114,7 +114,7 @@ struct ArgumentBreakdownApplyTests {
 		#expect(ArgumentMapValidator.validate(result.map).isEmpty)
 	}
 
-	@Test func aFullPageTakesNothing() {
+	@Test func aFullBoardTakesNothing() {
 		let map = existing(60)
 		let result = breakdown(["A."], conclusion: "B.").applied(to: map, replacing: false)
 
@@ -125,7 +125,7 @@ struct ArgumentBreakdownApplyTests {
 		#expect(result.skipped == 2)
 	}
 
-	@Test func replacingWithTooManyPremisesFillsThePage() {
+	@Test func replacingWithTooManyPremisesFillsTheBoard() {
 		let premises = (0 ..< 70).map { "Premise \($0)." }
 		let result = breakdown(premises, conclusion: "So.").applied(to: existing(5), replacing: true, maximumStatements: 60)
 

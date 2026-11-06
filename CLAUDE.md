@@ -9,7 +9,7 @@
 
 ## Layout
 - `Ergo.xcworkspace` opens the app, ErgoKit, ErgoServer, Evals and Plans together.
-- `Ergo/` is the iOS app. `Ergo.xcodeproj` links `ErgoKit` as a local package. `Ergo/Pages/` is the page model and `PageStore`.
+- `Ergo/` is the iOS app. `Ergo.xcodeproj` links `ErgoKit` as a local package. `Ergo/Boards/` is the board model and `BoardStore`.
 - `ErgoKit/` is shared by the app, the server and the evals:
   - `ErgoLogic`: entries, parser, checker, `LogicEnglish`, `LogicEquivalence`, and `Canvas/` (argument map, validator, layout, text conversion; pure, tested with `swift test`)
   - `ErgoTranslation`: the pipeline and stages
@@ -45,25 +45,25 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -destination 'generic/platform=i
 - Editor content is `[LogicKeyboardEntry]`, never a String. The six letters are `.variable(1...6)`, and the actual letter is only applied when displaying (`LogicLetters.resolved(Defaults[.logicLetters])`), so changing letters is lossless.
 - Every entry glyph is exactly one UTF-16 unit; `LogicEditorTextView` relies on that to map text ranges to entry indices.
 - Fallacy ids in `LogicFallacyForm` (ErgoLogic) must match ids in `Ergo/Special/Catalog/fallacies.json`.
-- A Check tab page (`LogicPage`, in `PageStore`, persisted with Defaults) is a canvas: `statements` joined by `links` ("premise of"). It always holds at least one statement. Letters are app-wide, descriptors are per page and shared by every statement, which is what makes `P` in two boxes the same claim.
-- A `Statement` owns one claim's English, logic, `source`, `translation` and canvas `position` (the box's centre). `StatementEditorView` edits one statement of the current page, through `PageStore`.
-- `PageStore` is how statements and links change (add, update, move, delete, link, unlink, arrange, apply text). `LogicPage.map` is the `ArgumentMap` that ErgoLogic's validator, layout, text and checks take.
+- A Check tab board (`LogicBoard`, in `BoardStore`, persisted with Defaults) is a canvas: `statements` joined by `links` ("premise of"). It always holds at least one statement. Letters are app-wide, descriptors are per board and shared by every statement, which is what makes `P` in two boxes the same claim.
+- A `Statement` owns one claim's English, logic, `source`, `translation` and canvas `position` (the box's centre). `StatementEditorView` edits one statement of the current board, through `BoardStore`.
+- `BoardStore` is how statements and links change (add, update, move, delete, link, unlink, arrange, apply text). `LogicBoard.map` is the `ArgumentMap` that ErgoLogic's validator, layout, text and checks take.
 - The canvas moves in UIKit (`CanvasBoardView`: pan, pinch, inertia, dragging, arrows), so nothing goes through SwiftUI while it moves. What a box looks like is SwiftUI (`StatementBoxView`), hosted per box, and the bars are SwiftUI (`CanvasBar`). Hosted boxes get no environment from the app: pass anything new in `CanvasBoard.boxContent`. Nothing on the canvas may be laid out from a measured size.
-- `Statement`, `Link`, `Translation`, `TranslationIssue` and `LogicKeyboardEntry` are saved in users' Defaults as synthesized Codable, and statements are also what sync records hold. Never rename their cases or stored properties. `LogicPage` itself is not frozen yet, only the statement inside it.
+- `Statement`, `Link`, `Translation`, `TranslationIssue` and `LogicKeyboardEntry` are saved in users' Defaults as synthesized Codable, and statements are also what sync records hold. Never rename their cases or stored properties. `LogicBoard` itself is not frozen yet, only the statement inside it.
 
 ## Translation
 - English → logic runs on the server: the app streams `TranslationEvent`s over a WebSocket, through `TranslationAccount`. Stages are `TranslationPipeline` stages in ErgoTranslation; never rename a stage's `name`.
-- Translating is per statement, and sends the page's six descriptors (`""` for a free slot) so the server reuses a letter for a claim the page already names. The result updates that statement, and its descriptors only fill slots still free.
+- Translating is per statement, and sends the board's six descriptors (`""` for a free slot) so the server reuses a letter for a claim the board already names. The result updates that statement, and its descriptors only fill slots still free.
 - `TranslationAccount.breakDown` runs the server's argument scope on pasted English: premises, a conclusion and claims, with no logic.
 - The app checks English with `EnglishValidator` before sending it, and re-parses the returned entries before applying them.
 - Logic → English is `LogicEnglish`, deterministic and exact. It's also what the verify stage compares against.
 - No Foundation Models, on-device or otherwise.
 
 ## Sync
-- Signed in with Apple or email, pages, bookmarks and the settings in `SyncedSetting` sync through the server (`Ergo/Sync/`, ErgoSync).
+- Signed in with Apple or email, boards, bookmarks and the settings in `SyncedSetting` sync through the server (`Ergo/Sync/`, ErgoSync).
 - Every new Defaults key needs a decision: synced (add it to `SyncedSetting` and `SyncedDefaults`) or this device only.
-- Sync kinds: `page` (`created`, `descriptor.N`), `statement` (`page`, `position`, `content`) and `link` (`page`, `premise`, `conclusion`). Statements and links are records of their own, so dragging a box never clashes with typing in it.
-- Deleting a page writes only its tombstone: the replica ignores its statements and links (`SyncReplica.isIgnored`). Deleting a statement tombstones it and its links. Pages are rebuilt from the replica's records, so arrival order doesn't matter.
+- Sync kinds: `board` (`created`, `descriptor.N`), `statement` (`board`, `position`, `content`) and `link` (`board`, `premise`, `conclusion`). Statements and links are records of their own, so dragging a box never clashes with typing in it.
+- Deleting a board writes only its tombstone: the replica ignores its statements and links (`SyncReplica.isIgnored`). Deleting a statement tombstones it and its links. Boards are rebuilt from the replica's records, so arrival order doesn't matter.
 - Merging is last writer wins per field, with hybrid-clock stamps. Two devices editing a statement's content at once give a conflict copy of that statement beside it, not a loss.
 - Sync values are always encoded with `SyncCoding`. A different encoder makes identical values look like edits.
 

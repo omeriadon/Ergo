@@ -64,7 +64,7 @@ Move these with plain `mv`/new files and delete the originals. Never use git.
 - Use `package` access only if it really helps.
 - Don't change behaviour; this is a move.
 
-**Never change the Codable shape** of `LogicKeyboardEntry`, `Translation` or `TranslationIssue`: users' saved pages decode them. Add a test that decodes JSON in today's synthesized format:
+**Never change the Codable shape** of `LogicKeyboardEntry`, `Translation` or `TranslationIssue`: users' saved boards decode them. Add a test that decodes JSON in today's synthesized format:
 1. Encode samples with the current app code *before* moving it.
 2. Paste the strings into the test.
 
@@ -309,7 +309,7 @@ public struct ErgoClient: Sendable {
    - Link products `ErgoLogic`, `ErgoTranslation`, `ErgoProtocol` and `ErgoClient` to the Ergo target.
 2. **Imports.** Add `import ErgoLogic` and the rest to each app file that needs them. `MEMBER_IMPORT_VISIBILITY` is on, so every file imports what it uses.
 3. **Translate is temporarily unavailable.** `CheckTabView.translate()` just sets `translationError = "Translation isn't set up yet"`. Phase 2b wires up the client. Remove the old backend usage.
-4. **Conformances stay put.** `LogicPage: Defaults.Serializable` stays in the app. Anything else from the moved code that conformed to app-only protocols stays app-side as an extension.
+4. **Conformances stay put.** `LogicBoard: Defaults.Serializable` stays in the app. Anything else from the moved code that conformed to app-only protocols stays app-side as an extension.
 
 ## Verify
 

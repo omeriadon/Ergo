@@ -32,7 +32,7 @@ struct FakeSyncServer {
 		rows.mapValues(\.record)
 	}
 
-	/// Applies the push, then returns a page of everything after the cursor, like `SyncService.apply`
+	/// Applies the push, then returns a board of everything after the cursor, like `SyncService.apply`
 	mutating func sync(_ request: SyncRequest) throws(Refusal) -> SyncResponse {
 		if let cursor = request.cursor, cursor < prunedThrough {
 			throw .syncResetRequired
@@ -56,11 +56,11 @@ struct FakeSyncServer {
 
 		let after = rows.values.filter { $0.seq > request.cursor ?? 0 }.sorted { $0.seq < $1.seq }
 		let limit = min(request.limit ?? SyncLimit.defaultRecords, SyncLimit.maxRecords)
-		let page = after.prefix(limit)
+		let board = after.prefix(limit)
 		let more = after.count > limit
 		return SyncResponse(
-			cursor: more ? page.last?.seq ?? seq : seq,
-			changes: page.map(\.record),
+			cursor: more ? board.last?.seq ?? seq : seq,
+			changes: board.map(\.record),
 			more: more,
 			superseded: superseded,
 			serverTime: Date(milliseconds: now)
@@ -68,17 +68,17 @@ struct FakeSyncServer {
 	}
 
 	/// Drops every tombstone, as the daily prune does once they're 90 days old, and the statements and links of
-	/// every page it drops. Those don't count towards `prunedThrough`, since they say nothing a client needs to hear.
+	/// every board it drops. Those don't count towards `prunedThrough`, since they say nothing a client needs to hear.
 	mutating func prune() {
-		var pages: Set<String> = []
+		var boards: Set<String> = []
 		for (key, row) in rows where row.record.isDeleted {
 			rows[key] = nil
 			prunedThrough = max(prunedThrough, row.seq)
-			if key.kind == .page {
-				pages.insert(key.id)
+			if key.kind == .board {
+				boards.insert(key.id)
 			}
 		}
-		for (key, row) in rows where row.record.owningPage.map(pages.contains) == true {
+		for (key, row) in rows where row.record.owningBoard.map(boards.contains) == true {
 			rows[key] = nil
 		}
 	}
@@ -93,7 +93,7 @@ struct FakeDevice {
 	/// How far this device's clock is from the server's, in milliseconds
 	var skew: Int64
 
-	/// Every superseded value this device was handed, which the app would copy into a new page
+	/// Every superseded value this device was handed, which the app would copy into a new board
 	var superseded: [SupersededField] = []
 
 	init(_ device: String, skew: Int64 = 0) {

@@ -316,8 +316,8 @@ struct LogInTests {
 			// Records an anonymous account can't normally have, written straight in
 			let older = SyncField(value: content("Older"), stamp: stamp(-1000))
 			let newer = SyncField(value: content("Newer"), stamp: stamp())
-			let shared = newPageID()
-			let onlyHere = newPageID()
+			let shared = newBoardID()
+			let onlyHere = newBoardID()
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [statementChange(shared, ["content": older])]), token: owner.token)
 			for (seq, record) in [
 				SyncRecord(kind: .statement, id: shared, fields: ["content": newer]),
@@ -963,7 +963,7 @@ struct AddAccountEmailTests {
 			#expect(account.isSignedIn)
 			#expect(try await app.storedSecret(.claude, account: apple) == "sk-ant-oat-old")
 			#expect(try await SyncRecordRow.query(on: app.db).count() == 1)
-			#expect(try await SyncRecordRow.query(on: app.db).first()?.page == nil)
+			#expect(try await SyncRecordRow.query(on: app.db).first()?.board == nil)
 			#expect(try await AccountToken.query(on: app.db).count() == 2)
 			#expect(try await app.status(of: appleToken) == .ok)
 			#expect(try await Account.find(anonymous, on: app.db)?.isSignedIn == false)

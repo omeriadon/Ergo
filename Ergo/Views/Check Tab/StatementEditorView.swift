@@ -11,8 +11,8 @@ import ErgoProtocol
 import ErgoTranslation
 import SwiftUI
 
-/// English over logic for one statement of the current page: the editor the Check tab has always been,
-/// pointed at a statement. It reads and writes through `PageStore`, so it follows what other devices change.
+/// English over logic for one statement of the current board: the editor the Check tab has always been,
+/// pointed at a statement. It reads and writes through `BoardStore`, so it follows what other devices change.
 struct StatementEditorView: View {
 	enum Field: Hashable {
 		case english, logic
@@ -24,15 +24,15 @@ struct StatementEditorView: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
-	@Environment(PageStore.self)
-	private var pageStore
+	@Environment(BoardStore.self)
+	private var boardStore
 
 	@Environment(TranslationAccount.self)
 	private var account
 
 	@Default(.logicLetters) var logicLetters
 
-	/// A statement of `pageStore.current`
+	/// A statement of `boardStore.current`
 	let statementID: Statement.ID
 
 	@State private var englishSelection: TextSelection?
@@ -49,21 +49,21 @@ struct StatementEditorView: View {
 	/// The claims found so far, shown on the keyboard before the logic arrives
 	@State private var liveDescriptors: [String]?
 
-	/// The server couldn't translate. Not kept on the page, since it says nothing about the English.
+	/// The server couldn't translate. Not kept on the board, since it says nothing about the English.
 	@State private var translationError: ServiceError?
 
-	private var page: LogicPage {
-		pageStore.current
+	private var board: LogicBoard {
+		boardStore.current
 	}
 
 	/// Empty once the statement is gone (deleted on another device), until the screen moves on
 	private var statement: Statement {
-		pageStore.statement(statementID) ?? Statement(id: statementID)
+		boardStore.statement(statementID) ?? Statement(id: statementID)
 	}
 
 	/// Writes are dropped once the statement is gone
 	private var statementBinding: Binding<Statement> {
-		pageStore.binding(for: statementID) ?? .constant(statement)
+		boardStore.binding(for: statementID) ?? .constant(statement)
 	}
 
 	private var letters: [String] {
@@ -133,7 +133,7 @@ struct StatementEditorView: View {
 						entries: statementBinding.logic,
 						isFocused: logicFocus,
 						highlights: currentAnalysis?.highlights ?? [],
-						descriptors: liveDescriptors ?? page.descriptors,
+						descriptors: liveDescriptors ?? board.descriptors,
 						onEditLetters: {
 							navigation.presentSheet(.logicLetters)
 						}
@@ -173,8 +173,8 @@ struct StatementEditorView: View {
 			translationError = nil
 			analyze()
 		}
-		.onChange(of: pageStore.remoteEdits) {
-			// Another device changed this page, and the selection was into the old English
+		.onChange(of: boardStore.remoteEdits) {
+			// Another device changed this board, and the selection was into the old English
 			englishSelection = nil
 		}
 		.onChange(of: statement.english) {
@@ -188,7 +188,7 @@ struct StatementEditorView: View {
 				statementBinding.wrappedValue.source = .logic
 			}
 		}
-		.onChange(of: page.descriptors) {
+		.onChange(of: board.descriptors) {
 			englishFollowsLogic()
 		}
 		.onChange(of: letters) {
@@ -241,7 +241,7 @@ struct StatementEditorView: View {
 		if statement.logic.isEmpty {
 			english = ""
 		} else if let currentAnalysis, currentAnalysis.parse.diagnostics.isEmpty {
-			english = LogicEnglish.text(for: currentAnalysis.parse.argument, letters: letters, descriptors: page.descriptors)
+			english = LogicEnglish.text(for: currentAnalysis.parse.argument, letters: letters, descriptors: board.descriptors)
 		} else {
 			return
 		}
@@ -267,7 +267,7 @@ struct StatementEditorView: View {
 		}
 
 		let id = statementID
-		let descriptors = page.descriptors
+		let descriptors = board.descriptors
 		let showsClaims = descriptors.allSatisfy(\.isEmpty)
 		progress = TranslationProgress()
 
@@ -314,7 +314,7 @@ struct StatementEditorView: View {
 			return
 		}
 
-		pageStore.applyTranslation(translation, english: english, to: id)
+		boardStore.applyTranslation(translation, english: english, to: id)
 	}
 
 	/// Only for errors fixed by connecting a provider in Settings

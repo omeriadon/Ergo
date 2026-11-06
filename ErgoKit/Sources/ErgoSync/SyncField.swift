@@ -30,19 +30,19 @@ public struct SyncField: Codable, Sendable, Hashable {
 
 /// The field names records use, shared so the app and the server's checks can't drift
 public enum SyncFieldName {
-	/// page, statement, link: a tombstone. A record is deleted while this is `true` and newer than every other field.
+	/// board, statement, link: a tombstone. A record is deleted while this is `true` and newer than every other field.
 	public static let deleted = "deleted"
 
-	/// page: when it was made
+	/// board: when it was made
 	public static let created = "created"
 
 	/// statement: `{ english, logic, source, translation }` together, since English and logic follow each other.
-	/// Opaque to the server. Pages used to carry this too, so the constant stays, but a page record refuses it now.
+	/// Opaque to the server. Boards used to carry this too, so the constant stays, but a board record refuses it now.
 	public static let content = "content"
 
-	/// statement, link: the owning page's id (uppercase UUID string). Statements and links whose page is deleted
+	/// statement, link: the owning board's id (uppercase UUID string). Statements and links whose board is deleted
 	/// or missing are ignored on read and pruned by the server.
-	public static let page = "page"
+	public static let board = "board"
 
 	/// statement: `{ x, y }` in canvas coordinates, written when a drag ends
 	public static let position = "position"
@@ -59,11 +59,11 @@ public enum SyncFieldName {
 	/// setting: the setting's value
 	public static let value = "value"
 
-	/// page: one per letter slot, so naming different letters on two devices keeps both
+	/// board: one per letter slot, so naming different letters on two devices keeps both
 	public static func descriptor(_ slot: Int) -> String {
 		"descriptor.\(slot)"
 	}
 
-	/// How many letter slots a page has, `LogicLetters.defaults.count`
+	/// How many letter slots a board has, `LogicLetters.defaults.count`
 	public static let descriptorSlots = 6
 }

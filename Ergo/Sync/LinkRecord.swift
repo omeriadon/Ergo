@@ -8,16 +8,16 @@
 import ErgoProtocol
 import Foundation
 
-/// A `Link` as a link record's fields: the page, and the statement ids at each end of the arrow
+/// A `Link` as a link record's fields: the board, and the statement ids at each end of the arrow
 enum LinkRecord {
 	static func id(_ id: Link.ID) -> String {
 		id.uuidString
 	}
 
 	/// Every field but `deleted`, which is only ever sent when deleting
-	static func fields(of link: Link, in page: LogicPage.ID) -> [String: JSONValue] {
+	static func fields(of link: Link, in board: LogicBoard.ID) -> [String: JSONValue] {
 		[
-			SyncFieldName.page: .string(PageRecord.id(page)),
+			SyncFieldName.board: .string(BoardRecord.id(board)),
 			SyncFieldName.premise: .string(StatementRecord.id(link.premise)),
 			SyncFieldName.conclusion: .string(StatementRecord.id(link.conclusion)),
 		]

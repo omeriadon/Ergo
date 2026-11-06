@@ -121,7 +121,7 @@ Put each case in the file that fits it best. Every file is an array of:
 - Leave out `expected` for `neither`. For `statements`, `conclusion` is `""`.
 - Write `expected` with the default letters X Y Z P Q R, in the order the claims first appear in the English. Any equivalent formula is fine.
 - `verdict` is optional, but give it for every argument the checker can decide, except enthymemes, where "invalid" isn't what the case is about.
-- `descriptors` is optional and rare: the page's six letter names, with `""` for free slots, sent with the request for a case about keeping a letter. The runner always asks for the `statement` scope and sends none otherwise.
+- `descriptors` is optional and rare: the board's six letter names, with `""` for free slots, sent with the request for a case about keeping a letter. The runner always asks for the `statement` scope and sends none otherwise.
 
 Follow the English conventions table in `Plans/README.md` exactly, because the server's formalize prompt follows it too. On top of the table, the corpus assumes:
 - **One premise per separately asserted sentence or clause.** "It's sunny but freezing" is one premise, X∧Y, as the table says. Two facts in separate sentences are two premises. Scoring joins the premises with ∧, so how they're split doesn't change the score.

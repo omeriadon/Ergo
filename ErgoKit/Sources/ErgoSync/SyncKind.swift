@@ -32,8 +32,8 @@ public struct SyncKind: RawRepresentable, Codable, Sendable, Hashable, Comparabl
 		a.rawValue < b.rawValue
 	}
 
-	/// id: the page's `UUID.uuidString`, uppercase
-	public static let page: SyncKind = "page"
+	/// id: the board's `UUID.uuidString`, uppercase
+	public static let board: SyncKind = "board"
 
 	/// id: `CatalogReference.id`
 	public static let bookmark: SyncKind = "bookmark"
@@ -41,13 +41,13 @@ public struct SyncKind: RawRepresentable, Codable, Sendable, Hashable, Comparabl
 	/// id: a `SyncedSetting` raw value
 	public static let setting: SyncKind = "setting"
 
-	/// id: the statement's `UUID.uuidString`, uppercase. One claim on a page's canvas.
+	/// id: the statement's `UUID.uuidString`, uppercase. One claim on a board's canvas.
 	public static let statement: SyncKind = "statement"
 
 	/// id: the link's `UUID.uuidString`, uppercase. An arrow from a premise statement to a conclusion statement.
 	public static let link: SyncKind = "link"
 
-	public static let known: [SyncKind] = [.page, .bookmark, .setting, .statement, .link]
+	public static let known: [SyncKind] = [.board, .bookmark, .setting, .statement, .link]
 }
 
 // MARK: - Checks
@@ -56,13 +56,13 @@ public extension SyncKind {
 	/// The field names a record of this kind may have. Empty for a kind this version doesn't know.
 	var fieldNames: Set<String> {
 		switch self {
-			case .page:
+			case .board:
 				Set([SyncFieldName.created, SyncFieldName.deleted]
 					+ (0 ..< SyncFieldName.descriptorSlots).map(SyncFieldName.descriptor))
 			case .statement:
-				[SyncFieldName.page, SyncFieldName.position, SyncFieldName.content, SyncFieldName.deleted]
+				[SyncFieldName.board, SyncFieldName.position, SyncFieldName.content, SyncFieldName.deleted]
 			case .link:
-				[SyncFieldName.page, SyncFieldName.premise, SyncFieldName.conclusion, SyncFieldName.deleted]
+				[SyncFieldName.board, SyncFieldName.premise, SyncFieldName.conclusion, SyncFieldName.deleted]
 			case .bookmark:
 				[SyncFieldName.present]
 			case .setting:
@@ -75,7 +75,7 @@ public extension SyncKind {
 	/// Whether `id` can name a record of this kind
 	func isValid(id: String) -> Bool {
 		switch self {
-			case .page, .statement, .link:
+			case .board, .statement, .link:
 				UUID(uuidString: id)?.uuidString == id
 			case .bookmark:
 				!id.isEmpty && id.utf8.count <= 256

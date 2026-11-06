@@ -78,7 +78,7 @@ ErgoKit is frozen after phase 1. If a phase 2 agent truly needs a change there:
 - **Network:** the current network **can't reach OpenAI** (TLS fails). Codex works fine elsewhere, but it can't be called live during this work. Anthropic works.
   - Never use Adon's own Claude/Codex logins for anything but the documented smoke tests.
   - Never print, log or copy credentials.
-- **Persisted formats:** `LogicPage`, `Translation`, `TranslationIssue` and `LogicKeyboardEntry` are already saved in users' Defaults as synthesized Codable. Never rename their types' cases or stored properties.
+- **Persisted formats:** `LogicBoard`, `Translation`, `TranslationIssue` and `LogicKeyboardEntry` are already saved in users' Defaults as synthesized Codable. Never rename their types' cases or stored properties.
 - **Stage names:** never rename a stage's `name` (`gate`, `breakdown`, `formalize`, `verify`).
 
 ## Decisions
@@ -98,7 +98,7 @@ ErgoKit is frozen after phase 1. If a phase 2 agent truly needs a change there:
 - **Models:** the server picks a model per stage per provider, using aliases (`haiku`/`sonnet`/`opus` for Claude) so the server tracks new releases. Users pick only the provider. Defaults are in 02-Server.md and can be overridden by config.
 - **Protocol:** WebSocket for translation and device login, JSON REST for everything else. The `Ergo-Protocol-Version` header goes on every request.
 - **Grammar:** the client sends `LogicGrammar.version`. The server refuses a mismatch with `outdatedApp`. Both are built from the same ErgoKit, so they only diverge across releases.
-- **Pages:** stay in Defaults (Adon's call).
+- **Boards:** stay in Defaults (Adon's call).
 - **Provider terms (risk, not a blocker):** hosting other people's subscription tokens is the user's own credential used through the official CLI, but provider terms on third-party/hosted use can change.
   - Keep the `apiKey` option working so there's always a compliant path.
   - Don't build anything that depends on one provider's subscription.
@@ -123,7 +123,7 @@ The formalize prompt (02) and the corpus (04) must agree on these:
 - Opposite words ("off", "dry") are their own claim. If an argument uses both words of a pair ("on" and "off"), one becomes the negation of the other, so the logic connects.
 - One letter per distinct claim; the same claim reworded gets the same letter.
 - Letters are assigned in order of first appearance in the English, even when the conclusion comes first.
-- On a page that already names letters, a claim that matches a name keeps that letter, and new claims only take unnamed ones.
+- On a board that already names letters, a claim that matches a name keeps that letter, and new claims only take unnamed ones.
 - "Unless" is the inclusive reading above. Plain "or" without "either" is inclusive too.
 - Everyday "must", "can't", generic "you" and "whenever" are not □, ◇ or ∀. Use plain propositional logic unless the English is explicitly about necessity or about all/some things.
 - "Exactly one of A, B, C" is not A⊕B⊕C (that means an odd number are true). Spell it out.

@@ -31,12 +31,12 @@ extension Application {
 		return try #require(result)
 	}
 
-	func syncPage(_ token: String) async throws -> String {
-		let page = newPageID()
+	func syncBoard(_ token: String) async throws -> String {
+		let board = newBoardID()
 		_ = try await sync(SyncRequest(cursor: nil, changes: [
-			statementChange(page, ["content": SyncField(value: content("Mine"), stamp: stamp())]),
+			statementChange(board, ["content": SyncField(value: content("Mine"), stamp: stamp())]),
 		]), token: token)
-		return page
+		return board
 	}
 }
 
@@ -51,7 +51,7 @@ struct AppleNotificationTests {
 			let phone = try await app.signedInAccount()
 			let pad = try await app.signedInAccount()
 			try await app.storeCredential("sk-ant-oat-fake", provider: .claude, kind: .subscription, account: phone.accountID)
-			let page = try await app.syncPage(phone.token)
+			let board = try await app.syncBoard(phone.token)
 
 			let (status, data) = try await app.notify(FakeApple.notification("consent-revoked"))
 			#expect(status == .ok)
@@ -71,7 +71,7 @@ struct AppleNotificationTests {
 			let again = try await app.signedInAccount()
 			#expect(again.accountID == phone.accountID)
 			#expect(!again.isNewAccount)
-			#expect(try await app.sync(SyncRequest(cursor: nil, changes: []), token: again.token).changes.map(\.id) == [page])
+			#expect(try await app.sync(SyncRequest(cursor: nil, changes: []), token: again.token).changes.map(\.id) == [board])
 		}
 	}
 
@@ -85,8 +85,8 @@ struct AppleNotificationTests {
 			let other = try await app.signedInAccount("someone-else")
 			try await app.storeCredential("sk-ant-oat-fake", provider: .claude, kind: .subscription, account: phone.accountID)
 			try await app.storeCredential("sk-ant-oat-other", provider: .claude, kind: .subscription, account: other.accountID)
-			_ = try await app.syncPage(phone.token)
-			_ = try await app.syncPage(other.token)
+			_ = try await app.syncBoard(phone.token)
+			_ = try await app.syncBoard(other.token)
 
 			let (status, data) = try await app.notify(FakeApple.notification("account-delete"))
 			#expect(status == .ok)
@@ -119,7 +119,7 @@ struct AppleNotificationTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let phone = try await app.signedInAccount()
 			#expect(try await app.register(phone.token).status == .noContent)
-			_ = try await app.syncPage(phone.token)
+			_ = try await app.syncBoard(phone.token)
 
 			#expect(try await app.notify(FakeApple.notification("account-delete")).status == .ok)
 

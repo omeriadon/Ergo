@@ -138,8 +138,8 @@ final class TranslationAccount {
 
 	// MARK: - translate
 
-	/// Translates one statement. `descriptors` are the page's six, with an empty string for a slot nobody has named,
-	/// so the server reuses a letter for a claim the page already calls something. `events` hears each step as the
+	/// Translates one statement. `descriptors` are the board's six, with an empty string for a slot nobody has named,
+	/// so the server reuses a letter for a claim the board already calls something. `events` hears each step as the
 	/// server runs it. The server's failures are thrown as `ServiceError`s.
 	func translate(english: String, letters: [String], descriptors: [String], events: (TranslationEvent) -> Void) async throws -> Translation {
 		let (server, token) = try credentials()
@@ -162,7 +162,7 @@ final class TranslationAccount {
 	}
 
 	/// Splits pasted English into premises, a conclusion and claims, without writing any logic. The breakdown's
-	/// `descriptors` are the page's own with the new claims in free slots; merge them with `PageStore.mergeDescriptors`.
+	/// `descriptors` are the board's own with the new claims in free slots; merge them with `BoardStore.mergeDescriptors`.
 	/// `letters` default to the ones the app shows. Events and failures are the same as `translate`'s.
 	func breakDown(
 		english: String,

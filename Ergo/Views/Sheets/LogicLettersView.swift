@@ -10,7 +10,7 @@ import ErgoLogic
 import SwiftUI
 
 struct LogicLettersView: View {
-	/// The current page's, when opened from the editor. Settings only edits the letters, which every page shares.
+	/// The current board's, when opened from the editor. Settings only edits the letters, which every board shares.
 	var descriptors: Binding<[String]>?
 
 	@Default(.logicLetters) var logicLetters
@@ -72,7 +72,7 @@ struct LogicLettersView: View {
 						}
 					}
 				} header: {
-					Text("On This Page")
+					Text("On This Board")
 				} footer: {
 					Text("What each letter stands for here, up to \(LogicLetters.descriptorWordLimit) words. Translating English fills these in.")
 				}
@@ -124,14 +124,14 @@ struct LogicLettersSheet: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
-	@Environment(PageStore.self)
-	private var pageStore
+	@Environment(BoardStore.self)
+	private var boardStore
 
 	var body: some View {
-		@Bindable var pageStore = pageStore
+		@Bindable var boardStore = boardStore
 
 		NavigationStack {
-			LogicLettersView(descriptors: $pageStore.current.descriptors)
+			LogicLettersView(descriptors: $boardStore.current.descriptors)
 				.toolbar {
 					ToolbarItem(placement: .topBarTrailing) {
 						Button(role: .close) {

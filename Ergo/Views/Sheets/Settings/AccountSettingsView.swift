@@ -127,7 +127,7 @@ private struct SignedInRows: View {
 				leave { try await sync.signOut() }
 			}
 		} message: {
-			Text("Your pages stay on this iPhone")
+			Text("Your boards stay on this iPhone")
 		}
 
 		Button("Delete Account", role: .destructive) {
@@ -139,7 +139,7 @@ private struct SignedInRows: View {
 				leave { try await sync.deleteAccount() }
 			}
 		} message: {
-			Text("Deletes everything Ergo's server keeps for you, including your Claude and ChatGPT connections. Pages on this iPhone stay")
+			Text("Deletes everything Ergo's server keeps for you, including your Claude and ChatGPT connections. Boards on this iPhone stay")
 		}
 	}
 
@@ -212,15 +212,15 @@ private struct AccountFooter: View {
 					.foregroundStyle(.red)
 			}
 
-			ForEach(sync.oversizedPages, id: \.self) { title in
-				Text("Page '\(title)' is too large to sync")
+			ForEach(sync.oversizedBoards, id: \.self) { title in
+				Text("Board '\(title)' is too large to sync")
 					.foregroundStyle(.red)
 			}
 
 			if !hasServer {
 				Text("Set the Mac's address in Translation → Server to sign in.")
 			} else if !sync.isSignedIn {
-				Text("Sync pages, bookmarks and letters across your devices. Translation works without an account.")
+				Text("Sync boards, bookmarks and letters across your devices. Translation works without an account.")
 			} else if sync.canAddApple {
 				Text("Continue with Apple to sign in with either your Apple ID or this email.")
 			}

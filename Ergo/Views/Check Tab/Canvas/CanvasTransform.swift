@@ -50,7 +50,7 @@ struct CanvasTransform: Equatable {
 	// MARK: - Fit
 
 	/// The transform that shows all of `rects` centred in the part of `size` the bars leave free.
-	/// A page that is small stays at a readable size instead of being blown up to fill the screen.
+	/// A board that is small stays at a readable size instead of being blown up to fill the screen.
 	static func fitting(_ rects: [CanvasRect], in size: CGSize, insets: EdgeInsets, margin: CGFloat = 28) -> CanvasTransform {
 		guard let first = rects.first, size.width > 0, size.height > 0 else { return CanvasTransform() }
 

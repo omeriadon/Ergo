@@ -10,13 +10,13 @@ Synced data is the user's stuff. State about where this particular screen is sta
 
 | Defaults key | Syncs | Why |
 |---|---|---|
-| `pages` | yes: a record per page, per statement and per link (see 06-Canvas) | The user's work |
+| `boards` | yes: a record per board, per statement and per link (see 06-Canvas) | The user's work |
 | `bookmarks` | yes, one record per bookmark | The user's library |
 | `logicLetters` | yes | A preference |
 | `ditherEnabled` | yes | A preference |
 | `translationProvider` | yes | A preference |
 | `translationServer` | **no** | It says where the server *is*, so it can't come from the server |
-| `currentPageID` | no | Which page this screen shows |
+| `currentBoardID` | no | Which board this screen shows |
 | `selectedTab`, `libraryPath`, `debatePath`, `presentedSheet`, `libraryGeneralSearchText` | no | Navigation state of this screen (Handoff can do this later) |
 | `lastIndexedVersion` | no | Spotlight's index on this device |
 
@@ -24,7 +24,7 @@ Every future Defaults key needs a decision here. `SyncedSetting` (below) is the 
 
 ### Why not something built in
 
-- **Defaults' iCloud sync** (`NSUbiquitousKeyValueStore`): 1 MB in total, and it replaces whole values. Two devices editing different pages would overwrite each other's `pages` array.
+- **Defaults' iCloud sync** (`NSUbiquitousKeyValueStore`): 1 MB in total, and it replaces whole values. Two devices editing different boards would overwrite each other's `boards` array.
 - **CloudKit:** works, but it's Apple-only and separate from the account the server already has. Adon asked for server sync, and the server already exists.
 
 ## Identity: Sign in with Apple
@@ -71,21 +71,21 @@ Everything synced is a **record**: `kind` + `id` + a set of named **fields**. Ea
 
 | kind | id | fields |
 |---|---|---|
-| `page` | page UUID | `created`, `descriptor.0` … `descriptor.5`, `deleted` |
-| `statement` | statement UUID | `page`, `position`, `content`, `deleted` |
-| `link` | link UUID | `page`, `premise`, `conclusion`, `deleted` |
+| `board` | board UUID | `created`, `descriptor.0` … `descriptor.5`, `deleted` |
+| `statement` | statement UUID | `board`, `position`, `content`, `deleted` |
+| `link` | link UUID | `board`, `premise`, `conclusion`, `deleted` |
 | `bookmark` | `CatalogReference.id` | `present` (Bool) |
 | `setting` | `SyncedSetting` raw value (`logicLetters`, `ditherEnabled`, `translationProvider`) | `value` |
 
-Ids of pages, statements and links are uppercase UUID strings.
+Ids of boards, statements and links are uppercase UUID strings.
 
-- **A page is a canvas** (06-Canvas). It has no content of its own any more: the server refuses a `content` field on a page. What a page used to hold lives on its statements.
-- **A statement's `content` field** holds `{ english, logic, source, translation }`, together. English and logic are linked (one follows the other), so mixing one device's English with another's logic gives a statement that contradicts itself. The server treats it as an opaque `JSONValue`, as it did for pages.
+- **A board is a canvas** (06-Canvas). It has no content of its own any more: the server refuses a `content` field on a board. What a board used to hold lives on its statements.
+- **A statement's `content` field** holds `{ english, logic, source, translation }`, together. English and logic are linked (one follows the other), so mixing one device's English with another's logic gives a statement that contradicts itself. The server treats it as an opaque `JSONValue`, as it did for boards.
 - **`position`** is `{ x, y }`, written when a drag ends. It is its own field, so dragging a box never clashes with typing in it.
-- **`page`** (on a statement or a link) is the owning page's id. The server keeps a copy of it in the clear (like the record id) so pruning can find a deleted page's statements and links without opening them.
+- **`board`** (on a statement or a link) is the owning board's id. The server keeps a copy of it in the clear (like the record id) so pruning can find a deleted board's statements and links without opening them.
 - **A link's `premise` and `conclusion`** are statement ids: the arrow runs from the premise to the conclusion.
 - **Descriptors are one field per slot.** Naming X on the phone and Y on the iPad keeps both.
-- **`modified` isn't a field.** The app works it out from the newest stamp in the record, so the pages list sorts the same way on every device.
+- **`modified` isn't a field.** The app works it out from the newest stamp in the record, so the boards list sorts the same way on every device.
 - **Bookmarks** store only the id. The app rebuilds the `CatalogReference` from the catalog, and drops ids the catalog no longer has (from an older or newer app version) without deleting the record.
 
 ### Stamps: hybrid logical clocks
@@ -111,18 +111,18 @@ SyncStamp { time: Int64 (ms), counter: Int, device: String }   compared in that 
 - **The server and the app run the same function**, from ErgoKit.
 
 **Deletion** is a `deleted: true` field, a tombstone. A record counts as deleted only if `deleted`'s stamp is newer than every other field's stamp:
-- If one device deletes a page while another keeps typing in it, the typing brings the page back.
+- If one device deletes a board while another keeps typing in it, the typing brings the board back.
 - Deleting and then undoing on the same device is just a newer `deleted: false`.
 
-### Deleting a page: cascading
+### Deleting a board: cascading
 
-A page's statements and links are records of their own, so deleting a page can't delete them in the same write. A page tombstone instead makes them **ignored**, and pruning removes them:
+A board's statements and links are records of their own, so deleting a board can't delete them in the same write. A board tombstone instead makes them **ignored**, and pruning removes them:
 
-- **On read, ignored:** a statement or link whose page is deleted (`isDeleted`) or missing is ignored, and so is a link whose premise or conclusion statement is deleted or missing. The app drops them from the page it shows; the replica offers `isIgnored(_:)` and `ignored` for it. Judge after a pull has finished, since a page can be "missing" only because it hasn't arrived yet.
-- **Nothing is removed by a delete.** A page brought back (a newer `deleted: false`, as an undo) brings its statements and links with it.
-- **Typing in a statement doesn't revive a deleted page.** It used to, when the text was the page's own field. Now a statement edited on one device while the page is deleted on another is ignored with the page. Undo is the way back.
-- **On the server, pruned:** when a page's tombstone is pruned (90 days), so are all its statements and links whatever their age. Statements and links with no page record at all, or no `page` field, are pruned once they haven't changed for the same 90 days (the grace is because a page can arrive after its statements). Those leftovers don't move `Account.prunedThrough`, since they say nothing a client needs to hear. A deleted statement or link is an ordinary tombstone, pruned and counted like a page's. A link whose statement is gone but whose page lives is ignored but not pruned (the app deletes its links when it deletes a statement).
-- **On a device, the same:** `SyncReplica` drops the statements and links of a page whose tombstone it prunes, and doesn't push ignored records back after a reset, so an orphan the server pruned stays gone.
+- **On read, ignored:** a statement or link whose board is deleted (`isDeleted`) or missing is ignored, and so is a link whose premise or conclusion statement is deleted or missing. The app drops them from the board it shows; the replica offers `isIgnored(_:)` and `ignored` for it. Judge after a pull has finished, since a board can be "missing" only because it hasn't arrived yet.
+- **Nothing is removed by a delete.** A board brought back (a newer `deleted: false`, as an undo) brings its statements and links with it.
+- **Typing in a statement doesn't revive a deleted board.** It used to, when the text was the board's own field. Now a statement edited on one device while the board is deleted on another is ignored with the board. Undo is the way back.
+- **On the server, pruned:** when a board's tombstone is pruned (90 days), so are all its statements and links whatever their age. Statements and links with no board record at all, or no `board` field, are pruned once they haven't changed for the same 90 days (the grace is because a board can arrive after its statements). Those leftovers don't move `Account.prunedThrough`, since they say nothing a client needs to hear. A deleted statement or link is an ordinary tombstone, pruned and counted like a board's. A link whose statement is gone but whose board lives is ignored but not pruned (the app deletes its links when it deletes a statement).
+- **On a device, the same:** `SyncReplica` drops the statements and links of a board whose tombstone it prunes, and doesn't push ignored records back after a reset, so an orphan the server pruned stays gone.
 
 ### Simultaneous edits to a statement: conflict copies
 
@@ -131,8 +131,8 @@ Per-field last-writer-wins would silently drop one side when two devices edit th
 - On the server, an incoming field is **concurrent** when the stored stamp is neither its `base` nor the incoming stamp itself.
 - The server still merges normally. It also returns the **losing** value (incoming or stored) in `superseded`.
 - **Only the device that pushed gets `superseded`, so the copy is made exactly once.**
-  - For a statement's `content`, that device makes a **new statement on the same page**, beside the original, holding the losing content (a new id, the original's `page`, a nearby `position`). It syncs like any other statement. `SyncApplied.superseded(.statement, field: SyncFieldName.content)` lists exactly these.
-  - Only that statement conflicts. The page's other statements, and the same statement's `position`, merge on their own and never produce a copy.
+  - For a statement's `content`, that device makes a **new statement on the same board**, beside the original, holding the losing content (a new id, the original's `board`, a nearby `position`). It syncs like any other statement. `SyncApplied.superseded(.statement, field: SyncFieldName.content)` lists exactly these.
+  - Only that statement conflicts. The board's other statements, and the same statement's `position`, merge on their own and never produce a copy.
   - For everything else (positions, descriptors, links, settings, bookmarks), last writer wins. Nothing is lost that's worth a copy.
 - **The user sees** two boxes with the same first line side by side, and nothing disappeared. No dialogs.
 - The mechanism is generic: `SupersededField` names a kind, an id and a field, so a future kind needs no new protocol. Only the app decides which of them make copies.
@@ -154,7 +154,7 @@ WS v1/sync/live         bearer, signed in
 
 - **One round trip does both directions.** The push is applied first, then everything after `cursor` is returned, including the records just pushed (they're merged and idempotent to apply). `cursor: nil` means from the start.
 - **`more: true`:** the client asks again with the new cursor and no changes, until it's false.
-- **`JSONValue`:** a small Codable enum (null, bool, number, string, array, object). It lets the server store and merge values without knowing what a page is.
+- **`JSONValue`:** a small Codable enum (null, bool, number, string, array, object). It lets the server store and merge values without knowing what a board is.
 - **New `ServiceError.Code` cases** (additive):
   - `signInRequired` ("Sign in to sync")
   - `syncResetRequired` (see Pruning)
@@ -168,16 +168,16 @@ WS v1/sync/live         bearer, signed in
 - 50,000 records per account. Every box and arrow is a record, so a big canvas is a few hundred.
 - 60 sync requests per minute per account.
 - `limit` defaults to 500, max 1000.
-- Kinds and field names are checked against the table above: an unknown field is refused for every kind, so `content` on a page or a link, or `descriptor.0` on a statement, is `invalidRequest`. Page, statement and link ids must be uppercase UUIDs. Settings ids are checked against `SyncedSetting`.
+- Kinds and field names are checked against the table above: an unknown field is refused for every kind, so `content` on a board or a link, or `descriptor.0` on a statement, is `invalidRequest`. Board, statement and link ids must be uppercase UUIDs. Settings ids are checked against `SyncedSetting`.
 
 ### Pruning
 
-Tombstones older than 90 days are deleted, and `Account.prunedThrough` is set to the highest seq removed. The statements and links of a pruned page, and old orphans, go too (see "Deleting a page"), without moving `prunedThrough`. A client whose cursor is below it gets `syncResetRequired`. It then:
+Tombstones older than 90 days are deleted, and `Account.prunedThrough` is set to the highest seq removed. The statements and links of a pruned board, and old orphans, go too (see "Deleting a board"), without moving `prunedThrough`. A client whose cursor is below it gets `syncResetRequired`. It then:
 1. pulls everything from `cursor: nil`
 2. merges
 3. pushes every local record the server doesn't have
 
-A device offline for more than 90 days can bring back a page deleted elsewhere. That's rare, and better than losing data.
+A device offline for more than 90 days can bring back a board deleted elsewhere. That's rare, and better than losing data.
 
 ## Server
 
@@ -189,8 +189,8 @@ Sources/ErgoServer/
 ```
 
 - **`SyncRecordRow`:**
-  - Columns: `account` (cascade), `kind`, `recordID`, `fields`, `seq`, `updated`, plus `tombstone` (when a record was deleted) and `page_id` (a statement's or link's `page`, set by `store`, in the clear). Unique on (account, kind, recordID), indexed on (account, seq) and (account, page_id).
-  - **`fields` is sealed** with the existing vault: AES-GCM, associated data `"\(account)/sync/\(kind)/\(recordID)"`. Pages are people's writing, so they're encrypted at rest like credentials. The server opens them to merge; it never logs them.
+  - Columns: `account` (cascade), `kind`, `recordID`, `fields`, `seq`, `updated`, plus `tombstone` (when a record was deleted) and `board_id` (a statement's or link's `board`, set by `store`, in the clear). Unique on (account, kind, recordID), indexed on (account, seq) and (account, board_id).
+  - **`fields` is sealed** with the existing vault: AES-GCM, associated data `"\(account)/sync/\(kind)/\(recordID)"`. Boards are people's writing, so they're encrypted at rest like credentials. The server opens them to merge; it never logs them.
 - **`Account`** gains:
   - `appleSubject` (unique, nullable)
   - `seq` (Int, the last change number)
@@ -203,7 +203,7 @@ Sources/ErgoServer/
   Then read the rows after the cursor, ordered by seq. SQLite serialises writers, so seq has no gaps or duplicates for one account.
 - **`SyncLive`:** an in-memory broadcaster, account id → open sockets. After a commit that changed something, it tells every socket of that account *except the one whose token pushed*. Pings every 20 s.
   - This is in-process only. More than one server instance would need Redis pub/sub; note that and don't build it.
-- **Pruning:** a daily `Task` loop, started in `configure`. Per account, in one transaction: old tombstones, then the statements and links of the pages among them, then old orphans. The orphan pass reads the `page_id` column and each account's page ids, never the sealed fields.
+- **Pruning:** a daily `Task` loop, started in `configure`. Per account, in one transaction: old tombstones, then the statements and links of the boards among them, then old orphans. The orphan pass reads the `board_id` column and each account's board ids, never the sealed fields.
 
 ## ErgoKit
 
@@ -223,7 +223,7 @@ ErgoKit/Sources/ErgoSync/
 
 ### SyncReplica
 
-Plain value type, `Codable`, saved by the app in Defaults (`syncState`). It knows nothing about pages.
+Plain value type, `Codable`, saved by the app in Defaults (`syncState`). It knows nothing about boards.
 
 - **`records: [RecordKey: SyncRecord]`:** the last merged state per record, which is the base for the next edit.
 - **`pending: [RecordKey: SyncChange]`:** local edits not acknowledged yet.
@@ -232,7 +232,7 @@ Plain value type, `Codable`, saved by the app in Defaults (`syncState`). It know
 Its methods:
 - **`recordLocal(kind:id:fields: [String: JSONValue])`:**
   - Compares each field with `records`. Only fields whose value **actually changed** get a fresh stamp and go into `pending`, with the old stamp as `base`.
-  - Because of that, the app can hand it the whole current state after every change, and unchanged pages cost nothing. It's also what stops echo loops: applying a remote change and then reporting it back changes nothing.
+  - Because of that, the app can hand it the whole current state after every change, and unchanged boards cost nothing. It's also what stops echo loops: applying a remote change and then reporting it back changes nothing.
 - **`makeRequest() -> SyncRequest`**
 - **`apply(_ response: SyncResponse, sent: SyncRequest) -> SyncApplied`:**
   - Merges `response.changes` into `records`.
@@ -249,7 +249,7 @@ Its methods:
 Ergo/Sync/
   SyncController.swift      @MainActor @Observable: when to sync, status, the live socket
   SyncedDefaults.swift      Defaults ↔ records: encode the synced keys into fields, write merged records back
-  PageRecord.swift          LogicPage ↔ page, statement and link records, conflict copies per statement
+  BoardRecord.swift          LogicBoard ↔ board, statement and link records, conflict copies per statement
   AppleSignIn.swift         nonce + ASAuthorization result → TranslationAccount.signIn
 Ergo/Views/Sheets/Account/
   AccountSettingsView.swift
@@ -260,7 +260,7 @@ Ergo/Views/Sheets/Account/
 Only signed in, with a server set. Syncs:
 - on launch
 - on `scenePhase == .active`
-- 2 s after the last local change (debounced, like `PageStore`'s save)
+- 2 s after the last local change (debounced, like `BoardStore`'s save)
 - when the live socket says `changed` with a cursor ahead of ours
 - after sign-in (full)
 
@@ -275,25 +275,25 @@ Details:
 
 `Defaults.updates([.logicLetters, .ditherEnabled, .translationProvider, .bookmarks])` feeds `recordLocal`.
 
-Pages go through `PageStore` instead of watching `Defaults[.pages]`. A page array can be big, and `PageStore` already knows what changed:
-- `PageStore.save()` hands the saved pages to `SyncController` (or `SyncedDefaults`), which calls `recordLocal` for each page.
+Boards go through `BoardStore` instead of watching `Defaults[.boards]`. A board array can be big, and `BoardStore` already knows what changed:
+- `BoardStore.save()` hands the saved boards to `SyncController` (or `SyncedDefaults`), which calls `recordLocal` for each board.
 - Diffing in the replica keeps that cheap.
-- Deletes call `recordLocal(kind: .page, id:, fields: ["deleted": true])`.
-- Drafts are never in `pages`, so they never sync.
+- Deletes call `recordLocal(kind: .board, id:, fields: ["deleted": true])`.
+- Drafts are never in `boards`, so they never sync.
 
 ### Writing remote changes
 
 - **Settings and bookmarks:** write the Defaults key directly.
   - For bookmarks, insert/remove per record. Never replace the whole set from the server, so a bookmark added during the sync isn't lost.
-- **Pages:** `PageStore.applyRemote(_ pages: [LogicPage], deleted: Set<LogicPage.ID>)`:
-  - updates the matching pages in place, inserts new ones, removes deleted ones
+- **Boards:** `BoardStore.applyRemote(_ boards: [LogicBoard], deleted: Set<LogicBoard.ID>)`:
+  - updates the matching boards in place, inserts new ones, removes deleted ones
   - sets `modified` from the record's newest stamp
   - **doesn't** stamp `modified = .now` or call `recordLocal`
-  - **The open page changes while it's open:** the editor shows the new content. It's newer, from the user's other device.
-  - **The open page is deleted remotely:** the editor goes to a new draft, as if the user had deleted it here.
-- **Superseded `content`:** for a statement (`applied.superseded(.statement, field: SyncFieldName.content)`), append a new statement on the same page (new id, the original's `page`, a position beside the original, the losing content) through `PageStore`, so it syncs as a normal new statement. Before the canvas this made a copy of the whole page.
-- **Ignored records:** statements and links for which `replica.isIgnored(_:)` is true (page deleted or missing, or a link's statement gone) aren't shown, whatever the page's array says, once a pull has finished.
-- **Records the app writes:** one `page` record per page (`created`, `descriptor.N`, `deleted`), one `statement` per statement (`page`, `position`, `content`, `deleted`) and one `link` per link (`page`, `premise`, `conclusion`, `deleted`). Deleting a page writes only the page's tombstone; deleting a statement writes its tombstone and its links'.
+  - **The open board changes while it's open:** the editor shows the new content. It's newer, from the user's other device.
+  - **The open board is deleted remotely:** the editor goes to a new draft, as if the user had deleted it here.
+- **Superseded `content`:** for a statement (`applied.superseded(.statement, field: SyncFieldName.content)`), append a new statement on the same board (new id, the original's `board`, a position beside the original, the losing content) through `BoardStore`, so it syncs as a normal new statement. Before the canvas this made a copy of the whole board.
+- **Ignored records:** statements and links for which `replica.isIgnored(_:)` is true (board deleted or missing, or a link's statement gone) aren't shown, whatever the board's array says, once a pull has finished.
+- **Records the app writes:** one `board` record per board (`created`, `descriptor.N`, `deleted`), one `statement` per statement (`board`, `position`, `content`, `deleted`) and one `link` per link (`board`, `premise`, `conclusion`, `deleted`). Deleting a board writes only the board's tombstone; deleting a statement writes its tombstone and its links'.
 - **Value checks:** every value from the server is decoded before it's written. One that fails to decode (newer app version, damaged data) is skipped, the record stays in the replica, and nothing local is touched. Never crash on server data.
 
 ### Settings UI
@@ -301,12 +301,12 @@ Pages go through `PageStore` instead of watching `Defaults[.pages]`. A page arra
 The section in `SettingsView` is **"Account"**, above Translation:
 - **Signed out:**
   - `SignInWithAppleButton` (`.signIn`), black/white matching the colour scheme, full width.
-  - The footer says: "Sync pages, bookmarks and letters across your devices. Translation works without an account."
+  - The footer says: "Sync boards, bookmarks and letters across your devices. Translation works without an account."
 - **Signed in:**
   - `LabeledContent("Sync")`, valued "Up to date · 2 min ago" / "Syncing" / "Waiting for network" / the error in red.
   - "Sync Now" doesn't exist; it syncs on its own.
-  - **Sign Out:** confirmation, "Your pages stay on this iPhone".
-  - **Delete Account:** destructive confirmation, "Deletes everything Ergo's server keeps for you, including your Claude and ChatGPT connections. Pages on this iPhone stay".
+  - **Sign Out:** confirmation, "Your boards stay on this iPhone".
+  - **Delete Account:** destructive confirmation, "Deletes everything Ergo's server keeps for you, including your Claude and ChatGPT connections. Boards on this iPhone stay".
 - **No server set:** sign-in is disabled, and the footer points at Translation → Server.
 
 Accessibility identifiers:
@@ -328,15 +328,15 @@ Accessibility identifiers:
   - At the end, after everyone syncs twice, all replicas have identical records.
 - Tombstone vs concurrent edit: the edit wins. Delete then undo: alive.
 - Concurrent `content` edits to a statement give exactly one `superseded` to exactly one replica, and a move on one device with typing on another gives none.
-- Statements and links are in the convergence walk. Pages deleted and brought back, ignored statements and links, and a page's pruning cascading on a device and on the fake server, have their own tests.
+- Statements and links are in the convergence walk. Boards deleted and brought back, ignored statements and links, and a board's pruning cascading on a device and on the fake server, have their own tests.
 - `recordLocal` with unchanged values produces no pending. Typing during a request stays pending after `apply`.
 
 ### ErgoServer
 
 - Sync with two tokens on one account: push from A, pull on B, `superseded`.
 - Cursor paging with `more`.
-- Limits: size, count (statements and links count, and the default is 50,000), kinds, future stamps, and field names per kind (unknown fields refused for statements and links, `content` refused for pages).
-- Pruning: a deleted page takes its statements and links, a page with no record keeps its orphans for 90 days and then loses them, other accounts are untouched, and none of it moves `prunedThrough`.
+- Limits: size, count (statements and links count, and the default is 50,000), kinds, future stamps, and field names per kind (unknown fields refused for statements and links, `content` refused for boards).
+- Pruning: a deleted board takes its statements and links, a board with no record keeps its orphans for 90 days and then loses them, other accounts are untouched, and none of it moves `prunedThrough`.
 - A conflicting statement `content` is `superseded` to the pusher only, and only for that statement.
 - `signInRequired` for anonymous accounts.
 - `syncResetRequired` after pruning.

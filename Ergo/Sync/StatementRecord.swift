@@ -35,9 +35,9 @@ enum StatementRecord {
 	// MARK: - Local → record
 
 	/// Every field but `deleted`, which is only ever sent when deleting
-	static func fields(of statement: Statement, in page: LogicPage.ID) throws -> [String: JSONValue] {
+	static func fields(of statement: Statement, in board: LogicBoard.ID) throws -> [String: JSONValue] {
 		try [
-			SyncFieldName.page: .string(PageRecord.id(page)),
+			SyncFieldName.board: .string(BoardRecord.id(board)),
 			SyncFieldName.position: SyncCoding.value(statement.position),
 			SyncFieldName.content: SyncCoding.value(Content(statement)),
 		]
@@ -70,11 +70,11 @@ enum StatementRecord {
 		return statement
 	}
 
-	/// What lost a simultaneous edit, as a new statement on the same page, below the one that won.
-	/// The page's descriptors are shared, so the lost logic still means what it did.
-	static func copy(of lost: SyncField, beside original: Statement.ID, in page: LogicPage) -> Statement? {
+	/// What lost a simultaneous edit, as a new statement on the same board, below the one that won.
+	/// The board's descriptors are shared, so the lost logic still means what it did.
+	static func copy(of lost: SyncField, beside original: Statement.ID, in board: LogicBoard) -> Statement? {
 		guard let content = try? SyncCoding.decode(Content.self, from: lost.value) else { return nil }
-		var copy = Statement(position: CanvasLayout.place(newNodeNear: original, in: page.map, side: .below))
+		var copy = Statement(position: CanvasLayout.place(newNodeNear: original, in: board.map, side: .below))
 		copy.apply(content)
 		return copy
 	}

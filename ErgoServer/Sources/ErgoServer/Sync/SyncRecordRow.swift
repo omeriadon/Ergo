@@ -38,9 +38,9 @@ final class SyncRecordRow: Model, @unchecked Sendable {
 	@OptionalField(key: "tombstone")
 	var tombstone: Date?
 
-	/// A statement's or link's `page` field, so pruning can find a deleted page's leftovers without opening every row
-	@OptionalField(key: "page_id")
-	var page: String?
+	/// A statement's or link's `board` field, so pruning can find a deleted board's leftovers without opening every row
+	@OptionalField(key: "board_id")
+	var board: String?
 
 	@Field(key: "updated")
 	var updated: Date
@@ -68,7 +68,7 @@ final class SyncRecordRow: Model, @unchecked Sendable {
 		fields = try vault.seal(record.fields, account: $account.id, record: key)
 		self.seq = seq
 		tombstone = record.isDeleted ? record.fields[SyncFieldName.deleted]?.stamp.date : nil
-		page = record.owningPage
+		board = record.owningBoard
 		updated = now
 	}
 

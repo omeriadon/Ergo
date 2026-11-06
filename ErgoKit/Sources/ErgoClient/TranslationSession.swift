@@ -36,7 +36,7 @@ public extension ErgoClient {
 	}
 
 	/// Breaks pasted English into premises, a conclusion and claims, without writing any logic: events as they
-	/// happen, finishing with the breakdown. The request's `descriptors` are what the page already calls its letters,
+	/// happen, finishing with the breakdown. The request's `descriptors` are what the board already calls its letters,
 	/// and come back filled in with the new claims. Cancelling the consuming task cancels the work on the server.
 	///
 	/// Always runs the `.argument` scope, whatever `request.scope` says.

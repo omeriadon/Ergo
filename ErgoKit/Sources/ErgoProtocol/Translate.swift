@@ -26,8 +26,8 @@ public struct TranslateRequest: Codable, Sendable, Hashable {
 	public let letters: [String]
 	public let grammarVersion: Int
 
-	/// What the page already calls its letters, up to six, with an empty string for a slot nobody has named yet.
-	/// Claims that match one keep that letter, and new claims only take free slots. Nil when the page names nothing.
+	/// What the board already calls its letters, up to six, with an empty string for a slot nobody has named yet.
+	/// Claims that match one keep that letter, and new claims only take free slots. Nil when the board names nothing.
 	public var descriptors: [String]?
 
 	public var scope: TranslateScope

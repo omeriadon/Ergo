@@ -12,7 +12,7 @@ import Foundation
 import Testing
 import VaporTesting
 
-/// The statement and link kinds on the server: conflicts per statement, the owning page, and pruning what a page leaves behind
+/// The statement and link kinds on the server: conflicts per statement, the owning board, and pruning what a board leaves behind
 struct SyncCanvasTests {
 	static let day: Int64 = 86_400_000
 
@@ -20,19 +20,19 @@ struct SyncCanvasTests {
 		SyncField(value: value, stamp: stamp(offset, device: device))
 	}
 
-	/// A page tombstone from before pruning's cutoff
-	static func deletedPage(_ id: String) -> SyncChange {
+	/// A board tombstone from before pruning's cutoff
+	static func deletedBoard(_ id: String) -> SyncChange {
 		let old = -100 * day
-		return pageChange(id, [
+		return boardChange(id, [
 			"created": field(1, old),
 			"deleted": field(true, old + 1),
 		])
 	}
 
-	static func statement(_ id: String, page: String?, _ english: String = "A claim", at offset: Int64 = 0) -> SyncChange {
+	static func statement(_ id: String, board: String?, _ english: String = "A claim", at offset: Int64 = 0) -> SyncChange {
 		var fields = ["content": field(content(english), offset), "position": field(["x": 0, "y": 0], offset)]
-		if let page {
-			fields["page"] = field(.string(page), offset)
+		if let board {
+			fields["board"] = field(.string(board), offset)
 		}
 		return statementChange(id, fields)
 	}
@@ -43,36 +43,36 @@ struct SyncCanvasTests {
 
 	// MARK: - Syncing
 
-	@Test func recordsKeepTheirPage() async throws {
+	@Test func recordsKeepTheirBoard() async throws {
 		let scratch = try Scratch()
 		defer { scratch.remove() }
 
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
-			let page = newPageID()
-			let (first, second, link) = (newPageID(), newPageID(), newPageID())
+			let board = newBoardID()
+			let (first, second, link) = (newBoardID(), newBoardID(), newBoardID())
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-				pageChange(page, ["created": Self.field(1)]),
-				Self.statement(first, page: page),
-				Self.statement(second, page: page),
-				linkChange(link, page: page, premise: first, conclusion: second),
+				boardChange(board, ["created": Self.field(1)]),
+				Self.statement(first, board: board),
+				Self.statement(second, board: board),
+				linkChange(link, board: board, premise: first, conclusion: second),
 				SyncChange(kind: .bookmark, id: "fallacy.strawman", fields: ["present": Self.field(true)]),
 			]), token: device.token)
 
 			let rows = try await SyncRecordRow.query(on: app.db).all()
-			let owners = Dictionary(uniqueKeysWithValues: rows.map { ($0.key, $0.page) })
-			#expect(owners[SyncRecord.Key(kind: .statement, id: first)] == page)
-			#expect(owners[SyncRecord.Key(kind: .link, id: link)] == page)
-			#expect(owners[SyncRecord.Key(kind: .page, id: page)] == .some(nil))
+			let owners = Dictionary(uniqueKeysWithValues: rows.map { ($0.key, $0.board) })
+			#expect(owners[SyncRecord.Key(kind: .statement, id: first)] == board)
+			#expect(owners[SyncRecord.Key(kind: .link, id: link)] == board)
+			#expect(owners[SyncRecord.Key(kind: .board, id: board)] == .some(nil))
 			#expect(owners[SyncRecord.Key(kind: .bookmark, id: "fallacy.strawman")] == .some(nil))
 
-			// Moving a statement to another page follows
-			let other = newPageID()
+			// Moving a statement to another board follows
+			let other = newBoardID()
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-				statementChange(first, ["page": Self.field(.string(other), 1000)]),
+				statementChange(first, ["board": Self.field(.string(other), 1000)]),
 			]), token: device.token)
 			let moved = try #require(try await SyncRecordRow.find(SyncRecord.Key(kind: .statement, id: first), for: device.accountID, on: app.db))
-			#expect(moved.page == other)
+			#expect(moved.board == other)
 		}
 	}
 
@@ -85,12 +85,12 @@ struct SyncCanvasTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let phone = try await app.signedInAccount()
 			let pad = try await app.signedInAccount()
-			let page = newPageID()
-			let (first, second) = (newPageID(), newPageID())
-			let base = Self.statement(first, page: page, "Base")
+			let board = newBoardID()
+			let (first, second) = (newBoardID(), newBoardID())
+			let base = Self.statement(first, board: board, "Base")
 			let baseStamp = try #require(base.fields["content"]?.stamp)
 			let positionStamp = try #require(base.fields["position"]?.stamp)
-			_ = try await app.sync(SyncRequest(cursor: nil, changes: [base, Self.statement(second, page: page, "Other")]), token: phone.token)
+			_ = try await app.sync(SyncRequest(cursor: nil, changes: [base, Self.statement(second, board: board, "Other")]), token: phone.token)
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: []), token: pad.token)
 
 			let phoneEdit = Self.field(content("From the phone"), 1000, device: "phone")
@@ -121,15 +121,15 @@ struct SyncCanvasTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let phone = try await app.signedInAccount()
 			let pad = try await app.signedInAccount()
-			let page = newPageID()
-			let (premise, conclusion, link) = (newPageID(), newPageID(), newPageID())
-			let change = linkChange(link, page: page, premise: premise, conclusion: conclusion)
+			let board = newBoardID()
+			let (premise, conclusion, link) = (newBoardID(), newBoardID(), newBoardID())
+			let change = linkChange(link, board: board, premise: premise, conclusion: conclusion)
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [change]), token: phone.token)
 
 			let pulled = try await app.sync(SyncRequest(cursor: nil, changes: []), token: pad.token)
 			#expect(pulled.changes == [change.record])
 			#expect(pulled.changes.first?.joined?.premise == premise)
-			#expect(pulled.changes.first?.owningPage == page)
+			#expect(pulled.changes.first?.owningBoard == board)
 		}
 	}
 
@@ -143,16 +143,16 @@ struct SyncCanvasTests {
 
 		try await withTestApp(config) { app in
 			let device = try await app.signedInAccount()
-			let page = newPageID()
-			let (first, second) = (newPageID(), newPageID())
+			let board = newBoardID()
+			let (first, second) = (newBoardID(), newBoardID())
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-				Self.statement(first, page: page),
-				Self.statement(second, page: page),
-				linkChange(newPageID(), page: page, premise: first, conclusion: second),
+				Self.statement(first, board: board),
+				Self.statement(second, board: board),
+				linkChange(newBoardID(), board: board, premise: first, conclusion: second),
 			]), token: device.token)
 
 			let (status, error) = try await app.syncRefusal(
-				SyncRequest(cursor: nil, changes: [Self.statement(newPageID(), page: page)]),
+				SyncRequest(cursor: nil, changes: [Self.statement(newBoardID(), board: board)]),
 				token: device.token
 			)
 			#expect(status == .payloadTooLarge)
@@ -160,7 +160,7 @@ struct SyncCanvasTests {
 			#expect(try await SyncRecordRow.query(on: app.db).count() == 3)
 
 			// Editing one it has is still fine
-			let edited = try await app.sync(SyncRequest(cursor: nil, changes: [Self.statement(first, page: page, "Edited", at: 1000)]), token: device.token)
+			let edited = try await app.sync(SyncRequest(cursor: nil, changes: [Self.statement(first, board: board, "Edited", at: 1000)]), token: device.token)
 			#expect(edited.changes.count == 3)
 		}
 	}
@@ -173,35 +173,35 @@ struct SyncCanvasTests {
 
 	// MARK: - Pruning
 
-	/// The page's tombstone goes, and its statements and links go with it even though they're recent
-	@Test func deletedPagesTakeTheirStatementsAndLinks() async throws {
+	/// The board's tombstone goes, and its statements and links go with it even though they're recent
+	@Test func deletedBoardsTakeTheirStatementsAndLinks() async throws {
 		let scratch = try Scratch()
 		defer { scratch.remove() }
 
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
-			let (gone, kept) = (newPageID(), newPageID())
-			let (goneStatement, goneOther, goneLink) = (newPageID(), newPageID(), newPageID())
-			let (keptStatement, keptLink) = (newPageID(), newPageID())
+			let (gone, kept) = (newBoardID(), newBoardID())
+			let (goneStatement, goneOther, goneLink) = (newBoardID(), newBoardID(), newBoardID())
+			let (keptStatement, keptLink) = (newBoardID(), newBoardID())
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-				Self.deletedPage(gone),
-				Self.statement(goneStatement, page: gone),
-				Self.statement(goneOther, page: gone),
-				linkChange(goneLink, page: gone, premise: goneStatement, conclusion: goneOther),
-				pageChange(kept, ["created": Self.field(1)]),
-				Self.statement(keptStatement, page: kept),
-				linkChange(keptLink, page: kept, premise: keptStatement, conclusion: keptStatement),
+				Self.deletedBoard(gone),
+				Self.statement(goneStatement, board: gone),
+				Self.statement(goneOther, board: gone),
+				linkChange(goneLink, board: gone, premise: goneStatement, conclusion: goneOther),
+				boardChange(kept, ["created": Self.field(1)]),
+				Self.statement(keptStatement, board: kept),
+				linkChange(keptLink, board: kept, premise: keptStatement, conclusion: keptStatement),
 			]), token: device.token)
 
 			#expect(try await app.ergo.sync.prune(on: app.db) == 4)
 			#expect(try await app.ergo.sync.prune(on: app.db) == 0)
 			#expect(try await keys(app) == [
-				SyncRecord.Key(kind: .page, id: kept),
+				SyncRecord.Key(kind: .board, id: kept),
 				SyncRecord.Key(kind: .statement, id: keptStatement),
 				SyncRecord.Key(kind: .link, id: keptLink),
 			])
 
-			// Only the page's tombstone made a device start over, not the records it left
+			// Only the board's tombstone made a device start over, not the records it left
 			let account = try #require(try await Account.find(device.accountID, on: app.db))
 			#expect(account.prunedThrough == 1)
 			#expect(account.seq == 7)
@@ -210,17 +210,17 @@ struct SyncCanvasTests {
 		}
 	}
 
-	/// A page deleted a day ago isn't pruned yet, so nothing it holds is
-	@Test func recentlyDeletedPagesKeepEverything() async throws {
+	/// A board deleted a day ago isn't pruned yet, so nothing it holds is
+	@Test func recentlyDeletedBoardsKeepEverything() async throws {
 		let scratch = try Scratch()
 		defer { scratch.remove() }
 
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
-			let page = newPageID()
+			let board = newBoardID()
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-				pageChange(page, ["created": Self.field(1, -2 * Self.day), "deleted": Self.field(true, -Self.day)]),
-				Self.statement(newPageID(), page: page),
+				boardChange(board, ["created": Self.field(1, -2 * Self.day), "deleted": Self.field(true, -Self.day)]),
+				Self.statement(newBoardID(), board: board),
 			]), token: device.token)
 
 			#expect(try await app.ergo.sync.prune(on: app.db) == 0)
@@ -228,29 +228,29 @@ struct SyncCanvasTests {
 		}
 	}
 
-	/// Statements with no page record are kept for the same ninety days, since a page can arrive after its statements
-	@Test func orphansWithNoPageAreKeptThenPruned() async throws {
+	/// Statements with no board record are kept for the same ninety days, since a board can arrive after its statements
+	@Test func orphansWithNoBoardAreKeptThenPruned() async throws {
 		let scratch = try Scratch()
 		defer { scratch.remove() }
 
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
-			let alive = newPageID()
-			let missing = newPageID()
-			let (old, recent, noPage, living, link) = (newPageID(), newPageID(), newPageID(), newPageID(), newPageID())
+			let alive = newBoardID()
+			let missing = newBoardID()
+			let (old, recent, noBoard, living, link) = (newBoardID(), newBoardID(), newBoardID(), newBoardID(), newBoardID())
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-				pageChange(alive, ["created": Self.field(1)]),
-				Self.statement(old, page: missing),
-				Self.statement(recent, page: missing),
-				Self.statement(noPage, page: nil),
-				Self.statement(living, page: alive),
-				linkChange(link, page: missing, premise: old, conclusion: recent),
+				boardChange(alive, ["created": Self.field(1)]),
+				Self.statement(old, board: missing),
+				Self.statement(recent, board: missing),
+				Self.statement(noBoard, board: nil),
+				Self.statement(living, board: alive),
+				linkChange(link, board: missing, premise: old, conclusion: recent),
 			]), token: device.token)
 
 			// Nothing's old enough yet
 			#expect(try await app.ergo.sync.prune(on: app.db) == 0)
 
-			for id in [old, noPage, link] {
+			for id in [old, noBoard, link] {
 				let kind: SyncKind = id == link ? .link : .statement
 				let row = try #require(try await SyncRecordRow.find(SyncRecord.Key(kind: kind, id: id), for: device.accountID, on: app.db))
 				row.updated = .now - TimeInterval(100 * 24 * 60 * 60)
@@ -259,7 +259,7 @@ struct SyncCanvasTests {
 
 			#expect(try await app.ergo.sync.prune(on: app.db) == 3)
 			#expect(try await keys(app) == [
-				SyncRecord.Key(kind: .page, id: alive),
+				SyncRecord.Key(kind: .board, id: alive),
 				SyncRecord.Key(kind: .statement, id: recent),
 				SyncRecord.Key(kind: .statement, id: living),
 			])
@@ -268,26 +268,26 @@ struct SyncCanvasTests {
 	}
 
 	/// A deleted statement is a tombstone like any other
-	@Test func deletedStatementsArePrunedLikePages() async throws {
+	@Test func deletedStatementsArePrunedLikeBoards() async throws {
 		let scratch = try Scratch()
 		defer { scratch.remove() }
 
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
-			let page = newPageID()
-			let (deleted, alive) = (newPageID(), newPageID())
+			let board = newBoardID()
+			let (deleted, alive) = (newBoardID(), newBoardID())
 			let old = -100 * Self.day
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-				pageChange(page, ["created": Self.field(1, old)]),
+				boardChange(board, ["created": Self.field(1, old)]),
 				statementChange(deleted, [
-					"page": Self.field(.string(page), old),
+					"board": Self.field(.string(board), old),
 					"deleted": Self.field(true, old + 1),
 				]),
-				Self.statement(alive, page: page, at: old),
+				Self.statement(alive, board: board, at: old),
 			]), token: device.token)
 
 			#expect(try await app.ergo.sync.prune(on: app.db) == 1)
-			#expect(try await keys(app) == [SyncRecord.Key(kind: .page, id: page), SyncRecord.Key(kind: .statement, id: alive)])
+			#expect(try await keys(app) == [SyncRecord.Key(kind: .board, id: board), SyncRecord.Key(kind: .statement, id: alive)])
 			#expect(try await Account.find(device.accountID, on: app.db)?.prunedThrough == 2)
 		}
 	}
@@ -300,13 +300,13 @@ struct SyncCanvasTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let mine = try await app.signedInAccount()
 			let theirs = try await app.signedInAccount("someone-else")
-			let page = newPageID()
-			let statement = newPageID()
-			_ = try await app.sync(SyncRequest(cursor: nil, changes: [Self.deletedPage(page), Self.statement(statement, page: page)]), token: mine.token)
-			// The same page id on someone else's account is a different, living page
+			let board = newBoardID()
+			let statement = newBoardID()
+			_ = try await app.sync(SyncRequest(cursor: nil, changes: [Self.deletedBoard(board), Self.statement(statement, board: board)]), token: mine.token)
+			// The same board id on someone else's account is a different, living board
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-				pageChange(page, ["created": Self.field(1)]),
-				Self.statement(statement, page: page),
+				boardChange(board, ["created": Self.field(1)]),
+				Self.statement(statement, board: board),
 			]), token: theirs.token)
 
 			#expect(try await app.ergo.sync.prune(on: app.db) == 2)

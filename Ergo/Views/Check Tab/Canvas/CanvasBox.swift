@@ -8,7 +8,7 @@
 import ErgoLogic
 import SwiftUI
 
-/// What a box can do, handed in by the canvas so the box doesn't know about the page or selection
+/// What a box can do, handed in by the canvas so the box doesn't know about the board or selection
 struct BoxActions {
 	var select: () -> Void
 	var edit: () -> Void

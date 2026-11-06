@@ -14,8 +14,8 @@ struct SyncRecordTests {
 		SyncStamp(time: time, counter: counter, device: device)
 	}
 
-	static func page(_ fields: [String: SyncField]) -> SyncRecord {
-		SyncRecord(kind: .page, id: "6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B", fields: fields)
+	static func board(_ fields: [String: SyncField]) -> SyncRecord {
+		SyncRecord(kind: .board, id: "6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B", fields: fields)
 	}
 
 	// MARK: - JSONValue
@@ -60,7 +60,7 @@ struct SyncRecordTests {
 	static func randomRecord(_ random: inout SeededRandom) -> SyncRecord {
 		let names = ["content", "deleted", "descriptor.0", "descriptor.1"]
 		let values: [JSONValue] = [nil, true, false, 1, "x", "y", ["x"], ["a": 1]]
-		var record = page([:])
+		var record = board([:])
 		for name in names where Bool.random(using: &random) {
 			let stamp = stamp(Int64.random(in: 0 ... 3, using: &random), ["A", "B"].randomElement(using: &random)!, counter: Int.random(in: 0 ... 1, using: &random))
 			record.fields[name] = SyncField(value: values.randomElement(using: &random)!, stamp: stamp)
@@ -82,8 +82,8 @@ struct SyncRecordTests {
 	}
 
 	@Test func mergeKeepsTheNewerFieldEach() {
-		let a = Self.page(["content": SyncField(value: "a", stamp: Self.stamp(2)), "descriptor.0": SyncField(value: "rain", stamp: Self.stamp(1))])
-		let b = Self.page(["content": SyncField(value: "b", stamp: Self.stamp(1, "B")), "descriptor.0": SyncField(value: "snow", stamp: Self.stamp(3, "B"))])
+		let a = Self.board(["content": SyncField(value: "a", stamp: Self.stamp(2)), "descriptor.0": SyncField(value: "rain", stamp: Self.stamp(1))])
+		let b = Self.board(["content": SyncField(value: "b", stamp: Self.stamp(1, "B")), "descriptor.0": SyncField(value: "snow", stamp: Self.stamp(3, "B"))])
 		#expect(SyncRecord.merge(a, b).values == ["content": "a", "descriptor.0": "snow"])
 		#expect(SyncRecord.merge(a, b).newestStamp == Self.stamp(3, "B"))
 	}
@@ -91,31 +91,31 @@ struct SyncRecordTests {
 	// MARK: - Tombstones
 
 	@Test func aNewerDeleteDeletes() {
-		let record = Self.page(["content": SyncField(value: "a", stamp: Self.stamp(1)), "deleted": SyncField(value: true, stamp: Self.stamp(2))])
+		let record = Self.board(["content": SyncField(value: "a", stamp: Self.stamp(1)), "deleted": SyncField(value: true, stamp: Self.stamp(2))])
 		#expect(record.isDeleted)
 	}
 
-	/// One device deletes a page while another keeps typing in it: the typing brings it back
+	/// One device deletes a board while another keeps typing in it: the typing brings it back
 	@Test func typingAfterADeleteWins() {
-		let deleted = Self.page(["content": SyncField(value: "a", stamp: Self.stamp(1)), "deleted": SyncField(value: true, stamp: Self.stamp(2))])
-		let typed = Self.page(["content": SyncField(value: "ab", stamp: Self.stamp(3, "B"))])
+		let deleted = Self.board(["content": SyncField(value: "a", stamp: Self.stamp(1)), "deleted": SyncField(value: true, stamp: Self.stamp(2))])
+		let typed = Self.board(["content": SyncField(value: "ab", stamp: Self.stamp(3, "B"))])
 		#expect(!SyncRecord.merge(deleted, typed).isDeleted)
 		#expect(!SyncRecord.merge(typed, deleted).isDeleted)
 	}
 
 	@Test func undoingADeleteIsANewerFalse() {
-		var record = Self.page(["content": SyncField(value: "a", stamp: Self.stamp(1)), "deleted": SyncField(value: true, stamp: Self.stamp(2))])
+		var record = Self.board(["content": SyncField(value: "a", stamp: Self.stamp(1)), "deleted": SyncField(value: true, stamp: Self.stamp(2))])
 		record.merge(["deleted": SyncField(value: false, stamp: Self.stamp(3))])
 		#expect(!record.isDeleted)
-		#expect(!Self.page([:]).isDeleted)
-		#expect(Self.page([:]).newestStamp == nil)
+		#expect(!Self.board([:]).isDeleted)
+		#expect(Self.board([:]).newestStamp == nil)
 	}
 
 	// MARK: - Pushes
 
 	@Test func anEditFromWhatsStoredIsntConcurrent() {
-		var stored = Self.page(["content": SyncField(value: "a", stamp: Self.stamp(1))])
-		let change = SyncChange(kind: .page, id: stored.id, fields: ["content": SyncField(value: "ab", stamp: Self.stamp(2, "B"))], bases: ["content": Self.stamp(1)])
+		var stored = Self.board(["content": SyncField(value: "a", stamp: Self.stamp(1))])
+		let change = SyncChange(kind: .board, id: stored.id, fields: ["content": SyncField(value: "ab", stamp: Self.stamp(2, "B"))], bases: ["content": Self.stamp(1)])
 		#expect(stored.apply(change).isEmpty)
 		#expect(stored.values == ["content": "ab"])
 
@@ -124,29 +124,29 @@ struct SyncRecordTests {
 	}
 
 	@Test func aNewerConcurrentEditSupersedesWhatsStored() {
-		var stored = Self.page(["content": SyncField(value: "a", stamp: Self.stamp(2))])
-		let change = SyncChange(kind: .page, id: stored.id, fields: ["content": SyncField(value: "b", stamp: Self.stamp(3, "B"))], bases: ["content": Self.stamp(1)])
-		#expect(stored.apply(change) == [SupersededField(kind: .page, id: stored.id, field: "content", lost: SyncField(value: "a", stamp: Self.stamp(2)))])
+		var stored = Self.board(["content": SyncField(value: "a", stamp: Self.stamp(2))])
+		let change = SyncChange(kind: .board, id: stored.id, fields: ["content": SyncField(value: "b", stamp: Self.stamp(3, "B"))], bases: ["content": Self.stamp(1)])
+		#expect(stored.apply(change) == [SupersededField(kind: .board, id: stored.id, field: "content", lost: SyncField(value: "a", stamp: Self.stamp(2)))])
 		#expect(stored.values == ["content": "b"])
 	}
 
 	@Test func anOlderConcurrentEditIsItselfSuperseded() {
-		var stored = Self.page(["content": SyncField(value: "a", stamp: Self.stamp(3))])
+		var stored = Self.board(["content": SyncField(value: "a", stamp: Self.stamp(3))])
 		let pushed = SyncField(value: "b", stamp: Self.stamp(2, "B"))
-		let change = SyncChange(kind: .page, id: stored.id, fields: ["content": pushed])
-		#expect(stored.apply(change) == [SupersededField(kind: .page, id: stored.id, field: "content", lost: pushed)])
+		let change = SyncChange(kind: .board, id: stored.id, fields: ["content": pushed])
+		#expect(stored.apply(change) == [SupersededField(kind: .board, id: stored.id, field: "content", lost: pushed)])
 		#expect(stored.values == ["content": "a"])
 	}
 
 	@Test func equalValuesArentAConflict() {
-		var stored = Self.page(["content": SyncField(value: "a", stamp: Self.stamp(2))])
-		let change = SyncChange(kind: .page, id: stored.id, fields: ["content": SyncField(value: "a", stamp: Self.stamp(3, "B"))])
+		var stored = Self.board(["content": SyncField(value: "a", stamp: Self.stamp(2))])
+		let change = SyncChange(kind: .board, id: stored.id, fields: ["content": SyncField(value: "a", stamp: Self.stamp(3, "B"))])
 		#expect(stored.apply(change).isEmpty)
 	}
 
 	@Test func aNewFieldIsntAConflict() {
-		var stored = Self.page(["content": SyncField(value: "a", stamp: Self.stamp(2))])
-		let change = SyncChange(kind: .page, id: stored.id, fields: ["descriptor.0": SyncField(value: "rain", stamp: Self.stamp(1, "B"))])
+		var stored = Self.board(["content": SyncField(value: "a", stamp: Self.stamp(2))])
+		let change = SyncChange(kind: .board, id: stored.id, fields: ["descriptor.0": SyncField(value: "rain", stamp: Self.stamp(1, "B"))])
 		#expect(stored.apply(change).isEmpty)
 		#expect(stored.values == ["content": "a", "descriptor.0": "rain"])
 	}
@@ -154,13 +154,13 @@ struct SyncRecordTests {
 	// MARK: - Checks
 
 	@Test func kindsKnowTheirFieldsAndIDs() {
-		#expect(SyncKind.page.fieldNames == ["created", "deleted", "descriptor.0", "descriptor.1", "descriptor.2", "descriptor.3", "descriptor.4", "descriptor.5"])
+		#expect(SyncKind.board.fieldNames == ["created", "deleted", "descriptor.0", "descriptor.1", "descriptor.2", "descriptor.3", "descriptor.4", "descriptor.5"])
 		#expect(SyncKind.bookmark.fieldNames == ["present"])
 		#expect(SyncKind.setting.fieldNames == ["value"])
 		#expect(SyncKind(rawValue: "folder").fieldNames.isEmpty)
 
-		#expect(SyncKind.page.isValid(id: "6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B"))
-		#expect(!SyncKind.page.isValid(id: "6f1c2e9a-3b4d-4e5f-8a9b-0c1d2e3f4a5b"))
+		#expect(SyncKind.board.isValid(id: "6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B"))
+		#expect(!SyncKind.board.isValid(id: "6f1c2e9a-3b4d-4e5f-8a9b-0c1d2e3f4a5b"))
 		#expect(SyncKind.setting.isValid(id: "logicLetters"))
 		#expect(!SyncKind.setting.isValid(id: "translationServer"))
 		#expect(SyncKind.bookmark.isValid(id: "fallacy.ad-hominem"))
@@ -172,6 +172,6 @@ struct SyncRecordTests {
 	@Test func unknownKindsDecode() throws {
 		let record = try JSONDecoder().decode(SyncRecord.self, from: Data(#"{"kind":"folder","id":"x","fields":{}}"#.utf8))
 		#expect(record.kind == SyncKind(rawValue: "folder"))
-		#expect(try String(decoding: JSONEncoder().encode(SyncKind.page), as: UTF8.self) == #""page""#)
+		#expect(try String(decoding: JSONEncoder().encode(SyncKind.board), as: UTF8.self) == #""board""#)
 	}
 }

@@ -160,7 +160,7 @@ struct ErgoProtocolTests {
 
 	@Test func syncRequest() throws {
 		let change = SyncChange(
-			kind: .page,
+			kind: .board,
 			id: Self.id.uuidString,
 			fields: ["content": SyncField(value: ["english": "It rains."], stamp: Self.stamp)],
 			bases: ["content": SyncStamp(time: 1, counter: 0, device: "iPad")]
@@ -169,7 +169,7 @@ struct ErgoProtocolTests {
 			SyncRequest(cursor: 3, changes: [change], limit: 500),
 			#"{"changes":[{"bases":{"content":{"counter":0,"device":"iPad","time":1}},"fields":{"content":{"stamp":"#
 				+ Self.stampJSON
-				+ #","value":{"english":"It rains."}}},"id":"6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B","kind":"page"}],"cursor":3,"limit":500}"#
+				+ #","value":{"english":"It rains."}}},"id":"6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B","kind":"board"}],"cursor":3,"limit":500}"#
 		)
 		try expectRoundTrip(SyncRequest(cursor: nil, changes: []), #"{"changes":[]}"#)
 	}
@@ -179,14 +179,14 @@ struct ErgoProtocolTests {
 			cursor: 7,
 			changes: [SyncRecord(kind: .setting, id: SyncedSetting.ditherEnabled.rawValue, fields: ["value": SyncField(value: true, stamp: Self.stamp)])],
 			more: false,
-			superseded: [SupersededField(kind: .page, id: Self.id.uuidString, field: "content", lost: SyncField(value: ["english": "It snows."], stamp: Self.stamp))],
+			superseded: [SupersededField(kind: .board, id: Self.id.uuidString, field: "content", lost: SyncField(value: ["english": "It snows."], stamp: Self.stamp))],
 			serverTime: Self.date
 		)
 		try expectRoundTrip(
 			response,
 			#"{"changes":[{"fields":{"value":{"stamp":"# + Self.stampJSON + #","value":true}},"id":"ditherEnabled","kind":"setting"}],"#
 				+ #""cursor":7,"more":false,"serverTime":"2026-11-05T00:00:00Z","#
-				+ #""superseded":[{"field":"content","id":"6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B","kind":"page","lost":{"stamp":"#
+				+ #""superseded":[{"field":"content","id":"6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B","kind":"board","lost":{"stamp":"#
 				+ Self.stampJSON + #","value":{"english":"It snows."}}}]}"#
 		)
 	}
@@ -221,8 +221,8 @@ struct ErgoProtocolTests {
 		let codes: [ServiceError.Code] = [.signInRequired, .syncResetRequired, .rateLimited, .tooLarge]
 		#expect(codes.map(\.rawValue) == ["signInRequired", "syncResetRequired", "rateLimited", "tooLarge"])
 		try expectRoundTrip(
-			ServiceError(code: .tooLarge, message: "Expected a page under 256 KB, found 300 KB"),
-			#"{"code":"tooLarge","message":"Expected a page under 256 KB, found 300 KB"}"#
+			ServiceError(code: .tooLarge, message: "Expected a board under 256 KB, found 300 KB"),
+			#"{"code":"tooLarge","message":"Expected a board under 256 KB, found 300 KB"}"#
 		)
 	}
 

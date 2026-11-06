@@ -45,7 +45,7 @@ public struct ServiceError: Error, Codable, Sendable, Hashable {
 		/// Too many requests for this account, try again later
 		case rateLimited
 
-		/// Over a sync limit: "Expected a page under 256 KB, found 300 KB"
+		/// Over a sync limit: "Expected a board under 256 KB, found 300 KB"
 		case tooLarge
 
 		/// A wrong email or password, the same for both so it can't be used to find out which emails have accounts.

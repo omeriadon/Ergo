@@ -66,7 +66,7 @@ public enum LogicLetters {
 
 	// MARK: - Descriptors
 
-	/// What each letter stands for on a page, short enough to label a key
+	/// What each letter stands for on a board, short enough to label a key
 	public static let descriptorWordLimit = 4
 	public static let descriptorLengthLimit = 32
 

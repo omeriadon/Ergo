@@ -24,8 +24,8 @@ extension Defaults.Keys {
 
 	static let logicLetters = Key<[String]>("logicLetters", default: LogicLetters.defaults)
 
-	/// Synced as a record per page, statement and link, through `PageStore`. Drafts aren't in here, so they never sync.
-	static let pages = Key<[LogicPage]>("pages", default: [])
+	/// Synced as a record per board, statement and link, through `BoardStore`. Drafts aren't in here, so they never sync.
+	static let boards = Key<[LogicBoard]>("boards", default: [])
 
 	static let ditherEnabled = Key<Bool>("ditherEnabled", default: true)
 
@@ -44,7 +44,7 @@ extension Defaults.Keys {
 
 	static let libraryGeneralSearchText = Key<String>("libraryGeneralSearchText", default: "")
 
-	static let currentPageID = Key<UUID?>("currentPageID", default: nil)
+	static let currentBoardID = Key<UUID?>("currentBoardID", default: nil)
 
 	/// Which server a debug build talks to. Release builds ignore it and always use production.
 	/// It says where the server is, so it can't come from the server.
@@ -66,7 +66,7 @@ extension Defaults.Keys {
 	static let syncDeviceID = Key<String?>("syncDeviceID", default: nil)
 
 	/// What's been synced and what's waiting to be. Never replaced, only `reset()`, so nothing pending is lost.
-	/// Named for the canvas: the older `syncState` held page records with `content`, which the server now refuses,
+	/// Named for the canvas: the older `syncState` held board records with `content`, which the server now refuses,
 	/// so keeping it would leave sync failing forever.
 	static let syncState = Key<SyncReplica?>("canvasSyncState", default: nil)
 }

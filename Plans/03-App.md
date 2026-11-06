@@ -42,7 +42,7 @@ Ergo/Views/Check Tab/CheckTabView.swift        (update)
 
 ### TranslationAccount
 
-`@MainActor @Observable final class`, in the environment like `PageStore` (created in `ErgoApp`).
+`@MainActor @Observable final class`, in the environment like `BoardStore` (created in `ErgoApp`).
 - **`server: URL?`** is read from Defaults. Accept `http://` too, for local development against a Mac.
 - **`connections: [Provider: ConnectionStatus]`** and **`refresh()`**:
   - Called when Settings appears, and after connect/disconnect.
@@ -74,12 +74,12 @@ Ergo/Views/Check Tab/CheckTabView.swift        (update)
      | `started(.verify, _)` | "Checking it means the same" |
 
    - Animate row changes the way the file already does (`.animation(.smooth, value:)`).
-   - **Live descriptors:** on `foundClaims`, if the page's descriptors are all empty, show them straight away. That is the visible streaming, the keyboard labels fill in as the model finds them. If the translation fails, put back what was there before.
+   - **Live descriptors:** on `foundClaims`, if the board's descriptors are all empty, show them straight away. That is the visible streaming, the keyboard labels fill in as the model finds them. If the translation fails, put back what was there before.
 4. **Finished:**
    - Apply exactly as today: the stale guard, `translation`, `source = .english`, entries, descriptors.
    - Re-parse the entries first: if `LogicParser.parse(entries).diagnostics` isn't empty, don't apply them, and show "Server sent logic that doesn't parse".
 5. **Errors:** a `ServiceError.message` goes in `translationError` as it is. Cancelling shows nothing.
-6. **Leaving the page** (`page.id` changes) or the view disappearing cancels the task.
+6. **Leaving the board** (`board.id` changes) or the view disappearing cancels the task.
 
 ### Settings
 

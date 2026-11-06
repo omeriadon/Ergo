@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Any JSON, so the server can store and merge field values without knowing what a page is.
+/// Any JSON, so the server can store and merge field values without knowing what a board is.
 ///
 /// Numbers are `Double`, like JSON itself: integers past 2^53 lose precision, so don't put ids or hashes in a number.
 public enum JSONValue: Sendable, Hashable {

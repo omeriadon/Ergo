@@ -16,8 +16,8 @@ public enum BreakdownStage: TranslationStage {
 		public let maximumClaims: Int
 		public let descriptorWordLimit: Int
 
-		/// What the page already calls its claims, other statements' labels included. A claim that means the same
-		/// as one of these takes its text as its descriptor, so the claim keeps its letter. Missing when the page has none.
+		/// What the board already calls its claims, other statements' labels included. A claim that means the same
+		/// as one of these takes its text as its descriptor, so the claim keeps its letter. Missing when the board has none.
 		public let descriptors: [String]?
 
 		public init(english: String, maximumClaims: Int, descriptorWordLimit: Int, descriptors: [String]? = nil) {

@@ -67,7 +67,7 @@ struct LogicEditorTests {
 		#expect(LogicKeyboardEntry.symbol("=").alternate == .symbol("≠"))
 	}
 
-	/// Pages saved before ErgoKit existed have to keep decoding, so this is the synthesized format as it was then
+	/// Boards saved before ErgoKit existed have to keep decoding, so this is the synthesized format as it was then
 	@Test func savedEntriesStillDecode() throws {
 		let saved = #"[{"variable":{"_0":1}},{"symbol":{"_0":"→"}},{"delimiter":{"_0":"("}},{"variable":{"_0":6}},{"delimiter":{"_0":"\n"}},{"symbol":{"_0":"∴"}}]"#
 		let entries: [LogicKeyboardEntry] = [.variable(1), .symbol("→"), .delimiter("("), .variable(6), .delimiter("\n"), .symbol("∴")]

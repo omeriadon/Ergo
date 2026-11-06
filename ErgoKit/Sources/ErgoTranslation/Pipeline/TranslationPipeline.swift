@@ -18,14 +18,14 @@ import Foundation
 ///
 /// `breakDown` runs only steps 1 to 3, for pasted arguments that become several statements.
 ///
-/// On a canvas page every statement shares the page's letters. `descriptors` are what the page already calls
+/// On a canvas board every statement shares the board's letters. `descriptors` are what the board already calls
 /// its letters (six, empty for a free slot): a claim that matches one keeps that letter, and new claims only
 /// take free slots, so `P` in one statement is still `P` in the next.
 public struct TranslationPipeline: Sendable {
 	public let backend: any TranslationBackend
 	public let letters: [String]
 
-	/// Nil when the page names nothing, which gives every claim the next free letter in order
+	/// Nil when the board names nothing, which gives every claim the next free letter in order
 	public let descriptors: [String]?
 
 	public init(backend: any TranslationBackend, letters: [String], descriptors: [String]? = nil) {
@@ -132,7 +132,7 @@ public struct TranslationPipeline: Sendable {
 	}
 
 	/// Each statement on its own line, then ∴ and the conclusion. Problems are worded for the model to fix.
-	/// `allowed` limits which letter slots may appear, so a statement can't take a letter another claim on the page owns.
+	/// `allowed` limits which letter slots may appear, so a statement can't take a letter another claim on the board owns.
 	private func compile(
 		_ output: FormalizeStage.Output,
 		premises expectedPremises: Int,
@@ -304,21 +304,21 @@ extension TranslationPipeline {
 		guard slots.unplaced == 0 else {
 			let free = slots.existing.count(where: \.isEmpty)
 			let noun = free == 1 ? "claim" : "claims"
-			return .failure(Rejection(message: "Expected at most \(free) new \(noun), found \(free + slots.unplaced), the page's other letters are taken"))
+			return .failure(Rejection(message: "Expected at most \(free) new \(noun), found \(free + slots.unplaced), the board's other letters are taken"))
 		}
 		return .success(Understood(gate: gate, breakdown: breakdown, slots: slots))
 	}
 
-	/// The page's descriptors as six sanitised strings, empty for a free slot
+	/// The board's descriptors as six sanitised strings, empty for a free slot
 	static func existing(_ descriptors: [String]?) -> [String] {
 		LogicLetters.slots.map { LogicLetters.descriptor(for: $0, in: descriptors ?? []) }
 	}
 }
 
-/// Which letter slot each claim gets. A claim whose descriptor matches one the page already has keeps that slot,
+/// Which letter slot each claim gets. A claim whose descriptor matches one the board already has keeps that slot,
 /// and the rest take free slots in order, so with nothing existing it's the claims in order, one letter each.
 struct ClaimSlots {
-	/// The page's descriptors going in, one per slot
+	/// The board's descriptors going in, one per slot
 	let existing: [String]
 
 	/// The slot, from 0, of each claim in claim order
@@ -327,7 +327,7 @@ struct ClaimSlots {
 	/// How many new claims found no free slot. The claims don't fit while this isn't 0.
 	let unplaced: Int
 
-	/// The page's descriptors coming out: existing ones kept, each new claim's in its slot
+	/// The board's descriptors coming out: existing ones kept, each new claim's in its slot
 	let descriptors: [String]
 
 	init(claims: [BreakdownStage.Output.Claim], existing: [String]) {

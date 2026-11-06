@@ -70,14 +70,14 @@ struct SyncLiveTests {
 			// Nothing changed, nobody hears
 			_ = try await phone.sync(SyncRequest(cursor: nil, changes: []))
 
-			let page = newPageID()
+			let board = newBoardID()
 			_ = try await phone.sync(SyncRequest(cursor: nil, changes: [
-				statementChange(page, ["content": SyncField(value: content("From the phone"), stamp: stamp(device: "phone"))]),
+				statementChange(board, ["content": SyncField(value: content("From the phone"), stamp: stamp(device: "phone"))]),
 			]))
 			#expect(try await eventually { heard.pad.all == [.changed(cursor: 1)] })
 
 			_ = try await pad.sync(SyncRequest(cursor: 1, changes: [
-				statementChange(page, ["position": SyncField(value: ["x": 1, "y": 2], stamp: stamp(device: "pad"))]),
+				statementChange(board, ["position": SyncField(value: ["x": 1, "y": 2], stamp: stamp(device: "pad"))]),
 			]))
 			#expect(try await eventually { heard.phone.all == [.changed(cursor: 2)] })
 
@@ -117,7 +117,7 @@ struct SyncLiveTests {
 		try await withLiveServer(.testing(scratch)) { app, server in
 			let (client, _) = try await device(server)
 			let changes = (0 ..< 5).map { _ in
-				statementChange(newPageID(), ["content": SyncField(value: content(String(repeating: "a", count: 250 * 1024)), stamp: stamp())])
+				statementChange(newBoardID(), ["content": SyncField(value: content(String(repeating: "a", count: 250 * 1024)), stamp: stamp())])
 			}
 
 			do {
@@ -174,27 +174,27 @@ struct SyncLiveTests {
 			var devices = [Device("phone", client: phoneClient), Device("pad", client: padClient)]
 
 			var random = SplitMix(seed: seed)
-			let newLinkID = newPageID()
-			let pages = (0 ..< 3).map { _ in newPageID() }
-			let statements = (0 ..< 3).map { _ in newPageID() }
+			let newLinkID = newBoardID()
+			let boards = (0 ..< 3).map { _ in newBoardID() }
+			let statements = (0 ..< 3).map { _ in newBoardID() }
 			let bookmarks = ["fallacy.strawman", "razor.occam"]
 
 			for step in 0 ..< 60 {
 				let index = Int.random(in: 0 ..< devices.count, using: &random)
-				let page = pages.randomElement(using: &random) ?? pages[0]
+				let board = boards.randomElement(using: &random) ?? boards[0]
 				let statement = statements.randomElement(using: &random) ?? statements[0]
 				switch Int.random(in: 0 ..< 10, using: &random) {
 					case 0:
-						let fields = ["page": JSONValue.string(page), "content": content("Step \(step) on \(index)")]
+						let fields = ["board": JSONValue.string(board), "content": content("Step \(step) on \(index)")]
 						devices[index].replica.recordLocal(kind: .statement, id: statement, fields: fields)
 					case 1:
 						let position: JSONValue = ["x": .number(Double(step)), "y": .number(Double(index))]
-						devices[index].replica.recordLocal(kind: .statement, id: statement, fields: ["page": .string(page), "position": position])
+						devices[index].replica.recordLocal(kind: .statement, id: statement, fields: ["board": .string(board), "position": position])
 					case 2:
 						let slot = Int.random(in: 0 ..< SyncFieldName.descriptorSlots, using: &random)
-						devices[index].replica.recordLocal(kind: .page, id: page, fields: [SyncFieldName.descriptor(slot): .string("claim \(step)")])
+						devices[index].replica.recordLocal(kind: .board, id: board, fields: [SyncFieldName.descriptor(slot): .string("claim \(step)")])
 					case 3:
-						devices[index].replica.recordLocal(kind: .page, id: page, fields: ["deleted": .bool(Bool.random(using: &random))])
+						devices[index].replica.recordLocal(kind: .board, id: board, fields: ["deleted": .bool(Bool.random(using: &random))])
 					case 4:
 						let bookmark = bookmarks.randomElement(using: &random) ?? bookmarks[0]
 						devices[index].replica.recordLocal(kind: .bookmark, id: bookmark, fields: ["present": .bool(Bool.random(using: &random))])
@@ -203,7 +203,7 @@ struct SyncLiveTests {
 					case 6:
 						_ = try await devices[index].syncOnce()
 					case 7:
-						let fields = ["page": JSONValue.string(page), "premise": .string(statements[0]), "conclusion": .string(statements[1])]
+						let fields = ["board": JSONValue.string(board), "premise": .string(statements[0]), "conclusion": .string(statements[1])]
 						devices[index].replica.recordLocal(kind: .link, id: newLinkID, fields: fields)
 					default:
 						try await devices[index].syncUntilDone()
@@ -237,7 +237,7 @@ struct SyncLiveTests {
 			let (padClient, _) = try await device(server)
 			var phone = Device("phone", client: phoneClient)
 			var pad = Device("pad", client: padClient)
-			let statement = newPageID()
+			let statement = newBoardID()
 
 			phone.replica.recordLocal(kind: .statement, id: statement, fields: ["content": content("First")])
 			try await phone.syncUntilDone()

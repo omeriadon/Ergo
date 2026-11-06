@@ -55,8 +55,8 @@ private nonisolated struct CanvasRoom: Equatable {
 	}
 }
 
-/// The current page as an argument map: boxes you can drag, arrows between them, and a bar for what you can do
-/// with the selection. Everything is edited through `PageStore`; this view only holds what's on screen
+/// The current board as an argument map: boxes you can drag, arrows between them, and a bar for what you can do
+/// with the selection. Everything is edited through `BoardStore`; this view only holds what's on screen
 /// (pan, zoom, selection).
 struct CanvasView: View {
 	private struct ZoomSource {
@@ -86,8 +86,8 @@ struct CanvasView: View {
 
 	let openEditor: (Statement.ID) -> Void
 
-	@Environment(PageStore.self)
-	private var pageStore
+	@Environment(BoardStore.self)
+	private var boardStore
 
 	@Environment(NavigationManager.self)
 	private var navigation
@@ -114,7 +114,7 @@ struct CanvasView: View {
 	/// is an invisible stand-in over it.
 	@State private var zoomSource: ZoomSource?
 
-	/// The page as it was when a drag began, for its undo step
+	/// The board as it was when a drag began, for its undo step
 	@State private var dragBefore: CanvasHistory.Snapshot?
 
 	@State private var selection: CanvasSelection?
@@ -126,7 +126,7 @@ struct CanvasView: View {
 	/// Whether the arrow being drawn makes the selected box a conclusion rather than a premise
 	@State private var connectsAsConclusion = false
 
-	/// Whether the canvas still fits itself to the page as the room changes. Adding a box ends it, so the bar changing
+	/// Whether the canvas still fits itself to the board as the room changes. Adding a box ends it, so the bar changing
 	/// for the new selection can't move the canvas again afterwards.
 	@State private var keepsFitting = true
 
@@ -142,8 +142,8 @@ struct CanvasView: View {
 	@State private var canUndo = false
 	@State private var canRedo = false
 
-	private var page: LogicPage {
-		pageStore.current
+	private var board: LogicBoard {
+		boardStore.current
 	}
 
 	private var letters: [String] {
@@ -186,11 +186,11 @@ struct CanvasView: View {
 	private var canvas: some View {
 		let relations = boxRelations
 		let connectable = connectableStatements
-		let boxes = page.statements.map { statement in
+		let boxes = board.statements.map { statement in
 			CanvasBoxModel(
 				statement: statement,
 				letters: letters,
-				descriptors: page.descriptors,
+				descriptors: board.descriptors,
 				relations: relations[statement.id] ?? BoxRelations(),
 				verdict: verdicts[statement.id],
 				appearance: appearance(of: statement.id, connectable: connectable)
@@ -199,7 +199,7 @@ struct CanvasView: View {
 
 		return CanvasBoard(
 			boxes: boxes,
-			links: page.links,
+			links: board.links,
 			selectedStatement: selectedStatement,
 			selectedLink: selectedLink,
 			controller: board,
@@ -230,7 +230,7 @@ struct CanvasView: View {
 
 	private var outline: some View {
 		CanvasOutlineView(
-			page: page,
+			board: board,
 			verdicts: verdicts,
 			edit: edit,
 			delete: delete,
@@ -307,10 +307,10 @@ struct CanvasView: View {
 				.accessibilityIdentifier("check.fitButton")
 			}
 
-			Button("Pages", systemImage: "text.page.and.line.vertical.and.text.page") {
-				navigation.presentSheet(.pages)
+			Button("Boards", systemImage: "text.page.and.line.vertical.and.text.page") {
+				navigation.presentSheet(.boards)
 			}
-			.accessibilityIdentifier("check.pagesButton")
+			.accessibilityIdentifier("check.boardsButton")
 		}
 
 		ToolbarOverflowMenu {
@@ -357,7 +357,7 @@ struct CanvasView: View {
 		}
 	}
 
-	/// The text and breakdown sheets edit the page themselves, so what they did becomes one undo step on the way out
+	/// The text and breakdown sheets edit the board themselves, so what they did becomes one undo step on the way out
 	private func present(_ sheet: Sheet, named name: String) {
 		sheetStart = history.snapshot()
 		sheetName = name
@@ -392,11 +392,11 @@ struct CanvasView: View {
 
 	/// Titles of what each box is joined to, for its ∴ mark and for VoiceOver
 	private var boxRelations: [Statement.ID: BoxRelations] {
-		let page = page
-		let titles = Dictionary(page.statements.map { ($0.id, StatementBoxView.title(of: $0, letters: letters)) }, uniquingKeysWith: { first, _ in first })
+		let board = board
+		let titles = Dictionary(board.statements.map { ($0.id, StatementBoxView.title(of: $0, letters: letters)) }, uniquingKeysWith: { first, _ in first })
 
 		var relations: [Statement.ID: BoxRelations] = [:]
-		for link in page.links where link.premise != link.conclusion {
+		for link in board.links where link.premise != link.conclusion {
 			guard let premise = titles[link.premise], let conclusion = titles[link.conclusion] else { continue }
 			relations[link.conclusion, default: BoxRelations()].premises.append(premise)
 			relations[link.premise, default: BoxRelations()].conclusions.append(conclusion)
@@ -407,8 +407,8 @@ struct CanvasView: View {
 	/// While drawing an arrow, the boxes it could end at. Nil when not drawing one.
 	private var connectableStatements: Set<Statement.ID>? {
 		guard let connecting else { return nil }
-		let map = page.map
-		return Set(page.statements.map(\.id).filter { target in
+		let map = board.map
+		return Set(board.statements.map(\.id).filter { target in
 			ArgumentMapValidator.problem(adding: newLink(from: connecting, to: target), to: map) == nil
 		})
 	}
@@ -417,9 +417,9 @@ struct CanvasView: View {
 	private var activeSelection: CanvasSelection? {
 		switch selection {
 			case let .statement(id)?:
-				page.statement(id) == nil ? nil : selection
+				board.statement(id) == nil ? nil : selection
 			case let .link(id)?:
-				page.links.contains { $0.id == id } ? selection : nil
+				board.links.contains { $0.id == id } ? selection : nil
 			case nil:
 				nil
 		}
@@ -445,7 +445,7 @@ struct CanvasView: View {
 	private func edit(_ id: Statement.ID) {
 		selection = .statement(id)
 
-		if let statement = page.statement(id) {
+		if let statement = board.statement(id) {
 			let box = CanvasRect.box(at: statement.position)
 			let transform = board.transform
 			let origin = transform.screen(CanvasPoint(x: box.minX, y: box.minY))
@@ -469,20 +469,20 @@ struct CanvasView: View {
 	}
 
 	private func boxMoved(_ id: Statement.ID, to position: CanvasPoint) {
-		pageStore.moveStatement(id: id, to: position)
+		boardStore.moveStatement(id: id, to: position)
 		history.register(dragBefore, name: "Move Statement")
 		dragBefore = nil
 	}
 
 	/// For VoiceOver, which can't drag: a step of the grid at a time
 	private func nudge(_ id: Statement.ID, columns: Int, rows: Int) {
-		guard let statement = page.statement(id) else { return }
+		guard let statement = board.statement(id) else { return }
 		let target = CanvasGrid.snapped(CanvasPoint(
 			x: statement.position.x + Double(columns) * CanvasGrid.step,
 			y: statement.position.y + Double(rows) * CanvasGrid.step
 		))
 		history.perform("Move Statement") {
-			pageStore.moveStatement(id: id, to: target)
+			boardStore.moveStatement(id: id, to: target)
 		}
 	}
 
@@ -517,7 +517,7 @@ struct CanvasView: View {
 		var problem: ArgumentMapProblem?
 		history.perform("Add Link") {
 			withAnimation(motion) {
-				problem = pageStore.link(premise: premise, conclusion: conclusion)
+				problem = boardStore.link(premise: premise, conclusion: conclusion)
 			}
 		}
 		if let problem {
@@ -530,14 +530,14 @@ struct CanvasView: View {
 
 	/// A new empty box where the person is looking
 	private func addStatement() {
-		guard page.statements.count < ArgumentMapValidator.defaultMaximumStatements else {
+		guard board.statements.count < ArgumentMapValidator.defaultMaximumStatements else {
 			show(statementLimitMessage)
 			return
 		}
 
 		history.perform("Add Statement") {
 			withAnimation(motion) {
-				selection = pageStore.addStatement(at: freeSpot(near: viewCentre)).map { .statement($0) }
+				selection = boardStore.addStatement(at: freeSpot(near: viewCentre)).map { .statement($0) }
 			}
 		}
 
@@ -550,14 +550,14 @@ struct CanvasView: View {
 	private var statementLimitMessage: String {
 		ArgumentMapProblem.tooManyStatements(
 			limit: ArgumentMapValidator.defaultMaximumStatements,
-			found: page.statements.count + 1
+			found: board.statements.count + 1
 		).message
 	}
 
 	private func delete(_ id: Statement.ID) {
 		history.perform("Delete Statement") {
 			withAnimation(motion) {
-				pageStore.deleteStatement(id: id)
+				boardStore.deleteStatement(id: id)
 			}
 		}
 	}
@@ -565,7 +565,7 @@ struct CanvasView: View {
 	private func deleteLink(_ id: Link.ID) {
 		history.perform("Delete Link") {
 			withAnimation(motion) {
-				pageStore.unlink(id: id)
+				boardStore.unlink(id: id)
 			}
 		}
 	}
@@ -573,7 +573,7 @@ struct CanvasView: View {
 	private func arrange() {
 		history.perform("Arrange") {
 			withAnimation(motion) {
-				pageStore.arrange()
+				boardStore.arrange()
 			}
 			board.move(to: fitted, animation: motion)
 		}
@@ -589,7 +589,7 @@ struct CanvasView: View {
 	/// The grid point nearest `point` where a box fits, else the nearest gap
 	private func freeSpot(near point: CanvasPoint) -> CanvasPoint {
 		let target = CanvasGrid.snapped(point)
-		let occupied = page.statements.map(\.position)
+		let occupied = board.statements.map(\.position)
 		let box = CanvasRect.box(at: target)
 		if !occupied.contains(where: { box.intersects(.box(at: $0), margin: CanvasLayout.minimumGap) }) {
 			return target
@@ -598,7 +598,7 @@ struct CanvasView: View {
 	}
 
 	private var fitted: CanvasTransform {
-		CanvasTransform.fitting(page.statements.map { .box(at: $0.position) }, in: room.viewport, insets: room.insets)
+		CanvasTransform.fitting(board.statements.map { .box(at: $0.position) }, in: room.viewport, insets: room.insets)
 	}
 
 	private func fit(animated: Bool) {
@@ -611,8 +611,8 @@ struct CanvasView: View {
 		let link = LinkHitTest.link(
 			near: point,
 			tolerance: 24 / board.transform.scale,
-			in: page.links,
-			positions: Dictionary(page.statements.map { ($0.id, $0.position) }, uniquingKeysWith: { first, _ in first })
+			in: board.links,
+			positions: Dictionary(board.statements.map { ($0.id, $0.position) }, uniquingKeysWith: { first, _ in first })
 		)
 		selection = link.map { .link($0) }
 	}
@@ -645,8 +645,8 @@ struct CanvasView: View {
 	private var lifecycle: CanvasLifecycle {
 		CanvasLifecycle(
 			checkKey: CanvasCheckKey(
-				statements: page.statements.map { .init(id: $0.id, position: $0.position, logic: $0.logic) },
-				links: page.links
+				statements: board.statements.map { .init(id: $0.id, position: $0.position, logic: $0.logic) },
+				links: board.links
 			),
 			notice: notice,
 			undoManager: undoManager,
@@ -658,7 +658,7 @@ struct CanvasView: View {
 		)
 	}
 
-	/// Keeps the whole page in view until the person moves the canvas or adds a box. The first measurements come in before
+	/// Keeps the whole board in view until the person moves the canvas or adds a box. The first measurements come in before
 	/// the screen has finished laying out, so fitting only once would fit to the wrong room. Not while the editor is what
 	/// changed the room.
 	private func fitUntilMoved() {
@@ -671,13 +671,13 @@ struct CanvasView: View {
 		try? await Task.sleep(for: .milliseconds(400))
 		guard !Task.isCancelled else { return }
 
-		let result = await BoxVerdict.all(in: pageStore.current.map)
+		let result = await BoxVerdict.all(in: boardStore.current.map)
 		guard !Task.isCancelled else { return }
 		verdicts = result
 	}
 
 	private func wireHistory() {
-		history.store = pageStore
+		history.store = boardStore
 		history.undoManager = undoManager
 		history.didChange = refreshUndo
 		refreshUndo()

@@ -18,10 +18,10 @@ public struct ArgumentBreakdownApplication<Node: ArgumentNode, Link: ArgumentLin
 	/// The new statement for the conclusion, nil when the text drew none or it didn't fit
 	public var conclusion: UUID?
 
-	/// Premises left out because the page was full
+	/// Premises left out because the board was full
 	public var skippedPremises: Int
 
-	/// The conclusion was left out because the page was full
+	/// The conclusion was left out because the board was full
 	public var skippedConclusion: Bool
 
 	/// How many statements didn't fit
@@ -60,7 +60,7 @@ public extension ArgumentBreakdown {
 		result.skippedPremises = premises.count - kept.count
 		result.skippedConclusion = hasConclusion && !conclusionFits
 		guard !kept.isEmpty || conclusionFits else {
-			// Nothing fits, and replacing must not empty the page for nothing
+			// Nothing fits, and replacing must not empty the board for nothing
 			return result
 		}
 

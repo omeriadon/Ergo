@@ -13,7 +13,7 @@ import Network
 import SwiftUI
 import UIKit
 
-/// Keeps pages, bookmarks and synced settings the same on every device signed in to the same account,
+/// Keeps boards, bookmarks and synced settings the same on every device signed in to the same account,
 /// with Apple or an email.
 ///
 /// It syncs on launch, on becoming active, 2 s after a local change, when another device pushes, and after signing
@@ -31,8 +31,8 @@ final class SyncController {
 
 	private(set) var status = Status.notSynced
 
-	/// Pages that stay on this device because they're over the server's size limit
-	private(set) var oversizedPages: [String] = []
+	/// Boards that stay on this device because they're over the server's size limit
+	private(set) var oversizedBoards: [String] = []
 
 	var isSignedIn: Bool {
 		account.signedIn != nil
@@ -49,7 +49,7 @@ final class SyncController {
 	}
 
 	@ObservationIgnored private let account: TranslationAccount
-	@ObservationIgnored private let pageStore: PageStore
+	@ObservationIgnored private let boardStore: BoardStore
 	@ObservationIgnored private let catalog: CatalogStore
 
 	@ObservationIgnored private var replica: SyncReplica
@@ -58,14 +58,14 @@ final class SyncController {
 	/// Without its email, so adding one to the account doesn't start over.
 	@ObservationIgnored private var syncingAccount: SignedInAccount?
 
-	init(account: TranslationAccount, pageStore: PageStore, catalog: CatalogStore) {
+	init(account: TranslationAccount, boardStore: BoardStore, catalog: CatalogStore) {
 		self.account = account
-		self.pageStore = pageStore
+		self.boardStore = boardStore
 		self.catalog = catalog
 		replica = Defaults[.syncState] ?? SyncReplica(device: Self.deviceID())
 		syncingAccount = account.signedIn?.withoutEmail
 
-		pageStore.didSave = { [weak self] changed, deleted in
+		boardStore.didSave = { [weak self] changed, deleted in
 			self?.record(changed, deleted: deleted)
 		}
 	}
@@ -240,31 +240,31 @@ final class SyncController {
 
 	@ObservationIgnored private var debounce: Task<Void, Never>?
 
-	private func record(_ pages: [LogicPage], deleted: Set<LogicPage.ID>) {
+	private func record(_ boards: [LogicBoard], deleted: Set<LogicBoard.ID>) {
 		guard isSignedIn else { return }
 
-		// Before anything is recorded: a link to a statement deleted here only counts as the page's while that statement lives
-		let removed = removedRecords(from: pages)
+		// Before anything is recorded: a link to a statement deleted here only counts as the board's while that statement lives
+		let removed = removedRecords(from: boards)
 
 		var changed = false
-		for page in pages {
-			if let fields = try? PageRecord.fields(of: page) {
-				changed = replica.recordLocal(kind: .page, id: PageRecord.id(page.id), fields: fields) || changed
+		for board in boards {
+			if let fields = try? BoardRecord.fields(of: board) {
+				changed = replica.recordLocal(kind: .board, id: BoardRecord.id(board.id), fields: fields) || changed
 			}
-			for statement in page.statements {
-				guard let fields = try? StatementRecord.fields(of: statement, in: page.id) else { continue }
+			for statement in board.statements {
+				guard let fields = try? StatementRecord.fields(of: statement, in: board.id) else { continue }
 				changed = replica.recordLocal(kind: .statement, id: StatementRecord.id(statement.id), fields: fields) || changed
 			}
-			for link in page.links {
-				changed = replica.recordLocal(kind: .link, id: LinkRecord.id(link.id), fields: LinkRecord.fields(of: link, in: page.id)) || changed
+			for link in board.links {
+				changed = replica.recordLocal(kind: .link, id: LinkRecord.id(link.id), fields: LinkRecord.fields(of: link, in: board.id)) || changed
 			}
 		}
 		for (kind, id) in removed {
 			changed = replica.recordLocal(kind: kind, id: id, fields: [SyncFieldName.deleted: true]) || changed
 		}
-		// Only the page's tombstone: its statements and links are ignored with it, and the server prunes them
+		// Only the board's tombstone: its statements and links are ignored with it, and the server prunes them
 		for id in deleted {
-			changed = replica.recordLocal(kind: .page, id: PageRecord.id(id), fields: [SyncFieldName.deleted: true]) || changed
+			changed = replica.recordLocal(kind: .board, id: BoardRecord.id(id), fields: [SyncFieldName.deleted: true]) || changed
 		}
 		if changed {
 			saveReplica()
@@ -272,21 +272,21 @@ final class SyncController {
 		}
 	}
 
-	/// Statements and links the replica has alive for these pages that the pages no longer have, because they were
-	/// deleted here. Only ones this version can read, and never ones the replica ignores (their page or statement
+	/// Statements and links the replica has alive for these boards that the boards no longer have, because they were
+	/// deleted here. Only ones this version can read, and never ones the replica ignores (their board or statement
 	/// might just not have arrived), so it never deletes what it hasn't shown.
-	private func removedRecords(from pages: [LogicPage]) -> [(kind: SyncKind, id: String)] {
-		let local = Dictionary(pages.map { (PageRecord.id($0.id), $0) }) { first, _ in first }
+	private func removedRecords(from boards: [LogicBoard]) -> [(kind: SyncKind, id: String)] {
+		let local = Dictionary(boards.map { (BoardRecord.id($0.id), $0) }) { first, _ in first }
 		var removed: [(kind: SyncKind, id: String)] = []
 		for record in replica.records.values where !record.isDeleted {
-			guard let owner = record.owningPage, let page = local[owner], !replica.isIgnored(record) else { continue }
+			guard let owner = record.owningBoard, let board = local[owner], !replica.isIgnored(record) else { continue }
 			switch record.kind {
 				case .statement:
-					if StatementRecord.canRead(record), !page.statements.contains(where: { StatementRecord.id($0.id) == record.id }) {
+					if StatementRecord.canRead(record), !board.statements.contains(where: { StatementRecord.id($0.id) == record.id }) {
 						removed.append((.statement, record.id))
 					}
 				case .link:
-					if LinkRecord.link(from: record) != nil, !page.links.contains(where: { LinkRecord.id($0.id) == record.id }) {
+					if LinkRecord.link(from: record) != nil, !board.links.contains(where: { LinkRecord.id($0.id) == record.id }) {
 						removed.append((.link, record.id))
 					}
 				default:
@@ -337,15 +337,15 @@ final class SyncController {
 		}
 		recordBookmarks()
 
-		// Deleted here while signed out. Only pages this version could show, so it never deletes one it skipped.
-		let local = Set(pageStore.pages.map { PageRecord.id($0.id) })
+		// Deleted here while signed out. Only boards this version could show, so it never deletes one it skipped.
+		let local = Set(boardStore.boards.map { BoardRecord.id($0.id) })
 		let missing = replica.records.values.filter { record in
-			record.kind == .page
+			record.kind == .board
 				&& !record.isDeleted
 				&& !local.contains(record.id)
-				&& PageRecord.canRead(record)
+				&& BoardRecord.canRead(record)
 		}
-		record(pageStore.pages, deleted: Set(missing.compactMap { UUID(uuidString: $0.id) }))
+		record(boardStore.boards, deleted: Set(missing.compactMap { UUID(uuidString: $0.id) }))
 		saveReplica()
 	}
 
@@ -354,10 +354,10 @@ final class SyncController {
 
 		let oversized = replica.oversized
 		let letters = LogicLetters.resolved(Defaults[.logicLetters])
-		oversizedPages = pageStore.pages
-			.filter { page in
-				oversized.contains(SyncRecord.Key(kind: .page, id: PageRecord.id(page.id)))
-					|| page.statements.contains { oversized.contains(SyncRecord.Key(kind: .statement, id: StatementRecord.id($0.id))) }
+		oversizedBoards = boardStore.boards
+			.filter { board in
+				oversized.contains(SyncRecord.Key(kind: .board, id: BoardRecord.id(board.id)))
+					|| board.statements.contains { oversized.contains(SyncRecord.Key(kind: .statement, id: StatementRecord.id($0.id))) }
 			}
 			.map { $0.title(letters: letters) }
 	}
@@ -367,15 +367,15 @@ final class SyncController {
 	/// `pullComplete` is false while more is still coming. A statement a link joins can be missing only because it
 	/// hasn't arrived yet, so links are only cleaned up once everything has.
 	private func write(_ applied: SyncApplied, pullComplete: Bool) {
-		var affected: Set<LogicPage.ID> = []
+		var affected: Set<LogicBoard.ID> = []
 		for record in applied.changed {
 			switch record.kind {
-				case .page:
+				case .board:
 					if let id = UUID(uuidString: record.id) {
 						affected.insert(id)
 					}
 				case .statement, .link:
-					if let id = record.owningPage.flatMap(UUID.init(uuidString:)) {
+					if let id = record.owningBoard.flatMap(UUID.init(uuidString:)) {
 						affected.insert(id)
 					}
 				case .bookmark:
@@ -389,20 +389,20 @@ final class SyncController {
 			}
 		}
 
-		// Pages are built from the replica as a whole, so the order records arrived in doesn't matter
-		let rebuilt = PageRecord.rebuild(affected, from: replica, local: pageStore.pages)
-		pageStore.applyRemote(rebuilt.pages, deleted: rebuilt.deleted)
+		// Boards are built from the replica as a whole, so the order records arrived in doesn't matter
+		let rebuilt = BoardRecord.rebuild(affected, from: replica, local: boardStore.boards)
+		boardStore.applyRemote(rebuilt.boards, deleted: rebuilt.deleted)
 
 		// Only a statement's content is worth a copy. Everything else is last writer wins.
 		for field in applied.superseded(.statement, field: SyncFieldName.content) {
 			guard
 				let id = UUID(uuidString: field.id),
-				let page = pageStore.pages.first(where: { $0.statement(id) != nil }),
-				let copy = StatementRecord.copy(of: field.lost, beside: id, in: page)
+				let board = boardStore.boards.first(where: { $0.statement(id) != nil }),
+				let copy = StatementRecord.copy(of: field.lost, beside: id, in: board)
 			else {
 				continue
 			}
-			pageStore.insertStatementCopy(copy, into: page.id)
+			boardStore.insertStatementCopy(copy, into: board.id)
 		}
 
 		if pullComplete {
@@ -410,7 +410,7 @@ final class SyncController {
 		}
 	}
 
-	/// A link whose statement is gone on a page that isn't. Another device deleted the statement without its links,
+	/// A link whose statement is gone on a board that isn't. Another device deleted the statement without its links,
 	/// or drew one to it at the same moment. The replica ignores it, so this makes that permanent.
 	private func deleteDanglingLinks() {
 		func isGone(_ kind: SyncKind, _ id: String) -> Bool {
@@ -418,8 +418,8 @@ final class SyncController {
 		}
 
 		let dangling = replica.records.values.filter { record in
-			guard record.kind == .link, !record.isDeleted, let page = record.owningPage, let ends = record.joined else { return false }
-			return !isGone(.page, page) && (isGone(.statement, ends.premise) || isGone(.statement, ends.conclusion))
+			guard record.kind == .link, !record.isDeleted, let board = record.owningBoard, let ends = record.joined else { return false }
+			return !isGone(.board, board) && (isGone(.statement, ends.premise) || isGone(.statement, ends.conclusion))
 		}
 
 		var changed = false
@@ -440,7 +440,7 @@ final class SyncController {
 	/// Goes up whenever syncing stops for an account change, so a reply that arrives afterwards is dropped
 	@ObservationIgnored private var generation = 0
 
-	/// Local changes wait for a pause, like `PageStore`'s save
+	/// Local changes wait for a pause, like `BoardStore`'s save
 	private func scheduleSync() {
 		debounce?.cancel()
 		debounce = Task {
@@ -494,7 +494,7 @@ final class SyncController {
 				return
 			}
 			// Typing that's waiting for its save goes in this request
-			pageStore.save()
+			boardStore.save()
 			let request = replica.makeRequest()
 
 			do {
@@ -502,7 +502,7 @@ final class SyncController {
 				guard generation == self.generation else { return }
 
 				// Records typing from during the request first, so a remote edit that beats it becomes a copy
-				pageStore.save()
+				boardStore.save()
 				let applied = replica.apply(response, sent: request)
 				// Written back before the replica is saved, so being killed in between only means pulling again
 				write(applied, pullComplete: !response.more)
@@ -585,7 +585,7 @@ final class SyncController {
 	/// Pushes what's pending straight away, so closing the app here and opening it on another device works.
 	/// iOS suspends an app soon after it leaves, so this asks for the few seconds a sync needs.
 	private func flush() {
-		pageStore.save()
+		boardStore.save()
 		guard isSignedIn, !replica.pending.isEmpty, backgroundTask == .invalid else { return }
 
 		backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "Sync") { [weak self] in
@@ -665,7 +665,7 @@ extension SyncController {
 		let account = TranslationAccount(
 			signedIn: signedIn ? SignedInAccount(server: ServerEnvironment.productionURL, id: UUID(), email: email) : nil
 		)
-		let sync = SyncController(account: account, pageStore: PageStore(), catalog: CatalogStore())
+		let sync = SyncController(account: account, boardStore: BoardStore(), catalog: CatalogStore())
 		sync.status = status
 		return sync
 	}

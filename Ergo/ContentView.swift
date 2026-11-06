@@ -57,7 +57,7 @@ struct ContentView: View {
 						.toolbarTitleItem()
 				}
 			} label: {
-				Label("Check", systemImage: "checkmark.seal")
+				Label("Board", systemImage: "flowchart")
 			}
 
 			Tab(value: .debate) {
@@ -136,8 +136,8 @@ struct ContentView: View {
 				case .logicLetters:
 					LogicLettersSheet()
 
-				case .pages:
-					PagesSheet()
+				case .boards:
+					BoardsSheet()
 			}
 		}
 		.fontDesign(.rounded)

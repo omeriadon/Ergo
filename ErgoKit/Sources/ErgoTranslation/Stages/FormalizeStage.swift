@@ -27,9 +27,9 @@ public enum FormalizeStage: TranslationStage {
 		public let conclusion: String?
 		public let letters: [Letter]
 
-		/// The letters the page already names, as `letter` and `meaning` (its descriptor), whichever statement uses them.
+		/// The letters the board already names, as `letter` and `meaning` (its descriptor), whichever statement uses them.
 		/// A claim in `letters` that is also here keeps that letter, and no other claim may take a letter listed here.
-		/// Missing when the page names none, or the request carried no descriptors.
+		/// Missing when the board names none, or the request carried no descriptors.
 		public let descriptors: [Letter]?
 
 		/// `LogicGrammar.reference`

@@ -15,7 +15,7 @@ public enum SyncLimit {
 	/// Any one field value, as compact JSON (`JSONValue.byteCount`)
 	public static let valueBytes = 256 << 10
 
-	/// Every canvas box and arrow is a record, so a big page alone is a few hundred
+	/// Every canvas box and arrow is a record, so a big board alone is a few hundred
 	public static let recordsPerAccount = 50000
 	public static let requestsPerMinute = 60
 

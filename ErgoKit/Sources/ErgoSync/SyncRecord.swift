@@ -63,7 +63,7 @@ public struct SyncRecord: Codable, Sendable, Hashable {
 		return fields.allSatisfy { name, field in name == SyncFieldName.deleted || field.stamp < deleted.stamp }
 	}
 
-	/// When the record last changed on any device, so every device sorts pages the same way
+	/// When the record last changed on any device, so every device sorts boards the same way
 	public var newestStamp: SyncStamp? {
 		fields.values.lazy.map(\.stamp).max()
 	}

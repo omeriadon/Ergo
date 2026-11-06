@@ -9,8 +9,8 @@ import Defaults
 import ErgoLogic
 import SwiftUI
 
-/// Edits the whole page as one block of text, one statement a line, in English or in logic. The statements stay the
-/// source of truth: Done matches the lines to them (`PageStore.applyText`), so lines that didn't change keep their box and links.
+/// Edits the whole board as one block of text, one statement a line, in English or in logic. The statements stay the
+/// source of truth: Done matches the lines to them (`BoardStore.applyText`), so lines that didn't change keep their box and links.
 struct EditAsTextSheet: View {
 	enum Kind: Hashable {
 		case english, logic
@@ -26,8 +26,8 @@ struct EditAsTextSheet: View {
 	@Environment(\.dismiss)
 	private var dismiss
 
-	@Environment(PageStore.self)
-	private var pageStore
+	@Environment(BoardStore.self)
+	private var boardStore
 
 	@Default(.logicLetters) private var logicLetters
 
@@ -35,10 +35,10 @@ struct EditAsTextSheet: View {
 	@State private var englishText = ""
 	@State private var logicEntries: [LogicKeyboardEntry] = []
 
-	/// What the page said when the sheet opened, to tell whether anything was edited
+	/// What the board said when the sheet opened, to tell whether anything was edited
 	@State private var original: (english: String, logic: [LogicKeyboardEntry])?
 
-	/// What Done would do to the page, for the line under the editor
+	/// What Done would do to the board, for the line under the editor
 	@State private var preview = TextPreview.unchanged
 
 	@State private var logicFocused = false
@@ -61,7 +61,7 @@ struct EditAsTextSheet: View {
 		}
 	}
 
-	/// The editor on screen differs from what the page said. Only one is edited at a time, so the other never needs converting.
+	/// The editor on screen differs from what the board said. Only one is edited at a time, so the other never needs converting.
 	private var isEdited: Bool {
 		guard let original else { return false }
 		return switch kind {
@@ -75,7 +75,7 @@ struct EditAsTextSheet: View {
 			VStack(alignment: .leading, spacing: 14) {
 				kindPicker
 
-				TextBox(kind: kind, english: $englishText, logic: $logicEntries, logicFocused: $logicFocused, englishFocused: $englishFocused, descriptors: pageStore.current.descriptors) {
+				TextBox(kind: kind, english: $englishText, logic: $logicEntries, logicFocused: $logicFocused, englishFocused: $englishFocused, descriptors: boardStore.current.descriptors) {
 					editingLetters = true
 				}
 
@@ -191,7 +191,7 @@ struct EditAsTextSheet: View {
 
 	private func load() {
 		guard original == nil else { return }
-		let map = pageStore.current.map
+		let map = boardStore.current.map
 		englishText = ArgumentText.text(of: map, kind: .english)
 		logicEntries = ArgumentText.entries(for: map)
 		original = (englishText, logicEntries)
@@ -209,11 +209,11 @@ struct EditAsTextSheet: View {
 		try? await Task.sleep(for: .milliseconds(400))
 		guard !Task.isCancelled else { return }
 
-		preview = TextPreview(of: evaluate(), in: pageStore.current.map)
+		preview = TextPreview(of: evaluate(), in: boardStore.current.map)
 	}
 
 	private func evaluate() -> Result<ArgumentTextChange<Statement, Link>, ArgumentTextProblem> {
-		let map = pageStore.current.map
+		let map = boardStore.current.map
 		let text = text
 		return Result { () throws(ArgumentTextProblem) in
 			try ArgumentText.apply(text: text, kind: kind.textKind, letters: letters, to: map)
@@ -235,28 +235,28 @@ struct EditAsTextSheet: View {
 				if change.removed.isEmpty {
 					apply()
 				} else {
-					confirmingRemoval = TextPreview.Summary(change, in: pageStore.current.map)
+					confirmingRemoval = TextPreview.Summary(change, in: boardStore.current.map)
 				}
 		}
 	}
 
 	private func apply() {
-		let wasBlank = pageStore.current.isEmpty
+		let wasBlank = boardStore.current.isEmpty
 
 		let change: ArgumentTextChange<Statement, Link>
 		do {
-			change = try pageStore.applyText(text, kind: kind.textKind)
+			change = try boardStore.applyText(text, kind: kind.textKind)
 		} catch {
 			preview = .problem(error.message)
 			return
 		}
 
-		// Nothing was there to keep, so it's laid out fresh instead of squeezed beside the empty box a new page starts with
+		// Nothing was there to keep, so it's laid out fresh instead of squeezed beside the empty box a new board starts with
 		if wasBlank, !change.added.isEmpty {
-			for statement in pageStore.current.statements where statement.isEmpty && !change.added.contains(statement.id) {
-				pageStore.deleteStatement(id: statement.id)
+			for statement in boardStore.current.statements where statement.isEmpty && !change.added.contains(statement.id) {
+				boardStore.deleteStatement(id: statement.id)
 			}
-			pageStore.arrange()
+			boardStore.arrange()
 		}
 
 		dismiss()
@@ -389,14 +389,14 @@ private struct TextStatusView: View {
 private struct LettersSheet: View {
 	@Binding var isPresented: Bool
 
-	@Environment(PageStore.self)
-	private var pageStore
+	@Environment(BoardStore.self)
+	private var boardStore
 
 	var body: some View {
-		@Bindable var pageStore = pageStore
+		@Bindable var boardStore = boardStore
 
 		NavigationStack {
-			LogicLettersView(descriptors: $pageStore.current.descriptors)
+			LogicLettersView(descriptors: $boardStore.current.descriptors)
 				.toolbar {
 					ToolbarItem(placement: .topBarTrailing) {
 						Button(role: .close) {

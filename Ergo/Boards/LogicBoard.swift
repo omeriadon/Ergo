@@ -1,5 +1,5 @@
 //
-//  LogicPage.swift
+//  LogicBoard.swift
 //  Ergo
 //
 //  Created by Adon Omeri on 5/11/2026.
@@ -13,7 +13,7 @@ import Foundation
 /// The descriptors are shared by every statement, which is what makes `P` in one box the same claim as `P` in another.
 ///
 /// It always holds at least one statement, so the Check tab is never empty.
-struct LogicPage: Codable, Hashable, Identifiable, Defaults.Serializable {
+struct LogicBoard: Codable, Hashable, Identifiable, Defaults.Serializable {
 	var id = UUID()
 	var created = Date.now
 	var modified = Date.now
@@ -24,7 +24,7 @@ struct LogicPage: Codable, Hashable, Identifiable, Defaults.Serializable {
 	var statements = [Statement()]
 	var links: [Link] = []
 
-	/// Nothing written yet, so the page stays out of the list. Where boxes sit isn't writing.
+	/// Nothing written yet, so the board stays out of the list. Where boxes sit isn't writing.
 	var isEmpty: Bool {
 		links.isEmpty && statements.allSatisfy(\.isEmpty)
 	}

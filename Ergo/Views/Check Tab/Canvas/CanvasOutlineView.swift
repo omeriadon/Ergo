@@ -22,7 +22,7 @@ struct CanvasOutlineView: View {
 		}
 	}
 
-	let page: LogicPage
+	let board: LogicBoard
 	let verdicts: [Statement.ID: BoxVerdict]
 	let edit: (Statement.ID) -> Void
 	let delete: (Statement.ID) -> Void
@@ -42,11 +42,11 @@ struct CanvasOutlineView: View {
 	}
 
 	private var map: ArgumentMap<Statement, Link> {
-		page.map
+		board.map
 	}
 
 	private var ordered: [Statement] {
-		map.topologicalOrder().compactMap { page.statement($0) }
+		map.topologicalOrder().compactMap { board.statement($0) }
 	}
 
 	var body: some View {
@@ -101,8 +101,8 @@ struct CanvasOutlineView: View {
 	}
 
 	private func rowLabel(for statement: Statement) -> some View {
-		let premises: [String] = map.premises(of: statement.id).compactMap { page.statement($0) }.map { title($0) }
-		let conclusions: [String] = map.conclusions(of: statement.id).compactMap { page.statement($0) }.map { title($0) }
+		let premises: [String] = map.premises(of: statement.id).compactMap { board.statement($0) }.map { title($0) }
+		let conclusions: [String] = map.conclusions(of: statement.id).compactMap { board.statement($0) }.map { title($0) }
 
 		return VStack(alignment: .leading, spacing: 4) {
 			Text(statement.englishLine ?? title(statement))
@@ -159,12 +159,12 @@ struct CanvasOutlineView: View {
 		switch question {
 			case let .premiseOf(id):
 				// Only the statements an arrow could go to, so a choice never gets refused
-				ForEach(page.statements.filter { canLink(id, to: $0.id) }) { target in
+				ForEach(board.statements.filter { canLink(id, to: $0.id) }) { target in
 					Button(title(target)) { link(id, target.id) }
 				}
 
 			case let .removeLinkOf(id):
-				ForEach(page.links.filter { $0.premise == id || $0.conclusion == id }) { link in
+				ForEach(board.links.filter { $0.premise == id || $0.conclusion == id }) { link in
 					Button(describe(link, from: id)) { unlink(link.id) }
 				}
 		}
@@ -176,7 +176,7 @@ struct CanvasOutlineView: View {
 
 	private func describe(_ link: Link, from id: Statement.ID) -> String {
 		let other = link.premise == id ? link.conclusion : link.premise
-		let name: String = page.statement(other).map { title($0) } ?? "Unknown"
+		let name: String = board.statement(other).map { title($0) } ?? "Unknown"
 		return link.premise == id ? "Premise of \(name)" : "Rests on \(name)"
 	}
 
