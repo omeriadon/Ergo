@@ -66,7 +66,7 @@ struct KeyboardButton: View {
 		}
 		.accessibilityLabel("Insert \(entry.glyph(letters: letters))")
 		.accessibilityHint(accessibilityHint)
-		.accessibilityIdentifier("check.logicKeyboard.\(entry.id)")
+		.accessibilityIdentifier("logic.logicKeyboard.\(entry.id)")
 		.accessibilityAction(named: Text("Insert alternate")) {
 			if let alternate = entry.alternate {
 				onInsert(alternate)

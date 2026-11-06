@@ -13,7 +13,7 @@ import SwiftUI
 final class NavigationManager {
 	// MARK: - selectedTab
 
-	var selectedTab: AppTab = .check {
+	var selectedTab: AppTab = .board {
 		didSet {
 			Defaults[.selectedTab] = selectedTab
 		}
@@ -27,11 +27,11 @@ final class NavigationManager {
 		}
 	}
 
-	// MARK: - debatePath
+	// MARK: - logicPath
 
-	var debatePath: [DebateRoute] = [] {
+	var logicPath: [LogicRoute] = [] {
 		didSet {
-			Defaults[.debatePath] = debatePath
+			Defaults[.logicPath] = logicPath
 		}
 	}
 
@@ -65,13 +65,6 @@ final class NavigationManager {
 		didSet {
 			Defaults[.libraryGeneralSearchText] = libraryGeneralSearchText
 		}
-	}
-
-	// MARK: - open()
-
-	func open(_ route: DebateRoute) {
-		selectedTab = .debate
-		debatePath.append(route)
 	}
 
 	// MARK: - openLibrary
@@ -110,10 +103,10 @@ final class NavigationManager {
 
 	func reset(_ tab: AppTab) {
 		switch tab {
-			case .check:
+			case .board, .ask:
 				break
-			case .debate:
-				debatePath.removeAll()
+			case .logic:
+				logicPath.removeAll()
 			case .library:
 				libraryPath.removeAll()
 		}
@@ -125,6 +118,6 @@ final class NavigationManager {
 		presentedSheet = Defaults[.presentedSheet]
 		selectedTab = Defaults[.selectedTab]
 		libraryPath = Defaults[.libraryPath]
-		debatePath = Defaults[.debatePath]
+		logicPath = Defaults[.logicPath]
 	}
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// The dither behind the Check tab. It is the navigation container's background, so it holds still while a box
+/// The dither behind the Board tab. It is the navigation container's background, so it holds still while a box
 /// zooms into its editor instead of being scaled with the canvas it sits behind.
 struct CanvasBackdrop: View {
 	var body: some View {

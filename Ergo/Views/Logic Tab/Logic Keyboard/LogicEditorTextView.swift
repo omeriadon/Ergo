@@ -56,7 +56,7 @@ final class LogicEditorTextView: UITextView, UITextViewDelegate {
 		textContainerInset = .zero
 		textContainer.lineFragmentPadding = 0
 		accessibilityLabel = "Logic editor"
-		accessibilityIdentifier = "check.logicEditor"
+		accessibilityIdentifier = "logic.logicEditor"
 	}
 
 	func setEntries(_ newEntries: [LogicKeyboardEntry]) {

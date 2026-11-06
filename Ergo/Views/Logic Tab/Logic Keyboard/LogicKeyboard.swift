@@ -38,7 +38,7 @@ struct LogicKeyboard: View {
 					Image(systemName: "pencil")
 				}
 				.accessibilityLabel("Edit letters")
-				.accessibilityIdentifier("check.logicKeyboard.editLetters")
+				.accessibilityIdentifier("logic.logicKeyboard.editLetters")
 			}
 
 			HStack(spacing: 4) {
@@ -77,7 +77,7 @@ struct LogicKeyboard: View {
 				Image(systemName: "delete.left")
 			}
 			.accessibilityLabel("Delete previous entry")
-			.accessibilityIdentifier("check.logicKeyboard.delete")
+			.accessibilityIdentifier("logic.logicKeyboard.delete")
 			.frame(width: 58)
 		}
 	}
@@ -96,7 +96,7 @@ struct LogicKeyboard: View {
 				Image(systemName: "return")
 			}
 			.accessibilityLabel("Insert newline")
-			.accessibilityIdentifier("check.logicKeyboard.newline")
+			.accessibilityIdentifier("logic.logicKeyboard.newline")
 			.frame(width: 58)
 		}
 	}

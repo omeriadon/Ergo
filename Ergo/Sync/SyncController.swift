@@ -13,7 +13,7 @@ import Network
 import SwiftUI
 import UIKit
 
-/// Keeps boards, bookmarks and synced settings the same on every device signed in to the same account,
+/// Keeps boards, scratchpads, bookmarks and synced settings the same on every device signed in to the same account,
 /// with Apple or an email.
 ///
 /// It syncs on launch, on becoming active, 2 s after a local change, when another device pushes, and after signing
@@ -54,7 +54,7 @@ final class SyncController {
 		}
 	}
 
-	/// Boards that stay on this device because they're over the server's size limit
+	/// Boards and scratchpads that stay on this device because they're over the server's size limit
 	private(set) var oversizedBoards: [String] = []
 
 	var isSignedIn: Bool {
@@ -73,6 +73,7 @@ final class SyncController {
 
 	@ObservationIgnored private let account: TranslationAccount
 	@ObservationIgnored private let boardStore: BoardStore
+	@ObservationIgnored private let scratchpadStore: ScratchpadStore
 	@ObservationIgnored private let catalog: CatalogStore
 
 	@ObservationIgnored private var replica: SyncReplica
@@ -81,15 +82,19 @@ final class SyncController {
 	/// Without its email, so adding one to the account doesn't start over.
 	@ObservationIgnored private var syncingAccount: SignedInAccount?
 
-	init(account: TranslationAccount, boardStore: BoardStore, catalog: CatalogStore) {
+	init(account: TranslationAccount, boardStore: BoardStore, scratchpadStore: ScratchpadStore, catalog: CatalogStore) {
 		self.account = account
 		self.boardStore = boardStore
+		self.scratchpadStore = scratchpadStore
 		self.catalog = catalog
 		replica = Defaults[.syncState] ?? SyncReplica(device: Self.deviceID())
 		syncingAccount = account.signedIn?.withoutEmail
 
 		boardStore.didSave = { [weak self] changed, deleted in
 			self?.record(changed, deleted: deleted)
+		}
+		scratchpadStore.didSave = { [weak self] changed, deleted in
+			self?.recordScratchpads(changed, deleted: deleted)
 		}
 	}
 
@@ -259,7 +264,7 @@ final class SyncController {
 
 	// MARK: - Local changes
 
-	private func record(_ boards: [LogicBoard], deleted: Set<LogicBoard.ID>) {
+	private func record(_ boards: [Board], deleted: Set<Board.ID>) {
 		guard isSignedIn else { return }
 
 		// Before anything is recorded: a link to a statement deleted here only counts as the board's while that statement lives
@@ -294,7 +299,7 @@ final class SyncController {
 	/// Statements and links the replica has alive for these boards that the boards no longer have, because they were
 	/// deleted here. Only ones this version can read, and never ones the replica ignores (their board or statement
 	/// might just not have arrived), so it never deletes what it hasn't shown.
-	private func removedRecords(from boards: [LogicBoard]) -> [(kind: SyncKind, id: String)] {
+	private func removedRecords(from boards: [Board]) -> [(kind: SyncKind, id: String)] {
 		let local = Dictionary(boards.map { (BoardRecord.id($0.id), $0) }) { first, _ in first }
 		var removed: [(kind: SyncKind, id: String)] = []
 		for record in replica.records.values where !record.isDeleted {
@@ -313,6 +318,24 @@ final class SyncController {
 			}
 		}
 		return removed
+	}
+
+	private func recordScratchpads(_ scratchpads: [LogicScratchpad], deleted: Set<LogicScratchpad.ID>) {
+		guard isSignedIn else { return }
+
+		var changed = false
+		for scratchpad in scratchpads {
+			if let fields = try? ScratchpadRecord.fields(of: scratchpad) {
+				changed = replica.recordLocal(kind: .scratchpad, id: ScratchpadRecord.id(scratchpad.id), fields: fields) || changed
+			}
+		}
+		for id in deleted {
+			changed = replica.recordLocal(kind: .scratchpad, id: ScratchpadRecord.id(id), fields: [SyncFieldName.deleted: true]) || changed
+		}
+		if changed {
+			saveReplica()
+			scheduleSync()
+		}
 	}
 
 	private func record(_ setting: SyncedSetting) {
@@ -365,6 +388,16 @@ final class SyncController {
 				&& BoardRecord.canRead(record)
 		}
 		record(boardStore.boards, deleted: Set(missing.compactMap { UUID(uuidString: $0.id) }))
+
+		// The same for scratchpads
+		let localScratchpads = Set(scratchpadStore.scratchpads.map { ScratchpadRecord.id($0.id) })
+		let missingScratchpads = replica.records.values.filter { record in
+			record.kind == .scratchpad
+				&& !record.isDeleted
+				&& !localScratchpads.contains(record.id)
+				&& ScratchpadRecord.canRead(record)
+		}
+		recordScratchpads(scratchpadStore.scratchpads, deleted: Set(missingScratchpads.compactMap { UUID(uuidString: $0.id) }))
 		saveReplica()
 	}
 
@@ -372,12 +405,16 @@ final class SyncController {
 		Defaults[.syncState] = replica
 
 		let oversized = replica.oversized
-		let letters = LogicLetters.resolved(Defaults[.logicLetters])
 		oversizedBoards = boardStore.boards
 			.filter { board in
 				oversized.contains(SyncRecord.Key(kind: .board, id: BoardRecord.id(board.id)))
 					|| board.statements.contains { oversized.contains(SyncRecord.Key(kind: .statement, id: StatementRecord.id($0.id))) }
 			}
+			.map(\.title)
+
+		let letters = LogicLetters.resolved(Defaults[.logicLetters])
+		oversizedBoards += scratchpadStore.scratchpads
+			.filter { oversized.contains(SyncRecord.Key(kind: .scratchpad, id: ScratchpadRecord.id($0.id))) }
 			.map { $0.title(letters: letters) }
 	}
 
@@ -386,7 +423,8 @@ final class SyncController {
 	/// `pullComplete` is false while more is still coming. A statement a link joins can be missing only because it
 	/// hasn't arrived yet, so links are only cleaned up once everything has.
 	private func write(_ applied: SyncApplied, pullComplete: Bool) {
-		var affected: Set<LogicBoard.ID> = []
+		var affected: Set<Board.ID> = []
+		var affectedScratchpads: Set<LogicScratchpad.ID> = []
 		for record in applied.changed {
 			switch record.kind {
 				case .board:
@@ -396,6 +434,10 @@ final class SyncController {
 				case .statement, .link:
 					if let id = record.owningBoard.flatMap(UUID.init(uuidString:)) {
 						affected.insert(id)
+					}
+				case .scratchpad:
+					if let id = UUID(uuidString: record.id) {
+						affectedScratchpads.insert(id)
 					}
 				case .bookmark:
 					BookmarkRecord.write(record, catalog: catalog.index)
@@ -422,6 +464,21 @@ final class SyncController {
 				continue
 			}
 			boardStore.insertStatementCopy(copy, into: board.id)
+		}
+
+		let rebuiltScratchpads = ScratchpadRecord.rebuild(affectedScratchpads, from: replica, local: scratchpadStore.scratchpads)
+		scratchpadStore.applyRemote(rebuiltScratchpads.scratchpads, deleted: rebuiltScratchpads.deleted)
+
+		// A scratchpad's content is worth a copy too
+		for field in applied.superseded(.scratchpad, field: SyncFieldName.content) {
+			guard
+				let id = UUID(uuidString: field.id),
+				let original = scratchpadStore.scratchpads.first(where: { $0.id == id }),
+				let copy = ScratchpadRecord.copy(of: field.lost, beside: original)
+			else {
+				continue
+			}
+			scratchpadStore.insertCopy(copy)
 		}
 
 		if pullComplete {
@@ -556,6 +613,7 @@ final class SyncController {
 			}
 			// Typing that's waiting for its save goes in this request
 			boardStore.save()
+			scratchpadStore.save()
 			let request = replica.makeRequest()
 
 			do {
@@ -564,6 +622,7 @@ final class SyncController {
 
 				// Records typing from during the request first, so a remote edit that beats it becomes a copy
 				boardStore.save()
+				scratchpadStore.save()
 				let applied = replica.apply(response, sent: request)
 				// Written back before the replica is saved, so being killed in between only means pulling again
 				write(applied, pullComplete: !response.more)
@@ -619,6 +678,7 @@ final class SyncController {
 	/// iOS suspends an app soon after it leaves, so this asks for the few seconds a sync needs.
 	private func flush() {
 		boardStore.save()
+		scratchpadStore.save()
 		guard isSignedIn, !replica.pending.isEmpty, backgroundTask == .invalid else { return }
 
 		backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "Sync") { [weak self] in
@@ -698,7 +758,7 @@ extension SyncController {
 		let account = TranslationAccount(
 			signedIn: signedIn ? SignedInAccount(server: ServerEnvironment.productionURL, id: UUID(), email: email) : nil
 		)
-		let sync = SyncController(account: account, boardStore: BoardStore(), catalog: CatalogStore())
+		let sync = SyncController(account: account, boardStore: BoardStore(), scratchpadStore: ScratchpadStore(), catalog: CatalogStore())
 		sync.seed(status)
 		return sync
 	}

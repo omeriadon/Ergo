@@ -8,7 +8,7 @@ Names are strings (the test bundle can't link the app): Swift type names from `E
 
 | Test | Intents | Asserts |
 |---|---|---|
-| `opensTabs` | `OpenTabIntent` (`tab`: check, debate, library) | `.intentsAllPass` |
+| `opensTabs` | `OpenTabIntent` (`tab`: board, logic, ask, library) | `.intentsAllPass` |
 | `showsCategories` | `ShowLibraryListIntent` (`category`) | `.intentsAllPass` |
 | `opensEntries` | `OpenLibraryEntryIntent` for a fallacy, bias, razor or philosopher, with `Finds` + `expectIdentifier` and `Calls(.disallowed)` for `SetBookmarkIntent` | `.intentsAllPass`, `.foundEntitiesAllPass` |
 | `opensOtherEntries` | `OpenLibraryEntryIntent` for a concept, paradox, argument or symbol, same checks | `.intentsAllPass`, `.foundEntitiesAllPass` |

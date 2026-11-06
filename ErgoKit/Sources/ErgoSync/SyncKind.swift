@@ -47,7 +47,10 @@ public struct SyncKind: RawRepresentable, Codable, Sendable, Hashable, Comparabl
 	/// id: the link's `UUID.uuidString`, uppercase. An arrow from a premise statement to a conclusion statement.
 	public static let link: SyncKind = "link"
 
-	public static let known: [SyncKind] = [.board, .bookmark, .setting, .statement, .link]
+	/// id: the scratchpad's `UUID.uuidString`, uppercase. A saved argument on the Logic tab, with no children.
+	public static let scratchpad: SyncKind = "scratchpad"
+
+	public static let known: [SyncKind] = [.board, .bookmark, .setting, .statement, .link, .scratchpad]
 }
 
 // MARK: - Checks
@@ -57,7 +60,9 @@ public extension SyncKind {
 	var fieldNames: Set<String> {
 		switch self {
 			case .board:
-				Set([SyncFieldName.created, SyncFieldName.deleted]
+				[SyncFieldName.created, SyncFieldName.deleted]
+			case .scratchpad:
+				Set([SyncFieldName.created, SyncFieldName.content, SyncFieldName.deleted]
 					+ (0 ..< SyncFieldName.descriptorSlots).map(SyncFieldName.descriptor))
 			case .statement:
 				[SyncFieldName.board, SyncFieldName.position, SyncFieldName.content, SyncFieldName.deleted]
@@ -75,7 +80,7 @@ public extension SyncKind {
 	/// Whether `id` can name a record of this kind
 	func isValid(id: String) -> Bool {
 		switch self {
-			case .board, .statement, .link:
+			case .board, .statement, .link, .scratchpad:
 				UUID(uuidString: id)?.uuidString == id
 			case .bookmark:
 				!id.isEmpty && id.utf8.count <= 256

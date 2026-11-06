@@ -30,14 +30,14 @@ public struct SyncField: Codable, Sendable, Hashable {
 
 /// The field names records use, shared so the app and the server's checks can't drift
 public enum SyncFieldName {
-	/// board, statement, link: a tombstone. A record is deleted while this is `true` and newer than every other field.
+	/// board, statement, link, scratchpad: a tombstone. A record is deleted while this is `true` and newer than every other field.
 	public static let deleted = "deleted"
 
-	/// board: when it was made
+	/// board, scratchpad: when it was made
 	public static let created = "created"
 
-	/// statement: `{ english, logic, source, translation }` together, since English and logic follow each other.
-	/// Opaque to the server. Boards used to carry this too, so the constant stays, but a board record refuses it now.
+	/// statement: the English. scratchpad: `{ english, logic, source, translation }` together, since English and logic
+	/// follow each other. Opaque to the server. A board record refuses it.
 	public static let content = "content"
 
 	/// statement, link: the owning board's id (uppercase UUID string). Statements and links whose board is deleted
@@ -59,11 +59,11 @@ public enum SyncFieldName {
 	/// setting: the setting's value
 	public static let value = "value"
 
-	/// board: one per letter slot, so naming different letters on two devices keeps both
+	/// scratchpad: one per letter slot, so naming different letters on two devices keeps both
 	public static func descriptor(_ slot: Int) -> String {
 		"descriptor.\(slot)"
 	}
 
-	/// How many letter slots a board has, `LogicLetters.defaults.count`
+	/// How many letter slots a scratchpad has, `LogicLetters.defaults.count`
 	public static let descriptorSlots = 6
 }

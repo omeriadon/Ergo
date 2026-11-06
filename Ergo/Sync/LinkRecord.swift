@@ -15,7 +15,7 @@ enum LinkRecord {
 	}
 
 	/// Every field but `deleted`, which is only ever sent when deleting
-	static func fields(of link: Link, in board: LogicBoard.ID) -> [String: JSONValue] {
+	static func fields(of link: Link, in board: Board.ID) -> [String: JSONValue] {
 		[
 			SyncFieldName.board: .string(BoardRecord.id(board)),
 			SyncFieldName.premise: .string(StatementRecord.id(link.premise)),

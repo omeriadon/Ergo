@@ -20,9 +20,6 @@ struct BoxActions {
 	/// The next box tapped loses its arrow to or from this one
 	var removeLink: () -> Void
 
-	/// Nil without a verdict to show
-	var showCheck: (() -> Void)?
-
 	/// Whole grid steps, right and down are positive
 	var nudge: (_ columns: Int, _ rows: Int) -> Void
 }
@@ -36,24 +33,13 @@ struct CanvasBox: View {
 		model.statement
 	}
 
-	private var letters: [String] {
-		model.letters
-	}
-
 	private var relations: BoxRelations {
 		model.relations
-	}
-
-	private var verdict: BoxVerdict? {
-		model.verdict
 	}
 
 	private var appearance: BoxAppearance {
 		model.appearance
 	}
-
-	@Environment(CatalogStore.self)
-	private var catalog
 
 	var body: some View {
 		box
@@ -65,12 +51,8 @@ struct CanvasBox: View {
 	private var box: some View {
 		StatementBoxView(
 			statement: statement,
-			letters: letters,
-			descriptors: model.descriptors,
 			relations: relations,
-			verdict: verdict,
-			appearance: appearance,
-			showCheck: { actions.showCheck?() }
+			appearance: appearance
 		)
 		.equatable()
 		.onTapGesture(perform: actions.select)
@@ -80,7 +62,7 @@ struct CanvasBox: View {
 			Button("Make Premise of…", systemImage: "arrow.down") { actions.connect(false) }
 			Button("Make Conclusion of…", systemImage: "arrow.up") { actions.connect(true) }
 			if !relations.premises.isEmpty || !relations.conclusions.isEmpty {
-				Button("Remove Link…", systemImage: "link.badge.minus", action: actions.removeLink)
+				Button("Remove Link…", systemImage: "link", action: actions.removeLink)
 			}
 			Button("Delete", systemImage: "trash", role: .destructive, action: actions.delete)
 		}
@@ -90,7 +72,7 @@ struct CanvasBox: View {
 
 	private var spokenText: String {
 		let english = statement.english.trimmingCharacters(in: .whitespacesAndNewlines)
-		return english.isEmpty ? StatementBoxView.title(of: statement, letters: letters) : english
+		return english.isEmpty ? StatementBoxView.title(of: statement) : english
 	}
 
 	private var spokenSummary: String {
@@ -103,9 +85,6 @@ struct CanvasBox: View {
 		}
 		if parts.isEmpty {
 			parts.append("Not connected")
-		}
-		if let verdict {
-			parts.append("Check: \(verdict.title(in: catalog))")
 		}
 		if appearance == .connectSource {
 			parts.append("Connecting from this statement")
@@ -155,7 +134,7 @@ private struct BoxSpeech: ViewModifier {
 			.accessibilityValue(summary)
 			.accessibilityHint(appearance == .unavailable ? "Can't be connected to" : "Double tap to select")
 			.accessibilityAddTraits(traits)
-			.accessibilityIdentifier("check.box.\(id.uuidString)")
+			.accessibilityIdentifier("board.box.\(id.uuidString)")
 	}
 
 	private var traits: AccessibilityTraits {
@@ -175,11 +154,6 @@ private struct BoxActionsModifier: ViewModifier {
 			.accessibilityAction(named: Text("Make conclusion of…")) { actions.connect(true) }
 			.accessibilityAction(named: Text("Remove link…"), actions.removeLink)
 			.accessibilityAction(named: Text("Delete"), actions.delete)
-			.accessibilityAction(named: Text("Show check"), showCheck)
-	}
-
-	private func showCheck() {
-		actions.showCheck?()
 	}
 }
 

@@ -25,7 +25,10 @@ extension Defaults.Keys {
 	static let logicLetters = Key<[String]>("logicLetters", default: LogicLetters.defaults)
 
 	/// Synced as a record per board, statement and link, through `BoardStore`. Drafts aren't in here, so they never sync.
-	static let boards = Key<[LogicBoard]>("boards", default: [])
+	static let boards = Key<[Board]>("boards", default: [])
+
+	/// Synced as a record per scratchpad, through `ScratchpadStore`. Drafts aren't in here, so they never sync.
+	static let scratchpads = Key<[LogicScratchpad]>("scratchpads", default: [])
 
 	static let ditherEnabled = Key<Bool>("ditherEnabled", default: true)
 
@@ -37,16 +40,19 @@ extension Defaults.Keys {
 // MARK: - This device only
 
 extension Defaults.Keys {
-	static let selectedTab = Key<AppTab>("selectedTab", default: .check)
+	static let selectedTab = Key<AppTab>("selectedTab", default: .board)
 
 	static let libraryPath = Key<[LibraryRoute]>("libraryPath", default: [])
-	static let debatePath = Key<[DebateRoute]>("debatePath", default: [])
 
 	static let presentedSheet = Key<AppSheet?>("presentedSheet", default: nil)
 
 	static let libraryGeneralSearchText = Key<String>("libraryGeneralSearchText", default: "")
 
 	static let currentBoardID = Key<UUID?>("currentBoardID", default: nil)
+
+	static let currentScratchpadID = Key<UUID?>("currentScratchpadID", default: nil)
+
+	static let logicPath = Key<[LogicRoute]>("logicPath", default: [])
 
 	/// Which server a debug build talks to. Release builds ignore it and always use production.
 	/// It says where the server is, so it can't come from the server.

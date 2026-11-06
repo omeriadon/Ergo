@@ -94,7 +94,7 @@ struct LogicAnalysisView: View {
 		}
 		.frame(maxWidth: .infinity, alignment: .leading)
 		.accessibilityElement(children: .contain)
-		.accessibilityIdentifier("check.logicAnalysis")
+		.accessibilityIdentifier("logic.logicAnalysis")
 	}
 
 	private func problem(_ diagnostic: LogicDiagnostic, symbol: String, color: Color) -> some View {
@@ -110,7 +110,7 @@ struct LogicAnalysisView: View {
 				}
 				.buttonStyle(.glass)
 				.controlSize(.small)
-				.accessibilityIdentifier("check.logicAnalysis.fix")
+				.accessibilityIdentifier("logic.logicAnalysis.fix")
 			}
 		}
 	}
@@ -199,7 +199,7 @@ struct LogicAnalysisView: View {
 	}
 }
 
-/// An icon, a compiler-style title and an optional note, used by both boxes on the Check tab
+/// An icon, a compiler-style title and an optional note, used by both boxes on the Logic tab
 struct MessageRow<Extra: View>: View {
 	let symbol: String
 	let color: Color

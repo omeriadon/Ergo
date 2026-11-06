@@ -1,5 +1,5 @@
 //
-//  CheckTabView.swift
+//  BoardTabView.swift
 //  Ergo
 //
 //  Created by Adon Omeri on 1/11/2026.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-/// The Check tab: the current board as a canvas of statements, and the editor a statement zooms into.
-struct CheckTabView: View {
+/// The Board tab: the current board as a canvas of statements, and the editor a statement zooms into.
+struct BoardTabView: View {
 	@Environment(BoardStore.self)
 	private var boardStore
 

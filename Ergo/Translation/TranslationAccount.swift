@@ -197,7 +197,7 @@ final class TranslationAccount {
 	}
 
 	/// Splits pasted English into premises, a conclusion and claims, without writing any logic. The breakdown's
-	/// `descriptors` are the board's own with the new claims in free slots; merge them with `BoardStore.mergeDescriptors`.
+	/// `descriptors` are whatever the caller already names; the board ignores the ones that come back.
 	/// `letters` default to the ones the app shows. Events and failures are the same as `translate`'s.
 	func breakDown(
 		english: String,

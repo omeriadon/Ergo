@@ -10,27 +10,22 @@ import ErgoProtocol
 import ErgoTranslation
 import Foundation
 
-/// A `LogicBoard` as a board record's fields: `created` and one field per descriptor, so naming different letters on
-/// two devices keeps both. Statements and links are records of their own (`StatementRecord`, `LinkRecord`), so typing
-/// in one box, dragging another and drawing an arrow never clash.
+/// A `Board` as a board record's fields: just `created`. Statements and links are records of their own
+/// (`StatementRecord`, `LinkRecord`), so typing in one box, dragging another and drawing an arrow never clash.
 ///
 /// `modified` isn't a field: it's the newest stamp in the board's records, so every device sorts boards the same way.
 enum BoardRecord {
-	static func id(_ id: LogicBoard.ID) -> String {
+	static func id(_ id: Board.ID) -> String {
 		id.uuidString
 	}
 
 	// MARK: - Local → record
 
 	/// Every field but `deleted`, which is only ever sent when deleting
-	static func fields(of board: LogicBoard) throws -> [String: JSONValue] {
-		var fields: [String: JSONValue] = try [
+	static func fields(of board: Board) throws -> [String: JSONValue] {
+		try [
 			SyncFieldName.created: SyncCoding.value(board.created),
 		]
-		for slot in 0 ..< SyncFieldName.descriptorSlots {
-			fields[SyncFieldName.descriptor(slot)] = .string(board.descriptors.indices.contains(slot) ? board.descriptors[slot] : "")
-		}
-		return fields
 	}
 
 	// MARK: - Record → local
@@ -41,17 +36,13 @@ enum BoardRecord {
 		if let created = record.fields[SyncFieldName.created], (try? SyncCoding.decode(Date.self, from: created.value)) == nil {
 			return false
 		}
-		for slot in 0 ..< SyncFieldName.descriptorSlots {
-			guard let field = record.fields[SyncFieldName.descriptor(slot)] else { continue }
-			guard case .string = field.value else { return false }
-		}
 		return true
 	}
 
 	/// Boards the replica has changed, and the ones it deleted
 	struct Rebuilt {
-		var boards: [LogicBoard] = []
-		var deleted: Set<LogicBoard.ID> = []
+		var boards: [Board] = []
+		var deleted: Set<Board.ID> = []
 	}
 
 	/// The boards with these ids as the replica now has them, built on `local` so what the replica lacks or can't read
@@ -61,7 +52,7 @@ enum BoardRecord {
 	/// Statements and links the replica reports as ignored (their board is deleted or missing, or a link's statement is)
 	/// are left out, and so are links that would repeat or loop an arrow, in the order of their ids so every device drops the same one.
 	/// A board without statements gets an empty one, since a board is never without.
-	static func rebuild(_ ids: Set<LogicBoard.ID>, from replica: SyncReplica, local: [LogicBoard]) -> Rebuilt {
+	static func rebuild(_ ids: Set<Board.ID>, from replica: SyncReplica, local: [Board]) -> Rebuilt {
 		let wanted = Set(ids.map { id($0) })
 		var statements: [String: [SyncRecord]] = [:]
 		var links: [String: [SyncRecord]] = [:]
@@ -104,19 +95,12 @@ enum BoardRecord {
 	}
 
 	/// Nil if the board's own fields fail to decode: then nothing local is touched
-	private static func board(from records: Records, replica: SyncReplica, local: LogicBoard?) -> LogicBoard? {
+	private static func board(from records: Records, replica: SyncReplica, local: Board?) -> Board? {
 		guard let boardID = UUID(uuidString: records.board.id), canRead(records.board) else { return nil }
-		var board = local ?? LogicBoard(id: boardID)
+		var board = local ?? Board(id: boardID)
 
 		if let created = records.board.fields[SyncFieldName.created], let date = try? SyncCoding.decode(Date.self, from: created.value) {
 			board.created = date
-		}
-		for slot in 0 ..< SyncFieldName.descriptorSlots {
-			guard case let .string(descriptor)? = records.board.fields[SyncFieldName.descriptor(slot)]?.value else { continue }
-			while board.descriptors.count <= slot {
-				board.descriptors.append("")
-			}
-			board.descriptors[slot] = descriptor
 		}
 		if let newest = records.newestStamp {
 			board.modified = newest.date

@@ -154,13 +154,16 @@ struct SyncRecordTests {
 	// MARK: - Checks
 
 	@Test func kindsKnowTheirFieldsAndIDs() {
-		#expect(SyncKind.board.fieldNames == ["created", "deleted", "descriptor.0", "descriptor.1", "descriptor.2", "descriptor.3", "descriptor.4", "descriptor.5"])
+		#expect(SyncKind.board.fieldNames == ["created", "deleted"])
+		#expect(SyncKind.scratchpad.fieldNames == ["created", "content", "deleted", "descriptor.0", "descriptor.1", "descriptor.2", "descriptor.3", "descriptor.4", "descriptor.5"])
 		#expect(SyncKind.bookmark.fieldNames == ["present"])
 		#expect(SyncKind.setting.fieldNames == ["value"])
 		#expect(SyncKind(rawValue: "folder").fieldNames.isEmpty)
 
 		#expect(SyncKind.board.isValid(id: "6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B"))
 		#expect(!SyncKind.board.isValid(id: "6f1c2e9a-3b4d-4e5f-8a9b-0c1d2e3f4a5b"))
+		#expect(SyncKind.scratchpad.isValid(id: "6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B"))
+		#expect(!SyncKind.scratchpad.isValid(id: "6f1c2e9a-3b4d-4e5f-8a9b-0c1d2e3f4a5b"))
 		#expect(SyncKind.setting.isValid(id: "logicLetters"))
 		#expect(!SyncKind.setting.isValid(id: "translationServer"))
 		#expect(SyncKind.bookmark.isValid(id: "fallacy.ad-hominem"))

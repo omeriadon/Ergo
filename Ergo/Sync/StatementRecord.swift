@@ -7,24 +7,17 @@
 
 import ErgoLogic
 import ErgoProtocol
-import ErgoTranslation
 import Foundation
 
 /// A `Statement` as a statement record's fields. `position` is its own field, so dragging a box never clashes with
-/// typing in it. English and logic travel together in `content`, since one follows the other.
+/// typing in it. The English is its `content`.
 enum StatementRecord {
 	/// Never rename a property: it's on the server, and other devices decode it
 	struct Content: Codable, Hashable {
 		var english: String
-		var logic: [LogicKeyboardEntry]
-		var source: Statement.Source
-		var translation: Translation?
 
 		init(_ statement: Statement) {
 			english = statement.english
-			logic = statement.logic
-			source = statement.source
-			translation = statement.translation
 		}
 	}
 
@@ -35,7 +28,7 @@ enum StatementRecord {
 	// MARK: - Local → record
 
 	/// Every field but `deleted`, which is only ever sent when deleting
-	static func fields(of statement: Statement, in board: LogicBoard.ID) throws -> [String: JSONValue] {
+	static func fields(of statement: Statement, in board: Board.ID) throws -> [String: JSONValue] {
 		try [
 			SyncFieldName.board: .string(BoardRecord.id(board)),
 			SyncFieldName.position: SyncCoding.value(statement.position),
@@ -71,8 +64,7 @@ enum StatementRecord {
 	}
 
 	/// What lost a simultaneous edit, as a new statement on the same board, below the one that won.
-	/// The board's descriptors are shared, so the lost logic still means what it did.
-	static func copy(of lost: SyncField, beside original: Statement.ID, in board: LogicBoard) -> Statement? {
+	static func copy(of lost: SyncField, beside original: Statement.ID, in board: Board) -> Statement? {
 		guard let content = try? SyncCoding.decode(Content.self, from: lost.value) else { return nil }
 		var copy = Statement(position: CanvasLayout.place(newNodeNear: original, in: board.map, side: .below))
 		copy.apply(content)
@@ -83,8 +75,5 @@ enum StatementRecord {
 private extension Statement {
 	mutating func apply(_ content: StatementRecord.Content) {
 		english = content.english
-		logic = content.logic
-		source = content.source
-		translation = content.translation
 	}
 }

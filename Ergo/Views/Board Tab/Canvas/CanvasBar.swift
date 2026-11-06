@@ -75,7 +75,7 @@ struct CanvasBar: View {
 		}
 		.buttonStyle(.glass)
 		.tint(role == .destructive ? .red : nil)
-		.accessibilityIdentifier("check.bar.\(id)")
+		.accessibilityIdentifier("board.bar.\(id)")
 	}
 }
 
@@ -99,11 +99,11 @@ struct CanvasNoticeView: View {
 				.labelStyle(.iconOnly)
 				.buttonStyle(.plain)
 				.foregroundStyle(.secondary)
-				.accessibilityIdentifier("check.notice.dismiss")
+				.accessibilityIdentifier("board.notice.dismiss")
 		}
 		.padding(14)
 		.glassEffect(.regular, in: RoundedRectangle(cornerRadius: 20))
 		.accessibilityElement(children: .combine)
-		.accessibilityIdentifier("check.notice")
+		.accessibilityIdentifier("board.notice")
 	}
 }

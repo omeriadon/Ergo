@@ -43,11 +43,12 @@ struct SyncCanvasTests {
 	// MARK: - Kinds
 
 	@Test func kindsKnowTheirFields() {
-		#expect(SyncKind.known == [.board, .bookmark, .setting, .statement, .link])
+		#expect(SyncKind.known == [.board, .bookmark, .setting, .statement, .link, .scratchpad])
 		#expect(SyncKind.statement.fieldNames == ["board", "position", "content", "deleted"])
 		#expect(SyncKind.link.fieldNames == ["board", "premise", "conclusion", "deleted"])
 		#expect(!SyncKind.board.fieldNames.contains(SyncFieldName.content))
-		#expect(SyncKind.board.fieldNames.contains("descriptor.5"))
+		#expect(!SyncKind.board.fieldNames.contains("descriptor.5"))
+		#expect(SyncKind.scratchpad.fieldNames.contains("descriptor.5"))
 		#expect(SyncFieldName.content == "content")
 	}
 
@@ -169,7 +170,7 @@ struct SyncCanvasTests {
 
 	@Test func otherKindsAreNeverIgnored() {
 		let replica = SyncReplica(device: "A")
-		for kind in [SyncKind.board, .bookmark, .setting] {
+		for kind in [SyncKind.board, .bookmark, .setting, .scratchpad] {
 			#expect(!replica.isIgnored(SyncRecord(kind: kind, id: "x")))
 		}
 		#expect(replica.isIgnored(SyncRecord(kind: .statement, id: Self.statementID)), "No board field yet")

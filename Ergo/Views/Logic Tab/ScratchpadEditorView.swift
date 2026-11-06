@@ -1,5 +1,5 @@
 //
-//  StatementEditorView.swift
+//  ScratchpadEditorView.swift
 //  Ergo
 //
 //  Created by Adon Omeri on 1/11/2026.
@@ -11,9 +11,9 @@ import ErgoProtocol
 import ErgoTranslation
 import SwiftUI
 
-/// English over logic for one statement of the current board: the editor the Check tab has always been,
-/// pointed at a statement. It reads and writes through `BoardStore`, so it follows what other devices change.
-struct StatementEditorView: View {
+/// English over logic for the current scratchpad. It reads and writes through `ScratchpadStore`, so it follows
+/// what other devices change.
+struct ScratchpadEditorView: View {
 	enum Field: Hashable {
 		case english, logic
 	}
@@ -24,16 +24,13 @@ struct StatementEditorView: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
-	@Environment(BoardStore.self)
-	private var boardStore
+	@Environment(ScratchpadStore.self)
+	private var scratchpadStore
 
 	@Environment(TranslationAccount.self)
 	private var account
 
 	@Default(.logicLetters) var logicLetters
-
-	/// A statement of `boardStore.current`
-	let statementID: Statement.ID
 
 	@State private var englishSelection: TextSelection?
 	@FocusState private var englishFocused: Bool
@@ -41,29 +38,26 @@ struct StatementEditorView: View {
 	@State private var analysis: LogicAnalysis?
 	@State private var analyzedLogic: [LogicKeyboardEntry] = []
 
-	/// A failure isn't kept on the board, since it says nothing about the English
+	/// A failure isn't kept on the scratchpad, since it says nothing about the English
 	@State private var run = TranslationRun<Never>.idle
 
-	private var board: LogicBoard {
-		boardStore.current
+	private var scratchpad: LogicScratchpad {
+		scratchpadStore.current
 	}
 
-	/// The claims found so far stand in on the keyboard, until the logic arrives, while the board names none
+	private var scratchpadBinding: Binding<LogicScratchpad> {
+		Binding(
+			get: { scratchpadStore.current },
+			set: { scratchpadStore.current = $0 }
+		)
+	}
+
+	/// The claims found so far stand in on the keyboard, until the logic arrives, while the scratchpad names none
 	private var keyboardDescriptors: [String] {
-		if let claims = run.progress?.claims, board.descriptors.allSatisfy(\.isEmpty) {
+		if let claims = run.progress?.claims, scratchpad.descriptors.allSatisfy(\.isEmpty) {
 			return claims
 		}
-		return board.descriptors
-	}
-
-	/// Empty once the statement is gone (deleted on another device), until the screen moves on
-	private var statement: Statement {
-		boardStore.statement(statementID) ?? Statement(id: statementID)
-	}
-
-	/// Writes are dropped once the statement is gone
-	private var statementBinding: Binding<Statement> {
-		boardStore.binding(for: statementID) ?? .constant(statement)
+		return scratchpad.descriptors
 	}
 
 	private var letters: [String] {
@@ -72,7 +66,7 @@ struct StatementEditorView: View {
 
 	/// Only shown while it still describes what's in the editor
 	private var currentAnalysis: LogicAnalysis? {
-		analyzedLogic == statement.logic ? analysis : nil
+		analyzedLogic == scratchpad.logic ? analysis : nil
 	}
 
 	@State private var focusedField: Field?
@@ -96,24 +90,24 @@ struct StatementEditorView: View {
 		ZStack {
 			VStack(spacing: 20) {
 				VStack(alignment: .leading, spacing: 14) {
-					TextEditor(text: statementBinding.english, selection: $englishSelection)
+					TextEditor(text: scratchpadBinding.english, selection: $englishSelection)
 						.textEditorStyle(.plain)
 						.focused($englishFocused)
 						.accessibilityLabel("English editor")
-						.accessibilityIdentifier("check.englishEditor")
+						.accessibilityIdentifier("logic.englishEditor")
 
 					EnglishStatusView(
-						issues: statement.currentIssues,
+						issues: scratchpad.currentIssues,
 						error: run.failure?.message,
 						setUp: setUp,
-						isLogicOutdated: statement.isLogicOutdated && !statement.logic.isEmpty,
+						isLogicOutdated: scratchpad.isLogicOutdated && !scratchpad.logic.isEmpty,
 						progress: run.progress,
-						canTranslate: !statement.english.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+						canTranslate: !scratchpad.english.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
 						translate: translate,
 						stop: stopTranslating
 					)
 				}
-				.animation(.smooth, value: statement.currentIssues)
+				.animation(.smooth, value: scratchpad.currentIssues)
 				.animation(.smooth, value: run.failure)
 				.padding(15)
 				.glassEffect(
@@ -130,7 +124,7 @@ struct StatementEditorView: View {
 
 				VStack(alignment: .leading, spacing: 14) {
 					LogicTextEditor(
-						entries: statementBinding.logic,
+						entries: scratchpadBinding.logic,
 						isFocused: logicFocus,
 						highlights: currentAnalysis?.highlights ?? [],
 						descriptors: keyboardDescriptors,
@@ -140,10 +134,10 @@ struct StatementEditorView: View {
 					)
 
 					if let currentAnalysis {
-						LogicAnalysisView(analysis: currentAnalysis, entries: statement.logic) { fix in
-							guard fix.range.upperBound <= statement.logic.count else { return }
-							statementBinding.wrappedValue.logic.replaceSubrange(fix.range, with: fix.replacement)
-							statementBinding.wrappedValue.source = .logic
+						LogicAnalysisView(analysis: currentAnalysis, entries: scratchpad.logic) { fix in
+							guard fix.range.upperBound <= scratchpad.logic.count else { return }
+							scratchpadBinding.wrappedValue.logic.replaceSubrange(fix.range, with: fix.replacement)
+							scratchpadBinding.wrappedValue.source = .logic
 						}
 						.fixedSize(horizontal: false, vertical: true)
 						.transition(.blurReplace)
@@ -159,39 +153,39 @@ struct StatementEditorView: View {
 			.padding(15)
 			.frame(maxWidth: .infinity, maxHeight: .infinity)
 		}
-		.task(id: statement.logic) {
+		.task(id: scratchpad.logic) {
 			// Waits for a pause in typing, an instant verdict feels like it's grading every keystroke
 			try? await Task.sleep(for: .seconds(1))
 			guard !Task.isCancelled else { return }
 
 			analyze()
 		}
-		.onChange(of: statementID) {
-			// A statement that's opened has already been written, no need to wait
+		.onChange(of: scratchpadStore.currentID) {
+			// A scratchpad that's opened has already been written, no need to wait
 			stopTranslating()
 			run = .idle
 			englishSelection = nil
 			analyze()
 		}
-		.onChange(of: boardStore.remoteEdits) {
-			// Another device changed this board, and the selection was into the old English
+		.onChange(of: scratchpadStore.remoteEdits) {
+			// Another device changed this scratchpad, and the selection was into the old English
 			englishSelection = nil
 		}
-		.onChange(of: statement.english) {
+		.onChange(of: scratchpad.english) {
 			// Only a failure goes, a translation that's running carries on
 			if run.failure != nil {
 				run = .idle
 			}
 			if englishFocused {
-				statementBinding.wrappedValue.source = .english
+				scratchpadBinding.wrappedValue.source = .english
 			}
 		}
-		.onChange(of: statement.logic) {
+		.onChange(of: scratchpad.logic) {
 			if focusedField == .logic {
-				statementBinding.wrappedValue.source = .logic
+				scratchpadBinding.wrappedValue.source = .logic
 			}
 		}
-		.onChange(of: board.descriptors) {
+		.onChange(of: scratchpad.descriptors) {
 			englishFollowsLogic()
 		}
 		.onChange(of: letters) {
@@ -222,14 +216,14 @@ struct StatementEditorView: View {
 				}
 				.buttonStyle(.glassProminent)
 				.accessibilityLabel("Done")
-				.accessibilityIdentifier("check.doneButton")
+				.accessibilityIdentifier("logic.doneButton")
 			}
 		}
 		.animation(.easeInOut, value: focusedField == nil)
 	}
 
 	private func analyze() {
-		let logic = statement.logic
+		let logic = scratchpad.logic
 		analysis = logic.isEmpty ? nil : LogicChecker.analyze(logic)
 		analyzedLogic = logic
 		englishFollowsLogic()
@@ -238,39 +232,39 @@ struct StatementEditorView: View {
 	/// When the logic was edited last, the English is read back from it.
 	/// Waits for logic that parses, so half-written lines don't wipe the English.
 	private func englishFollowsLogic() {
-		guard statement.source == .logic else { return }
+		guard scratchpad.source == .logic else { return }
 
 		let english: String
-		if statement.logic.isEmpty {
+		if scratchpad.logic.isEmpty {
 			english = ""
 		} else if let currentAnalysis, currentAnalysis.parse.diagnostics.isEmpty {
-			english = LogicEnglish.text(for: currentAnalysis.parse.argument, letters: letters, descriptors: board.descriptors)
+			english = LogicEnglish.text(for: currentAnalysis.parse.argument, letters: letters, descriptors: scratchpad.descriptors)
 		} else {
 			return
 		}
 
-		if statement.english != english {
-			statementBinding.wrappedValue.english = english
+		if scratchpad.english != english {
+			scratchpadBinding.wrappedValue.english = english
 		}
 	}
 
 	// MARK: - Translating
 
 	private func translate() {
-		let english = statement.english
+		let english = scratchpad.english
 		run = .idle
 
 		// Obviously bad input never reaches the server, and reads like any other translation issue
 		if let problem = EnglishValidator.problem(with: english) {
-			statementBinding.wrappedValue.translation = Translation(
+			scratchpadBinding.wrappedValue.translation = Translation(
 				english: english,
 				issues: [TranslationIssue(severity: .error, message: problem)]
 			)
 			return
 		}
 
-		let id = statementID
-		let descriptors = board.descriptors
+		let id = scratchpad.id
+		let descriptors = scratchpad.descriptors
 
 		let task = Task {
 			do {
@@ -280,7 +274,7 @@ struct StatementEditorView: View {
 				}
 				guard !Task.isCancelled else { return }
 				run = .idle
-				apply(translation, english: english, to: id)
+				apply(translation, english: english, in: id)
 			} catch {
 				guard !Task.isCancelled, !(error is CancellationError) else { return }
 				run = .failed(
@@ -297,9 +291,9 @@ struct StatementEditorView: View {
 		run.cancel()
 	}
 
-	private func apply(_ translation: Translation, english: String, to id: Statement.ID) {
-		// The statement or its English changed while the server worked
-		guard statementID == id, statement.english == english else { return }
+	private func apply(_ translation: Translation, english: String, in id: LogicScratchpad.ID) {
+		// The scratchpad or its English changed while the server worked
+		guard scratchpad.id == id, scratchpad.english == english else { return }
 
 		// Never trust the server's logic blindly
 		guard LogicParser.parse(translation.entries).diagnostics.isEmpty else {
@@ -307,7 +301,7 @@ struct StatementEditorView: View {
 			return
 		}
 
-		boardStore.applyTranslation(translation, english: english, to: id)
+		scratchpadStore.applyTranslation(translation, english: english)
 	}
 
 	/// Only for errors fixed by connecting a provider in Settings

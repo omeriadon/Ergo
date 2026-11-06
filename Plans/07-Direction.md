@@ -1,6 +1,6 @@
 # 07 · Direction
 
-Where the product is heading. Nothing here is built or scheduled, and no code changes come from this document yet. It's a living record of the conversation, so it changes as the thinking does.
+Where the product is heading. The tabs and scratchpads are built (see [08-Tabs.md](08-Tabs.md)); the rest isn't built or scheduled. It's a living record of the conversation, so it changes as the thinking does.
 
 **Decided** means Adon has settled it. **Proposed** means it's on the table but not agreed.
 
@@ -8,7 +8,7 @@ Where the product is heading. Nothing here is built or scheduled, and no code ch
 
 ## The tabs
 
-**Decided:** Board, Logic, Ask, Library.
+**Decided:** Board, Logic, Ask, Library. **Built:** the four tabs, with Ask as a placeholder.
 
 | Tab | What it is | State today |
 |---|---|---|
@@ -36,7 +36,7 @@ You paste in links, blocks of text and documents. They become arguments, diagram
 - No canvas. It's a split view, English on one side and logic on the other.
 - The Board does not formalise cards or use logic to back its arrows. Real-world articles argue from evidence, analogy and best explanation, so very few of them would benefit from formal logic.
 
-**Open:** `Statement` holds both a claim's English and its logic today. Once logic leaves the Board, is the Logic tab a list of saved conversions, or one scratchpad?
+**Decided:** the Logic tab is a list of saved scratchpads, each holding a whole argument. **Built:** statements on the Board are English only, and logic lives in scratchpads.
 
 ## Text into cards
 

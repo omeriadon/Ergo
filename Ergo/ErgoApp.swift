@@ -14,6 +14,7 @@ struct ErgoApp: App {
 	@State private var navigation = NavigationManager()
 	@State private var catalog = CatalogStore()
 	@State private var boardStore: BoardStore
+	@State private var scratchpadStore: ScratchpadStore
 	@State private var translationAccount: TranslationAccount
 	@State private var sync: SyncController
 
@@ -24,13 +25,15 @@ struct ErgoApp: App {
 		let navigation = NavigationManager()
 		let catalog = CatalogStore()
 		let boardStore = BoardStore()
+		let scratchpadStore = ScratchpadStore()
 		let translationAccount = TranslationAccount()
 
 		_navigation = State(initialValue: navigation)
 		_catalog = State(initialValue: catalog)
 		_boardStore = State(initialValue: boardStore)
+		_scratchpadStore = State(initialValue: scratchpadStore)
 		_translationAccount = State(initialValue: translationAccount)
-		_sync = State(initialValue: SyncController(account: translationAccount, boardStore: boardStore, catalog: catalog))
+		_sync = State(initialValue: SyncController(account: translationAccount, boardStore: boardStore, scratchpadStore: scratchpadStore, catalog: catalog))
 
 		AppDependencyManager.shared.add(
 			dependency: navigation
@@ -47,6 +50,7 @@ struct ErgoApp: App {
 				.environment(catalog)
 				.environment(navigation)
 				.environment(boardStore)
+				.environment(scratchpadStore)
 				.environment(translationAccount)
 				.environment(sync)
 				.task {
@@ -71,6 +75,7 @@ struct ErgoApp: App {
 			// Saves usually wait for a pause in typing, don't lose that pause to the app closing
 			if phase != .active {
 				boardStore.save()
+				scratchpadStore.save()
 			}
 			sync.scenePhaseChanged(phase)
 		}

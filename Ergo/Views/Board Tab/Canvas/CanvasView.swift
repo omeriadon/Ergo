@@ -5,7 +5,6 @@
 //  Created by Adon Omeri on 6/11/2026.
 //
 
-import Defaults
 import ErgoLogic
 import SwiftUI
 
@@ -28,18 +27,6 @@ private enum BoxPick: Equatable {
 			case let .connect(id), let .unlink(id): id
 		}
 	}
-}
-
-/// What the checker's answers depend on, so they're only worked out again when one of these changes
-private struct CanvasCheckKey: Equatable {
-	struct Item: Equatable {
-		let id: Statement.ID
-		let position: CanvasPoint
-		let logic: [LogicKeyboardEntry]
-	}
-
-	let statements: [Item]
-	let links: [Link]
 }
 
 /// The room the canvas has, read in one go from the view that sits between the bars: all of the screen the canvas
@@ -79,16 +66,6 @@ struct CanvasView: View {
 		let frame: CGRect
 	}
 
-	private enum Sheet: Identifiable {
-		case check(Statement.ID)
-
-		var id: String {
-			switch self {
-				case let .check(id): "check.\(id.uuidString)"
-			}
-		}
-	}
-
 	let zoomNamespace: Namespace.ID
 	let history: CanvasHistory
 
@@ -108,11 +85,6 @@ struct CanvasView: View {
 
 	@Environment(\.undoManager)
 	private var undoManager
-
-	@Environment(CatalogStore.self)
-	private var catalog
-
-	@Default(.logicLetters) private var logicLetters
 
 	// What's on screen
 	@State private var canvasBoard = CanvasBoardController()
@@ -140,21 +112,15 @@ struct CanvasView: View {
 	/// for the new selection can't move the canvas again afterwards.
 	@State private var keepsFitting = true
 
-	// Messages, checks and sheets
+	/// Messages
 	@State private var notice: String?
-	@State private var verdicts: [Statement.ID: BoxVerdict] = [:]
-	@State private var sheet: Sheet?
 
 	// Undo
 	@State private var canUndo = false
 	@State private var canRedo = false
 
-	private var board: LogicBoard {
+	private var board: Board {
 		boardStore.current
-	}
-
-	private var letters: [String] {
-		LogicLetters.resolved(logicLetters)
 	}
 
 	/// Animations are skipped entirely under Reduce Motion
@@ -173,9 +139,6 @@ struct CanvasView: View {
 		}
 		.safeAreaInset(edge: .bottom, spacing: 0) { bottomStack }
 		.toolbar { toolbar }
-		.sheet(item: $sheet) { sheet in
-			sheetContent(sheet)
-		}
 		.modifier(lifecycle)
 	}
 
@@ -187,10 +150,7 @@ struct CanvasView: View {
 		let boxes = board.statements.map { statement in
 			CanvasBoxModel(
 				statement: statement,
-				letters: letters,
-				descriptors: board.descriptors,
 				relations: relations[statement.id] ?? BoxRelations(),
-				verdict: verdicts[statement.id],
 				appearance: appearance(of: statement.id, connectable: connectable)
 			)
 		}
@@ -202,7 +162,6 @@ struct CanvasView: View {
 			selectedStatement: activePick == nil ? selectedStatement : nil,
 			selectedLink: selectedLink,
 			controller: canvasBoard,
-			catalog: catalog,
 			actions: actions(for:),
 			dragStarted: dragStarted,
 			moved: boxMoved,
@@ -294,12 +253,12 @@ struct CanvasView: View {
 			Button("Fit", systemImage: "arrow.up.left.and.down.right.magnifyingglass") {
 				fit(animated: true)
 			}
-			.accessibilityIdentifier("check.fitButton")
+			.accessibilityIdentifier("board.fitButton")
 
 			Button("Boards", systemImage: "text.page.and.line.vertical.and.text.page") {
 				navigation.presentSheet(.boards)
 			}
-			.accessibilityIdentifier("check.boardsButton")
+			.accessibilityIdentifier("board.boardsButton")
 		}
 
 		ToolbarOverflowMenu {
@@ -318,20 +277,6 @@ struct CanvasView: View {
 
 		Section {
 			Button("Arrange", systemImage: "rectangle.3.group") { arrange() }
-		}
-
-		Section {
-			Button("Letters and Descriptors", systemImage: "textformat.alt") { navigation.presentSheet(.logicLetters) }
-		}
-	}
-
-	// MARK: - Sheets
-
-	@ViewBuilder
-	private func sheetContent(_ sheet: Sheet) -> some View {
-		switch sheet {
-			case let .check(id):
-				ArgumentCheckSheet(statementID: id)
 		}
 	}
 
@@ -353,7 +298,7 @@ struct CanvasView: View {
 	/// Titles of what each box is joined to, for its ∴ mark and for VoiceOver
 	private var boxRelations: [Statement.ID: BoxRelations] {
 		let board = board
-		let titles = Dictionary(board.statements.map { ($0.id, StatementBoxView.title(of: $0, letters: letters)) }, uniquingKeysWith: { first, _ in first })
+		let titles = Dictionary(board.statements.map { ($0.id, StatementBoxView.title(of: $0)) }, uniquingKeysWith: { first, _ in first })
 
 		var relations: [Statement.ID: BoxRelations] = [:]
 		for link in board.links where link.premise != link.conclusion {
@@ -409,7 +354,6 @@ struct CanvasView: View {
 			delete: { delete(id) },
 			connect: { pickToConnect(id, asConclusion: $0) },
 			removeLink: { pickToUnlink(id) },
-			showCheck: verdicts[id] == nil ? nil : { sheet = .check(id) },
 			nudge: { nudge(id, columns: $0, rows: $1) }
 		)
 	}
@@ -719,17 +663,11 @@ struct CanvasView: View {
 
 	private var lifecycle: CanvasLifecycle {
 		CanvasLifecycle(
-			checkKey: CanvasCheckKey(
-				statements: board.statements.map { .init(id: $0.id, position: $0.position, logic: $0.logic) },
-				links: board.links
-			),
 			notice: notice,
 			undoManager: undoManager,
-			computeVerdicts: computeVerdicts,
 			clearNotice: { notice = nil },
 			wireHistory: wireHistory,
-			refreshUndo: refreshUndo,
-			tabLeft: { sheet = nil }
+			refreshUndo: refreshUndo
 		)
 	}
 
@@ -739,16 +677,6 @@ struct CanvasView: View {
 	private func fitUntilMoved() {
 		guard keepsFitting, !canvasBoard.hasBeenMoved, !isCovered, room.viewport.width > 0, room.viewport.height > 0 else { return }
 		fit(animated: false)
-	}
-
-	/// Off the main actor, after a pause, so typing in a box or dragging it never waits on a truth table
-	private func computeVerdicts() async {
-		try? await Task.sleep(for: .milliseconds(400))
-		guard !Task.isCancelled else { return }
-
-		let result = await BoxVerdict.all(in: boardStore.current.map)
-		guard !Task.isCancelled else { return }
-		verdicts = result
 	}
 
 	private func wireHistory() {
@@ -768,23 +696,14 @@ struct CanvasView: View {
 
 /// The `onChange`s, tasks and observers of the canvas, kept out of `body` so it type-checks quickly
 private struct CanvasLifecycle: ViewModifier {
-	let checkKey: CanvasCheckKey
 	let notice: String?
 	let undoManager: UndoManager?
-	let computeVerdicts: () async -> Void
 	let clearNotice: () -> Void
 	let wireHistory: () -> Void
 	let refreshUndo: () -> Void
-	let tabLeft: () -> Void
-
-	@Environment(NavigationManager.self)
-	private var navigation
 
 	func body(content: Content) -> some View {
 		content
-			.task(id: checkKey) {
-				await computeVerdicts()
-			}
 			.task(id: notice) {
 				guard notice != nil else { return }
 				try? await Task.sleep(for: .seconds(7))
@@ -793,9 +712,6 @@ private struct CanvasLifecycle: ViewModifier {
 			}
 			.task(id: undoManager.map(ObjectIdentifier.init)) {
 				wireHistory()
-			}
-			.onChange(of: navigation.selectedTab) {
-				tabLeft()
 			}
 			.onReceive(NotificationCenter.default.publisher(for: .NSUndoManagerDidCloseUndoGroup)) { _ in refreshUndo() }
 			.onReceive(NotificationCenter.default.publisher(for: .NSUndoManagerDidUndoChange)) { _ in refreshUndo() }

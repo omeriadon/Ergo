@@ -36,7 +36,7 @@ struct EnglishStatusView: View {
 					if let setUp {
 						Button("Set Up", action: setUp)
 							.buttonStyle(.glass)
-							.accessibilityIdentifier("check.setUpTranslation")
+							.accessibilityIdentifier("logic.setUpTranslation")
 					}
 				}
 			}
@@ -70,7 +70,7 @@ struct EnglishStatusView: View {
 					}
 					.buttonStyle(.glass)
 					.disabled(!canTranslate)
-					.accessibilityIdentifier("check.translateButton")
+					.accessibilityIdentifier("logic.translateButton")
 				} else {
 					Button {
 						stop()
@@ -78,14 +78,14 @@ struct EnglishStatusView: View {
 						Label("Stop", systemImage: "stop.fill")
 					}
 					.buttonStyle(.glass)
-					.accessibilityIdentifier("check.translateButton")
+					.accessibilityIdentifier("logic.translateButton")
 				}
 			}
 		}
 		.animation(.smooth, value: progress)
 		.fixedSize(horizontal: false, vertical: true)
 		.accessibilityElement(children: .contain)
-		.accessibilityIdentifier("check.englishStatus")
+		.accessibilityIdentifier("logic.englishStatus")
 	}
 }
 
@@ -114,6 +114,6 @@ struct ProgressRow: View {
 			Spacer(minLength: 0)
 		}
 		.accessibilityElement(children: .combine)
-		.accessibilityIdentifier("check.translationProgress")
+		.accessibilityIdentifier("logic.translationProgress")
 	}
 }

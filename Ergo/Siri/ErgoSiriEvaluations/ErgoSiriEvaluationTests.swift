@@ -47,25 +47,25 @@ struct ErgoSiriEvaluationTests {
 		}
 	}
 
-	static let openDebateTab = SiriScenario {
-		UserTurn("Switch to the Debate tab in Ergo") {
+	static let openAskTab = SiriScenario {
+		UserTurn("Switch to the Ask tab in Ergo") {
 			Calls {
-				OpenTabIntent.expect(tab: .equals("debate"))
+				OpenTabIntent.expect(tab: .equals("ask"))
 			}
 		}
 	}
 
-	static let openCheckTab = SiriScenario {
-		UserTurn("Take me to the Check tab in Ergo") {
+	static let openBoardTab = SiriScenario {
+		UserTurn("Take me to the Board tab in Ergo") {
 			Calls {
-				OpenTabIntent.expect(tab: .equals("check"))
+				OpenTabIntent.expect(tab: .equals("board"))
 			}
 		}
 	}
 
 	static let tabsEvaluation = ErgoEvaluation(
 		name: "Ergo - Open tabs",
-		dataset: SiriScenarioLoader { openLibraryTab; openDebateTab; openCheckTab }
+		dataset: SiriScenarioLoader { openLibraryTab; openAskTab; openBoardTab }
 	)
 
 	@Test("Siri opens the requested Ergo tab", .evaluates(tabsEvaluation))

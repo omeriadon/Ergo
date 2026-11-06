@@ -5,8 +5,6 @@
 //  Created by Adon Omeri on 5/11/2026.
 //
 
-import Defaults
-import ErgoLogic
 import SwiftUI
 
 struct BoardsSheet: View {
@@ -16,13 +14,7 @@ struct BoardsSheet: View {
 	@Environment(BoardStore.self)
 	private var boardStore
 
-	@Default(.logicLetters) var logicLetters
-
 	@State private var breakingDown = false
-
-	private var letters: [String] {
-		LogicLetters.resolved(logicLetters)
-	}
 
 	var body: some View {
 		NavigationStack {
@@ -34,7 +26,6 @@ struct BoardsSheet: View {
 					} label: {
 						BoardRow(
 							board: board,
-							letters: letters,
 							isCurrent: board.id == boardStore.current.id
 						)
 					}
@@ -51,7 +42,7 @@ struct BoardsSheet: View {
 					ContentUnavailableView(
 						"No Boards",
 						systemImage: "doc.text",
-						description: Text("Anything you write on the Check tab is kept here.")
+						description: Text("Anything you write on the Board tab is kept here.")
 					)
 				}
 			}
@@ -91,14 +82,13 @@ struct BoardsSheet: View {
 }
 
 private struct BoardRow: View {
-	let board: LogicBoard
-	let letters: [String]
+	let board: Board
 	let isCurrent: Bool
 
 	var body: some View {
 		HStack {
 			VStack(alignment: .leading, spacing: 4) {
-				Text(board.title(letters: letters))
+				Text(board.title)
 					.font(.headline)
 					.lineLimit(1)
 

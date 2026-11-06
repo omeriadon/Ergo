@@ -6,7 +6,6 @@
 //
 
 import ErgoLogic
-import ErgoTranslation
 import SwiftUI
 
 /// What a box knows about its neighbours, for its badge and for VoiceOver. Titles, not ids, since they're only ever read.
@@ -38,19 +37,11 @@ struct StatementBoxView: View, Equatable {
 	private static let corner = 18.0
 
 	let statement: Statement
-	let letters: [String]
-	let descriptors: [String]
 	let relations: BoxRelations
-	let verdict: BoxVerdict?
 	let appearance: BoxAppearance
-	let showCheck: () -> Void
-
-	@Environment(CatalogStore.self)
-	private var catalog
 
 	static func == (left: Self, right: Self) -> Bool {
-		left.statement == right.statement && left.letters == right.letters && left.descriptors == right.descriptors
-			&& left.relations == right.relations && left.verdict == right.verdict && left.appearance == right.appearance
+		left.statement == right.statement && left.relations == right.relations && left.appearance == right.appearance
 	}
 
 	var body: some View {
@@ -60,13 +51,6 @@ struct StatementBoxView: View, Equatable {
 				.foregroundStyle(headline.isPlaceholder ? .secondary : .primary)
 				.lineLimit(2)
 				.frame(maxWidth: .infinity, alignment: .leading)
-
-			if let logicLine {
-				Text(logicLine)
-					.font(.caption.monospaced())
-					.foregroundStyle(.secondary)
-					.lineLimit(1)
-			}
 
 			Spacer(minLength: 0)
 
@@ -89,33 +73,10 @@ struct StatementBoxView: View, Equatable {
 
 	// MARK: - Content
 
-	/// The English, else the logic read back as English, else a prompt
+	/// The English, else a prompt
 	private var headline: (text: String, isPlaceholder: Bool) {
 		let english = statement.english.trimmingCharacters(in: .whitespacesAndNewlines)
-		if !english.isEmpty {
-			return (english, false)
-		}
-		if let derived = derivedEnglish {
-			return (derived, false)
-		}
-		if let line = statement.logicLine(letters: letters) {
-			return (line, false)
-		}
-		return ("Empty statement", true)
-	}
-
-	private var derivedEnglish: String? {
-		guard !statement.logic.isEmpty else { return nil }
-		let parse = LogicParser.parse(statement.logic)
-		guard parse.diagnostics.isEmpty else { return nil }
-		let text = LogicEnglish.text(for: parse.argument, letters: letters, descriptors: descriptors)
-		return text.isEmpty ? nil : text
-	}
-
-	/// Shown under the English; when the English is what the logic reads back as, the logic is the headline's source anyway
-	private var logicLine: String? {
-		guard !statement.english.isEmpty || derivedEnglish != nil else { return nil }
-		return statement.logicLine(letters: letters)
+		return english.isEmpty ? ("Empty statement", true) : (english, false)
 	}
 
 	private var footer: some View {
@@ -126,37 +87,9 @@ struct StatementBoxView: View, Equatable {
 					.foregroundStyle(.secondary)
 			}
 
-			if let status {
-				Label(status.text, systemImage: status.symbol)
-					.font(.caption2)
-					.foregroundStyle(status.color)
-					.lineLimit(1)
-			}
-
 			Spacer(minLength: 0)
-
-			if let verdict {
-				VerdictBadge(verdict: verdict, action: showCheck)
-			}
 		}
 		.frame(height: 22)
-	}
-
-	/// The small line about the statement itself, apart from how it fits with the others
-	private var status: (text: String, symbol: String, color: Color)? {
-		if let issue = statement.currentIssues.first {
-			return (issue.message, issue.severity == .error ? "xmark.circle.fill" : "exclamationmark.triangle.fill", issue.severity == .error ? .red : .orange)
-		}
-		if statement.isLogicOutdated, !statement.logic.isEmpty {
-			return ("Logic out of date", "arrow.triangle.2.circlepath", .secondary)
-		}
-		if !statement.english.isEmpty, statement.logic.isEmpty {
-			return ("Not translated", "text.badge.xmark", .secondary)
-		}
-		if !statement.logic.isEmpty, !LogicParser.parse(statement.logic).diagnostics.isEmpty {
-			return ("Doesn't parse", "exclamationmark.circle.fill", .orange)
-		}
-		return nil
 	}
 
 	// MARK: - Outline
@@ -179,7 +112,7 @@ struct StatementBoxView: View, Equatable {
 
 extension StatementBoxView {
 	/// "All men are mortal", or what the box would say if it had any text
-	static func title(of statement: Statement, letters: [String]) -> String {
-		statement.englishLine ?? statement.logicLine(letters: letters) ?? "Empty statement"
+	static func title(of statement: Statement) -> String {
+		statement.englishLine ?? "Empty statement"
 	}
 }

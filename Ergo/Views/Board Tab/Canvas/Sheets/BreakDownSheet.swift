@@ -11,7 +11,7 @@ import ErgoTranslation
 import SwiftUI
 
 /// Pastes English and lets the server split it into premises and a conclusion, with no logic written. What it finds becomes
-/// a new board of statements joined by arrows (`BoardStore.newBoard(from:)`), and each one is translated on its own afterwards.
+/// a new board of statements joined by arrows (`BoardStore.newBoard(from:)`). The claims it names are dropped, since a board holds English only.
 struct BreakDownSheet: View {
 	@Environment(\.dismiss)
 	private var dismiss
@@ -49,7 +49,7 @@ struct BreakDownSheet: View {
 				if let found {
 					BreakdownResultView(
 						breakdown: found,
-						application: found.applied(to: LogicBoard().map, replacing: true)
+						application: found.applied(to: Board().map, replacing: true)
 					)
 				} else {
 					input
@@ -77,7 +77,7 @@ struct BreakDownSheet: View {
 					.focused($englishFocused)
 					.scrollDismissesKeyboard(.interactively)
 					.accessibilityLabel("Argument")
-					.accessibilityIdentifier("check.breakDown.englishEditor")
+					.accessibilityIdentifier("board.breakDown.englishEditor")
 
 				if english.isEmpty {
 					Text("Paste an argument and the premises and conclusion are found for you.")
@@ -113,7 +113,7 @@ struct BreakDownSheet: View {
 				stop()
 				dismiss()
 			}
-			.accessibilityIdentifier("check.breakDown.cancel")
+			.accessibilityIdentifier("board.breakDown.cancel")
 		}
 
 		if found != nil {
@@ -121,7 +121,7 @@ struct BreakDownSheet: View {
 				Button("Edit Text", systemImage: "pencil") {
 					run = .idle
 				}
-				.accessibilityIdentifier("check.breakDown.editText")
+				.accessibilityIdentifier("board.breakDown.editText")
 			}
 
 			ToolbarItem(placement: .topBarTrailing) {
@@ -130,7 +130,7 @@ struct BreakDownSheet: View {
 				}
 				.buttonStyle(.glassProminent)
 				.accessibilityLabel("Create board")
-				.accessibilityIdentifier("check.breakDown.apply")
+				.accessibilityIdentifier("board.breakDown.apply")
 			}
 		} else {
 			ToolbarItem(placement: .keyboard) {
@@ -231,7 +231,7 @@ private struct BreakDownStatusView: View {
 					if let setUp {
 						Button("Set Up", action: setUp)
 							.buttonStyle(.glass)
-							.accessibilityIdentifier("check.breakDown.setUp")
+							.accessibilityIdentifier("board.breakDown.setUp")
 					}
 				}
 			}
@@ -249,7 +249,7 @@ private struct BreakDownStatusView: View {
 					}
 					.buttonStyle(.glassProminent)
 					.disabled(!canBreakDown)
-					.accessibilityIdentifier("check.breakDown.button")
+					.accessibilityIdentifier("board.breakDown.button")
 				} else {
 					Button {
 						stop()
@@ -257,14 +257,14 @@ private struct BreakDownStatusView: View {
 						Label("Stop", systemImage: "stop.fill")
 					}
 					.buttonStyle(.glass)
-					.accessibilityIdentifier("check.breakDown.button")
+					.accessibilityIdentifier("board.breakDown.button")
 				}
 			}
 		}
 		.animation(.smooth, value: progress)
 		.fixedSize(horizontal: false, vertical: true)
 		.accessibilityElement(children: .contain)
-		.accessibilityIdentifier("check.breakDown.status")
+		.accessibilityIdentifier("board.breakDown.status")
 	}
 }
 
@@ -321,7 +321,7 @@ private struct BreakdownResultView: View {
 				}
 			}
 		}
-		.accessibilityIdentifier("check.breakDown.result")
+		.accessibilityIdentifier("board.breakDown.result")
 	}
 
 	/// Said before creating, so an argument too long for one board doesn't surprise anyone
@@ -330,6 +330,6 @@ private struct BreakdownResultView: View {
 		let found = application.map.statements.count + application.skipped
 		return Text("Expected at most \(limit) statements, found \(found). \(application.skipped) won't be added, starting from the last premise.")
 			.foregroundStyle(.orange)
-			.accessibilityIdentifier("check.breakDown.limit")
+			.accessibilityIdentifier("board.breakDown.limit")
 	}
 }

@@ -66,10 +66,10 @@ public extension ArgumentBreakdown {
 
 		var block = ArgumentMap<Node, Link>()
 		for quote in kept {
-			block.statements.append(Node(id: makeID(), position: .zero, english: quote, logic: []))
+			block.statements.append(Node(id: makeID(), position: .zero, english: quote))
 		}
 		if conclusionFits {
-			let node = Node(id: makeID(), position: .zero, english: conclusion, logic: [])
+			let node = Node(id: makeID(), position: .zero, english: conclusion)
 			block.statements.append(node)
 			result.conclusion = node.id
 			for premise in block.statements.dropLast() {

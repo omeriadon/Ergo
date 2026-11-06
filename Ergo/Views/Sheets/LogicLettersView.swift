@@ -10,7 +10,7 @@ import ErgoLogic
 import SwiftUI
 
 struct LogicLettersView: View {
-	/// The current board's, when opened from the editor. Settings only edits the letters, which every board shares.
+	/// The current scratchpad's, when opened from the editor. Settings only edits the letters, which every scratchpad shares.
 	var descriptors: Binding<[String]>?
 
 	@Default(.logicLetters) var logicLetters
@@ -72,7 +72,7 @@ struct LogicLettersView: View {
 						}
 					}
 				} header: {
-					Text("On This Board")
+					Text("On This Scratchpad")
 				} footer: {
 					Text("What each letter stands for here, up to \(LogicLetters.descriptorWordLimit) words. Translating English fills these in.")
 				}
@@ -124,14 +124,14 @@ struct LogicLettersSheet: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
-	@Environment(BoardStore.self)
-	private var boardStore
+	@Environment(ScratchpadStore.self)
+	private var scratchpadStore
 
 	var body: some View {
-		@Bindable var boardStore = boardStore
+		@Bindable var scratchpadStore = scratchpadStore
 
 		NavigationStack {
-			LogicLettersView(descriptors: $boardStore.current.descriptors)
+			LogicLettersView(descriptors: $scratchpadStore.current.descriptors)
 				.toolbar {
 					ToolbarItem(placement: .topBarTrailing) {
 						Button(role: .close) {

@@ -47,29 +47,52 @@ struct ContentView: View {
 		)
 	}
 
+	private var logicPath: Binding<[LogicRoute]> {
+		Binding(
+			get: {
+				navigation.logicPath
+			},
+			set: { newValue in
+				navigation.logicPath = newValue
+			}
+		)
+	}
+
 	var body: some View {
 		@Bindable var router = navigation
 
 		TabView(selection: tabSelection) {
-			Tab(value: .check) {
+			Tab(value: .board) {
 				NavigationStack {
-					CheckTabView()
+					BoardTabView()
 						.toolbarTitleItem()
 				}
 			} label: {
 				Label("Board", systemImage: "flowchart")
 			}
 
-			Tab(value: .debate) {
-				NavigationStack {
-					HStack {
-						Text("debate")
-						Image("Ergo")
-					}
-					.toolbarTitleItem()
+			Tab(value: .logic) {
+				NavigationStack(path: logicPath) {
+					LogicTabView()
+						.toolbarTitleItem()
+						.navigationDestination(for: LogicRoute.self) { route in
+							switch route {
+								case .scratchpad:
+									ScratchpadEditorView()
+							}
+						}
 				}
 			} label: {
-				Label("Debate", systemImage: "bubble.left.and.text.bubble.right")
+				Label("Logic", systemImage: "function")
+			}
+
+			Tab(value: .ask) {
+				NavigationStack {
+					AskTabView()
+						.toolbarTitleItem()
+				}
+			} label: {
+				Label("Ask", systemImage: "bubble.left.and.text.bubble.right")
 			}
 
 			Tab(value: .library, role: .prominent) {
@@ -127,9 +150,6 @@ struct ContentView: View {
 				case .result:
 					Text("sheet here!")
 
-				case .createDebate:
-					Text("sheet here!")
-
 				case .settings:
 					SettingsView()
 
@@ -147,13 +167,19 @@ struct ContentView: View {
 #Preview {
 	@Previewable @State var thing = NavigationManager()
 	@Previewable @State var catalog = CatalogStore()
+	@Previewable @State var boardStore = BoardStore()
+	@Previewable @State var scratchpadStore = ScratchpadStore()
+	@Previewable @State var account = TranslationAccount()
 
 	ContentView()
 		.environment(thing)
 		.environment(catalog)
+		.environment(boardStore)
+		.environment(scratchpadStore)
+		.environment(account)
 		.onAppear {
 			thing.startup()
-			thing.selectedTab = .check
+			thing.selectedTab = .board
 			thing.libraryPath = [.bookmarks, .category(.philosophers), .detail(category: .philosophers, id: "david-hume")]
 			Task {
 				try? await catalog.load()

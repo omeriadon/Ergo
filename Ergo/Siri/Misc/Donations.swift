@@ -10,7 +10,7 @@ import AppIntents
 /// Tells the system about library actions the user did themselves, so Siri, Spotlight and Shortcuts can learn and suggest them.
 ///
 /// Only call these from the view layer's own handlers, never from an intent's `perform()` or from a `NavigationManager` method an intent calls: the system already donates what it runs itself, and donating that again would feed back into the suggestions.
-/// Only library browsing is donated. Nothing from the Check tab (English or logic text) goes through here.
+/// Only library browsing is donated. Nothing from the Board or Logic tabs (English or logic text) goes through here.
 enum IntentDonations {
 	// MARK: - Tabs
 

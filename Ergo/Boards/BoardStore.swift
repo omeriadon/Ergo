@@ -10,8 +10,8 @@ import ErgoLogic
 import ErgoTranslation
 import SwiftUI
 
-/// Every board, and which one the Check tab is showing. Shared so the boards list
-/// and the letters sheet edit the same board the editor does.
+/// Every board, and which one the Board tab is showing. Shared so the boards list
+/// and the editor edit the same board.
 ///
 /// Statements and links are edited on the current board through the methods under "statements" and "links". Each
 /// one bumps `modified` and goes through `current`, so it's saved after a pause and reported to sync with the board.
@@ -20,25 +20,25 @@ import SwiftUI
 final class BoardStore {
 	// MARK: - boards
 
-	private(set) var boards: [LogicBoard]
+	private(set) var boards: [Board]
 
 	/// Newest first
-	var sortedBoards: [LogicBoard] {
+	var sortedBoards: [Board] {
 		boards.sorted { $0.modified > $1.modified }
 	}
 
 	// MARK: - current
 
-	private(set) var currentID: LogicBoard.ID? {
+	private(set) var currentID: Board.ID? {
 		didSet {
 			Defaults[.currentBoardID] = currentID
 		}
 	}
 
 	/// Stays out of the list until something's written on it
-	private var draft = LogicBoard()
+	private var draft = Board()
 
-	var current: LogicBoard {
+	var current: Board {
 		get {
 			boards.first { $0.id == currentID } ?? draft
 		}
@@ -76,13 +76,13 @@ final class BoardStore {
 
 	func newBoard() {
 		discardCurrentIfEmpty()
-		draft = LogicBoard()
+		draft = Board()
 		currentID = nil
 	}
 
 	// MARK: - open
 
-	func open(_ id: LogicBoard.ID) {
+	func open(_ id: Board.ID) {
 		guard id != currentID else { return }
 		discardCurrentIfEmpty()
 		currentID = id
@@ -90,7 +90,7 @@ final class BoardStore {
 
 	// MARK: - delete
 
-	func delete(_ ids: Set<LogicBoard.ID>) {
+	func delete(_ ids: Set<Board.ID>) {
 		boards.removeAll { ids.contains($0.id) }
 		deletedIDs.formUnion(ids)
 		if let currentID, ids.contains(currentID) {
@@ -193,71 +193,16 @@ final class BoardStore {
 		current = board
 	}
 
-	// MARK: - checking
-
-	/// What the checker makes of the statement as the conclusion of its premises. Nil when it has no premises, or it or
-	/// one of them has no logic yet; the failure says why a statement can't be checked (`ArgumentEntriesProblem.message`).
-	/// A statement on its own is checked by `LogicChecker.analyze(statement.logic)`, as the editor does.
-	func check(_ id: Statement.ID) -> Result<LogicAnalysis?, ArgumentEntriesProblem> {
-		Result { () throws(ArgumentEntriesProblem) in
-			try ArgumentEntries.check(statement: id, in: current.map)
-		}
-	}
-
-	/// `check` without the reason
-	func analysis(for id: Statement.ID) -> LogicAnalysis? {
-		(try? check(id).get()) ?? nil
-	}
-
-	// MARK: - translating
-
-	/// Gives the board the names for letters that a translation or breakdown found, in slots still free
-	func mergeDescriptors(_ descriptors: [String]) {
-		var board = current
-		let before = board.descriptors
-		board.merge(descriptors: descriptors)
-		guard board.descriptors != before else { return }
-		current = board
-	}
-
-	/// Records a finished translation on the statement it was for, whose English must still be `english`.
-	/// The logic and descriptors only change when it produced logic; the caller has already parsed that. A failed
-	/// translation only brings issues, and the logic that was there stays.
-	func applyTranslation(_ translation: Translation, english: String, to id: Statement.ID) {
-		var board = current
-		guard let index = board.statements.firstIndex(where: { $0.id == id }), board.statements[index].english == english else { return }
-
-		// Keyed to the English as sent, so the statement never thinks it's out of date
-		board.statements[index].translation = Translation(
-			english: english,
-			entries: translation.entries,
-			descriptors: translation.descriptors,
-			issues: translation.issues
-		)
-		board.statements[index].source = .english
-		if !translation.entries.isEmpty {
-			board.statements[index].logic = translation.entries
-			board.merge(descriptors: translation.descriptors)
-		}
-		current = board
-	}
-
 	// MARK: - breaking down
 
 	/// Opens a new board holding a server breakdown: a statement per premise and one for the conclusion, every premise linked
-	/// to it (`ArgumentBreakdown.applied`). The breakdown's claims fill the descriptors. Statements past the limit are left out.
-	///
-	/// New statements start as English with nothing translated, like any typed statement.
+	/// to it (`ArgumentBreakdown.applied`). The breakdown's claims are dropped, since a board holds English only.
+	/// Statements past the limit are left out.
 	func newBoard(from breakdown: ArgumentBreakdown) {
 		newBoard()
 
 		var board = current
-		var application = breakdown.applied(to: board.map, replacing: true)
-		for index in application.map.statements.indices where application.added.contains(application.map.statements[index].id) {
-			application.map.statements[index].source = .english
-		}
-		board.map = application.map
-		board.merge(descriptors: breakdown.descriptors)
+		board.map = breakdown.applied(to: board.map, replacing: true).map
 		current = board
 	}
 
@@ -265,14 +210,14 @@ final class BoardStore {
 
 	/// What changed since the last save, for sync
 	@ObservationIgnored
-	private var changedIDs: Set<LogicBoard.ID> = []
+	private var changedIDs: Set<Board.ID> = []
 
 	@ObservationIgnored
-	private var deletedIDs: Set<LogicBoard.ID> = []
+	private var deletedIDs: Set<Board.ID> = []
 
 	/// Hears every save with the boards that changed and the ones deleted. Remote changes aren't passed back.
 	@ObservationIgnored
-	var didSave: ((_ changed: [LogicBoard], _ deleted: Set<LogicBoard.ID>) -> Void)?
+	var didSave: ((_ changed: [Board], _ deleted: Set<Board.ID>) -> Void)?
 
 	/// Typing changes the board on every keystroke, so writes wait for a pause
 	private func scheduleSave() {
@@ -307,7 +252,7 @@ final class BoardStore {
 	// MARK: - sync
 
 	/// Writes what other devices changed. Keeps their `modified`, and doesn't report it back as a local change.
-	func applyRemote(_ remote: [LogicBoard], deleted: Set<LogicBoard.ID>) {
+	func applyRemote(_ remote: [Board], deleted: Set<Board.ID>) {
 		guard !remote.isEmpty || !deleted.isEmpty else { return }
 
 		for board in remote {
@@ -327,7 +272,7 @@ final class BoardStore {
 
 		// Deleted on another device, so it goes the same way as deleting it here
 		if let currentID, deleted.contains(currentID) {
-			draft = LogicBoard()
+			draft = Board()
 			self.currentID = nil
 		}
 
@@ -336,7 +281,7 @@ final class BoardStore {
 
 	/// A statement holding what lost a simultaneous edit on another device, on the board it was edited on.
 	/// It syncs like any new statement, and isn't held to the statement limit, since nothing may be lost.
-	func insertStatementCopy(_ statement: Statement, into boardID: LogicBoard.ID) {
+	func insertStatementCopy(_ statement: Statement, into boardID: Board.ID) {
 		guard let index = boards.firstIndex(where: { $0.id == boardID }) else { return }
 		boards[index].statements.append(statement)
 		boards[index].modified = .now

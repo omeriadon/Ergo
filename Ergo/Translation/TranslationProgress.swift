@@ -8,7 +8,7 @@
 import ErgoTranslation
 import Foundation
 
-/// The one live row the Check tab shows while the server translates, so a slow translation never looks stuck
+/// The one live row the Logic tab shows while the server translates, so a slow translation never looks stuck
 struct TranslationProgress: Hashable {
 	var title = "Connecting"
 	var detail: String?

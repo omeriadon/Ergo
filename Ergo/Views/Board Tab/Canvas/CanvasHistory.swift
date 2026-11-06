@@ -17,7 +17,7 @@ import SwiftUI
 @MainActor
 final class CanvasHistory {
 	struct Snapshot: Equatable, Sendable {
-		let boardID: LogicBoard.ID
+		let boardID: Board.ID
 		let statements: [Statement]
 		let links: [Link]
 	}

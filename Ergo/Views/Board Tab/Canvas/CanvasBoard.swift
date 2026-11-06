@@ -11,10 +11,7 @@ import SwiftUI
 /// What one box shows. Compared before its SwiftUI is touched, so a box only redraws when this changes.
 struct CanvasBoxModel: Equatable {
 	let statement: Statement
-	let letters: [String]
-	let descriptors: [String]
 	let relations: BoxRelations
-	let verdict: BoxVerdict?
 	let appearance: BoxAppearance
 }
 
@@ -60,9 +57,7 @@ struct CanvasBoard: UIViewRepresentable {
 	let selectedLink: Link.ID?
 	let controller: CanvasBoardController
 
-	/// A hosted box has its own SwiftUI environment, so what it needs from the app's is passed in
-	let catalog: CatalogStore
-
+	/// A hosted box has its own SwiftUI environment, so anything it needs from the app's has to be passed in
 	let actions: (Statement) -> BoxActions
 	let dragStarted: (Statement.ID) -> Void
 	let moved: (Statement.ID, CanvasPoint) -> Void
@@ -106,7 +101,6 @@ struct CanvasBoard: UIViewRepresentable {
 		AnyView(
 			CanvasBox(model: model, actions: actions(model.statement))
 				.modifier(BoxEntrance(isNew: isNew))
-				.environment(catalog)
 				.fontDesign(.rounded)
 		)
 	}

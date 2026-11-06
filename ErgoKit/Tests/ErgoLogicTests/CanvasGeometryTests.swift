@@ -149,7 +149,7 @@ struct CanvasGeometryTests {
 		let rect = box(1.5, -2)
 		let decoded = try JSONDecoder().decode(CanvasRect.self, from: JSONEncoder().encode(rect))
 		#expect(decoded == rect)
-		let statement = ArgumentFixtures.statement(1, logic: "X→Y", english: "If X, Y", x: 3, y: 4)
+		let statement = ArgumentFixtures.statement(1, english: "If X, Y", x: 3, y: 4)
 		#expect(try JSONDecoder().decode(ArgumentStatement.self, from: JSONEncoder().encode(statement)) == statement)
 	}
 }
