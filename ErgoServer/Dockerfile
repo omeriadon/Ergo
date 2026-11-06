@@ -27,7 +27,8 @@ RUN --mount=type=cache,id=ergo-server-build,target=/src/ErgoServer/.build \
 	&& bin="$(swift build -c release --show-bin-path)" \
 	&& mkdir /staging \
 	&& cp "$bin/ErgoServer" /staging/ \
-	&& find "$bin" -maxdepth 1 -name '*.resources' -exec cp -R {} /staging/ \;
+	&& find -L "$bin" -maxdepth 1 \( -name '*.bundle' -o -name '*.resources' \) -exec cp -RL {} /staging/ \; \
+	&& test -d /staging/ErgoServer_ErgoServer.bundle
 
 # MARK: - Run
 
