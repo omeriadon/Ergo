@@ -18,11 +18,11 @@ FROM ${SWIFT_IMAGE} AS build
 WORKDIR /src
 
 COPY ErgoKit/ ErgoKit/
-COPY ErgoServer/Package.swift ErgoServer/Package.resolved ErgoServer/
-RUN cd ErgoServer && swift package resolve
-
 COPY ErgoServer/ ErgoServer/
-RUN cd ErgoServer \
+
+# .build lives in a cache mount that outlasts each build, so a change only recompiles what it touches
+RUN --mount=type=cache,id=ergo-server-build,target=/src/ErgoServer/.build \
+	cd ErgoServer \
 	&& swift build -c release --product ErgoServer --static-swift-stdlib \
 	&& bin="$(swift build -c release --show-bin-path)" \
 	&& mkdir /staging \
