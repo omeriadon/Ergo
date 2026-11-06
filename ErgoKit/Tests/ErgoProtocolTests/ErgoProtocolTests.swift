@@ -78,9 +78,52 @@ struct ErgoProtocolTests {
 	@Test func translateClientMessages() throws {
 		try expectRoundTrip(
 			TranslateClientMessage.translate(Self.request),
-			#"{"translate":{"_0":{"english":"It rains.","grammarVersion":1,"id":"6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B","letters":["X","Y","Z","P","Q","R"],"provider":"codex"}}}"#
+			#"{"translate":{"_0":{"english":"It rains.","grammarVersion":1,"id":"6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B","letters":["X","Y","Z","P","Q","R"],"provider":"codex","scope":"statement"}}}"#
 		)
 		try expectRoundTrip(TranslateClientMessage.cancel, #"{"cancel":{}}"#)
+	}
+
+	@Test func translateScopeAndDescriptors() throws {
+		var request = Self.request
+		request.descriptors = ["it rains", "", "", "", "", ""]
+		request.scope = .argument
+		try expectRoundTrip(
+			TranslateClientMessage.translate(request),
+			#"{"translate":{"_0":{"descriptors":["it rains","","","","",""],"english":"It rains.","grammarVersion":1,"id":"6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B","letters":["X","Y","Z","P","Q","R"],"provider":"codex","scope":"argument"}}}"#
+		)
+	}
+
+	/// An older app sends neither, and means one statement with nothing named
+	@Test func olderRequestsDecodeAsStatements() throws {
+		let old = #"{"english":"It rains.","grammarVersion":1,"id":"6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B","letters":["X","Y","Z","P","Q","R"],"provider":"codex"}"#
+		let decoded = try ErgoProtocol.decoder.decode(TranslateRequest.self, from: Data(old.utf8))
+		#expect(decoded == Self.request)
+		#expect(decoded.scope == .statement)
+		#expect(decoded.descriptors == nil)
+	}
+
+	@Test func breakDownServerMessages() throws {
+		let breakdown = ArgumentBreakdown(
+			kind: .argument,
+			premises: ["It rains"],
+			conclusion: "the ground is wet",
+			claims: [BreakdownStage.Output.Claim(meaning: "It rains", descriptor: "it rains")],
+			descriptors: ["it rains", "", "", "", "", ""]
+		)
+		try expectRoundTrip(
+			BreakDownServerMessage.finished(breakdown),
+			#"{"finished":{"_0":{"claims":[{"descriptor":"it rains","meaning":"It rains"}],"conclusion":"the ground is wet","descriptors":["it rains","","","","",""],"issues":[],"kind":"argument","premises":["It rains"]}}}"#
+		)
+		try expectRoundTrip(
+			BreakDownServerMessage.event(.started(step: .breakdown, attempt: 1)),
+			#"{"event":{"_0":{"started":{"attempt":1,"step":"breakdown"}}}}"#
+		)
+
+		// The same bytes as a statement scope's, so a failure before the scope is known reaches either client
+		let failure = #"{"failed":{"_0":{"code":"busy","message":"Already translating"}}}"#
+		let error = ServiceError(code: .busy, message: "Already translating")
+		#expect(try ErgoProtocol.decoder.decode(BreakDownServerMessage.self, from: Data(failure.utf8)) == .failed(error))
+		#expect(try json(TranslateServerMessage.failed(error)) == failure)
 	}
 
 	@Test func translateServerMessages() throws {

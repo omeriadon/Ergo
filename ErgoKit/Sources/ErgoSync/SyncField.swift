@@ -30,14 +30,28 @@ public struct SyncField: Codable, Sendable, Hashable {
 
 /// The field names records use, shared so the app and the server's checks can't drift
 public enum SyncFieldName {
-	/// page: a tombstone. A record is deleted while this is `true` and newer than every other field.
+	/// page, statement, link: a tombstone. A record is deleted while this is `true` and newer than every other field.
 	public static let deleted = "deleted"
 
 	/// page: when it was made
 	public static let created = "created"
 
-	/// page: `{ english, logic, source, translation }` together, since English and logic follow each other
+	/// statement: `{ english, logic, source, translation }` together, since English and logic follow each other.
+	/// Opaque to the server. Pages used to carry this too, so the constant stays, but a page record refuses it now.
 	public static let content = "content"
+
+	/// statement, link: the owning page's id (uppercase UUID string). Statements and links whose page is deleted
+	/// or missing are ignored on read and pruned by the server.
+	public static let page = "page"
+
+	/// statement: `{ x, y }` in canvas coordinates, written when a drag ends
+	public static let position = "position"
+
+	/// link: the id of the statement that is the premise, the arrow's tail
+	public static let premise = "premise"
+
+	/// link: the id of the statement that is the conclusion, the arrow's head
+	public static let conclusion = "conclusion"
 
 	/// bookmark: whether it's bookmarked
 	public static let present = "present"

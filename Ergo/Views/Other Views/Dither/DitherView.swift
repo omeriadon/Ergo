@@ -53,6 +53,7 @@ public nonisolated struct DitherConfiguration: Equatable, Sendable {
 	public var useThemeColors = false
 	public var opacity: Float = 1
 	public var topBlur = false
+	public var clipsToDeviceCorners = true
 
 	public var cursorInteractionEnabled = false
 	public var cursorRadius: Double = 0.5
@@ -205,6 +206,9 @@ struct DitherRenderInputs: Equatable, Sendable {
 	var cursorTrail: [SIMD3<Float>] = []
 	var cursorTouch: SIMD2<Float> = .zero
 	var cursorPresence: Float = 0
+	var screenOrigin: SIMD2<Float> = .zero
+	var screenSize: SIMD2<Float> = .zero
+	var screenCornerRadius: Float = 0
 
 	static let empty = DitherRenderInputs()
 }
@@ -258,6 +262,9 @@ private struct DitherUniforms {
 	var backgroundStyle: Int32
 	var squareStyle: Int32
 	var cursorPresence: Float
+	var screenOrigin: SIMD2<Float>
+	var screenSize: SIMD2<Float>
+	var screenCornerRadius: Float
 }
 
 private struct TopBlurUniforms {
@@ -591,7 +598,7 @@ private final class DitherMetalRenderer {
 		self.usesTwoDimensionalThreadgroups = usesTwoDimensionalThreadgroups
 		self.usesCellBlurFastPath = usesCellBlurFastPath
 		guard MemoryLayout<FieldUniforms>.stride == 224,
-		      MemoryLayout<DitherUniforms>.stride == 128
+		      MemoryLayout<DitherUniforms>.stride == 144
 		else {
 			throw NSError(domain: "DitherMetal", code: 12, userInfo: [NSLocalizedDescriptionKey: "Swift and Metal uniform layouts do not match"])
 		}
@@ -770,7 +777,10 @@ private final class DitherMetalRenderer {
 			colorPlacement: configuration.colorPlacement == "background" ? 1 : 0,
 			backgroundStyle: backgroundStyle,
 			squareStyle: configuration.squareStyle == "black" ? 1 : 0,
-			cursorPresence: inputs.cursorPresence
+			cursorPresence: inputs.cursorPresence,
+			screenOrigin: inputs.screenOrigin * scale,
+			screenSize: inputs.screenSize * scale,
+			screenCornerRadius: configuration.clipsToDeviceCorners ? inputs.screenCornerRadius * scale : 0
 		)
 		for index in 0 ..< 8 {
 			themePositions[index] = index < inputs.themePositions.count ? inputs.themePositions[index] : .zero
@@ -1626,6 +1636,16 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 	private var frameScheduler = DitherFrameScheduler()
 	#if os(macOS)
 		private var occlusionObserver: NSObjectProtocol?
+	#else
+		/// Empty, fills the window and takes its corners from it. UIKit has no property for the display's radius, but a
+		/// view concentric with the window reports it through `effectiveRadius(corner:)`.
+		private let cornerProbe: UIView = {
+			let probe = UIView()
+			probe.isUserInteractionEnabled = false
+			probe.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+			probe.cornerConfiguration = .corners(radius: .containerConcentric())
+			return probe
+		}()
 	#endif
 
 	override init(frame: CGRect, device: MTLDevice?) {
@@ -1688,6 +1708,11 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 	#if os(iOS)
 		override func didMoveToWindow() {
 			super.didMoveToWindow()
+			cornerProbe.removeFromSuperview()
+			if let window {
+				cornerProbe.frame = window.bounds
+				window.insertSubview(cornerProbe, at: 0)
+			}
 			updateScheduling()
 			requestFrame()
 		}
@@ -1838,7 +1863,7 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 				frameConfiguration.disableAnimation = true
 				frameConfiguration.intro = false
 			}
-			let inputs: DitherRenderInputs = if frameConfiguration.cursorInteractionEnabled, !frameConfiguration.disableAnimation {
+			var inputs: DitherRenderInputs = if frameConfiguration.cursorInteractionEnabled, !frameConfiguration.disableAnimation {
 				interaction.inputs(
 					location: inputStorage?.location,
 					now: now,
@@ -1847,6 +1872,7 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 			} else {
 				.empty
 			}
+			applyDeviceCorners(to: &inputs)
 			try renderer?.render(
 				to: drawable,
 				size: bounds.size,
@@ -1860,6 +1886,26 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 			NSLog("DitherView render failed: %@", error.localizedDescription)
 			renderFallback(to: drawable)
 		}
+	}
+
+	/// Passes the screen's rounded rectangle, in this view's coordinates, so the
+	/// shader can skip cells that would sit under the device's corners.
+	private func applyDeviceCorners(to inputs: inout DitherRenderInputs) {
+		#if os(iOS)
+			guard configuration.clipsToDeviceCorners,
+			      let screen = window?.windowScene?.screen
+			else {
+				return
+			}
+			let radius = cornerProbe.effectiveRadius(corner: .allCorners)
+			guard radius > 0 else {
+				return
+			}
+			let rect = screen.coordinateSpace.convert(screen.bounds, to: self)
+			inputs.screenOrigin = SIMD2<Float>(Float(rect.minX), Float(rect.minY))
+			inputs.screenSize = SIMD2<Float>(Float(rect.width), Float(rect.height))
+			inputs.screenCornerRadius = Float(radius)
+		#endif
 	}
 
 	private func renderFallback(to drawable: CAMetalDrawable) {

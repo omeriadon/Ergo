@@ -7,9 +7,11 @@
 
 import AppIntents
 
-@AppIntent(.tool)
+/// Plain `OpenIntent` so Spotlight can open an indexed entity. Not a tool and hidden from Shortcuts: Siri and Shortcuts open entries through `OpenLibraryEntryIntent`.
 struct OpenConceptEntityIntent: OpenIntent {
 	static let title: LocalizedStringResource = "Open Concept"
+
+	static let isDiscoverable = false
 
 	@Parameter(title: "Concept", description: "The concept to open in Ergo")
 	var target: ConceptEntity

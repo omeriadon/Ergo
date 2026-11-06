@@ -68,8 +68,17 @@ import SwiftUI
 				guard let coordinator, let probe else { return }
 				coordinator.apply(to: probe)
 			}
-			probe.onDisappearance = { [weak coordinator = context.coordinator] in
-				coordinator?.restore()
+			probe.onWillAppear = { [weak coordinator = context.coordinator, weak probe] transition in
+				guard let coordinator, let probe else { return }
+				coordinator.titleWillAppear(for: probe, transition: transition)
+			}
+			probe.onDidAppear = { [weak coordinator = context.coordinator, weak probe] in
+				guard let coordinator, let probe else { return }
+				coordinator.apply(to: probe)
+				coordinator.installedTitleView?.alpha = 1
+			}
+			probe.onWillDisappear = { [weak coordinator = context.coordinator] transition in
+				coordinator?.fadeTitle(to: 0, transition: transition)
 			}
 			return probe
 		}
@@ -86,24 +95,35 @@ import SwiftUI
 			coordinator.isDismantled = true
 			coordinator.restore()
 			probe.onAttachment = nil
-			probe.onDisappearance = nil
+			probe.onWillAppear = nil
+			probe.onDidAppear = nil
+			probe.onWillDisappear = nil
 		}
 
 		@MainActor
 		final class ProbeViewController: UIViewController {
 			var onAttachment: (() -> Void)?
-			var onDisappearance: (() -> Void)?
+			var onWillAppear: ((UIViewControllerTransitionCoordinator?) -> Void)?
+			var onDidAppear: (() -> Void)?
+			var onWillDisappear: ((UIViewControllerTransitionCoordinator?) -> Void)?
 			var canInstall = false
+
+			private var activeTransition: UIViewControllerTransitionCoordinator? {
+				transitionCoordinator ?? navigationController?.transitionCoordinator
+			}
 
 			override func viewWillAppear(_ animated: Bool) {
 				super.viewWillAppear(animated)
 				canInstall = true
+				onWillAppear?(activeTransition)
 			}
 
+			/// The title view stays installed while the screen leaves, so the push, pop and
+			/// interactive back swipe can scrub its opacity. It is removed in dismantle.
 			override func viewWillDisappear(_ animated: Bool) {
 				super.viewWillDisappear(animated)
 				canInstall = false
-				onDisappearance?()
+				onWillDisappear?(activeTransition)
 			}
 
 			override func didMove(toParent parent: UIViewController?) {
@@ -113,7 +133,7 @@ import SwiftUI
 
 			override func viewDidAppear(_ animated: Bool) {
 				super.viewDidAppear(animated)
-				onAttachment?()
+				onDidAppear?()
 			}
 		}
 
@@ -155,6 +175,29 @@ import SwiftUI
 				installedTitleView = titleView
 				item.titleView = titleView
 				configure(titleView: titleView, navigation: navigation)
+			}
+
+			func titleWillAppear(for probe: ProbeViewController, transition: UIViewControllerTransitionCoordinator?) {
+				let isNew = installedTitleView == nil
+				apply(to: probe)
+				guard let titleView = installedTitleView else { return }
+				if isNew, transition != nil {
+					titleView.alpha = 0
+				}
+				fadeTitle(to: 1, transition: transition)
+			}
+
+			/// Driven by the transition coordinator, so an interactive swipe scrubs the fade and a
+			/// cancelled one reverses it. Without a transition the change is immediate.
+			func fadeTitle(to alpha: CGFloat, transition: UIViewControllerTransitionCoordinator?) {
+				guard let titleView = installedTitleView else { return }
+				guard let transition else {
+					titleView.alpha = alpha
+					return
+				}
+				transition.animate(alongsideTransition: { _ in
+					titleView.alpha = alpha
+				})
 			}
 
 			func restore() {

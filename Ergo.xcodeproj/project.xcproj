@@ -43,11 +43,14 @@
           ],
         },
       ],
-    }, {
+    },
+    { "kind": "folder", "path": "ErgoSiriEvaluations", "target-membership": [ "ErgoSiriEvaluations" ] },
+    {
       "kind": "group",
       "name": "Products",
       "children": [
         { "path": "<PRODUCTS>/Ergo.app", "id": "2A527FE83097149200732B54", "type": "wrapper.application", "index": false },
+        { "path": "<PRODUCTS>/ErgoSiriEvaluations.xctest", "id": "2AA53FA3309D6E8C00F3B46D", "type": "wrapper.cfbundle", "index": false },
       ],
     },
   ],
@@ -132,6 +135,33 @@
         "SWIFT_VERSION": "5.0",
         "TARGETED_DEVICE_FAMILY": "1",
       },
+    }, {
+      "name": "ErgoSiriEvaluations",
+      "id": "2AA53FA2309D6E8C00F3B46D",
+      "product": "Products/ErgoSiriEvaluations.xctest",
+      "product-type": "bundle.unit-test",
+      "build-phases": [
+        "compile-sources",
+        "frameworks",
+        "resources",
+      ],
+      "build-settings": {
+        "CODE_SIGN_STYLE": "Automatic",
+        "CURRENT_PROJECT_VERSION": "1",
+        "GENERATE_INFOPLIST_FILE": "YES",
+        "IPHONEOS_DEPLOYMENT_TARGET": "27.3",
+        "MARKETING_VERSION": "1.0",
+        "PRODUCT_BUNDLE_IDENTIFIER": "com.adonis.ErgoSiriEvaluations",
+        "PRODUCT_NAME": "$(TARGET_NAME)",
+        "SDKROOT": "iphoneos",
+        "STRING_CATALOG_GENERATE_SYMBOLS": "NO",
+        "SUPPORTED_PLATFORMS": "iphoneos",
+        "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
+        "SWIFT_EMIT_LOC_STRINGS": "NO",
+        "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
+        "SWIFT_VERSION": "6.0",
+        "TARGETED_DEVICE_FAMILY": "1",
+      },
     },
   ],
   "build-settings": {
@@ -202,5 +232,5 @@
     "VALIDATE_PRODUCT[config=Release]": "YES",
   },
   "last-upgrade": "27.3",
-  "last-swift-update": "27.2",
+  "last-swift-update": "27.3",
 }

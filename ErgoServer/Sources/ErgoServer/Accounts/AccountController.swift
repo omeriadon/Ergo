@@ -81,7 +81,7 @@ enum AccountController {
 		let tokenID = try request.tokenID
 		let merger = AccountMerger(vault: request.ergo.vault, logger: request.logger)
 
-		let (accountID, isNewAccount, changedCursor) = try await request.db.transaction { database -> (UUID, Bool, Int?) in
+		let (accountID, isNewAccount, changedCursor) = try await request.quietDB.transaction { database -> (UUID, Bool, Int?) in
 			let caller = try await SyncService.lock(callerID, on: database)
 			let existing = try await Account.query(on: database).filter(\.$appleSubject == identity.subject).first()
 

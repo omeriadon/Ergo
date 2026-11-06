@@ -318,10 +318,10 @@ struct LogInTests {
 			let newer = SyncField(value: content("Newer"), stamp: stamp())
 			let shared = newPageID()
 			let onlyHere = newPageID()
-			_ = try await app.sync(SyncRequest(cursor: nil, changes: [pageChange(shared, ["content": older])]), token: owner.token)
+			_ = try await app.sync(SyncRequest(cursor: nil, changes: [statementChange(shared, ["content": older])]), token: owner.token)
 			for (seq, record) in [
-				SyncRecord(kind: .page, id: shared, fields: ["content": newer]),
-				SyncRecord(kind: .page, id: onlyHere, fields: ["content": older]),
+				SyncRecord(kind: .statement, id: shared, fields: ["content": newer]),
+				SyncRecord(kind: .statement, id: onlyHere, fields: ["content": older]),
 			].enumerated() {
 				let row = SyncRecordRow(account: anonymous.id, key: record.key)
 				try row.store(record, seq: seq + 1, vault: app.ergo.vault)
@@ -342,8 +342,8 @@ struct LogInTests {
 			let records = try await SyncRecordRow.query(on: app.db).sort(\.$seq).all()
 			#expect(records.allSatisfy { $0.$account.id == owner.id })
 			#expect(try records.map { try $0.record(app.ergo.vault) } == [
-				SyncRecord(kind: .page, id: shared, fields: ["content": newer]),
-				SyncRecord(kind: .page, id: onlyHere, fields: ["content": older]),
+				SyncRecord(kind: .statement, id: shared, fields: ["content": newer]),
+				SyncRecord(kind: .statement, id: onlyHere, fields: ["content": older]),
 			])
 
 			// The device's token now reaches the owner's account, which is signed in
@@ -932,7 +932,11 @@ struct AddAccountEmailTests {
 			let record = SyncRecord(kind: .setting, id: SyncedSetting.ditherEnabled.rawValue, fields: ["value": SyncField(value: true, stamp: stamp())])
 			let row = SyncRecordRow(account: apple, key: record.key)
 			try row.store(record, seq: 3, vault: CredentialVault(key: config.vaultKey))
-			try await row.save(on: app.db)
+			// Raw, since the model has columns later migrations add
+			try await sql.raw("""
+			INSERT INTO sync_records (id, account_id, kind, record_id, fields, seq, updated)
+			VALUES (\(bind: UUID()), \(bind: apple), \(bind: row.kind), \(bind: row.recordID), \(bind: row.fields), 3, \(bind: row.updated))
+			""").run()
 		}
 
 		try await withTestApp(config) { app in
@@ -948,6 +952,7 @@ struct AddAccountEmailTests {
 			#expect(account.isSignedIn)
 			#expect(try await app.storedSecret(.claude, account: apple) == "sk-ant-oat-old")
 			#expect(try await SyncRecordRow.query(on: app.db).count() == 1)
+			#expect(try await SyncRecordRow.query(on: app.db).first()?.page == nil)
 			#expect(try await AccountToken.query(on: app.db).count() == 2)
 			#expect(try await app.status(of: appleToken) == .ok)
 			#expect(try await Account.find(anonymous, on: app.db)?.isSignedIn == false)

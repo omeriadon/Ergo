@@ -52,6 +52,7 @@ func configure(
 
 	// Replaces Vapor's own error middleware, so every error leaves as a ServiceError
 	app.middleware = Middlewares()
+	app.middleware.use(RequestLogMiddleware())
 	app.middleware.use(ServiceErrorMiddleware())
 	app.middleware.use(ProtocolVersionMiddleware())
 
@@ -66,6 +67,7 @@ func addMigrations(to app: Application) {
 	app.migrations.add(MoveAccountTokens())
 	app.migrations.add(CreateSyncRecord())
 	app.migrations.add(AddAccountEmail())
+	app.migrations.add(AddSyncRecordPage())
 }
 
 /// SQLite creates the file with the umask's permissions, which would let the runner user read every sealed credential

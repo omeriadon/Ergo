@@ -8,7 +8,7 @@ The wire protocol is `ErgoProtocol` in ErgoKit. The design is in `Plans/02-Serve
 
 ## Routes
 
-Every request sends `Ergo-Protocol-Version: 1`, and all but `POST v1/accounts` send `Authorization: Bearer <token>`. Errors are a `ServiceError` body.
+Every request from the app sends `Ergo-Protocol-Version: 1`, and all but `POST v1/accounts` send `Authorization: Bearer <token>`. Errors are a `ServiceError` body. The one route the app doesn't call, `POST v1/apple/notifications`, needs neither, see [Sign in with Apple notifications](#sign-in-with-apple-notifications).
 
 | Route | Needs | |
 |---|---|---|
@@ -22,9 +22,10 @@ Every request sends `Ergo-Protocol-Version: 1`, and all but `POST v1/accounts` s
 | `GET v1/connections` | token | `[ConnectionStatus]` |
 | `PUT` / `DELETE v1/connections/<provider>` | token | Checks a credential with one real call, then stores it, or removes it |
 | `WS v1/connections/codex/device-login` | token | Codex's device login |
-| `WS v1/translate` | token | One translation, streamed |
+| `WS v1/translate` | token | One translation, streamed. `TranslateRequest.scope` is `statement` (the default: the whole pipeline for one statement, ends with a `Translation`) or `argument` (gate and breakdown only, for pasted English: ends with an `ArgumentBreakdown`). `descriptors` carries the page's letter names so claims keep their letters. |
 | `POST v1/sync` | signed in | `SyncRequest` → `SyncResponse` |
 | `WS v1/sync/live` | signed in | `SyncLiveMessage.changed(cursor:)` whenever another device pushes |
+| `POST v1/apple/notifications` | Apple's signature | Sign in with Apple's server-to-server notifications. Called by Apple, never the app. |
 
 "Signed in" means an Apple ID, an email, or both, on one account. An anonymous account gets `403` `signInRequired` from both sync routes.
 
@@ -73,6 +74,28 @@ curl -X POST -H 'Ergo-Protocol-Version: 1' -H "Authorization: Bearer $TOKEN" \
 ```
 
 Signing in with Apple needs a real identity token from the app. To try sync by hand against a scratch database only, mark the account signed in directly: `sqlite3 ergo.sqlite "UPDATE accounts SET apple_subject = 'test' WHERE id = '<account id>'"` (ids are stored as their uppercase text).
+
+## Testing from a device
+
+Debug builds of the app can use this server instead of the hosted one: Settings → Translation → Server → This Mac. `127.0.0.1` only takes connections from the Mac itself, so listen on every interface:
+
+```sh
+swift run ErgoServer serve --hostname 0.0.0.0 --port 8080
+```
+
+- In the app, enter `http://<Mac name>.local:8080`. The name is `scutil --get LocalHostName`, or System Settings → General → Sharing. The Mac's LAN address works too (`ipconfig getifaddr en0`). The phone and the Mac need to be on the same network, and the macOS firewall may ask to let ErgoServer accept connections.
+- The first request shows iOS's local network prompt. If it was turned down, turn it back on in Settings → Privacy & Security → Local Network. Only debug builds have the usage description, so release builds never ask.
+- Plain `http://` and `ws://` to a `.local` name or a local address are allowed by the app's `NSAllowsLocalNetworking`, so no other ATS exception is needed.
+- Settings → Translation → Test Server (debug builds only) tries REST and the translate socket separately, and shows each one's error as the app would.
+- Every request logs one line at `info` with its status, so the console shows what actually reached the server:
+
+	```
+	[ INFO ] GET /v1/connections 200 [request-id: …]
+	[ INFO ] GET /v1/translate 101 (WebSocket upgrade) [request-id: …]
+	```
+
+	A translation always starts with `GET /v1/translate`. A status other than 101 is why it was turned away: 401 for an unknown account, 426 for another protocol version. No line at all means the upgrade never reached the server, so look at the address, the network, local network access and the firewall.
+- Don't run with `--log trace` outside your own machine: Vapor's trace lines print every request's headers, bearer token included.
 
 ## Configuration
 
@@ -166,18 +189,40 @@ Sync follows `Plans/05-Sync.md`. The merge rules are ErgoKit's `ErgoSync`, so th
   - No account has that Apple ID yet: the caller's account takes it.
   - Another account has it: the caller's account is merged into it in one transaction. Connections move only for providers the target has none for, synced records merge with `SyncRecord.merge`, the caller's token moves over, and the caller's account is deleted. The device keeps its token.
   - A device already signed in to a different Apple ID has to sign out first.
-- **Records:** one row per record (`sync_records`). The fields are sealed with the same key as credentials, with associated data `<account>/sync/<kind>/<id>`, so a page's text is never at rest in the clear and a row can't be moved to another account or record. The server opens them only to merge. In the clear are only the kind, id, seq, when it last changed and, for a tombstone, when it was deleted.
+- **Records:** one row per record (`sync_records`). The fields are sealed with the same key as credentials, with associated data `<account>/sync/<kind>/<id>`, so a page's text is never at rest in the clear and a row can't be moved to another account or record. The server opens them only to merge. In the clear are only the kind, id, seq, when it last changed, for a tombstone when it was deleted and, for a statement or link, which page it is on.
 - **Seq:** every record that changes takes the account's next seq, in the same transaction, so a cursor is exactly "everything up to here". Each sync transaction starts with a write, so SQLite hands it the write lock before it reads anything, and two syncs of one account can't take the same seq.
 - **One request does both directions:** the push is applied, then everything after the cursor comes back in seq order, at most `limit` records (default 500, at most 1000) and about 4 MB. `more` says to ask again.
 - **Conflicts:** an edit whose base isn't what the server has is concurrent. It still merges by stamp, and only the device that pushed it gets the losing value in `superseded`, so the copy is made exactly once.
-- **Limits:** a body of 1 MB, a value of 256 KB, 10,000 records per account, 60 syncs a minute per account, and no stamp more than 10 minutes ahead of the server's clock. Kinds, field names and ids are checked against ErgoSync's lists.
-- **Pruning:** at launch and then daily, tombstones whose `deleted` stamp is over 90 days old are removed and the account's `prunedThrough` moves past them. A device whose cursor is below it, or ahead of the account, gets `410` `syncResetRequired` and pulls from the start.
+- **Kinds:** `page` (`created`, `descriptor.0`…`5`, `deleted`), `statement` (`page`, `position`, `content`, `deleted`), `link` (`page`, `premise`, `conclusion`, `deleted`), `bookmark` and `setting`. Page, statement and link ids are uppercase UUIDs. A statement's `content` (`english`, `logic`, `source`, `translation`) is an opaque JSON value to the server, like a page's used to be. Two devices typing in one statement at once give the later pusher a `superseded` `content` for that statement alone; moving a box never conflicts with typing in it.
+- **Limits:** a body of 1 MB, a value of 256 KB, 50,000 records per account (statements and links count), 60 syncs a minute per account, and no stamp more than 10 minutes ahead of the server's clock. Kinds, field names and ids are checked against ErgoSync's lists.
+- **Pruning:** at launch and then daily, tombstones whose `deleted` stamp is over 90 days old are removed and the account's `prunedThrough` moves past them. A device whose cursor is below it, or ahead of the account, gets `410` `syncResetRequired` and pulls from the start. When a page's tombstone is pruned its statements and links go too, and statements and links with no page record (or no `page` field) go once they're 90 days old; those don't move `prunedThrough`. The owning page's id is kept in a `page_id` column, in the clear like the record id, so none of this opens a sealed row. Devices ignore a statement or link whose page is deleted or missing on read, so nothing waits on the server.
 - **Live:** `WS v1/sync/live` sends `changed(cursor:)` to every socket of the account except those of the token that pushed. Signing out closes that device's sockets, and deleting the account closes all of them.
 
 - **Email accounts:** `accounts.email` (unique) and `accounts.password_hash`, both empty until someone registers. An account can have an Apple ID and an email at once, and either gets back in.
   - Registering needs a token and attaches to that device's account. An account has one email.
   - Logging in is the Apple flow with a password: it refuses a device that's already signed in as another account ("sign out first"), and otherwise merges the anonymous account in with `AccountMerger`. `isNewAccount` is always `false`, since an email can only be logged in to once registered. `AccountMerger` refuses to merge away an account that has an email.
   - An account with an email isn't deleted when its last device signs out.
+
+## Sign in with Apple notifications
+
+Apple posts to `POST v1/apple/notifications` when someone changes their Hide My Email forwarding, stops using Sign in with Apple with Ergo, or deletes their Apple Account. It's the server's only route that Apple calls rather than the app.
+
+- **Body:** JSON `{"payload": "<JWT>"}`, or the same `payload` field as `application/x-www-form-urlencoded`. At most 16 KB.
+- **Exemptions:** no bearer token, and the only request `ProtocolVersionMiddleware` lets through without `Ergo-Protocol-Version`, since Apple doesn't send it. Only `POST` to exactly this path is exempt.
+- **Checks:** the JWT's signature against Apple's published keys (`https://appleid.apple.com/auth/keys`, fetched and cached the same way as for signing in), `iss` is `https://appleid.apple.com`, `aud` is `ERGO_APPLE_APP_ID`, and `iat` is at most a day old and at most 5 minutes ahead of the server's clock. `events` is JSON inside a string; only its `type` and `sub` are read, so `email`, `is_private_email` (a bool or a string) and `event_time` can come in any shape.
+- **Answers:** an empty `200` for every verified notification, including one about an Apple ID no account has, one already handled, and an unknown type, so Apple doesn't retry. `400` with the same vague `ServiceError` for anything that doesn't verify, whatever the reason. `413` for a body over 16 KB, `429` after 120 a minute from one address (per address as for the other limits, so `ERGO_TRUST_PROXY` applies), and `502` if Apple's keys can't be fetched, so Apple tries again later.
+- **Replays:** each `jti` is remembered for 25 hours (a day being the oldest `iat` accepted) and a repeat is answered `200` without doing anything. If handling fails, the `jti` is forgotten so Apple's retry is handled. The set is in memory, so a restart forgets it: a notification captured in the day before a restart could be handled once more. Every event is safe to repeat except that a replayed `consent-revoked` would sign out devices that signed in again since.
+
+| Event | What the server does |
+|---|---|
+| `email-enabled`, `email-disabled` | Nothing. The relay address is never stored. |
+| `consent-revoked` | Deletes every device token of the account with that `sub` and closes its live sockets, so each device is signed out on its next request. The account, its `appleSubject` and all its data stay, so signing in with Apple again gets back to them. |
+| `account-delete` | That Apple ID can never sign in again. An account that also has an email only loses its `appleSubject`, and its devices stay signed in. Otherwise the whole account goes, exactly like `DELETE v1/account`: connections, synced records, every token, and its live sockets. |
+| anything else | Nothing, and the type is logged. |
+
+The log says only the event type and whether an account matched. Never the `sub`, an email, a token or the JWT, and the route's queries use the quiet database handle, so Fluent's debug log can't print the `sub` either.
+
+**Registering it**, once the server is hosted: in the developer portal, open Certificates, Identifiers & Profiles → Identifiers → the App ID `com.omeriadon.Ergo` → Sign in with Apple → Configure (or Edit), and set **Server-to-Server Notification Endpoint** to `https://<production host>/v1/apple/notifications`. It must be an absolute HTTPS URL with TLS 1.2 or later, and there's one per primary App ID group. Then save the App ID.
 
 ## Known gaps
 

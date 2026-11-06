@@ -6,6 +6,7 @@
 //
 
 import Defaults
+import ErgoClient
 import ErgoProtocol
 import SwiftUI
 
@@ -105,7 +106,7 @@ struct TranslationSettingsView: View {
 
 #if DEBUG
 	/// Debug builds only: pick the hosted server or `ErgoServer` running on the Mac.
-	/// Switching signs this device out of the old server's account. Signing in again with the same Apple ID reaches
+	/// Switching signs this device out of the old server's account. Signing in again the same way reaches
 	/// the same account there, and each server keeps its own token, so nothing is lost by switching back.
 	private struct ServerSection: View {
 		@Default(.serverEnvironment) var serverEnvironment
@@ -132,6 +133,8 @@ struct TranslationSettingsView: View {
 						.onSubmit(commitMac)
 						.accessibilityIdentifier("translation.server")
 				}
+
+				ServerTestRows(server: ServerEnvironment.effective(serverEnvironment, macAddress: translationServer))
 			} header: {
 				Text("Server")
 			} footer: {
@@ -148,9 +151,9 @@ struct TranslationSettingsView: View {
 				Text(macProblem)
 					.foregroundStyle(.red)
 			} else if serverEnvironment == .thisMac {
-				Text("The address of ErgoServer on your Mac. An iPhone can't reach localhost, so use the Mac's name or IP address. Switching signs you out here, and signing in again with the same Apple ID reaches the same account.")
+				Text("The address of ErgoServer on your Mac. An iPhone can't reach localhost, so use the Mac's name or IP address. Switching signs you out here, and signing in again reaches the same account.")
 			} else {
-				Text("Debug builds only. Switching signs you out here, and signing in again with the same Apple ID reaches the same account.")
+				Text("Debug builds only. Switching signs you out here, and signing in again reaches the same account.")
 			}
 		}
 
@@ -169,6 +172,82 @@ struct TranslationSettingsView: View {
 			macProblem = nil
 			macDraft = url.absoluteString
 			translationServer = url.absoluteString
+		}
+	}
+
+	/// Debug builds only: tries REST and the translate socket on their own, since one can work while the other doesn't.
+	/// Uses this device's token if it has one, and never makes an account.
+	private struct ServerTestRows: View {
+		let server: URL?
+
+		@State private var attempt = 0
+		@State private var testing = false
+		@State private var result: (probe: ErgoClient.Probe, hasAccount: Bool)?
+
+		var body: some View {
+			Button("Test Server") {
+				attempt += 1
+			}
+			.disabled(server == nil || testing)
+			.accessibilityIdentifier("translation.testServer")
+			.task(id: attempt) {
+				await test()
+			}
+			.onChange(of: server) {
+				result = nil
+			}
+
+			if testing {
+				ProgressView()
+			} else if let result {
+				ProbeRow(name: "REST", outcome: result.probe.rest, hasAccount: result.hasAccount)
+				ProbeRow(name: "WebSocket", outcome: result.probe.socket, hasAccount: result.hasAccount)
+			}
+		}
+
+		private func test() async {
+			guard attempt > 0, let server else { return }
+			testing = true
+			defer { testing = false }
+
+			let token = AccountKeychain.token(for: server)
+			guard let probe = try? await ErgoClient(server: server, token: token).probe() else { return }
+			result = (probe, token != nil)
+		}
+	}
+
+	private struct ProbeRow: View {
+		let name: String
+		let outcome: ErgoClient.Probe.Outcome
+		let hasAccount: Bool
+
+		var body: some View {
+			VStack(alignment: .leading, spacing: 4) {
+				Text(name)
+
+				Text(detail)
+					.font(.subheadline)
+					.foregroundStyle(isFailure ? .red : .secondary)
+					.textSelection(.enabled)
+			}
+		}
+
+		private var detail: String {
+			switch outcome {
+				case .ok:
+					"✓"
+				case .noAccount:
+					hasAccount ? "✓ Reached, but the server doesn't know this account" : "✓ Reached, no account here yet"
+				case let .failed(error):
+					error.message
+			}
+		}
+
+		private var isFailure: Bool {
+			if case .failed = outcome {
+				return true
+			}
+			return false
 		}
 	}
 #endif

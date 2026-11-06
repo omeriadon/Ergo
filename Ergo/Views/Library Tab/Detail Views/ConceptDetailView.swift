@@ -26,6 +26,7 @@ struct ConceptDetailView: View {
 							.frame(height: 10)
 
 						Text(concept.summary)
+							.textSelection(.enabled)
 							.lineLimit(10)
 
 						RelatedSection(list: concept.keyFigures, title: "Key Figures")
@@ -33,6 +34,7 @@ struct ConceptDetailView: View {
 
 						Text(concept.body)
 							.padding(12)
+							.textSelection(.enabled)
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
@@ -78,18 +80,7 @@ struct ConceptDetailView: View {
 				} action: { _, newValue in
 					hasScrolled = newValue
 				}
-				.richNavigationTitle(height: 40, width: 360) {
-					VStack {
-						Text(hasScrolled ? concept.name : "")
-
-						Text(hasScrolled ? "Concepts" : "")
-							.textCase(.uppercase)
-							.font(.caption2)
-							.foregroundStyle(.secondary)
-					}
-					.contentTransition(.numericText())
-					.animation(.easeInOut(duration: 0.2), value: hasScrolled)
-				}
+				.libraryDetailTitle(concept.name, category: "Concepts", hasScrolled: hasScrolled)
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(concept.name.capitalized)
 				.toolbar {

@@ -45,6 +45,7 @@ Evals/
 ```
 
 - `kind`: `argument` | `statements` | `neither`.
+- `descriptors` (optional, almost always absent): the page's six letter names, with empty strings for free slots. Sent with the request, for a case about reusing a letter. Without it the runner translates one statement on a page that names nothing, which is what the whole corpus does today. The runner always sends `scope: statement`; the argument scope has no scoring yet.
 - `expected`:
   - Omit it for `neither`.
   - For `statements`, `conclusion` is `""`.

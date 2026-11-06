@@ -51,6 +51,18 @@ func pageChange(_ id: String, _ fields: [String: SyncField], bases: [String: Syn
 	SyncChange(kind: .page, id: id, fields: fields, bases: bases)
 }
 
+func statementChange(_ id: String, _ fields: [String: SyncField], bases: [String: SyncStamp] = [:]) -> SyncChange {
+	SyncChange(kind: .statement, id: id, fields: fields, bases: bases)
+}
+
+func linkChange(_ id: String, page: String, premise: String, conclusion: String, at stamp: SyncStamp = stamp()) -> SyncChange {
+	SyncChange(kind: .link, id: id, fields: [
+		"page": SyncField(value: .string(page), stamp: stamp),
+		"premise": SyncField(value: .string(premise), stamp: stamp),
+		"conclusion": SyncField(value: .string(conclusion), stamp: stamp),
+	])
+}
+
 func newPageID() -> String {
 	UUID().uuidString
 }
@@ -68,15 +80,15 @@ struct SyncTests {
 			#expect(pad.accountID == phone.accountID)
 			#expect(!pad.isNewAccount)
 
-			// The phone writes a page, the iPad pulls it
+			// The phone writes a statement, the iPad pulls it
 			let page = newPageID()
 			let first = SyncField(value: content("It's raining, so the ground is wet."), stamp: stamp(device: "phone"))
-			let pushed = try await app.sync(SyncRequest(cursor: nil, changes: [pageChange(page, ["content": first])]), token: phone.token)
+			let pushed = try await app.sync(SyncRequest(cursor: nil, changes: [statementChange(page, ["content": first])]), token: phone.token)
 			#expect(pushed.cursor == 1)
 			#expect(pushed.superseded == [])
 
 			let pulled = try await app.sync(SyncRequest(cursor: nil, changes: []), token: pad.token)
-			#expect(pulled.changes == [SyncRecord(kind: .page, id: page, fields: ["content": first])])
+			#expect(pulled.changes == [SyncRecord(kind: .statement, id: page, fields: ["content": first])])
 			#expect(pulled.cursor == 1)
 			#expect(!pulled.more)
 			#expect(abs(pulled.serverTime.timeIntervalSinceNow) < 5)
@@ -85,16 +97,16 @@ struct SyncTests {
 			let phoneEdit = SyncField(value: content("Phone"), stamp: stamp(1, device: "phone"))
 			let padEdit = SyncField(value: content("iPad"), stamp: stamp(2, device: "pad"))
 			let fromPhone = try await app.sync(
-				SyncRequest(cursor: 1, changes: [pageChange(page, ["content": phoneEdit], bases: ["content": first.stamp])]),
+				SyncRequest(cursor: 1, changes: [statementChange(page, ["content": phoneEdit], bases: ["content": first.stamp])]),
 				token: phone.token
 			)
 			#expect(fromPhone.superseded == [])
 
 			let fromPad = try await app.sync(
-				SyncRequest(cursor: 1, changes: [pageChange(page, ["content": padEdit], bases: ["content": first.stamp])]),
+				SyncRequest(cursor: 1, changes: [statementChange(page, ["content": padEdit], bases: ["content": first.stamp])]),
 				token: pad.token
 			)
-			#expect(fromPad.superseded == [SupersededField(kind: .page, id: page, field: "content", lost: phoneEdit)])
+			#expect(fromPad.superseded == [SupersededField(kind: .statement, id: page, field: "content", lost: phoneEdit)])
 			#expect(fromPad.changes.map(\.fields) == [["content": padEdit]])
 			#expect(fromPad.cursor == 3)
 
@@ -172,7 +184,7 @@ struct SyncTests {
 	@Test(arguments: [
 		(
 			SyncChange(kind: "note", id: "1", fields: [:]),
-			"Unknown record kind 'note', expected 'page', 'bookmark' or 'setting'"
+			"Unknown record kind 'note', expected 'page', 'bookmark', 'setting', 'statement' or 'link'"
 		),
 		(
 			SyncChange(kind: .page, id: "not-a-uuid", fields: [:]),
@@ -193,6 +205,35 @@ struct SyncTests {
 		(
 			SyncChange(kind: .bookmark, id: "", fields: [:]),
 			"Expected a bookmark id of 1 to 256 bytes, found 0"
+		),
+		// Pages no longer carry content, statements do
+		(
+			SyncChange(kind: .page, id: UUID().uuidString, fields: ["content": SyncField(value: content("Hi"), stamp: stamp())]),
+			"Unknown field 'content' in a page record"
+		),
+		(
+			SyncChange(kind: .statement, id: UUID().uuidString, fields: ["english": SyncField(value: "Hi", stamp: stamp())]),
+			"Unknown field 'english' in a statement record"
+		),
+		(
+			SyncChange(kind: .statement, id: UUID().uuidString, fields: ["descriptor.0": SyncField(value: "rain", stamp: stamp())]),
+			"Unknown field 'descriptor.0' in a statement record"
+		),
+		(
+			SyncChange(kind: .link, id: UUID().uuidString, fields: ["content": SyncField(value: content("Hi"), stamp: stamp())]),
+			"Unknown field 'content' in a link record"
+		),
+		(
+			SyncChange(kind: .link, id: UUID().uuidString, fields: ["position": SyncField(value: ["x": 0, "y": 0], stamp: stamp())]),
+			"Unknown field 'position' in a link record"
+		),
+		(
+			SyncChange(kind: .statement, id: "statement-1", fields: [:]),
+			"Expected a statement id to be an uppercase UUID, found 'statement-1'"
+		),
+		(
+			SyncChange(kind: .link, id: UUID().uuidString.lowercased(), fields: [:]),
+			"Expected a link id to be an uppercase UUID"
 		),
 	])
 	func malformedChanges(change: SyncChange, message: String) async throws {
@@ -215,14 +256,14 @@ struct SyncTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
 			let ahead = stamp(SyncLimit.futureStamp + 60000)
-			let change = pageChange(newPageID(), ["content": SyncField(value: content("From the future"), stamp: ahead)])
+			let change = statementChange(newPageID(), ["content": SyncField(value: content("From the future"), stamp: ahead)])
 
 			let (status, error) = try await app.syncRefusal(SyncRequest(cursor: nil, changes: [change]), token: device.token)
 			#expect(status == .badRequest)
 			#expect(error == ServiceError(code: .invalidRequest, message: "Expected a time within 10 minutes of the server, found 11 minutes ahead"))
 
 			// A little ahead is just clock skew
-			let skewed = pageChange(newPageID(), ["content": SyncField(value: content("Fine"), stamp: stamp(60000))])
+			let skewed = statementChange(newPageID(), ["content": SyncField(value: content("Fine"), stamp: stamp(60000))])
 			#expect(try await app.sync(SyncRequest(cursor: nil, changes: [skewed]), token: device.token).cursor == 1)
 		}
 	}
@@ -234,11 +275,21 @@ struct SyncTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
 			let english = String(repeating: "a", count: 300 * 1024)
-			let change = pageChange(newPageID(), ["content": SyncField(value: content(english), stamp: stamp())])
+			let change = statementChange(newPageID(), ["content": SyncField(value: content(english), stamp: stamp())])
 
 			let (status, error) = try await app.syncRefusal(SyncRequest(cursor: nil, changes: [change]), token: device.token)
 			#expect(status == .payloadTooLarge)
-			#expect(error == ServiceError(code: .tooLarge, message: "Expected a page under 256 KB, found 301 KB"))
+			#expect(error == ServiceError(code: .tooLarge, message: "Expected a statement under 256 KB, found 301 KB"))
+
+			// Over the limit is over the limit for every field
+			let position = pageChange(newPageID(), ["descriptor.0": SyncField(value: .string(english), stamp: stamp())])
+			let (_, descriptorError) = try await app.syncRefusal(SyncRequest(cursor: nil, changes: [position]), token: device.token)
+			#expect(descriptorError.code == .tooLarge)
+
+			// Just under is fine
+			let small = String(repeating: "a", count: 200 * 1024)
+			let fits = statementChange(newPageID(), ["content": SyncField(value: content(small), stamp: stamp())])
+			#expect(try await app.sync(SyncRequest(cursor: nil, changes: [fits]), token: device.token).cursor == 1)
 		}
 	}
 
@@ -249,7 +300,7 @@ struct SyncTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let device = try await app.signedInAccount()
 			let changes = (0 ..< 5).map { _ in
-				pageChange(newPageID(), ["content": SyncField(value: content(String(repeating: "a", count: 250 * 1024)), stamp: stamp())])
+				statementChange(newPageID(), ["content": SyncField(value: content(String(repeating: "a", count: 250 * 1024)), stamp: stamp())])
 			}
 
 			let (status, error) = try await app.syncRefusal(SyncRequest(cursor: nil, changes: changes), token: device.token)
@@ -333,14 +384,14 @@ struct SyncTests {
 
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
 				pageChange(deleted, [
-					"content": SyncField(value: content("Gone"), stamp: stamp(old)),
+					"descriptor.0": SyncField(value: "gone", stamp: stamp(old)),
 					"deleted": SyncField(value: true, stamp: stamp(old + 1)),
 				]),
 				pageChange(recent, [
-					"content": SyncField(value: content("Just deleted"), stamp: stamp(-1000)),
+					"descriptor.0": SyncField(value: "just deleted", stamp: stamp(-1000)),
 					"deleted": SyncField(value: true, stamp: stamp()),
 				]),
-				pageChange(alive, ["content": SyncField(value: content("Here"), stamp: stamp(old))]),
+				pageChange(alive, ["descriptor.0": SyncField(value: "here", stamp: stamp(old))]),
 			]), token: device.token)
 
 			#expect(try await app.ergo.sync.prune(on: app.db) == 1)
@@ -382,7 +433,7 @@ struct SyncTests {
 			let english = "Socrates is a man, and all men are mortal"
 			let page = newPageID()
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-				pageChange(page, ["content": SyncField(value: content(english), stamp: stamp()), "descriptor.0": SyncField(value: "Socrates", stamp: stamp())]),
+				statementChange(page, ["content": SyncField(value: content(english), stamp: stamp()), "page": SyncField(value: .string(newPageID()), stamp: stamp())]),
 			]), token: device.token)
 
 			let sql = try #require(app.db as? any SQLDatabase)
@@ -394,10 +445,10 @@ struct SyncTests {
 			#expect(!raw.contains("mortal"))
 
 			// Opens only as its own row
-			let row = try #require(try await SyncRecordRow.find(SyncRecord.Key(kind: .page, id: page), for: device.accountID, on: app.db))
+			let row = try #require(try await SyncRecordRow.find(SyncRecord.Key(kind: .statement, id: page), for: device.accountID, on: app.db))
 			#expect(try row.record(app.ergo.vault).fields["content"]?.value == content(english))
 			#expect(throws: CredentialVault.Unreadable.self) {
-				try app.ergo.vault.open(sealed, account: device.accountID, record: SyncRecord.Key(kind: .page, id: newPageID()))
+				try app.ergo.vault.open(sealed, account: device.accountID, record: SyncRecord.Key(kind: .statement, id: newPageID()))
 			}
 			#expect(throws: CredentialVault.Unreadable.self) {
 				try app.ergo.vault.open(sealed, account: UUID(), record: row.key)

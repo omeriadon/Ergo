@@ -10,6 +10,7 @@ import ErgoProtocol
 @testable import ErgoServer
 import Fluent
 import Foundation
+import JWT
 import Testing
 import VaporTesting
 
@@ -72,13 +73,15 @@ extension ConnectionVerifier {
 }
 
 extension AppleTokenVerifier {
-	/// Takes `FakeApple.token(subject:nonce:)` at its word, without Apple
+	/// Takes `FakeApple.token(subject:nonce:)` at its word, and checks notifications against `FakeApple.key`, without Apple
 	static let fake = AppleTokenVerifier { identityToken, _ in
 		let parts = identityToken.split(separator: "|", omittingEmptySubsequences: false).map(String.init)
 		guard parts.count == 2 else {
 			throw ServiceError(code: .invalidRequest, message: "Couldn't verify the Sign in with Apple token")
 		}
 		return AppleIdentity(subject: parts[0], nonce: parts[1].isEmpty ? nil : parts[1])
+	} notificationKeys: { _ in
+		await JWTKeyCollection().add(ecdsa: FakeApple.key.publicKey, kid: FakeApple.keyID)
 	}
 }
 
@@ -90,6 +93,43 @@ enum FakeApple {
 
 	static func request(subject: String, nonce: String = UUID().uuidString) -> SignInWithAppleRequest {
 		SignInWithAppleRequest(identityToken: token(subject: subject, nonce: nonce), nonce: nonce)
+	}
+
+	// MARK: - Notifications
+
+	/// Stands in for Apple's signing key. ES256 rather than Apple's RS256, since it's quick to make.
+	static let key = ES256PrivateKey()
+	static let keyID: JWKIdentifier = "fake-apple"
+
+	/// What Apple puts in `events`, `is_private_email` as a string like Apple sometimes sends it
+	struct Events: Encodable {
+		let type: String
+		let sub: String
+		var eventTime = Int64(Date.now.timeIntervalSince1970 * 1000)
+		var email = "relay.canary@privaterelay.appleid.com"
+		var isPrivateEmail = "true"
+
+		enum CodingKeys: String, CodingKey {
+			case type, sub, email
+			case eventTime = "event_time"
+			case isPrivateEmail = "is_private_email"
+		}
+	}
+
+	/// A signed server-to-server notification, as Apple would post it
+	static func notification(
+		_ type: String,
+		subject: String = "apple-user",
+		id: String = UUID().uuidString,
+		issuer: String = AppleNotification.issuer,
+		audience: String = "com.omeriadon.Ergo",
+		issued: Date = .now,
+		events: String? = nil,
+		signedWith signer: ES256PrivateKey = key
+	) async throws -> String {
+		let events = try events ?? String(decoding: JSONEncoder().encode(Events(type: type, sub: subject)), as: UTF8.self)
+		let claims = AppleNotificationClaims(iss: IssuerClaim(value: issuer), aud: AudienceClaim(value: [audience]), iat: IssuedAtClaim(value: issued), jti: IDClaim(value: id), events: events)
+		return try await JWTKeyCollection().add(ecdsa: signer, kid: keyID).sign(claims, kid: keyID)
 	}
 }
 

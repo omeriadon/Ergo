@@ -11,10 +11,46 @@ struct ContentView: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
+	@Environment(CatalogStore.self) private var catalog
+
+	/// SwiftUI only calls the setter for the user's own taps; intents change `NavigationManager` directly. That keeps intent-driven navigation out of the donations.
+	private var tabSelection: Binding<AppTab> {
+		Binding(
+			get: {
+				navigation.selectedTab
+			},
+			set: { newValue in
+				guard newValue != navigation.selectedTab else {
+					return
+				}
+
+				navigation.selectedTab = newValue
+				IntentDonations.tab(newValue)
+			}
+		)
+	}
+
+	/// Same idea as `tabSelection`. Only pushes are donated, not pops or the same path written back.
+	private var libraryPath: Binding<[LibraryRoute]> {
+		Binding(
+			get: {
+				navigation.libraryPath
+			},
+			set: { newValue in
+				let previous = navigation.libraryPath
+				navigation.libraryPath = newValue
+
+				if newValue.count > previous.count, let route = newValue.last {
+					IntentDonations.route(route, catalog: catalog)
+				}
+			}
+		)
+	}
+
 	var body: some View {
 		@Bindable var router = navigation
 
-		TabView(selection: $router.selectedTab) {
+		TabView(selection: tabSelection) {
 			Tab(value: .check) {
 				NavigationStack {
 					CheckTabView()
@@ -37,7 +73,7 @@ struct ContentView: View {
 			}
 
 			Tab(value: .library, role: .prominent) {
-				NavigationStack(path: $router.libraryPath) {
+				NavigationStack(path: libraryPath) {
 					LibraryTabView()
 						.navigationDestination(for: LibraryRoute.self) { route in
 							switch route {

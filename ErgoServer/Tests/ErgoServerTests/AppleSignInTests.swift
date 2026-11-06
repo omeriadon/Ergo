@@ -139,15 +139,15 @@ struct AppleSignInTests {
 			let shared = newPageID()
 			let older = SyncField(value: content("Older"), stamp: stamp(-1000))
 			let newer = SyncField(value: content("Newer"), stamp: stamp())
-			let descriptor = SyncField(value: "rain", stamp: stamp(-2000))
-			_ = try await app.sync(SyncRequest(cursor: nil, changes: [pageChange(shared, ["content": older])]), token: first.token)
+			let position = SyncField(value: ["x": 1, "y": 2], stamp: stamp(-2000))
+			_ = try await app.sync(SyncRequest(cursor: nil, changes: [statementChange(shared, ["content": older])]), token: first.token)
 
 			// Records an anonymous account can't normally have, written straight in
 			let vault = app.ergo.vault
 			let onlyHere = newPageID()
 			for (seq, record) in [
-				SyncRecord(kind: .page, id: shared, fields: ["content": newer, "descriptor.0": descriptor]),
-				SyncRecord(kind: .page, id: onlyHere, fields: ["content": older]),
+				SyncRecord(kind: .statement, id: shared, fields: ["content": newer, "position": position]),
+				SyncRecord(kind: .statement, id: onlyHere, fields: ["content": older]),
 			].enumerated() {
 				let row = SyncRecordRow(account: device.id, key: record.key)
 				try row.store(record, seq: seq + 1, vault: vault)
@@ -165,8 +165,8 @@ struct AppleSignInTests {
 			let records = try await SyncRecordRow.query(on: app.db).sort(\.$seq).all()
 			#expect(records.allSatisfy { $0.$account.id == first.accountID })
 			#expect(try records.map { try $0.record(vault) } == [
-				SyncRecord(kind: .page, id: shared, fields: ["content": newer, "descriptor.0": descriptor]),
-				SyncRecord(kind: .page, id: onlyHere, fields: ["content": older]),
+				SyncRecord(kind: .statement, id: shared, fields: ["content": newer, "position": position]),
+				SyncRecord(kind: .statement, id: onlyHere, fields: ["content": older]),
 			])
 			#expect(records.map(\.seq) == [2, 3])
 			#expect(try await Account.find(first.accountID, on: app.db)?.seq == 3)
@@ -236,7 +236,7 @@ struct AppleSignInTests {
 			try await app.storeCredential("sk-ant-oat-fake", provider: .claude, kind: .subscription, account: phone.accountID)
 			for device in [phone, other] {
 				_ = try await app.sync(SyncRequest(cursor: nil, changes: [
-					pageChange(newPageID(), ["content": SyncField(value: content("Mine"), stamp: stamp())]),
+					statementChange(newPageID(), ["content": SyncField(value: content("Mine"), stamp: stamp())]),
 				]), token: device.token)
 			}
 

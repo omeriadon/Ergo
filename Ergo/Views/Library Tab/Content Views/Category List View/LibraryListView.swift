@@ -104,7 +104,6 @@ struct LibraryListView<Item: LibraryListItem>: View {
 		.animation(.easeInOut(duration: 0.2), value: state.filters)
 		.listSectionIndexVisibility(Item.showsSectionIndex ? .visible : .hidden)
 		.scrollEdgeEffectStyle(.soft, for: .all)
-		.buttonStyle(.plain)
 		.toolbarMinimizationBehavior(.never, for: .navigationBar)
 		.searchable(
 			text: searchBinding,
@@ -116,6 +115,9 @@ struct LibraryListView<Item: LibraryListItem>: View {
 			Text(filter.title)
 		}
 		.searchPresentationToolbarBehavior(.avoidHidingContent)
+		.onSubmit(of: .search) {
+			IntentDonations.search(state.searchText)
+		}
 		.navigationTitle(Item.listTitle)
 		.toolbar {
 			ToolbarItem(placement: .title) {
@@ -146,6 +148,7 @@ struct LibraryListView<Item: LibraryListItem>: View {
 					Button {
 						state.toggle(filter)
 						state.searchText = ""
+						donateFilters()
 					} label: {
 						Label(filter.title, systemImage: filter.kind.tokenImage)
 					}
@@ -230,6 +233,7 @@ struct LibraryListView<Item: LibraryListItem>: View {
 					.environment(navigation)
 			}
 		}
+		.buttonStyle(.plain)
 		.swipeActions(edge: .trailing) {
 			Button {
 				toggleBookmark(target, isBookmarked: isBookmarked)
@@ -239,6 +243,7 @@ struct LibraryListView<Item: LibraryListItem>: View {
 					systemImage: isBookmarked ? "bookmark.fill" : "bookmark"
 				)
 			}
+			.buttonStyle(.automatic)
 			.tint(.accentColor)
 		}
 		.listedEntity(Item.Entity.self, id: item.id)
@@ -266,6 +271,7 @@ struct LibraryListView<Item: LibraryListItem>: View {
 				withAnimation(.easeInOut(duration: 0.2)) {
 					state.clearFilters()
 				}
+				IntentDonations.clearFilters()
 			}
 			.disabled(state.filters.isEmpty)
 			.accessibilityIdentifier("library.\(Item.category.rawValue).clearFilters")
@@ -289,16 +295,24 @@ struct LibraryListView<Item: LibraryListItem>: View {
 						withAnimation(.easeInOut(duration: 0.2)) {
 							state.toggle(filter)
 						}
+						donateFilters()
 					}
 				)
 			)
 		}
 	}
 
+	/// Donates the list as it looks after the user changed its filters.
+	private func donateFilters() {
+		IntentDonations.libraryList(Item.category, filters: state.filters)
+	}
+
 	private func toggleBookmark(
 		_ target: CatalogReference,
 		isBookmarked: Bool
 	) {
+		IntentDonations.bookmark(target, added: !isBookmarked, catalog: catalog)
+
 		withAnimation(.easeInOut) {
 			if isBookmarked {
 				bookmarks.remove(target)

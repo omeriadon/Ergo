@@ -41,6 +41,7 @@ struct ParadoxDetailView: View {
 							.frame(height: 10)
 
 						Text(paradox.summary)
+							.textSelection(.enabled)
 							.lineLimit(10)
 
 						RelatedSection(list: paradox.keyFigures, title: "Key Figures")
@@ -51,6 +52,7 @@ struct ParadoxDetailView: View {
 
 						Text(paradox.body)
 							.padding(12)
+							.textSelection(.enabled)
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 
@@ -96,18 +98,7 @@ struct ParadoxDetailView: View {
 				} action: { _, newValue in
 					hasScrolled = newValue
 				}
-				.richNavigationTitle(height: 40, width: 360) {
-					VStack {
-						Text(hasScrolled ? paradox.name : "")
-
-						Text(hasScrolled ? "Paradoxes" : "")
-							.textCase(.uppercase)
-							.font(.caption2)
-							.foregroundStyle(.secondary)
-					}
-					.contentTransition(.numericText())
-					.animation(.easeInOut(duration: 0.2), value: hasScrolled)
-				}
+				.libraryDetailTitle(paradox.name, category: "Paradoxes", hasScrolled: hasScrolled)
 				.toolbar {
 					ToolbarItem(placement: .title) {
 						Text("")
@@ -123,6 +114,8 @@ struct ParadoxDetailView: View {
 						let isBookmarked = bookmarks.contains(reference)
 
 						Button {
+							IntentDonations.bookmark(reference, added: !isBookmarked, catalog: catalog)
+
 							withAnimation(.easeInOut) {
 								if isBookmarked {
 									bookmarks.remove(reference)

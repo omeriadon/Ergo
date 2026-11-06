@@ -41,4 +41,8 @@ struct EvalCase: Codable, Hashable, Sendable {
 
 	/// Why the case exists, when it isn't obvious
 	let note: String?
+
+	/// What the page already calls its letters, up to six with empty strings for free slots. Nil for every case that
+	/// isn't about reusing a letter: the corpus translates one statement on a page that names nothing.
+	var descriptors: [String]? = nil
 }

@@ -126,6 +126,13 @@ extension EvalCase {
 				}
 		}
 
+		if let descriptors, descriptors.count > LogicLetters.slots.count {
+			problems.append("Expected at most \(LogicLetters.slots.count) descriptors, found \(descriptors.count)")
+		}
+		if let long = descriptors?.first(where: { $0.count > LogicLetters.descriptorLengthLimit }) {
+			problems.append("Expected descriptors of at most \(LogicLetters.descriptorLengthLimit) characters, found '\(long)'")
+		}
+
 		if tags.contains(Corpus.fallacyTag) != (verdict == .invalid) {
 			problems.append("Expected the '\(Corpus.fallacyTag)' tag exactly when the verdict is invalid")
 		}

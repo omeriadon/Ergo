@@ -16,8 +16,34 @@ public extension ErgoClient {
 	///
 	/// The server's own failures arrive as `.failed`, the last message. Thrown errors mean the server couldn't be reached
 	/// or dropped the connection.
+	///
+	/// Always runs the `.statement` scope, whatever `request.scope` says. Use `breakDown` for an argument.
 	func translate(_ request: TranslateRequest) -> AsyncThrowingStream<TranslateServerMessage, Error> {
-		messages(
+		var request = request
+		request.scope = .statement
+		return messages(
+			at: ErgoProtocol.Path.translate,
+			opening: Self.text(TranslateClientMessage.translate(request)),
+			closing: Self.text(TranslateClientMessage.cancel)
+		) { message in
+			switch message {
+				case .event:
+					false
+				case .finished, .failed:
+					true
+			}
+		}
+	}
+
+	/// Breaks pasted English into premises, a conclusion and claims, without writing any logic: events as they
+	/// happen, finishing with the breakdown. The request's `descriptors` are what the page already calls its letters,
+	/// and come back filled in with the new claims. Cancelling the consuming task cancels the work on the server.
+	///
+	/// Always runs the `.argument` scope, whatever `request.scope` says.
+	func breakDown(_ request: TranslateRequest) -> AsyncThrowingStream<BreakDownServerMessage, Error> {
+		var request = request
+		request.scope = .argument
+		return messages(
 			at: ErgoProtocol.Path.translate,
 			opening: Self.text(TranslateClientMessage.translate(request)),
 			closing: Self.text(TranslateClientMessage.cancel)

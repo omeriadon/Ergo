@@ -29,6 +29,7 @@ struct FallacyDetailView: View {
 							.frame(height: 10)
 
 						Text(fallacy.summary)
+							.textSelection(.enabled)
 							.lineLimit(10)
 
 						if let criteria = fallacy.detectionCriteria, !criteria.isEmpty {
@@ -41,6 +42,7 @@ struct FallacyDetailView: View {
 									Image(systemName: "checklist")
 										.font(.title)
 									Text(criteria)
+										.textSelection(.enabled)
 								}
 							}
 							.padding(12)
@@ -51,6 +53,7 @@ struct FallacyDetailView: View {
 
 						Text(fallacy.body)
 							.padding(12)
+							.textSelection(.enabled)
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
@@ -90,18 +93,7 @@ struct FallacyDetailView: View {
 				} action: { _, newValue in
 					hasScrolled = newValue
 				}
-				.richNavigationTitle(height: 40, width: 360) {
-					VStack {
-						Text(hasScrolled ? fallacy.name : "")
-
-						Text(hasScrolled ? "Fallacies" : "")
-							.textCase(.uppercase)
-							.font(.caption2)
-							.foregroundStyle(.secondary)
-					}
-					.contentTransition(.numericText())
-					.animation(.easeInOut(duration: 0.2), value: hasScrolled)
-				}
+				.libraryDetailTitle(fallacy.name, category: "Fallacies", hasScrolled: hasScrolled)
 				.toolbar {
 					ToolbarItem(placement: .title) {
 						Text("")

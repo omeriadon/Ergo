@@ -28,6 +28,17 @@ struct TranslateSocketTests {
 		return messages
 	}
 
+	func breakdownMessages(_ client: ErgoClient, _ request: TranslateRequest) async throws -> [BreakDownServerMessage] {
+		var messages: [BreakDownServerMessage] = []
+		for try await message in client.breakDown(request) {
+			messages.append(message)
+		}
+		return messages
+	}
+
+	/// The ground is wet is already P, the fourth slot
+	static let named = ["", "", "", "the ground is wet", "", ""]
+
 	/// A signed-in client, with Claude connected unless `connect` is nil
 	func signIn(_ app: Application, _ server: URL, connect provider: Provider? = .claude) async throws -> (ErgoClient, AccountCreated) {
 		let account = try await ErgoClient(server: server, token: nil).createAccount()
@@ -124,6 +135,232 @@ struct TranslateSocketTests {
 				issues: [TranslationIssue(severity: .error, message: "Expected at least one full sentence")]
 			))])
 			#expect(scratch.read("calls") == nil)
+		}
+	}
+
+	// MARK: - Descriptors
+
+	@Test func descriptorsReachTheModelAndKeepTheirLetters() async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+		var config = ServerConfig.testing(scratch)
+		config.claudePath = try FakeCLI.claude(in: scratch, [
+			"formalize": #"answer '{"premises":["X→P","X"],"conclusion":"P"}'"#,
+		])
+
+		try await withLiveServer(config) { app, server in
+			let (client, _) = try await signIn(app, server)
+			var named = request()
+			named.descriptors = Self.named
+			let messages = try await messages(client, named)
+
+			guard case let .finished(translation)? = messages.last else {
+				Issue.record("Expected .finished last, found \(messages)")
+				return
+			}
+			#expect(LogicInputVocabulary(letters: LogicLetters.defaults).text(for: translation.entries) == "X→P\nX\n∴P")
+			#expect(translation.descriptors == ["it rains", "", "", "the ground is wet", "", ""])
+			#expect(translation.issues == [])
+
+			// The model was told, in the data and not the instructions
+			let formalize = try #require(scratch.read("input-formalize"))
+			#expect(formalize.contains("\"descriptors\""))
+			#expect(formalize.contains("the ground is wet"))
+			#expect(formalize.contains("\"letter\" : \"P\""))
+			let breakdown = try #require(scratch.read("input-breakdown"))
+			#expect(breakdown.contains("\"descriptors\" : [\n    \"the ground is wet\"\n  ]"))
+		}
+	}
+
+	@Test func noDescriptorsLeavesTheInputsAsTheyWere() async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+		var config = ServerConfig.testing(scratch)
+		config.claudePath = try FakeCLI.claude(in: scratch)
+
+		try await withLiveServer(config) { app, server in
+			let (client, _) = try await signIn(app, server)
+			_ = try await messages(client, request())
+
+			#expect(try #require(scratch.read("input-breakdown")).contains("descriptors") == false)
+			#expect(try #require(scratch.read("input-formalize")).contains("\"descriptors\"") == false)
+		}
+	}
+
+	// MARK: - Breaking down
+
+	@Test func argumentScopeStopsAfterTheBreakdown() async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+		var config = ServerConfig.testing(scratch)
+		config.claudePath = try FakeCLI.claude(in: scratch)
+
+		try await withLiveServer(config) { app, server in
+			let (client, account) = try await signIn(app, server)
+			var named = request()
+			named.descriptors = Self.named
+			let messages = try await breakdownMessages(client, named)
+
+			let descriptors = ["it rains", "", "", "the ground is wet", "", ""]
+			let premises = ["If it rains, the ground is wet", "It rains"]
+			#expect(messages == [
+				.event(.started(step: .gate, attempt: 1)),
+				.event(.started(step: .breakdown, attempt: 1)),
+				.event(.foundClaims(premises: premises, conclusion: "the ground is wet", descriptors: descriptors)),
+				.finished(ArgumentBreakdown(
+					kind: .argument,
+					premises: premises,
+					conclusion: "the ground is wet",
+					claims: [
+						BreakdownStage.Output.Claim(meaning: "It rains", descriptor: "it rains"),
+						BreakdownStage.Output.Claim(meaning: "The ground is wet", descriptor: "the ground is wet"),
+					],
+					descriptors: descriptors
+				)),
+			])
+			#expect(scratch.read("calls") == "gate\nbreakdown\n")
+
+			let stored = try #require(try await Credential.find(.claude, for: account.id, on: app.db))
+			#expect(stored.verified != nil)
+		}
+	}
+
+	@Test func argumentScopeAnswersCodexToo() async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+		var config = ServerConfig.testing(scratch)
+		config.codexPath = try FakeCLI.codex(in: scratch)
+
+		try await withLiveServer(config) { app, server in
+			let (client, _) = try await signIn(app, server, connect: .codex)
+			let messages = try await breakdownMessages(client, request(.codex))
+
+			guard case let .finished(breakdown)? = messages.last else {
+				Issue.record("Expected .finished last, found \(messages)")
+				return
+			}
+			#expect(breakdown.premises.count == 2)
+			#expect(breakdown.descriptors == ["it rains", "the ground is wet", "", "", "", ""])
+			#expect(scratch.read("calls") == "gate\nbreakdown\n")
+		}
+	}
+
+	@Test func statementScopeStillRunsEveryStage() async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+		var config = ServerConfig.testing(scratch)
+		config.claudePath = try FakeCLI.claude(in: scratch)
+
+		try await withLiveServer(config) { app, server in
+			let (client, _) = try await signIn(app, server)
+			var asked = request()
+			asked.scope = .argument
+			// `translate` is always the statement scope, whatever the request says
+			let messages = try await messages(client, asked)
+
+			guard case .finished? = messages.last else {
+				Issue.record("Expected .finished last, found \(messages)")
+				return
+			}
+			#expect(scratch.read("calls") == "gate\nbreakdown\nformalize\nverify\n")
+		}
+	}
+
+	// MARK: - Limits
+
+	@Test func tooLongEnglishNeverReachesTheCLI() async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+		var config = ServerConfig.testing(scratch)
+		config.claudePath = try FakeCLI.claude(in: scratch)
+
+		try await withLiveServer(config) { app, server in
+			let (client, _) = try await signIn(app, server)
+			let long = String(repeating: "It rains. ", count: 200)
+			let problem = "Too long to translate, expected at most \(EnglishValidator.characterLimit) characters"
+			var named = request(english: long)
+			named.descriptors = Self.named
+
+			#expect(try await messages(client, named) == [.finished(Translation(
+				english: long,
+				issues: [TranslationIssue(severity: .error, message: problem)]
+			))])
+			#expect(try await breakdownMessages(client, named) == [.finished(ArgumentBreakdown(
+				kind: .neither,
+				descriptors: Self.named,
+				issues: [TranslationIssue(severity: .error, message: problem)]
+			))])
+			#expect(scratch.read("calls") == nil)
+		}
+	}
+
+	@Test(arguments: [
+		(Array(repeating: "claim", count: 7), "Expected at most 6 descriptors, found 7"),
+		(["", String(repeating: "a", count: 33)], "Expected descriptors of at most 32 characters, found 33"),
+	])
+	func badDescriptorsAreRefusedForBothScopes(descriptors: [String], message: String) async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+		var config = ServerConfig.testing(scratch)
+		config.claudePath = try FakeCLI.claude(in: scratch)
+
+		try await withLiveServer(config) { app, server in
+			let (client, _) = try await signIn(app, server)
+			var bad = request()
+			bad.descriptors = descriptors
+			let refusal = ServiceError(code: .invalidRequest, message: message)
+
+			#expect(try await messages(client, bad) == [.failed(refusal)])
+			#expect(try await breakdownMessages(client, bad) == [.failed(refusal)])
+			#expect(scratch.read("calls") == nil)
+		}
+	}
+
+	@Test func otherGrammarIsOutdatedForBothScopes() async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+
+		try await withLiveServer(.testing(scratch)) { app, server in
+			let (client, _) = try await signIn(app, server)
+			let old = request(grammarVersion: LogicGrammar.version + 1)
+
+			guard case let .failed(error)? = try await breakdownMessages(client, old).first else {
+				Issue.record("Expected .failed")
+				return
+			}
+			#expect(error.code == .outdatedApp)
+		}
+	}
+
+	@Test func argumentScopeNeedsAConnection() async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+
+		try await withLiveServer(.testing(scratch)) { app, server in
+			let (client, _) = try await signIn(app, server, connect: nil)
+
+			#expect(try await breakdownMessages(client, request()) == [
+				.failed(ServiceError(code: .notConnected, message: "Claude isn't connected")),
+			])
+		}
+	}
+
+	@Test func cancellingAnArgumentKillsTheCLI() async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+		var config = ServerConfig.testing(scratch)
+		config.claudePath = try FakeCLI.claude(in: scratch, ["gate": FakeCLI.sleeping(in: scratch)])
+
+		try await withLiveServer(config) { app, server in
+			let (client, _) = try await signIn(app, server)
+			let work = Task { try await breakdownMessages(client, request()) }
+
+			#expect(try await eventually { pid("child", in: scratch) != nil })
+			let cli = try #require(pid("pid", in: scratch))
+			#expect(isRunning(cli))
+
+			work.cancel()
+			#expect(try await eventually { !isRunning(cli) })
 		}
 	}
 

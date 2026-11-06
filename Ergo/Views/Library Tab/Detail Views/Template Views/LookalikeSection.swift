@@ -39,6 +39,8 @@ struct LookalikeSection: View {
 							}
 							.contextMenu {
 								Button {
+									IntentDonations.bookmark(target, added: !isBookmarked, catalog: catalog)
+
 									withAnimation(.easeInOut) {
 										if isBookmarked {
 											bookmarks.remove(target)

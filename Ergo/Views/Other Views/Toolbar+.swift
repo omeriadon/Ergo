@@ -81,3 +81,39 @@ private struct ToolbarTitleViewModifier: ViewModifier {
 			}
 	}
 }
+
+extension View {
+	/// A two-line title that fades in under the navigation bar once the page has scrolled.
+	func libraryDetailTitle(_ name: String, category: String, hasScrolled: Bool) -> some View {
+		modifier(LibraryDetailTitleModifier(name: name, category: category, hasScrolled: hasScrolled))
+	}
+}
+
+private struct LibraryDetailTitleModifier: ViewModifier {
+	let name: String
+	let category: String
+	let hasScrolled: Bool
+
+	@State private var containerWidth: CGFloat = 0
+	/// Room for a two-line name plus the category line.
+	@ScaledMetric(relativeTo: .body) private var height = 64
+
+	func body(content: Content) -> some View {
+		content
+			.onGeometryChange(for: CGFloat.self) { $0.size.width } action: { containerWidth = $0 }
+			.richNavigationTitle(height: height, width: containerWidth * 0.7) {
+				VStack {
+					Text(hasScrolled ? name : "")
+						.lineLimit(2)
+						.multilineTextAlignment(.center)
+
+					Text(hasScrolled ? category : "")
+						.textCase(.uppercase)
+						.font(.caption2)
+						.foregroundStyle(.secondary)
+				}
+				.contentTransition(.numericText())
+				.animation(.easeInOut(duration: 0.2), value: hasScrolled)
+			}
+	}
+}

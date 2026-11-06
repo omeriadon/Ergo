@@ -66,10 +66,12 @@ struct SymbolDetailView: View {
 							.frame(height: 10)
 
 						Text(symbol.summary)
+							.textSelection(.enabled)
 							.lineLimit(10)
 
 						Text(symbol.body)
 							.padding(12)
+							.textSelection(.enabled)
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
@@ -111,18 +113,7 @@ struct SymbolDetailView: View {
 				} action: { _, newValue in
 					hasScrolled = newValue
 				}
-				.richNavigationTitle(height: 40, width: 360) {
-					VStack {
-						Text(hasScrolled ? symbol.name : "")
-
-						Text(hasScrolled ? "Symbols" : "")
-							.textCase(.uppercase)
-							.font(.caption2)
-							.foregroundStyle(.secondary)
-					}
-					.contentTransition(.numericText())
-					.animation(.easeInOut(duration: 0.2), value: hasScrolled)
-				}
+				.libraryDetailTitle(symbol.name, category: "Symbols", hasScrolled: hasScrolled)
 				.toolbar {
 					ToolbarItem(placement: .title) {
 						Text("")
@@ -138,6 +129,8 @@ struct SymbolDetailView: View {
 						let isBookmarked = bookmarks.contains(reference)
 
 						Button {
+							IntentDonations.bookmark(reference, added: !isBookmarked, catalog: catalog)
+
 							withAnimation(.easeInOut) {
 								if isBookmarked {
 									bookmarks.remove(reference)

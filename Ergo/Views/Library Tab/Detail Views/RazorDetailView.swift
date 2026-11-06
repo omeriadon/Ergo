@@ -41,6 +41,7 @@ struct RazorDetailView: View {
 							.frame(height: 10)
 
 						Text(razor.summary)
+							.textSelection(.enabled)
 							.lineLimit(10)
 
 						VStack {
@@ -49,6 +50,7 @@ struct RazorDetailView: View {
 
 							Text(razor.lensQuestion)
 								.font(.title3)
+								.textSelection(.enabled)
 								.padding(.horizontal, 24)
 								.frame(maxWidth: .infinity, alignment: .center)
 
@@ -62,6 +64,7 @@ struct RazorDetailView: View {
 
 						Text(razor.body)
 							.padding(12)
+							.textSelection(.enabled)
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 
@@ -94,18 +97,7 @@ struct RazorDetailView: View {
 				} action: { _, newValue in
 					hasScrolled = newValue
 				}
-				.richNavigationTitle(height: 40, width: 360) {
-					VStack {
-						Text(hasScrolled ? razor.name : "")
-
-						Text(hasScrolled ? "Razors" : "")
-							.textCase(.uppercase)
-							.font(.caption2)
-							.foregroundStyle(.secondary)
-					}
-					.contentTransition(.numericText())
-					.animation(.easeInOut(duration: 0.2), value: hasScrolled)
-				}
+				.libraryDetailTitle(razor.name, category: "Razors", hasScrolled: hasScrolled)
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(razor.name.capitalized)
 				.toolbar {
@@ -123,6 +115,8 @@ struct RazorDetailView: View {
 						let isBookmarked = bookmarks.contains(reference)
 
 						Button {
+							IntentDonations.bookmark(reference, added: !isBookmarked, catalog: catalog)
+
 							withAnimation(.easeInOut) {
 								if isBookmarked {
 									bookmarks.remove(reference)

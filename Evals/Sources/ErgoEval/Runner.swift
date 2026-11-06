@@ -141,7 +141,9 @@ struct Runner: Sendable {
 			english: evalCase.english,
 			provider: provider,
 			letters: Corpus.letters,
-			grammarVersion: LogicGrammar.version
+			grammarVersion: LogicGrammar.version,
+			descriptors: evalCase.descriptors,
+			scope: .statement
 		)
 
 		let clock = ContinuousClock()

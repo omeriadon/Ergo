@@ -123,6 +123,7 @@ The formalize prompt (02) and the corpus (04) must agree on these:
 - Opposite words ("off", "dry") are their own claim. If an argument uses both words of a pair ("on" and "off"), one becomes the negation of the other, so the logic connects.
 - One letter per distinct claim; the same claim reworded gets the same letter.
 - Letters are assigned in order of first appearance in the English, even when the conclusion comes first.
+- On a page that already names letters, a claim that matches a name keeps that letter, and new claims only take unnamed ones.
 - "Unless" is the inclusive reading above. Plain "or" without "either" is inclusive too.
 - Everyday "must", "can't", generic "you" and "whenever" are not □, ◇ or ∀. Use plain propositional logic unless the English is explicitly about necessity or about all/some things.
 - "Exactly one of A, B, C" is not A⊕B⊕C (that means an odd number are true). Spell it out.

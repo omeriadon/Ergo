@@ -154,7 +154,7 @@ struct SyncRecordTests {
 	// MARK: - Checks
 
 	@Test func kindsKnowTheirFieldsAndIDs() {
-		#expect(SyncKind.page.fieldNames == ["created", "content", "deleted", "descriptor.0", "descriptor.1", "descriptor.2", "descriptor.3", "descriptor.4", "descriptor.5"])
+		#expect(SyncKind.page.fieldNames == ["created", "deleted", "descriptor.0", "descriptor.1", "descriptor.2", "descriptor.3", "descriptor.4", "descriptor.5"])
 		#expect(SyncKind.bookmark.fieldNames == ["present"])
 		#expect(SyncKind.setting.fieldNames == ["value"])
 		#expect(SyncKind(rawValue: "folder").fieldNames.isEmpty)

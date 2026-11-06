@@ -61,4 +61,24 @@ struct ErgoClientTests {
 		#expect(try ErgoProtocol.decoder.decode(TranslateClientMessage.self, from: Data(text.utf8)) == .translate(request))
 		#expect(ErgoClient.text(TranslateClientMessage.cancel) == #"{"cancel":{}}"#)
 	}
+
+	/// Both are optional for the app, and default to one statement with nothing named
+	@Test func requestsDefaultToAStatementWithNoDescriptors() throws {
+		let request = TranslateRequest(id: UUID(), english: "It rains.", provider: .claude, letters: ["X"], grammarVersion: 1)
+		#expect(request.scope == .statement)
+		#expect(request.descriptors == nil)
+
+		let argument = TranslateRequest(
+			id: UUID(),
+			english: "It rains, so it pours.",
+			provider: .claude,
+			letters: ["X"],
+			grammarVersion: 1,
+			descriptors: ["it rains", "", "", "", "", ""],
+			scope: .argument
+		)
+		let text = try #require(ErgoClient.text(TranslateClientMessage.translate(argument)))
+		#expect(text.contains(#""scope":"argument""#))
+		#expect(try ErgoProtocol.decoder.decode(TranslateClientMessage.self, from: Data(text.utf8)) == .translate(argument))
+	}
 }

@@ -2,14 +2,16 @@
 
 ## Ground rules
 - Never commit, stage, or otherwise touch git state. Adon manages git.
-- Never boot a simulator or run the app/UI tests; it cripples the machine. Verify with a build only.
+- Never boot a simulator or run the app/UI tests; it cripples the machine.
+- Verification is light. Don't build for small changes. For a big change, build once with `-configuration Debug` only (never Release, no other schemes), and don't re-run suites or builds to double-check. Say plainly what wasn't built or run.
 - Match the surrounding code's style. Specialised code (parsers, performance-critical UIKit) can differ, since Adon doesn't write UIKit.
 - Never use Adon's own Claude or Codex logins for testing, and never print, log or copy credentials. Tests use fake CLI scripts.
 
 ## Layout
-- `Ergo/` is the iOS app. `Ergo.xcodeproj` links `ErgoKit` as a local package.
+- `Ergo.xcworkspace` opens the app, ErgoKit, ErgoServer, Evals and Plans together.
+- `Ergo/` is the iOS app. `Ergo.xcodeproj` links `ErgoKit` as a local package. `Ergo/Pages/` is the page model and `PageStore`.
 - `ErgoKit/` is shared by the app, the server and the evals:
-  - `ErgoLogic`: entries, parser, checker, `LogicEnglish`, `LogicEquivalence`
+  - `ErgoLogic`: entries, parser, checker, `LogicEnglish`, `LogicEquivalence`, and `Canvas/` (argument map, validator, layout, text conversion; pure, tested with `swift test`)
   - `ErgoTranslation`: the pipeline and stages
   - `ErgoSync`: the sync engine
   - `ErgoProtocol`: the wire types
@@ -43,17 +45,33 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -destination 'generic/platform=i
 - Editor content is `[LogicKeyboardEntry]`, never a String. The six letters are `.variable(1...6)`, and the actual letter is only applied when displaying (`LogicLetters.resolved(Defaults[.logicLetters])`), so changing letters is lossless.
 - Every entry glyph is exactly one UTF-16 unit; `LogicEditorTextView` relies on that to map text ranges to entry indices.
 - Fallacy ids in `LogicFallacyForm` (ErgoLogic) must match ids in `Ergo/Special/Catalog/fallacies.json`.
-- Each Check tab page (`LogicPage`, in `PageStore`, persisted with Defaults) owns its English, logic and descriptors. Letters are app-wide, descriptors are per page.
-- `LogicPage`, `Translation`, `TranslationIssue` and `LogicKeyboardEntry` are saved in users' Defaults as synthesized Codable. Never rename their cases or stored properties.
+- A Check tab page (`LogicPage`, in `PageStore`, persisted with Defaults) is a canvas: `statements` joined by `links` ("premise of"). It always holds at least one statement. Letters are app-wide, descriptors are per page and shared by every statement, which is what makes `P` in two boxes the same claim.
+- A `Statement` owns one claim's English, logic, `source`, `translation` and canvas `position` (the box's centre). `StatementEditorView` edits one statement of the current page, through `PageStore`.
+- `PageStore` is how statements and links change (add, update, move, delete, link, unlink, arrange, apply text). `LogicPage.map` is the `ArgumentMap` that ErgoLogic's validator, layout, text and checks take.
+- `Statement`, `Link`, `Translation`, `TranslationIssue` and `LogicKeyboardEntry` are saved in users' Defaults as synthesized Codable, and statements are also what sync records hold. Never rename their cases or stored properties. `LogicPage` itself is not frozen yet, only the statement inside it.
 
 ## Translation
 - English → logic runs on the server: the app streams `TranslationEvent`s over a WebSocket, through `TranslationAccount`. Stages are `TranslationPipeline` stages in ErgoTranslation; never rename a stage's `name`.
+- Translating is per statement, and sends the page's six descriptors (`""` for a free slot) so the server reuses a letter for a claim the page already names. The result updates that statement, and its descriptors only fill slots still free.
+- `TranslationAccount.breakDown` runs the server's argument scope on pasted English: premises, a conclusion and claims, with no logic.
 - The app checks English with `EnglishValidator` before sending it, and re-parses the returned entries before applying them.
 - Logic → English is `LogicEnglish`, deterministic and exact. It's also what the verify stage compares against.
 - No Foundation Models, on-device or otherwise.
 
 ## Sync
-- Signed in with Apple, pages, bookmarks and the settings in `SyncedSetting` sync through the server (`Ergo/Sync/`, ErgoSync).
+- Signed in with Apple or email, pages, bookmarks and the settings in `SyncedSetting` sync through the server (`Ergo/Sync/`, ErgoSync).
 - Every new Defaults key needs a decision: synced (add it to `SyncedSetting` and `SyncedDefaults`) or this device only.
-- Merging is last writer wins per field, with hybrid-clock stamps. Two devices editing a page's content at once give a conflict copy, not a loss.
+- Sync kinds: `page` (`created`, `descriptor.N`), `statement` (`page`, `position`, `content`) and `link` (`page`, `premise`, `conclusion`). Statements and links are records of their own, so dragging a box never clashes with typing in it.
+- Deleting a page writes only its tombstone: the replica ignores its statements and links (`SyncReplica.isIgnored`). Deleting a statement tombstones it and its links. Pages are rebuilt from the replica's records, so arrival order doesn't matter.
+- Merging is last writer wins per field, with hybrid-clock stamps. Two devices editing a statement's content at once give a conflict copy of that statement beside it, not a loss.
 - Sync values are always encoded with `SyncCoding`. A different encoder makes identical values look like edits.
+
+## Accounts
+- Anonymous until signed in; sync needs Sign in with Apple or email + password. One account can hold both.
+- Email addresses are not verified and there is no password reset yet. A wrong password is `invalidCredentials`, never `.unauthorized`: the app treats `.unauthorized` as a dead token and signs out.
+- The server handles Apple's server-to-server notifications at `POST v1/apple/notifications`. Register `https://<host>/v1/apple/notifications` in the developer portal once there is a real host. Replay protection (`jti`) is in memory only.
+- Revoking a user's Apple sign-in on account deletion is not built (needs a `.p8` key on the server and the app sending the `authorizationCode`).
+
+## Server environment
+- Release builds always use `ServerEnvironment.productionURL`, which is still a placeholder (`https://ergo.example.com`). Set it when there is a real host.
+- Debug builds can switch between Production and This Mac (Settings → Translation → Server, which also has a Test Server row). For a phone, run the Mac server with `--hostname 0.0.0.0`.

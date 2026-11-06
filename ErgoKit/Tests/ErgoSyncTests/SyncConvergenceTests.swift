@@ -19,6 +19,9 @@ struct SyncConvergenceTests {
 		SyncRecord.Key(kind: .setting, id: SyncedSetting.logicLetters.rawValue),
 		SyncRecord.Key(kind: .setting, id: SyncedSetting.ditherEnabled.rawValue),
 		SyncRecord.Key(kind: .bookmark, id: "fallacy.ad-hominem"),
+		SyncRecord.Key(kind: .statement, id: "AAAAAAAA-2222-4333-8444-555555555555"),
+		SyncRecord.Key(kind: .statement, id: "BBBBBBBB-2222-4333-8444-555555555555"),
+		SyncRecord.Key(kind: .link, id: "CCCCCCCC-2222-4333-8444-555555555555"),
 	]
 
 	/// What the random walk may do besides editing and syncing
@@ -118,11 +121,13 @@ struct SyncConvergenceTests {
 
 	/// After pruning, a tombstone the server dropped can still be on a device. Deleted and gone look the same to the
 	/// user, so only then are they compared as the same.
+	/// Pruning also drops the statements and links of a pruned page, which a device keeps until it prunes too.
+	/// They're ignored on every device, so they count as gone as well.
 	static func expectConverged(_ world: World, seed: UInt64, ignoringTombstones: Bool = false) {
-		func visible(_ records: [SyncRecord.Key: SyncRecord]) -> [SyncRecord.Key: SyncRecord] {
-			ignoringTombstones ? records.filter { !$0.value.isDeleted } : records
-		}
 		for device in world.devices {
+			func visible(_ records: [SyncRecord.Key: SyncRecord]) -> [SyncRecord.Key: SyncRecord] {
+				ignoringTombstones ? records.filter { !$0.value.isDeleted && !device.replica.isIgnored($0.value) } : records
+			}
 			#expect(visible(device.replica.records) == visible(world.server.records), "Seed \(seed): \(device.replica.device) disagrees with the server")
 			#expect(device.replica.pending.isEmpty, "Seed \(seed): \(device.replica.device) still has pending changes")
 			#expect(device.replica.isCaughtUp, "Seed \(seed): \(device.replica.device) never caught up")

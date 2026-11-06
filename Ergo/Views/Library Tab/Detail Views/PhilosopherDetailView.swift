@@ -97,10 +97,12 @@ struct PhilosopherDetailView: View {
 							.frame(height: 60)
 
 						Text(philosopher.summary)
+							.textSelection(.enabled)
 							.lineLimit(10)
 
 						Text(philosopher.body)
 							.padding(12)
+							.textSelection(.enabled)
 							.frame(maxWidth: .infinity, alignment: .leading)
 							.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 							.padding(.top)
@@ -121,18 +123,7 @@ struct PhilosopherDetailView: View {
 				} action: { _, newValue in
 					hasScrolled = newValue
 				}
-				.richNavigationTitle(height: 40, width: 360) {
-					VStack {
-						Text(hasScrolled ? philosopher.name : "")
-
-						Text(hasScrolled ? "Philosophers" : "")
-							.textCase(.uppercase)
-							.font(.caption2)
-							.foregroundStyle(.secondary)
-					}
-					.contentTransition(.numericText())
-					.animation(.easeInOut(duration: 0.2), value: hasScrolled)
-				}
+				.libraryDetailTitle(philosopher.name, category: "Philosophers", hasScrolled: hasScrolled)
 				.toolbar {
 					ToolbarItem(placement: .title) {
 						Text("")
@@ -148,6 +139,8 @@ struct PhilosopherDetailView: View {
 						let isBookmarked = bookmarks.contains(reference)
 
 						Button {
+							IntentDonations.bookmark(reference, added: !isBookmarked, catalog: catalog)
+
 							withAnimation(.easeInOut) {
 								if isBookmarked {
 									bookmarks.remove(reference)

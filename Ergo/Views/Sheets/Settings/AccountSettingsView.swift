@@ -9,7 +9,7 @@ import AuthenticationServices
 import Defaults
 import SwiftUI
 
-/// The Account section of Settings: Sign in with Apple, and how sync is doing
+/// The Account page of Settings: signing in with Apple or an email, and how sync is doing
 struct AccountSettingsView: View {
 	@Environment(SyncController.self)
 	private var sync
@@ -30,8 +30,15 @@ struct AccountSettingsView: View {
 				if sync.isSignedIn {
 					SignedInRows(problem: $problem)
 				} else {
-					SignInRow(problem: $problem)
-						.disabled(!hasServer)
+					Group {
+						SignInRow(problem: $problem)
+
+						NavigationLink("Sign in with Email") {
+							EmailSignInView()
+						}
+						.accessibilityIdentifier("account.emailSignIn")
+					}
+					.disabled(!hasServer)
 				}
 			} footer: {
 				AccountFooter(problem: problem, hasServer: hasServer)
@@ -91,10 +98,19 @@ private struct SignedInRows: View {
 	@State private var confirmingDelete = false
 
 	var body: some View {
+		// Apple doesn't share the email, so it's only known when this device used one
+		if let email = sync.email {
+			LabeledContent("Email", value: email)
+		} else {
+			Text("Signed in")
+		}
+
 		LabeledContent("Sync") {
 			SyncStatusText(status: sync.status)
 		}
 		.accessibilityIdentifier("account.syncStatus")
+
+		EmailLink(hasEmail: sync.email != nil)
 
 		Button("Sign Out") {
 			confirmingSignOut = true
@@ -129,6 +145,25 @@ private struct SignedInRows: View {
 			} catch {
 				problem = error.localizedDescription
 			}
+		}
+	}
+}
+
+/// Changing the password needs an email this device knows about. Without one, an email can be added.
+private struct EmailLink: View {
+	let hasEmail: Bool
+
+	var body: some View {
+		if hasEmail {
+			NavigationLink("Change Password") {
+				ChangePasswordView()
+			}
+			.accessibilityIdentifier("account.changePassword")
+		} else {
+			NavigationLink("Add Email and Password") {
+				EmailSignInView(isAddingEmail: true)
+			}
+			.accessibilityIdentifier("account.addEmail")
 		}
 	}
 }
@@ -199,4 +234,11 @@ private struct AccountFooter: View {
 		AccountSettingsView()
 	}
 	.environment(SyncController.preview(signedIn: true, status: .upToDate(.now.addingTimeInterval(-120))))
+}
+
+#Preview("Signed in with email") {
+	NavigationStack {
+		AccountSettingsView()
+	}
+	.environment(SyncController.preview(signedIn: true, email: "ada@example.com", status: .syncing))
 }

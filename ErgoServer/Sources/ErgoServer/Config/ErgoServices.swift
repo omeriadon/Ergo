@@ -16,6 +16,8 @@ struct ErgoServices: Sendable {
 	let accountLimiter: CreateAccountLimiter
 	let registerLimiter: CreateAccountLimiter
 	let loginLimiter: LoginLimiter
+	let appleNotificationLimiter: CreateAccountLimiter
+	let appleNotifications: SeenNotifications
 
 	/// What an unknown email's password is checked against, so it takes as long as a known one's
 	let dummyPasswordHash: String
@@ -41,6 +43,8 @@ struct ErgoServices: Sendable {
 		accountLimiter = CreateAccountLimiter(limit: config.accountsPerHour)
 		registerLimiter = CreateAccountLimiter(limit: config.registrationsPerHour)
 		loginLimiter = LoginLimiter(limit: config.failedLoginsPerWindow, window: config.loginWindow)
+		appleNotificationLimiter = CreateAccountLimiter(limit: config.appleNotificationsPerMinute, window: 60)
+		appleNotifications = SeenNotifications()
 		dummyPasswordHash = try Bcrypt.hash(UUID().uuidString, cost: config.passwordCost)
 		translations = TranslationService(vault: vault, config: config, runner: runner)
 		self.verifier = verifier ?? .live(config: config, runner: runner)

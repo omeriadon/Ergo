@@ -67,11 +67,19 @@ struct FakeSyncServer {
 		)
 	}
 
-	/// Drops every tombstone, as the daily prune does once they're 90 days old
+	/// Drops every tombstone, as the daily prune does once they're 90 days old, and the statements and links of
+	/// every page it drops. Those don't count towards `prunedThrough`, since they say nothing a client needs to hear.
 	mutating func prune() {
+		var pages: Set<String> = []
 		for (key, row) in rows where row.record.isDeleted {
 			rows[key] = nil
 			prunedThrough = max(prunedThrough, row.seq)
+			if key.kind == .page {
+				pages.insert(key.id)
+			}
+		}
+		for (key, row) in rows where row.record.owningPage.map(pages.contains) == true {
+			rows[key] = nil
 		}
 	}
 }

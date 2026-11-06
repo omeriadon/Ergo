@@ -49,16 +49,77 @@ final class TranslationService: Sendable {
 		logger: Logger,
 		events: @escaping @Sendable (TranslationEvent) async -> Void
 	) async throws -> Translation {
-		guard request.grammarVersion == LogicGrammar.version else {
-			throw ServiceError(code: .outdatedApp, message: "Expected logic grammar \(LogicGrammar.version), found \(request.grammarVersion), update the app")
-		}
+		try check(request)
 		if let problem = EnglishValidator.problem(with: request.english) {
 			return Translation(english: request.english, issues: [TranslationIssue(severity: .error, message: problem)])
+		}
+
+		return try await run(request, account: account, database: database, logger: logger) { backend in
+			try await pipeline(for: request, backend: backend).translate(request.english, events: events)
+		} summary: { translation in
+			["issues": "\(translation.issues.count)"]
+		}
+	}
+
+	/// The same checks and rules as `translate`, for a pasted argument: only the gate and breakdown run
+	func breakDown(
+		_ request: TranslateRequest,
+		account: UUID,
+		database: any Database,
+		logger: Logger,
+		events: @escaping @Sendable (TranslationEvent) async -> Void
+	) async throws -> ArgumentBreakdown {
+		try check(request)
+		if let problem = EnglishValidator.problem(with: request.english) {
+			return ArgumentBreakdown(
+				kind: .neither,
+				descriptors: LogicLetters.slots.map { LogicLetters.descriptor(for: $0, in: request.descriptors ?? []) },
+				issues: [TranslationIssue(severity: .error, message: problem)]
+			)
+		}
+
+		return try await run(request, account: account, database: database, logger: logger) { backend in
+			try await pipeline(for: request, backend: backend).breakDown(request.english, events: events)
+		} summary: { breakdown in
+			["premises": "\(breakdown.premises.count)", "issues": "\(breakdown.issues.count)"]
+		}
+	}
+
+	private func pipeline(for request: TranslateRequest, backend: ProviderBackend) -> TranslationPipeline {
+		TranslationPipeline(backend: backend, letters: request.letters, descriptors: request.descriptors)
+	}
+
+	/// What no model call is needed to refuse: another grammar, letters or descriptors the app would never send
+	private func check(_ request: TranslateRequest) throws {
+		guard request.grammarVersion == LogicGrammar.version else {
+			throw ServiceError(code: .outdatedApp, message: "Expected logic grammar \(LogicGrammar.version), found \(request.grammarVersion), update the app")
 		}
 		guard LogicLetters.resolved(request.letters) == request.letters else {
 			throw ServiceError(code: .invalidRequest, message: "Expected six distinct letters, found '\(request.letters.joined(separator: " "))'")
 		}
+		if let descriptors = request.descriptors {
+			guard descriptors.count <= LogicLetters.slots.count else {
+				throw ServiceError(code: .invalidRequest, message: "Expected at most \(LogicLetters.slots.count) descriptors, found \(descriptors.count)")
+			}
+			if let long = descriptors.first(where: { $0.count > LogicLetters.descriptorLengthLimit }) {
+				throw ServiceError(
+					code: .invalidRequest,
+					message: "Expected descriptors of at most \(LogicLetters.descriptorLengthLimit) characters, found \(long.count)"
+				)
+			}
+		}
+	}
 
+	/// Opens the user's connection, runs `work` with it, one at a time per account, and turns whatever goes wrong into
+	/// a `ServiceError`. `summary` is what's worth logging about the result, never its text.
+	private func run<Result: Sendable>(
+		_ request: TranslateRequest,
+		account: UUID,
+		database: any Database,
+		logger: Logger,
+		_ work: (ProviderBackend) async throws -> Result,
+		summary: (Result) -> Logger.Metadata
+	) async throws -> Result {
 		guard let stored = try await Credential.find(request.provider, for: account, on: database), let id = stored.id else {
 			throw ServiceError(code: .notConnected, message: "\(request.provider.displayName) isn't connected")
 		}
@@ -85,14 +146,16 @@ final class TranslationService: Sendable {
 
 			let start = ContinuousClock.now
 			do {
-				let translation = try await TranslationPipeline(backend: backend, letters: request.letters).translate(request.english, events: events)
+				let result = try await work(backend)
 				try? await Credential.markWorking(id, on: database)
-				logger.info("Translated", metadata: [
+				var metadata: Logger.Metadata = [
 					"provider": "\(credential.provider)",
+					"scope": "\(request.scope.rawValue)",
 					"duration": "\(start.duration(to: .now))",
-					"issues": "\(translation.issues.count)",
-				])
-				return translation
+				]
+				metadata.merge(summary(result)) { first, _ in first }
+				logger.info("Translated", metadata: metadata)
+				return result
 			} catch let failure as ProviderFailure {
 				if case let .credentialRejected(problem) = failure {
 					try? await Credential.mark(id, problem: problem, on: database)

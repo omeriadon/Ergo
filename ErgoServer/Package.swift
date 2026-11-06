@@ -44,6 +44,7 @@ let package = Package(
 				.product(name: "ErgoProtocol", package: "ErgoKit"),
 				.product(name: "ErgoClient", package: "ErgoKit"),
 				.product(name: "VaporTesting", package: "vapor"),
+				.product(name: "JWT", package: "jwt"),
 			],
 			resources: [
 				.copy("Fixtures"),

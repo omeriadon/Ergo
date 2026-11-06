@@ -38,6 +38,11 @@ final class SyncController {
 		account.signedIn != nil
 	}
 
+	/// Known only when this device signed in or registered with an email, and then the password can be changed
+	var email: String? {
+		account.signedIn?.email
+	}
+
 	@ObservationIgnored private let account: TranslationAccount
 	@ObservationIgnored private let pageStore: PageStore
 	@ObservationIgnored private let catalog: CatalogStore
@@ -195,6 +200,11 @@ final class SyncController {
 		accountChanged()
 	}
 
+	/// Other devices are signed out and find out from their next request. This one stays as it is.
+	func changePassword(current: String, new: String) async throws {
+		try await account.changePassword(current: current, new: new)
+	}
+
 	func signOut() async throws {
 		try await leaving { try await account.signOut() }
 	}
@@ -228,11 +238,26 @@ final class SyncController {
 	private func record(_ pages: [LogicPage], deleted: Set<LogicPage.ID>) {
 		guard isSignedIn else { return }
 
+		// Before anything is recorded: a link to a statement deleted here only counts as the page's while that statement lives
+		let removed = removedRecords(from: pages)
+
 		var changed = false
 		for page in pages {
-			guard let fields = try? PageRecord.fields(of: page) else { continue }
-			changed = replica.recordLocal(kind: .page, id: PageRecord.id(page.id), fields: fields) || changed
+			if let fields = try? PageRecord.fields(of: page) {
+				changed = replica.recordLocal(kind: .page, id: PageRecord.id(page.id), fields: fields) || changed
+			}
+			for statement in page.statements {
+				guard let fields = try? StatementRecord.fields(of: statement, in: page.id) else { continue }
+				changed = replica.recordLocal(kind: .statement, id: StatementRecord.id(statement.id), fields: fields) || changed
+			}
+			for link in page.links {
+				changed = replica.recordLocal(kind: .link, id: LinkRecord.id(link.id), fields: LinkRecord.fields(of: link, in: page.id)) || changed
+			}
 		}
+		for (kind, id) in removed {
+			changed = replica.recordLocal(kind: kind, id: id, fields: [SyncFieldName.deleted: true]) || changed
+		}
+		// Only the page's tombstone: its statements and links are ignored with it, and the server prunes them
 		for id in deleted {
 			changed = replica.recordLocal(kind: .page, id: PageRecord.id(id), fields: [SyncFieldName.deleted: true]) || changed
 		}
@@ -240,6 +265,30 @@ final class SyncController {
 			saveReplica()
 			scheduleSync()
 		}
+	}
+
+	/// Statements and links the replica has alive for these pages that the pages no longer have, because they were
+	/// deleted here. Only ones this version can read, and never ones the replica ignores (their page or statement
+	/// might just not have arrived), so it never deletes what it hasn't shown.
+	private func removedRecords(from pages: [LogicPage]) -> [(kind: SyncKind, id: String)] {
+		let local = Dictionary(pages.map { (PageRecord.id($0.id), $0) }) { first, _ in first }
+		var removed: [(kind: SyncKind, id: String)] = []
+		for record in replica.records.values where !record.isDeleted {
+			guard let owner = record.owningPage, let page = local[owner], !replica.isIgnored(record) else { continue }
+			switch record.kind {
+				case .statement:
+					if StatementRecord.canRead(record), !page.statements.contains(where: { StatementRecord.id($0.id) == record.id }) {
+						removed.append((.statement, record.id))
+					}
+				case .link:
+					if LinkRecord.link(from: record) != nil, !page.links.contains(where: { LinkRecord.id($0.id) == record.id }) {
+						removed.append((.link, record.id))
+					}
+				default:
+					break
+			}
+		}
+		return removed
 	}
 
 	private func record(_ setting: SyncedSetting) {
@@ -289,7 +338,7 @@ final class SyncController {
 			record.kind == .page
 				&& !record.isDeleted
 				&& !local.contains(record.id)
-				&& PageRecord.page(from: record, local: nil) != nil
+				&& PageRecord.canRead(record)
 		}
 		record(pageStore.pages, deleted: Set(missing.compactMap { UUID(uuidString: $0.id) }))
 		saveReplica()
@@ -298,26 +347,31 @@ final class SyncController {
 	private func saveReplica() {
 		Defaults[.syncState] = replica
 
-		let oversized = replica.oversized.filter { $0.kind == .page }
+		let oversized = replica.oversized
 		let letters = LogicLetters.resolved(Defaults[.logicLetters])
 		oversizedPages = pageStore.pages
-			.filter { oversized.contains(SyncRecord.Key(kind: .page, id: PageRecord.id($0.id))) }
+			.filter { page in
+				oversized.contains(SyncRecord.Key(kind: .page, id: PageRecord.id(page.id)))
+					|| page.statements.contains { oversized.contains(SyncRecord.Key(kind: .statement, id: StatementRecord.id($0.id))) }
+			}
 			.map { $0.title(letters: letters) }
 	}
 
 	// MARK: - Remote changes
 
-	private func write(_ applied: SyncApplied) {
-		var pages: [LogicPage] = []
-		var deleted: Set<LogicPage.ID> = []
+	/// `pullComplete` is false while more is still coming. A statement a link joins can be missing only because it
+	/// hasn't arrived yet, so links are only cleaned up once everything has.
+	private func write(_ applied: SyncApplied, pullComplete: Bool) {
+		var affected: Set<LogicPage.ID> = []
 		for record in applied.changed {
 			switch record.kind {
 				case .page:
-					guard let id = UUID(uuidString: record.id) else { continue }
-					if record.isDeleted {
-						deleted.insert(id)
-					} else if let page = PageRecord.page(from: record, local: pageStore.pages.first { $0.id == id }) {
-						pages.append(page)
+					if let id = UUID(uuidString: record.id) {
+						affected.insert(id)
+					}
+				case .statement, .link:
+					if let id = record.owningPage.flatMap(UUID.init(uuidString:)) {
+						affected.insert(id)
 					}
 				case .bookmark:
 					BookmarkRecord.write(record, catalog: catalog.index)
@@ -329,19 +383,47 @@ final class SyncController {
 					continue
 			}
 		}
-		pageStore.applyRemote(pages, deleted: deleted)
 
-		// Only a page's content is worth a copy. Everything else is last writer wins.
-		for field in applied.superseded where field.kind == .page && field.field == SyncFieldName.content {
-			guard let id = UUID(uuidString: field.id) else { continue }
-			let page = pageStore.pages.first { $0.id == id }
-			if let copy = PageRecord.copy(
-				of: field.lost,
-				descriptors: page?.descriptors ?? LogicLetters.emptyDescriptors,
-				created: page?.created ?? field.lost.stamp.date
-			) {
-				pageStore.insertCopy(copy)
+		// Pages are built from the replica as a whole, so the order records arrived in doesn't matter
+		let rebuilt = PageRecord.rebuild(affected, from: replica, local: pageStore.pages)
+		pageStore.applyRemote(rebuilt.pages, deleted: rebuilt.deleted)
+
+		// Only a statement's content is worth a copy. Everything else is last writer wins.
+		for field in applied.superseded(.statement, field: SyncFieldName.content) {
+			guard
+				let id = UUID(uuidString: field.id),
+				let page = pageStore.pages.first(where: { $0.statement(id) != nil }),
+				let copy = StatementRecord.copy(of: field.lost, beside: id, in: page)
+			else {
+				continue
 			}
+			pageStore.insertStatementCopy(copy, into: page.id)
+		}
+
+		if pullComplete {
+			deleteDanglingLinks()
+		}
+	}
+
+	/// A link whose statement is gone on a page that isn't. Another device deleted the statement without its links,
+	/// or drew one to it at the same moment. The replica ignores it, so this makes that permanent.
+	private func deleteDanglingLinks() {
+		func isGone(_ kind: SyncKind, _ id: String) -> Bool {
+			replica[kind, id].map(\.isDeleted) ?? true
+		}
+
+		let dangling = replica.records.values.filter { record in
+			guard record.kind == .link, !record.isDeleted, let page = record.owningPage, let ends = record.joined else { return false }
+			return !isGone(.page, page) && (isGone(.statement, ends.premise) || isGone(.statement, ends.conclusion))
+		}
+
+		var changed = false
+		for record in dangling {
+			changed = replica.recordLocal(kind: .link, id: record.id, fields: [SyncFieldName.deleted: true]) || changed
+		}
+		if changed {
+			saveReplica()
+			scheduleSync()
 		}
 	}
 
@@ -418,7 +500,7 @@ final class SyncController {
 				pageStore.save()
 				let applied = replica.apply(response, sent: request)
 				// Written back before the replica is saved, so being killed in between only means pulling again
-				write(applied)
+				write(applied, pullComplete: !response.more)
 				saveReplica()
 				if !applied.syncAgain {
 					break

@@ -16,15 +16,20 @@ public enum BreakdownStage: TranslationStage {
 		public let maximumClaims: Int
 		public let descriptorWordLimit: Int
 
-		public init(english: String, maximumClaims: Int, descriptorWordLimit: Int) {
+		/// What the page already calls its claims, other statements' labels included. A claim that means the same
+		/// as one of these takes its text as its descriptor, so the claim keeps its letter. Missing when the page has none.
+		public let descriptors: [String]?
+
+		public init(english: String, maximumClaims: Int, descriptorWordLimit: Int, descriptors: [String]? = nil) {
 			self.english = english
 			self.maximumClaims = maximumClaims
 			self.descriptorWordLimit = descriptorWordLimit
+			self.descriptors = descriptors
 		}
 	}
 
 	public struct Output: Codable, Sendable {
-		public struct Claim: Codable, Sendable {
+		public struct Claim: Codable, Sendable, Hashable {
 			public let meaning: String
 			public let descriptor: String
 

@@ -48,6 +48,9 @@ struct ServerConfig: Sendable {
 	var accountsPerHour = 5
 	var registrationsPerHour = 10
 
+	/// Generous, since every user's notifications come from Apple's few addresses
+	var appleNotificationsPerMinute = 120
+
 	/// Failed logins per address, and per email, within `loginWindow`
 	var failedLoginsPerWindow = 10
 	var loginWindow: TimeInterval = 15 * 60

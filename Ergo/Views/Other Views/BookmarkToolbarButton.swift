@@ -4,6 +4,7 @@ import SwiftUI
 struct BookmarkToolbarButton: View {
 	let reference: CatalogReference
 	@Default(.bookmarks) private var bookmarks
+	@Environment(CatalogStore.self) private var catalog
 
 	private var isBookmarked: Bool {
 		bookmarks.contains(reference)
@@ -11,6 +12,8 @@ struct BookmarkToolbarButton: View {
 
 	var body: some View {
 		Button {
+			IntentDonations.bookmark(reference, added: !isBookmarked, catalog: catalog)
+
 			withAnimation(.easeInOut) {
 				if isBookmarked {
 					bookmarks.remove(reference)

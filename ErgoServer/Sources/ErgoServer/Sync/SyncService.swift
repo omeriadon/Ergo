@@ -143,34 +143,84 @@ struct SyncService: Sendable {
 	// MARK: - Pruning
 
 	/// Deletes tombstones older than `SyncLimit.tombstoneDays`, and moves each account's `prunedThrough` past them,
-	/// so a device that might have missed one is told to start over. Returns how many went.
+	/// so a device that might have missed one is told to start over. Returns how many records went.
+	///
+	/// It also deletes what a deleted page leaves behind, since the page's own record can't take them with it:
+	/// - the statements and links of every page whose tombstone is pruned, whatever their age
+	/// - statements and links with no page record at all (or no `page` field) that haven't changed in as long
+	///
+	/// Those don't move `prunedThrough`: a device that has them ignores them, because their page is deleted or missing.
 	@discardableResult
 	func prune(now: Date = .now, on database: any Database) async throws -> Int {
 		let cutoff = now - TimeInterval(SyncLimit.tombstoneDays) * 24 * 60 * 60
-		let accounts = try await SyncRecordRow.query(on: database)
+		let tombstoned = try await SyncRecordRow.query(on: database)
 			.filter(\.$tombstone < cutoff)
+			.field(\.$account.$id)
+			.unique()
+			.all()
+			.map(\.$account.id)
+		let withOldChildren = try await SyncRecordRow.query(on: database)
+			.filter(\.$kind ~~ Self.childKinds)
+			.filter(\.$updated < cutoff)
 			.field(\.$account.$id)
 			.unique()
 			.all()
 			.map(\.$account.id)
 
 		var pruned = 0
-		for id in Set(accounts) {
+		for id in Set(tombstoned + withOldChildren) {
 			pruned += try await database.transaction { database in
 				guard let account = try? await Self.lock(id, on: database) else { return 0 }
-				let rows = try await SyncRecordRow.query(on: database)
-					.filter(\.$account.$id == id)
-					.filter(\.$tombstone < cutoff)
-					.all()
-				guard let highest = rows.map(\.seq).max() else { return 0 }
-
-				try await SyncRecordRow.query(on: database).filter(\.$id ~~ rows.compactMap(\.id)).delete()
-				account.prunedThrough = max(account.prunedThrough, highest)
-				try await account.save(on: database)
-				return rows.count
+				return try await prune(account, before: cutoff, on: database)
 			}
 		}
 		return pruned
+	}
+
+	/// Statements and links, the kinds that belong to a page
+	private static let childKinds = [SyncKind.statement.rawValue, SyncKind.link.rawValue]
+
+	private func prune(_ account: Account, before cutoff: Date, on database: any Database) async throws -> Int {
+		let id = try account.requireID()
+		let tombstones = try await SyncRecordRow.query(on: database)
+			.filter(\.$account.$id == id)
+			.filter(\.$tombstone < cutoff)
+			.all()
+		var doomed = Set(tombstones.compactMap(\.id))
+
+		let prunedPages = Set(tombstones.filter { $0.kind == SyncKind.page.rawValue }.map(\.recordID))
+		let livePages = try await Set(SyncRecordRow.query(on: database)
+			.filter(\.$account.$id == id)
+			.filter(\.$kind == SyncKind.page.rawValue)
+			.field(\.$recordID)
+			.all()
+			.map(\.recordID)).subtracting(prunedPages)
+		let children = try await SyncRecordRow.query(on: database)
+			.filter(\.$account.$id == id)
+			.filter(\.$kind ~~ Self.childKinds)
+			.field(\.$id)
+			.field(\.$page)
+			.field(\.$updated)
+			.all()
+		for child in children {
+			guard let childID = child.id else { continue }
+			if let page = child.page, prunedPages.contains(page) {
+				doomed.insert(childID)
+			} else if child.updated < cutoff, child.page.map(livePages.contains) != true {
+				doomed.insert(childID)
+			}
+		}
+		guard !doomed.isEmpty else { return 0 }
+
+		let ids = Array(doomed)
+		for start in stride(from: 0, to: ids.count, by: 500) {
+			try await SyncRecordRow.query(on: database).filter(\.$id ~~ ids[start ..< min(start + 500, ids.count)]).delete()
+		}
+		if let highest = tombstones.map(\.seq).max() {
+			account.prunedThrough = max(account.prunedThrough, highest)
+			try await account.save(on: database)
+		}
+		return doomed.count
 	}
 
 	// MARK: - Locking

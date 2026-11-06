@@ -8,7 +8,8 @@
 import Foundation
 
 /// Shell scripts that stand in for `claude` and `codex`. They tell the stages apart by the input's fields,
-/// log each stage they answer to `calls`, and leave their arguments and environment in `args` and `env`.
+/// log each stage they answer to `calls`, the last input each stage got in `input-<stage>`, and leave their arguments
+/// and environment in `args` and `env`.
 enum FakeCLI {
 	/// What an argument about rain and wet ground gets at each stage
 	static let answers = [
@@ -86,6 +87,7 @@ enum FakeCLI {
 			*) stage=gate ;;
 		esac
 		echo "$stage" >> '\#(scratch.path("calls"))'
+		printf '%s' "$input" > '\#(scratch.path("input-"))'"$stage"
 		printf '%s\n' "$@" > '\#(scratch.path("args"))'
 		env > '\#(scratch.path("env"))'
 		"""#

@@ -15,32 +15,34 @@ import Foundation
 /// 4. Formalize, then compile with `LogicParser`, feeding errors back for another try
 /// 5. Verify: read the logic back with `LogicEnglish` and ask whether it still means the same,
 ///    feeding differences back the same way
+///
+/// `breakDown` runs only steps 1 to 3, for pasted arguments that become several statements.
+///
+/// On a canvas page every statement shares the page's letters. `descriptors` are what the page already calls
+/// its letters (six, empty for a free slot): a claim that matches one keeps that letter, and new claims only
+/// take free slots, so `P` in one statement is still `P` in the next.
 public struct TranslationPipeline: Sendable {
 	public let backend: any TranslationBackend
 	public let letters: [String]
 
-	public init(backend: any TranslationBackend, letters: [String]) {
+	/// Nil when the page names nothing, which gives every claim the next free letter in order
+	public let descriptors: [String]?
+
+	public init(backend: any TranslationBackend, letters: [String], descriptors: [String]? = nil) {
 		self.backend = backend
 		self.letters = letters
+		self.descriptors = descriptors
 	}
 
 	/// Throws only when the backend can't be reached or the task is cancelled, everything else ends up in `issues`.
 	/// `events` hears about each step as it happens.
 	public func translate(
 		_ english: String,
-		events: @Sendable (TranslationEvent) async -> Void = { _ in }
+		events: @escaping @Sendable (TranslationEvent) async -> Void = { _ in }
 	) async throws -> Translation {
 		var result = Translation(english: english)
 		let letters = LogicLetters.resolved(letters)
-		var attempts: [TranslationStep: Int] = [:]
-
-		// Every model call goes through here, so each one is announced and can be cancelled
-		func run<Stage: TranslationStage>(_ stage: Stage.Type, _ step: TranslationStep, _ input: Stage.Input) async throws -> Stage.Output {
-			try Task.checkCancellation()
-			attempts[step, default: 0] += 1
-			await events(.started(step: step, attempt: attempts[step, default: 0]))
-			return try await backend.run(stage, input)
-		}
+		var calls = Calls(backend: backend, events: events)
 
 		func failure(_ message: String, notes: [String] = []) -> Translation {
 			var failed = Translation(english: english)
@@ -49,35 +51,16 @@ public struct TranslationPipeline: Sendable {
 			return failed
 		}
 
-		if let problem = EnglishValidator.problem(with: english) {
-			return failure(problem)
+		let understood: Understood
+		switch try await understand(english, calls: &calls) {
+			case let .failure(rejection):
+				return failure(rejection.message)
+			case let .success(found):
+				understood = found
 		}
+		let (gate, breakdown, slots) = (understood.gate, understood.breakdown, understood.slots)
 
-		let gate = try await run(GateStage.self, .gate, GateStage.Input(english: english))
-		guard gate.kind != .neither else {
-			return failure(gate.reason.isEmpty ? "Expected an argument or a claim" : gate.reason)
-		}
-
-		let breakdown = try await run(
-			BreakdownStage.self,
-			.breakdown,
-			BreakdownStage.Input(
-				english: english,
-				maximumClaims: LogicLetters.slots.count,
-				descriptorWordLimit: LogicLetters.descriptorWordLimit
-			)
-		)
-		guard !breakdown.claims.isEmpty else {
-			return failure("Expected at least one claim")
-		}
-		guard breakdown.claims.count <= LogicLetters.slots.count else {
-			return failure("Expected at most \(LogicLetters.slots.count) separate claims, found \(breakdown.claims.count)")
-		}
-
-		result.descriptors = LogicLetters.slots.map { slot in
-			let index = slot - LogicLetters.slots.lowerBound
-			return breakdown.claims.indices.contains(index) ? LogicLetters.sanitizedDescriptor(breakdown.claims[index].descriptor) : ""
-		}
+		result.descriptors = slots.descriptors
 
 		let conclusion = gate.kind == .argument && !breakdown.conclusion.isEmpty ? breakdown.conclusion : nil
 		await events(.foundClaims(premises: breakdown.premises, conclusion: conclusion ?? "", descriptors: result.descriptors))
@@ -94,14 +77,17 @@ public struct TranslationPipeline: Sendable {
 				}
 			}
 
-			let output = try await run(
+			let output = try await calls.run(
 				FormalizeStage.self,
 				.formalize,
 				FormalizeStage.Input(
 					english: english,
 					premises: breakdown.premises,
 					conclusion: conclusion,
-					letters: zip(letters, breakdown.claims).map { FormalizeStage.Input.Letter(letter: $0, meaning: $1.meaning) },
+					letters: zip(slots.slots, breakdown.claims).map { FormalizeStage.Input.Letter(letter: letters[$0], meaning: $1.meaning) },
+					descriptors: descriptors.map { _ in
+						slots.existing.indices.filter { !slots.existing[$0].isEmpty }.map { FormalizeStage.Input.Letter(letter: letters[$0], meaning: slots.existing[$0]) }
+					},
 					grammar: LogicGrammar.reference(letters: letters),
 					grammarVersion: LogicGrammar.version,
 					previous: previous,
@@ -110,7 +96,13 @@ public struct TranslationPipeline: Sendable {
 			)
 			previous = output
 
-			let compiled = compile(output, premises: breakdown.premises.count, hasConclusion: conclusion != nil, letters: letters)
+			let compiled = compile(
+				output,
+				premises: breakdown.premises.count,
+				hasConclusion: conclusion != nil,
+				letters: letters,
+				allowing: descriptors == nil ? nil : Set(slots.slots.map { $0 + LogicLetters.slots.lowerBound })
+			)
 			guard let entries = compiled.entries else {
 				await retry(compiled.problems)
 				continue
@@ -124,7 +116,7 @@ public struct TranslationPipeline: Sendable {
 			guard backend.policy.verifies else { return result }
 
 			let reading = LogicEnglish.text(for: LogicParser.parse(entries).argument, letters: letters, descriptors: result.descriptors)
-			let verdict = try await run(VerifyStage.self, .verify, VerifyStage.Input(english: english, reading: reading))
+			let verdict = try await calls.run(VerifyStage.self, .verify, VerifyStage.Input(english: english, reading: reading))
 			if verdict.matches {
 				return result
 			}
@@ -140,11 +132,13 @@ public struct TranslationPipeline: Sendable {
 	}
 
 	/// Each statement on its own line, then ∴ and the conclusion. Problems are worded for the model to fix.
+	/// `allowed` limits which letter slots may appear, so a statement can't take a letter another claim on the page owns.
 	private func compile(
 		_ output: FormalizeStage.Output,
 		premises expectedPremises: Int,
 		hasConclusion: Bool,
-		letters: [String]
+		letters: [String],
+		allowing allowed: Set<Int>?
 	) -> (entries: [LogicKeyboardEntry]?, problems: [String]) {
 		let vocabulary = LogicInputVocabulary(letters: letters)
 		var problems: [String] = []
@@ -167,6 +161,17 @@ public struct TranslationPipeline: Sendable {
 			}
 
 			let entries = text.compactMap { vocabulary.entry(for: $0) }
+			if let allowed {
+				let stray = entries.compactMap { entry -> String? in
+					guard case let .variable(slot) = entry, !allowed.contains(slot) else { return nil }
+					return LogicLetters.letter(for: slot, in: letters)
+				}
+				if !stray.isEmpty {
+					let names = allowed.sorted().map { LogicLetters.letter(for: $0, in: letters) }.joined(separator: ", ")
+					problems.append("\(label) '\(text)': Expected only the letters \(names), found '\(Set(stray).sorted().joined(separator: ", "))'")
+					continue
+				}
+			}
 			let parse = LogicParser.parse(entries)
 
 			if let diagnostic = parse.diagnostics.first {
@@ -194,5 +199,169 @@ public struct TranslationPipeline: Sendable {
 		}
 
 		return (entries, [])
+	}
+}
+
+// MARK: - Breaking down
+
+public extension TranslationPipeline {
+	/// Steps 1 to 3 only: what a pasted argument is made of, for the app to build statements and links from.
+	/// Throws only when the backend can't be reached or the task is cancelled. English that can't be broken down
+	/// comes back with an error in `issues`, like `translate`.
+	func breakDown(
+		_ english: String,
+		events: @escaping @Sendable (TranslationEvent) async -> Void = { _ in }
+	) async throws -> ArgumentBreakdown {
+		var calls = Calls(backend: backend, events: events)
+		let own = TranslationPipeline.existing(descriptors)
+
+		switch try await understand(english, calls: &calls) {
+			case let .failure(rejection):
+				return ArgumentBreakdown(
+					kind: .neither,
+					descriptors: own,
+					issues: [TranslationIssue(severity: .error, message: rejection.message)]
+				)
+
+			case let .success(found):
+				let conclusion = found.gate.kind == .argument ? found.breakdown.conclusion : ""
+				await events(.foundClaims(premises: found.breakdown.premises, conclusion: conclusion, descriptors: found.slots.descriptors))
+				return ArgumentBreakdown(
+					kind: found.gate.kind,
+					premises: found.breakdown.premises,
+					conclusion: conclusion,
+					claims: found.breakdown.claims,
+					descriptors: found.slots.descriptors
+				)
+		}
+	}
+}
+
+// MARK: - Shared steps
+
+extension TranslationPipeline {
+	/// Why the English can't go any further, worded for the user
+	struct Rejection: Error {
+		let message: String
+	}
+
+	/// What validating, the gate and breakdown found
+	struct Understood {
+		let gate: GateStage.Output
+		let breakdown: BreakdownStage.Output
+		let slots: ClaimSlots
+	}
+
+	/// Every model call goes through here, so each one is announced and can be cancelled
+	struct Calls {
+		let backend: any TranslationBackend
+		let events: @Sendable (TranslationEvent) async -> Void
+		private var attempts: [TranslationStep: Int] = [:]
+
+		init(backend: any TranslationBackend, events: @escaping @Sendable (TranslationEvent) async -> Void) {
+			self.backend = backend
+			self.events = events
+		}
+
+		mutating func run<Stage: TranslationStage>(_ stage: Stage.Type, _ step: TranslationStep, _ input: Stage.Input) async throws -> Stage.Output {
+			try Task.checkCancellation()
+			attempts[step, default: 0] += 1
+			await events(.started(step: step, attempt: attempts[step, default: 0]))
+			return try await backend.run(stage, input)
+		}
+	}
+
+	/// Steps 1 to 3, which both `translate` and `breakDown` start with
+	func understand(_ english: String, calls: inout Calls) async throws -> Result<Understood, Rejection> {
+		if let problem = EnglishValidator.problem(with: english) {
+			return .failure(Rejection(message: problem))
+		}
+
+		let gate = try await calls.run(GateStage.self, .gate, GateStage.Input(english: english))
+		guard gate.kind != .neither else {
+			return .failure(Rejection(message: gate.reason.isEmpty ? "Expected an argument or a claim" : gate.reason))
+		}
+
+		let own = Self.existing(descriptors)
+		let breakdown = try await calls.run(
+			BreakdownStage.self,
+			.breakdown,
+			BreakdownStage.Input(
+				english: english,
+				maximumClaims: LogicLetters.slots.count,
+				descriptorWordLimit: LogicLetters.descriptorWordLimit,
+				descriptors: descriptors == nil ? nil : own.filter { !$0.isEmpty }
+			)
+		)
+		guard !breakdown.claims.isEmpty else {
+			return .failure(Rejection(message: "Expected at least one claim"))
+		}
+		guard breakdown.claims.count <= LogicLetters.slots.count else {
+			return .failure(Rejection(message: "Expected at most \(LogicLetters.slots.count) separate claims, found \(breakdown.claims.count)"))
+		}
+
+		let slots = ClaimSlots(claims: breakdown.claims, existing: own)
+		guard slots.unplaced == 0 else {
+			let free = slots.existing.count(where: \.isEmpty)
+			let noun = free == 1 ? "claim" : "claims"
+			return .failure(Rejection(message: "Expected at most \(free) new \(noun), found \(free + slots.unplaced), the page's other letters are taken"))
+		}
+		return .success(Understood(gate: gate, breakdown: breakdown, slots: slots))
+	}
+
+	/// The page's descriptors as six sanitised strings, empty for a free slot
+	static func existing(_ descriptors: [String]?) -> [String] {
+		LogicLetters.slots.map { LogicLetters.descriptor(for: $0, in: descriptors ?? []) }
+	}
+}
+
+/// Which letter slot each claim gets. A claim whose descriptor matches one the page already has keeps that slot,
+/// and the rest take free slots in order, so with nothing existing it's the claims in order, one letter each.
+struct ClaimSlots {
+	/// The page's descriptors going in, one per slot
+	let existing: [String]
+
+	/// The slot, from 0, of each claim in claim order
+	let slots: [Int]
+
+	/// How many new claims found no free slot. The claims don't fit while this isn't 0.
+	let unplaced: Int
+
+	/// The page's descriptors coming out: existing ones kept, each new claim's in its slot
+	let descriptors: [String]
+
+	init(claims: [BreakdownStage.Output.Claim], existing: [String]) {
+		self.existing = existing
+		var taken: Set<Int> = []
+		var placed: [Int?] = claims.map { claim in
+			let descriptor = LogicLetters.sanitizedDescriptor(claim.descriptor)
+			guard !descriptor.isEmpty,
+			      let slot = existing.indices.first(where: { !taken.contains($0) && existing[$0].caseInsensitiveCompare(descriptor) == .orderedSame })
+			else {
+				return nil
+			}
+			taken.insert(slot)
+			return slot
+		}
+
+		var free = existing.indices.filter { existing[$0].isEmpty }.makeIterator()
+		var unplaced = 0
+		for index in placed.indices where placed[index] == nil {
+			if let slot = free.next() {
+				placed[index] = slot
+			} else {
+				unplaced += 1
+			}
+		}
+
+		var descriptors = existing
+		for (claim, slot) in zip(claims, placed) {
+			if let slot, existing[slot].isEmpty {
+				descriptors[slot] = LogicLetters.sanitizedDescriptor(claim.descriptor)
+			}
+		}
+		slots = placed.compactMap(\.self)
+		self.unplaced = unplaced
+		self.descriptors = descriptors
 	}
 }

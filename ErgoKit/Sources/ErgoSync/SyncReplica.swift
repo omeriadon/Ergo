@@ -265,7 +265,7 @@ public struct SyncReplica: Sendable, Hashable {
 	/// The full pull is done, so whatever the server didn't have goes up
 	private mutating func finishCatchingUp() {
 		var pushes: [SyncRecord.Key: [String: SyncField]] = [:]
-		for (key, seed) in seeds ?? [:] where !seed.isDeleted {
+		for (key, seed) in seeds ?? [:] where !seed.isDeleted && !isIgnored(seed) {
 			let missing = seed.fields.filter { records[key]?.fields[$0.key] == nil }
 			if !missing.isEmpty {
 				records[key, default: SyncRecord(kind: key.kind, id: key.id)].merge(missing)
@@ -273,7 +273,8 @@ public struct SyncReplica: Sendable, Hashable {
 			}
 		}
 		for key in unconfirmed ?? [] {
-			guard let record = records[key], !record.isDeleted else { continue }
+			// Ignored records are what the server pruned with their page, so they stay down
+			guard let record = records[key], !record.isDeleted, !isIgnored(record) else { continue }
 			pushes[key, default: [:]].merge(record.fields) { a, _ in a }
 		}
 		seeds = nil
@@ -319,11 +320,23 @@ public struct SyncReplica: Sendable, Hashable {
 
 	/// The server prunes tombstones after `SyncLimit.tombstoneDays`, so they're dropped here too, rather than keeping
 	/// deleted pages' text on the device forever
+	///
+	/// A pruned page takes its statements and links with it, like on the server. Without that a reset would push
+	/// them back up as orphans.
 	private mutating func pruneTombstones(at deviceNow: Date) {
 		let cutoff = clock.now(deviceNow) - Int64(SyncLimit.tombstoneDays) * 86_400_000
+		func isOld(_ key: SyncRecord.Key, _ record: SyncRecord) -> Bool {
+			guard record.isDeleted, pending[key] == nil, let deleted = record.fields[SyncFieldName.deleted] else { return false }
+			return deleted.stamp.time < cutoff
+		}
+
+		let pages = Set(records.filter { key, record in key.kind == .page && isOld(key, record) }.keys.map(\.id))
 		records = records.filter { key, record in
-			guard record.isDeleted, pending[key] == nil, let deleted = record.fields[SyncFieldName.deleted] else { return true }
-			return deleted.stamp.time >= cutoff
+			if isOld(key, record) {
+				return false
+			}
+			guard !pages.isEmpty, pending[key] == nil, let page = record.owningPage else { return true }
+			return !pages.contains(page)
 		}
 	}
 

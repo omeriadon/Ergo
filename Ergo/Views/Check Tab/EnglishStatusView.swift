@@ -90,7 +90,7 @@ struct EnglishStatusView: View {
 }
 
 /// Laid out like `MessageRow`, with a spinner for the symbol
-private struct ProgressRow: View {
+struct ProgressRow: View {
 	let progress: TranslationProgress
 
 	var body: some View {

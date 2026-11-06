@@ -53,7 +53,7 @@ struct ConnectChatGPTView: View {
 					}
 					.padding(.vertical, 8)
 
-					Link(destination: deviceCode.url) {
+					SwiftUI.Link(destination: deviceCode.url) {
 						Label("Open ChatGPT", systemImage: "safari")
 					}
 

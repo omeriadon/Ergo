@@ -6,6 +6,7 @@
 //
 
 import ErgoProtocol
+import ErgoTranslation
 import Foundation
 import NIOCore
 import Vapor
@@ -99,35 +100,49 @@ struct TranslateSocket {
 		await work?.value
 	}
 
+	/// The scope picks which message type answers: a statement ends with a `Translation`, an argument with its breakdown
 	private func translate(_ translate: TranslateRequest, account: UUID) async {
-		let reply: TranslateServerMessage
+		let service = request.ergo.translations
+		switch translate.scope {
+			case .statement:
+				await answer(TranslateServerMessage.finished, failed: TranslateServerMessage.failed, event: TranslateServerMessage.event) { events in
+					try await service.translate(translate, account: account, database: request.db, logger: request.logger, events: events)
+				}
+			case .argument:
+				await answer(BreakDownServerMessage.finished, failed: BreakDownServerMessage.failed, event: BreakDownServerMessage.event) { events in
+					try await service.breakDown(translate, account: account, database: request.db, logger: request.logger, events: events)
+				}
+		}
+	}
+
+	private func answer<Result, Message: Encodable & Sendable>(
+		_ finished: (Result) -> Message,
+		failed: (ServiceError) -> Message,
+		event: @escaping @Sendable (TranslationEvent) -> Message,
+		_ work: (@escaping @Sendable (TranslationEvent) async -> Void) async throws -> Result
+	) async {
+		let reply: Message
 		do {
-			let translation = try await request.ergo.translations.translate(
-				translate,
-				account: account,
-				database: request.db,
-				logger: request.logger
-			) { event in
-				await send(.event(event))
-			}
-			reply = .finished(translation)
+			reply = try await finished(work { await send(event($0)) })
 		} catch {
 			// Whoever cancelled has stopped listening
 			guard !Task.isCancelled, !(error is CancellationError) else {
 				return await close()
 			}
-			reply = .failed(error as? ServiceError ?? .internalFailure)
+			reply = failed(error as? ServiceError ?? .internalFailure)
 		}
-		await finish(reply)
+		await send(reply)
+		await close()
 	}
 
 	// MARK: - Sending
 
-	private func send(_ message: TranslateServerMessage) async {
+	private func send(_ message: some Encodable) async {
 		guard let data = try? ErgoProtocol.encoder.encode(message) else { return }
 		try? await socket.send(String(decoding: data, as: UTF8.self))
 	}
 
+	/// Before the request is known, so before there's a scope to answer in
 	private func finish(_ message: TranslateServerMessage) async {
 		await send(message)
 		await close()

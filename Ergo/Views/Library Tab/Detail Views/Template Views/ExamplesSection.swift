@@ -14,8 +14,10 @@ struct ExamplesSection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					ForEach(list, id: \.text) { example in
 						Text("-  \(example.text)")
+							.textSelection(.enabled)
 						if let note = example.note {
 							Text("-  \(note)")
+								.textSelection(.enabled)
 								.padding(.leading, 30)
 						}
 					}

@@ -41,7 +41,13 @@ public struct SyncKind: RawRepresentable, Codable, Sendable, Hashable, Comparabl
 	/// id: a `SyncedSetting` raw value
 	public static let setting: SyncKind = "setting"
 
-	public static let known: [SyncKind] = [.page, .bookmark, .setting]
+	/// id: the statement's `UUID.uuidString`, uppercase. One claim on a page's canvas.
+	public static let statement: SyncKind = "statement"
+
+	/// id: the link's `UUID.uuidString`, uppercase. An arrow from a premise statement to a conclusion statement.
+	public static let link: SyncKind = "link"
+
+	public static let known: [SyncKind] = [.page, .bookmark, .setting, .statement, .link]
 }
 
 // MARK: - Checks
@@ -51,8 +57,12 @@ public extension SyncKind {
 	var fieldNames: Set<String> {
 		switch self {
 			case .page:
-				Set([SyncFieldName.created, SyncFieldName.content, SyncFieldName.deleted]
+				Set([SyncFieldName.created, SyncFieldName.deleted]
 					+ (0 ..< SyncFieldName.descriptorSlots).map(SyncFieldName.descriptor))
+			case .statement:
+				[SyncFieldName.page, SyncFieldName.position, SyncFieldName.content, SyncFieldName.deleted]
+			case .link:
+				[SyncFieldName.page, SyncFieldName.premise, SyncFieldName.conclusion, SyncFieldName.deleted]
 			case .bookmark:
 				[SyncFieldName.present]
 			case .setting:
@@ -65,7 +75,7 @@ public extension SyncKind {
 	/// Whether `id` can name a record of this kind
 	func isValid(id: String) -> Bool {
 		switch self {
-			case .page:
+			case .page, .statement, .link:
 				UUID(uuidString: id)?.uuidString == id
 			case .bookmark:
 				!id.isEmpty && id.utf8.count <= 256

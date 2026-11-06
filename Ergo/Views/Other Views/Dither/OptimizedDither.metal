@@ -43,6 +43,9 @@ struct DitherUniforms {
     int backgroundStyle;
     int squareStyle;
     float cursorPresence;
+    float2 screenOrigin;
+    float2 screenSize;
+    float screenCornerRadius;
 };
 
 struct TopBlurUniforms {
@@ -319,6 +322,29 @@ float threshold(float2 cell, int mode) {
     return bayer8[coordinate.y * 8 + coordinate.x];
 }
 
+// True when any corner of the cell lies outside the device's rounded screen
+// rectangle, so cells never get clipped by the display's corners.
+bool cellOutsideDeviceCorners(float2 cell, constant DitherUniforms &uniforms) {
+    float radius = uniforms.screenCornerRadius;
+    if (radius <= 0.0) {
+        return false;
+    }
+    float size = uniforms.cellDevice;
+    float2 padding = float2((uniforms.viewportSize - uniforms.fieldSize * int(size)) / 2);
+    float2 origin = padding + cell * size;
+    float2 center = uniforms.screenOrigin + uniforms.screenSize * 0.5;
+    float2 inner = uniforms.screenSize * 0.5 - radius;
+    for (int corner = 0; corner < 4; corner++) {
+        float2 point = origin + float2(corner & 1, corner >> 1) * size;
+        float2 q = abs(point - center) - inner;
+        float distance = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - radius;
+        if (distance > 0.0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 float4 quantizedCellColor(
     float value,
     float2 cell,
@@ -358,6 +384,9 @@ float4 quantizedCellColor(
     float opacityValue = value + thresholdValue / levels;
     opacityValue = clamp(opacityValue - mix(0.2, 0.0, smoothstep(0.45, 0.8, opacityValue)), 0.0, 1.0);
     float alpha = floor(opacityValue * levels + 0.5) / levels;
+    if (cellOutsideDeviceCorners(cell, uniforms)) {
+        alpha = 0.0;
+    }
     if (uniforms.useThemeColors > 0 && uniforms.themeCount > 0) {
         float2 normalizedCell = (cell + 0.5) / float2(uniforms.fieldSize);
         float3 weighted = float3(0.0);

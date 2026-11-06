@@ -14,6 +14,8 @@ import Foundation
 ///
 /// The translate socket gets exactly one `TranslateClientMessage.translate`, answers with any number of `.event`s,
 /// then exactly one `.finished` or `.failed`, and closes. Sending `.cancel` or closing stops the work.
+/// `TranslateRequest.scope` picks the answer's type: `.statement` gets `TranslateServerMessage`s, `.argument` gets
+/// `BreakDownServerMessage`s. Failures before the scope is known, like a missing request, use the first.
 ///
 /// The device login socket sends `.code` once, then `.connected` or `.failed`, and closes. Closing it cancels the login.
 ///
@@ -51,7 +53,7 @@ public enum ErgoProtocol {
 		/// WebSocket of `DeviceLoginMessage`
 		public static let deviceLogin = "v1/connections/codex/device-login"
 
-		/// WebSocket of `TranslateClientMessage` and `TranslateServerMessage`
+		/// WebSocket of `TranslateClientMessage` and `TranslateServerMessage` (or `BreakDownServerMessage`)
 		public static let translate = "v1/translate"
 
 		/// POST `SyncRequest` → `SyncResponse`

@@ -72,7 +72,6 @@ struct BookmarksView: View {
 		)
 		.listSectionIndexVisibility(.visible)
 		.scrollEdgeEffectStyle(.soft, for: .all)
-		.buttonStyle(.plain)
 		.navigationBarTitleDisplayMode(.inline)
 		.scrollDisabled(groupedBookmarks.isEmpty)
 		.toolbarMinimizationBehavior(.never, for: .navigationBar)
@@ -95,6 +94,8 @@ struct BookmarksView: View {
 							let isBookmarked = bookmarks.contains(bookmark)
 
 							Button {
+								IntentDonations.bookmark(bookmark, added: !isBookmarked, catalog: catalog)
+
 								withAnimation(.easeInOut) {
 									if isBookmarked {
 										bookmarks.remove(bookmark)
@@ -115,14 +116,16 @@ struct BookmarksView: View {
 								.environment(navigation)
 						}
 					}
+					.buttonStyle(.plain)
 					.swipeActions(edge: .trailing) {
 						Button {
-							withAnimation(.easeInOut) {
-								bookmarks.remove(bookmark)
-							}
+							IntentDonations.bookmark(bookmark, added: false, catalog: catalog)
+
+							bookmarks.remove(bookmark)
 						} label: {
 							Label("Remove Bookmark", systemImage: "bookmark.fill")
 						}
+						.buttonStyle(.automatic)
 						.tint(.accentColor)
 					}
 					.transition(.opacity)

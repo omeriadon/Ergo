@@ -11,6 +11,13 @@ import Vapor
 /// Every path comes from `ErgoProtocol.Path`, so the app and the server can't disagree
 func routes(_ app: Application) throws {
 	app.post(ErgoProtocol.Path.accounts.pathComponents, use: AccountController.create)
+	// Apple's, not the app's, so the path isn't in ErgoProtocol
+	app.on(
+		.POST,
+		AppleNotificationController.path.pathComponents,
+		body: .collect(maxSize: ByteCount(value: AppleNotificationController.maxBytes)),
+		use: AppleNotificationController.receive
+	)
 
 	let signedIn = app.grouped(AccountAuthenticator())
 	let connection = ErgoProtocol.Path.connections.pathComponents + [":provider"]

@@ -45,6 +45,18 @@ struct TranslationCodingTests {
 		#expect(try roundTrip(events) == events)
 	}
 
+	@Test func breakdownRoundTrips() throws {
+		let breakdown = ArgumentBreakdown(
+			kind: .statements,
+			premises: ["It rained"],
+			claims: [BreakdownStage.Output.Claim(meaning: "It rains", descriptor: "it rains")],
+			descriptors: ["it rains", "", "", "", "", ""],
+			issues: [TranslationIssue(severity: .warning, message: "W")]
+		)
+		#expect(try roundTrip(breakdown) == breakdown)
+		#expect(ArgumentBreakdown(kind: .neither).descriptors == LogicLetters.emptyDescriptors)
+	}
+
 	private func roundTrip<Value: Codable>(_ value: Value) throws -> Value {
 		try JSONDecoder().decode(Value.self, from: JSONEncoder().encode(value))
 	}

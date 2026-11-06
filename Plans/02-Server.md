@@ -96,9 +96,15 @@ Wording examples: "Expected a token from 'claude setup-token', found an API key"
    - `grammarVersion == LogicGrammar.version`, else `.outdatedApp`
    - `EnglishValidator` passes, else `.finished` with that issue, same as the pipeline
    - letters resolve
+   - `descriptors`, when present: at most six, each at most 32 characters, else `.invalidRequest`
    - a credential exists for `provider`, else `.notConnected`: "Claude isn't connected" / "ChatGPT isn't connected"
 3. **Single flight:** `TranslationService` allows one running translation per account. A second one gets `.busy`.
-4. **Run.** Run `TranslationPipeline(backend: ProviderBackend(...), letters:)` in a child task. Forward every event as `.event` as it happens, then `.finished(translation)`.
+4. **Run.** Run `TranslationPipeline(backend: ProviderBackend(...), letters:, descriptors:)` in a child task, picked by the request's `scope`. Forward every event as `.event` as it happens, then the result.
+   - **`statement` (the default):** `translate`, the whole pipeline for one statement: gate, breakdown, formalize, verify. Ends with `TranslateServerMessage.finished(Translation)`.
+   - **`argument`:** `breakDown`, only the gate and breakdown stages, for pasted English that becomes several statements and links. Ends with `BreakDownServerMessage.finished(ArgumentBreakdown)`: the premises, the conclusion (empty when none is drawn), the claims, the page's descriptors with the new claims added, and `issues` (an error when the English isn't an argument or claim). Events are the same as the first three steps of a statement.
+   - The two scopes answer with different message types so `TranslateServerMessage` stays exhaustive for apps that never break anything down. `.event` and `.failed` code identically in both, so a failure before the scope is known reaches either. `ErgoClient.translate` always sends `statement`; `ErgoClient.breakDown` always sends `argument`.
+   - **Descriptors:** `TranslateRequest.descriptors` are the page's six letter names (empty for a free slot), shared by every statement. The pipeline gives each claim whose descriptor matches an existing one (case-insensitively) that slot, and each new claim the next free slot, in order. Breakdown is told the existing descriptors and prefers them as labels. Formalize is told which letter each claim has (`letters`) and which letters the page already names (`descriptors`), and a formula that uses any other letter is a compiler error fed back for another try. More new claims than free slots is an error issue ("Expected at most 1 new claim, found 2, the page's other letters are taken"). With no descriptors every claim takes the next letter in order, exactly as before.
+   - **Limits, both scopes:** `EnglishValidator` (1,500 characters and the rest) answers with an issue and no model call, the grammar must match, and descriptors are checked as above.
 5. **Cancel.**
    - `.cancel` or the socket closing cancels the task. Cancellation must **terminate the CLI process**: use swift-subprocess's teardown (SIGTERM, then SIGKILL after 2 s).
    - Test it with a fake CLI that sleeps.

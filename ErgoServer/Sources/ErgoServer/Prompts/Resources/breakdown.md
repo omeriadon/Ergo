@@ -11,6 +11,7 @@ A JSON object:
 - `english`: the text, already known to contain claims.
 - `maximumClaims`: the most claims you may return (one per available letter).
 - `descriptorWordLimit`: the most words a descriptor may have.
+- `descriptors`: the labels the page already uses for its claims, including claims from other statements. Missing when the page has none.
 
 ## Output
 
@@ -53,3 +54,4 @@ A JSON object matching the schema:
 - No full stop or other punctuation at the end.
 - Positive, like the claim: never "not …".
 - Distinct from every other descriptor, and recognisable on its own as that claim.
+- **Reuse the page's `descriptors`.** When a claim means the same as one of them, in any wording, give the claim exactly that descriptor, copied character for character, instead of a new label. Another step uses an exact match to keep the claim's letter. Only write a new descriptor for a claim none of them describes. Never reuse one for a claim that means something different, and never use the same descriptor for two claims.

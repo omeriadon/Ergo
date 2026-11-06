@@ -8,6 +8,12 @@
 import Defaults
 import SwiftUI
 
+struct CatalogTag: Identifiable, Hashable, Sendable {
+	let id: String
+	let title: String
+	let route: LibraryRoute
+}
+
 struct TagSection: View {
 	@Environment(CatalogStore.self) private var catalog
 

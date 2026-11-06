@@ -14,6 +14,7 @@ struct NotesSection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					ForEach(list, id: \.self) { note in
 						Text("-  \(note)")
+							.textSelection(.enabled)
 					}
 				}
 			}

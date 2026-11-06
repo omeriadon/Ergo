@@ -7,6 +7,7 @@
 
 import Defaults
 import ErgoClient
+import ErgoLogic
 import ErgoProtocol
 import ErgoTranslation
 import Foundation
@@ -137,25 +138,14 @@ final class TranslationAccount {
 
 	// MARK: - translate
 
-	/// `events` hears each step as the server runs it. The server's failures are thrown as `ServiceError`s.
-	func translate(english: String, letters: [String], events: (TranslationEvent) -> Void) async throws -> Translation {
-		let provider = Defaults[.translationProvider]
-		guard let server else {
-			throw Self.notSetUp
-		}
-		guard let token = AccountKeychain.token(for: server) else {
-			throw Self.notConnected(provider)
-		}
+	/// Translates one statement. `descriptors` are the page's six, with an empty string for a slot nobody has named,
+	/// so the server reuses a letter for a claim the page already calls something. `events` hears each step as the
+	/// server runs it. The server's failures are thrown as `ServiceError`s.
+	func translate(english: String, letters: [String], descriptors: [String], events: (TranslationEvent) -> Void) async throws -> Translation {
+		let (server, token) = try credentials()
+		let request = translateRequest(english: english, letters: letters, descriptors: descriptors)
 
-		let request = TranslateRequest(
-			id: UUID(),
-			english: english,
-			provider: provider,
-			letters: letters,
-			grammarVersion: LogicGrammar.version
-		)
-
-		do {
+		return try await signedOutOnUnauthorized(of: server) {
 			for try await message in ErgoClient(server: server, token: token).translate(request) {
 				switch message {
 					case let .event(event):
@@ -168,10 +158,72 @@ final class TranslationAccount {
 			}
 			try Task.checkCancellation()
 			throw Self.disconnected
+		}
+	}
+
+	/// Splits pasted English into premises, a conclusion and claims, without writing any logic. The breakdown's
+	/// `descriptors` are the page's own with the new claims in free slots; merge them with `PageStore.mergeDescriptors`.
+	/// `letters` default to the ones the app shows. Events and failures are the same as `translate`'s.
+	func breakDown(
+		english: String,
+		descriptors: [String],
+		letters: [String]? = nil,
+		events: (TranslationEvent) -> Void
+	) async throws -> ArgumentBreakdown {
+		let (server, token) = try credentials()
+		let request = translateRequest(
+			english: english,
+			letters: letters ?? LogicLetters.resolved(Defaults[.logicLetters]),
+			descriptors: descriptors
+		)
+
+		return try await signedOutOnUnauthorized(of: server) {
+			for try await message in ErgoClient(server: server, token: token).breakDown(request) {
+				switch message {
+					case let .event(event):
+						events(event)
+					case let .finished(breakdown):
+						return breakdown
+					case let .failed(error):
+						throw error
+				}
+			}
+			try Task.checkCancellation()
+			throw Self.disconnected
+		}
+	}
+
+	private func credentials() throws -> (server: URL, token: String) {
+		let provider = Defaults[.translationProvider]
+		guard let server else {
+			throw Self.notSetUp
+		}
+		guard let token = AccountKeychain.token(for: server) else {
+			throw Self.notConnected(provider)
+		}
+		return (server, token)
+	}
+
+	/// `scope` is set by the client method that sends it
+	private func translateRequest(english: String, letters: [String], descriptors: [String]) -> TranslateRequest {
+		TranslateRequest(
+			id: UUID(),
+			english: english,
+			provider: Defaults[.translationProvider],
+			letters: letters,
+			grammarVersion: LogicGrammar.version,
+			// Nothing named yet is the same as not saying
+			descriptors: descriptors.allSatisfy(\.isEmpty) ? nil : descriptors
+		)
+	}
+
+	private func signedOutOnUnauthorized<Result>(of server: URL, _ work: () async throws -> Result) async throws -> Result {
+		do {
+			return try await work()
 		} catch let error as ServiceError where error.code == .unauthorized {
 			// The server forgot this account, and a new one has nothing connected
 			forgetToken(for: server)
-			throw Self.notConnected(provider)
+			throw Self.notConnected(Defaults[.translationProvider])
 		}
 	}
 

@@ -127,14 +127,14 @@ public struct ErgoClient: Sendable {
 		return request
 	}
 
-	private func data(for request: URLRequest) async throws -> Data {
+	func data(for request: URLRequest) async throws -> Data {
 		let data: Data
 		let response: URLResponse
 		do {
 			(data, response) = try await session.data(for: request)
 		} catch {
 			try Task.checkCancellation()
-			throw ServiceError.unreachable
+			throw ServiceError.unreachable(because: error, host: request.url?.host())
 		}
 
 		let status = (response as? HTTPURLResponse)?.statusCode ?? 0
@@ -186,7 +186,7 @@ public struct ErgoClient: Sendable {
 				} catch let error as ServiceError {
 					continuation.finish(throwing: error)
 				} catch {
-					continuation.finish(throwing: Task.isCancelled ? CancellationError() : Self.failure(of: socket))
+					continuation.finish(throwing: Task.isCancelled ? CancellationError() : Self.failure(of: socket, error))
 				}
 			}
 
@@ -225,17 +225,28 @@ public struct ErgoClient: Sendable {
 		}
 	}
 
-	/// The upgrade's status is all there is to go on, a socket can't carry an error body
-	private static func failure(of socket: URLSessionWebSocketTask) -> ServiceError {
-		switch (socket.response as? HTTPURLResponse)?.statusCode {
-			case 101:
-				.disconnected
-			case 401:
+	/// The task's own error is the first thing that went wrong. `thrown` can be a later one, like "not connected".
+	static func failure(of socket: URLSessionWebSocketTask, _ thrown: any Error) -> ServiceError {
+		failure(
+			status: (socket.response as? HTTPURLResponse)?.statusCode,
+			error: socket.error ?? thrown,
+			host: socket.originalRequest?.url?.host()
+		)
+	}
+
+	/// The upgrade's status comes first, a socket can't carry an error body. No status means no HTTP reply at all.
+	static func failure(status: Int?, error: any Error, host: String?) -> ServiceError {
+		switch status {
+			case 101?:
+				.disconnected(because: error, host: host)
+			case 401?:
 				ServiceError(code: .unauthorized, message: "Unknown Ergo account")
-			case 403:
+			case 403?:
 				ServiceError(code: .signInRequired, message: "Sign in to sync")
-			default:
-				.unreachable
+			case let status?:
+				.unreachable("the server answered HTTP \(status) to the WebSocket upgrade")
+			case nil:
+				.unreachable(because: error, host: host)
 		}
 	}
 }

@@ -27,6 +27,11 @@ public enum FormalizeStage: TranslationStage {
 		public let conclusion: String?
 		public let letters: [Letter]
 
+		/// The letters the page already names, as `letter` and `meaning` (its descriptor), whichever statement uses them.
+		/// A claim in `letters` that is also here keeps that letter, and no other claim may take a letter listed here.
+		/// Missing when the page names none, or the request carried no descriptors.
+		public let descriptors: [Letter]?
+
 		/// `LogicGrammar.reference`
 		public let grammar: String
 		public let grammarVersion: Int
@@ -40,6 +45,7 @@ public enum FormalizeStage: TranslationStage {
 			premises: [String],
 			conclusion: String?,
 			letters: [Letter],
+			descriptors: [Letter]? = nil,
 			grammar: String,
 			grammarVersion: Int,
 			previous: Output?,
@@ -49,6 +55,7 @@ public enum FormalizeStage: TranslationStage {
 			self.premises = premises
 			self.conclusion = conclusion
 			self.letters = letters
+			self.descriptors = descriptors
 			self.grammar = grammar
 			self.grammarVersion = grammarVersion
 			self.previous = previous
