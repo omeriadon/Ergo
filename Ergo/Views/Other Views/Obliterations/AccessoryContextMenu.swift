@@ -500,7 +500,7 @@ public struct AccessoryContextMenuDemo: View {
 					.accessibilityIdentifier("contextMenu.scrollingAccessory")
 				}
 				.padding(8)
-				.background(.regularMaterial, in: RoundedRectangle(cornerRadius: 22))
+				.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22))
 				.clipShape(RoundedRectangle(cornerRadius: 22))
 			}
 		)

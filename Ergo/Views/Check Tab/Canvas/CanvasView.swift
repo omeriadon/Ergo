@@ -329,8 +329,6 @@ struct CanvasView: View {
 
 		Section {
 			Button("Arrange", systemImage: "rectangle.3.group") { arrange() }
-			Button("Fit", systemImage: "arrow.up.left.and.down.right.magnifyingglass") { fit(animated: true) }
-				.disabled(showsOutline)
 		}
 
 		Section {

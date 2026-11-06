@@ -213,6 +213,71 @@ struct SyncCanvasTests {
 		#expect(server.records[SyncRecord.Key(kind: .statement, id: Self.statementID)] == nil)
 		#expect(b.replica.isCaughtUp)
 	}
+
+	// MARK: - First sign-in
+
+	/// What's on a device when it first signs in goes up whole, however the seeds happen to be ordered
+	@Test func firstSyncPushesEveryStatementAndLink() {
+		var server = FakeSyncServer()
+		var device = FakeDevice("A")
+		let statements = (0 ..< 30).map { _ in UUID().uuidString }
+		let links = (0 ..< 29).map { _ in UUID().uuidString }
+
+		device.edit(.page, Self.pageID, ["created": 1], server)
+		for id in statements {
+			device.edit(.statement, id, ["page": .string(Self.pageID), "position": Self.position(0, 0), "content": Self.content(id)], server)
+		}
+		for (index, id) in links.enumerated() {
+			device.edit(.link, id, ["page": .string(Self.pageID), "premise": .string(statements[index]), "conclusion": .string(statements[index + 1])], server)
+		}
+		device.syncUntilDone(with: &server)
+
+		#expect(server.records.values.count { $0.kind == .page } == 1)
+		#expect(server.records.values.count { $0.kind == .statement } == statements.count)
+		#expect(server.records.values.count { $0.kind == .link } == links.count)
+		#expect(device.replica.ignored.isEmpty)
+		#expect(device.replica.pending.isEmpty)
+	}
+
+	/// A statement seeded on a page the server has deleted is what deleting the page was meant to remove
+	@Test func firstSyncLeavesStatementsOfADeletedPageDown() {
+		var (server, a, _) = Self.twoDevices()
+		a.edit(.page, Self.pageID, ["deleted": true], server)
+		server.now += 1000
+		a.syncUntilDone(with: &server)
+
+		var fresh = FakeDevice("C")
+		fresh.edit(.statement, Self.otherStatementID, ["page": .string(Self.pageID), "position": Self.position(0, 0), "content": Self.content("seed")], server)
+		fresh.syncUntilDone(with: &server)
+
+		#expect(server.records[SyncRecord.Key(kind: .statement, id: Self.otherStatementID)] == nil)
+	}
+
+	/// A push too big for one request reaches other devices part way through, and they delete a link whose statement
+	/// looks gone. So links always go up after the statements they join.
+	@Test func linksGoUpAfterTheirStatements() {
+		var server = FakeSyncServer()
+		var device = FakeDevice("A")
+		device.syncUntilDone(with: &server)
+
+		device.edit(.page, Self.pageID, ["created": 1], server)
+		let words = String(repeating: "a", count: SyncLimit.valueBytes / 2)
+		let statements = (0 ..< 8).map { _ in UUID().uuidString }
+		for id in statements {
+			device.edit(.statement, id, ["page": .string(Self.pageID), "content": ["english": .string(words)]], server)
+		}
+		device.edit(.link, Self.linkID, ["page": .string(Self.pageID), "premise": .string(statements[0]), "conclusion": .string(statements[1])], server)
+
+		var sent: [SyncKind] = []
+		for _ in 0 ..< 20 {
+			sent += device.replica.makeRequest().changes.map(\.kind)
+			guard let applied = device.sync(with: &server), applied.syncAgain else { break }
+		}
+
+		#expect(sent.first == .page)
+		#expect(sent.last == .link)
+		#expect(sent.count { $0 == .statement } == statements.count)
+	}
 }
 
 private extension SyncReplica {

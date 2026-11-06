@@ -40,8 +40,7 @@ struct ArgumentCheckSheet: View {
 				.padding(20)
 				.frame(maxWidth: .infinity, alignment: .leading)
 			}
-			.navigationTitle("Check")
-			.navigationBarTitleDisplayMode(.inline)
+			.toolbarTitleVire("Check", "")
 			.toolbar {
 				ToolbarItem(placement: .topBarLeading) {
 					Button(role: .close) {

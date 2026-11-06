@@ -56,7 +56,7 @@ struct CanvasOutlineView: View {
 			}
 		}
 		.scrollContentBackground(.hidden)
-		.scrollEdgeEffectStyle(.none, for: .all)
+		.scrollEdgeEffectHidden(true, for: .all)
 		.contentMargins(.bottom, 150, for: .scrollContent)
 		.confirmationDialog(
 			heading(for: question),
@@ -82,7 +82,7 @@ struct CanvasOutlineView: View {
 			rowLabel(for: statement)
 		}
 		.buttonStyle(.plain)
-		.listRowBackground(Rectangle().fill(.regularMaterial))
+		.listRowBackground(Rectangle().fill(.ultraThinMaterial))
 		.swipeActions {
 			Button("Delete", systemImage: "trash", role: .destructive) {
 				delete(statement.id)

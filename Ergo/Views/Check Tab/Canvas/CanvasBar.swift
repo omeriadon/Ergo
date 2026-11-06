@@ -57,7 +57,7 @@ struct CanvasBar: View {
 		Button(role: role, action: action) {
 			Label(title, systemImage: symbol)
 				.font(.subheadline.weight(.medium))
-				.padding(.horizontal, 6)
+				.padding(.horizontal, 5)
 				.padding(.vertical, 4)
 		}
 		.buttonStyle(.glass)

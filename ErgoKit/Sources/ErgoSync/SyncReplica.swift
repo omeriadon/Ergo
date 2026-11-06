@@ -131,7 +131,7 @@ public struct SyncReplica: Sendable, Hashable {
 
 	// MARK: - Requests
 
-	/// Pending changes, oldest record key first, up to a body comfortably under `SyncLimit.requestBytes`.
+	/// Pending changes in `pushesBefore` order, up to a body comfortably under `SyncLimit.requestBytes`.
 	///
 	/// Holds every change back until the clock has a server time, since its stamps could be refused. Leaves out
 	/// fields over `SyncLimit.valueBytes`, which would be refused forever (see `oversized`).
@@ -151,12 +151,21 @@ public struct SyncReplica: Sendable, Hashable {
 
 	private func sendable() -> [SyncChange] {
 		guard clock.offset != nil else { return [] }
-		return pending.values.sorted { $0.key < $1.key }.compactMap { change in
+		return pending.values.sorted { Self.pushesBefore($0.key, $1.key) }.compactMap { change in
 			var change = change
 			change.fields = change.fields.filter { $0.value.value.byteCount <= SyncLimit.valueBytes }
 			change.bases = change.bases.filter { change.fields[$0.key] != nil }
 			return change.fields.isEmpty ? nil : change
 		}
+	}
+
+	/// A page before its statements, which key order gives, and a statement before its links, which it doesn't.
+	/// Another device can pull part way through a big push, and it deletes a link whose statement looks gone.
+	private static func pushesBefore(_ a: SyncRecord.Key, _ b: SyncRecord.Key) -> Bool {
+		if (a.kind == .link) != (b.kind == .link) {
+			return b.kind == .link
+		}
+		return a < b
 	}
 
 	// MARK: - Responses
@@ -265,7 +274,8 @@ public struct SyncReplica: Sendable, Hashable {
 	/// The full pull is done, so whatever the server didn't have goes up
 	private mutating func finishCatchingUp() {
 		var pushes: [SyncRecord.Key: [String: SyncField]] = [:]
-		for (key, seed) in seeds ?? [:] where !seed.isDeleted && !isIgnored(seed) {
+		// In order, since whether a statement or link is ignored depends on the seeds merged before it
+		for (key, seed) in (seeds ?? [:]).sorted(by: { Self.pushesBefore($0.key, $1.key) }) where !seed.isDeleted && !isIgnored(seed) {
 			let missing = seed.fields.filter { records[key]?.fields[$0.key] == nil }
 			if !missing.isEmpty {
 				records[key, default: SyncRecord(kind: key.kind, id: key.id)].merge(missing)
