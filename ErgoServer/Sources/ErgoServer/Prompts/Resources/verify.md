@@ -27,7 +27,7 @@ A JSON object matching the schema:
 
 - `matches`: true when the reading claims exactly what the original does, nothing more and nothing less.
 - `differences`: each real difference in meaning. Empty when `matches` is true.
-- `structural`: true when a difference is about which premises and conclusion exist: one split in two, two merged into one, one missing or extra, or the wrong one marked as the conclusion. Also true when a label names a different claim from the one in the text, since only the step before the logic can change labels. False when the premises are right and only how a formula is written is wrong, and when `matches` is true.
+- `structural`: true when a difference is about which premises and conclusion exist: one split in two, two merged into one, one missing or extra, or the wrong one marked as the conclusion. Also true when a label names a different claim from the one in the text, or one claim has two labels, since only the step before the logic can change labels. False when the premises are right and only how a formula is written is wrong, and when `matches` is true.
 
 ## What counts as a difference
 
@@ -39,7 +39,8 @@ List only real differences in meaning, such as:
 - a negation in the wrong scope, or missing, or extra ("not both" read as "neither", or the reverse)
 - inclusive or where the text means exclusive, or the reverse
 - a conditional where the text states a biconditional, or the reverse
-- two different claims given the same label, or one claim split into two labels
+- two different claims given the same label
+- one claim split into two labels, even when each label reads fine on its own: "jake picks you up" and "jake makes it" for one fact about Jake, or "ella attends dinner" and "ella comes" for "make it to dinner" and "come to dinner". Check every pair of labels for this
 - a label that names a different claim from the one in the text: "i have a library" for "I have a library card", or "ella makes dinner" for "Ella makes it to dinner"
 
 Ergo reads English with these conventions, so these are never differences:
