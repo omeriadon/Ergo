@@ -36,6 +36,7 @@ enum ScratchpadRecord {
 	static func fields(of scratchpad: LogicScratchpad) throws -> [String: JSONValue] {
 		var fields: [String: JSONValue] = try [
 			SyncFieldName.created: SyncCoding.value(scratchpad.created),
+			SyncFieldName.name: .string(scratchpad.name),
 			SyncFieldName.content: SyncCoding.value(Content(scratchpad)),
 		]
 		for slot in 0 ..< SyncFieldName.descriptorSlots {
@@ -54,6 +55,9 @@ enum ScratchpadRecord {
 		}
 		if let content = record.fields[SyncFieldName.content], (try? SyncCoding.decode(Content.self, from: content.value)) == nil {
 			return false
+		}
+		if let name = record.fields[SyncFieldName.name] {
+			guard case .string = name.value else { return false }
 		}
 		for slot in 0 ..< SyncFieldName.descriptorSlots {
 			guard let field = record.fields[SyncFieldName.descriptor(slot)] else { continue }
@@ -93,6 +97,9 @@ enum ScratchpadRecord {
 
 		if let created = record.fields[SyncFieldName.created], let date = try? SyncCoding.decode(Date.self, from: created.value) {
 			scratchpad.created = date
+		}
+		if case let .string(name)? = record.fields[SyncFieldName.name]?.value {
+			scratchpad.name = name
 		}
 		for slot in 0 ..< SyncFieldName.descriptorSlots {
 			guard case let .string(descriptor)? = record.fields[SyncFieldName.descriptor(slot)]?.value else { continue }

@@ -72,9 +72,9 @@ public extension SyncKind {
 	var fieldNames: Set<String> {
 		switch self {
 			case .board:
-				[SyncFieldName.created, SyncFieldName.deleted]
+				[SyncFieldName.created, SyncFieldName.name, SyncFieldName.deleted]
 			case .scratchpad:
-				Set([SyncFieldName.created, SyncFieldName.content, SyncFieldName.deleted]
+				Set([SyncFieldName.created, SyncFieldName.name, SyncFieldName.content, SyncFieldName.deleted]
 					+ (0 ..< SyncFieldName.descriptorSlots).map(SyncFieldName.descriptor))
 			case .statement:
 				[SyncFieldName.board, SyncFieldName.position, SyncFieldName.content, SyncFieldName.source, SyncFieldName.deleted]

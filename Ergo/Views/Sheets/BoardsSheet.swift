@@ -17,6 +17,8 @@ struct BoardsSheet: View {
 
 	@State private var breakingDown = false
 
+	@State private var renaming: Renaming<Board.ID>?
+
 	/// A board this person owns and has shared, whose delete goes for everyone
 	@State private var deletingShared: Board?
 
@@ -63,7 +65,16 @@ struct BoardsSheet: View {
 					.swipeActions {
 						removeAction(for: board)
 					}
+					.swipeActions(edge: .leading) {
+						renameButton(for: board)
+					}
+					.contextMenu {
+						renameButton(for: board)
+					}
 				}
+			}
+			.renameAlert("Rename Board", renaming: $renaming) { id, name in
+				boardStore.rename(id, to: name)
 			}
 			.confirmationDialog("Delete for everyone?", isPresented: isConfirmingDelete, titleVisibility: .visible, presenting: deletingShared) { board in
 				Button("Delete for Everyone", role: .destructive) {
@@ -121,6 +132,17 @@ struct BoardsSheet: View {
 			.sheet(isPresented: $breakingDown) {
 				BreakDownSheet()
 			}
+		}
+	}
+
+	/// Not offered on a board this person can only read
+	@ViewBuilder
+	private func renameButton(for board: Board) -> some View {
+		if boardStore.canEdit(board.id) {
+			Button("Rename", systemImage: "pencil") {
+				renaming = Renaming(id: board.id, name: board.name)
+			}
+			.tint(.orange)
 		}
 	}
 

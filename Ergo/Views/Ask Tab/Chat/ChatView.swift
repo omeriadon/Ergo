@@ -76,6 +76,12 @@ private struct AskConversationView: View {
 		store.runs[conversation.id]
 	}
 
+	/// Grows with each piece of the answer that arrives (text, a tool, a button), for a tap per piece
+	private var streamed: Int {
+		guard let answer = conversation.messages.last, answer.role == .assistant else { return 0 }
+		return answer.text.count + answer.tools.count + answer.actions.count
+	}
+
 	var body: some View {
 		ScrollViewReader { proxy in
 			thread
@@ -111,6 +117,7 @@ private struct AskConversationView: View {
 		}
 		.scrollEdgeEffectStyle(.soft, for: .all)
 		.sensoryFeedback(.impact(weight: .light), trigger: sent) { _, _ in hapticsEnabled }
+		.sensoryFeedback(.impact(weight: .light, intensity: 0.5), trigger: streamed) { old, new in hapticsEnabled && run != nil && new > old }
 		.animation(.smooth, value: run?.activity)
 		.animation(.smooth, value: run == nil)
 		.animation(.smooth, value: store.failures[conversation.id])

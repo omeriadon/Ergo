@@ -36,6 +36,9 @@ public enum SyncFieldName {
 	/// board, scratchpad: when it was made
 	public static let created = "created"
 
+	/// board, scratchpad: the name its owner gave it, or an empty string to be titled from what's written
+	public static let name = "name"
+
 	/// source (a statement's): the id of the source it was broken down from, or null. That's what makes a region on the canvas,
 	/// and it's on the statement so one device moving a card out never clashes with another adding one.
 	public static let source = "source"

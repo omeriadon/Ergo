@@ -167,27 +167,20 @@ struct ScratchpadEditorView: View {
 		.padding(.bottom, 8)
 	}
 
+	@ContentBuilder
 	private var doneButton: some View {
-		// With the keyboard up the button puts it away, and then it closes the editor
-		Button(role: .confirm) {
-			if isLogicFocused {
+		if isLogicFocused {
+			Button(role: .confirm) {
 				isLogicFocused = false
-			} else {
-				dismiss()
+			} label: {
+				// Toolbar items don't pick up the animation on the body, so it has to be here
+
+				Image(systemName: "checkmark")
 			}
-		} label: {
-			// Toolbar items don't pick up the animation on the body, so it has to be here
-			ZStack {
-				let symbol = isLogicFocused ? "checkmark" : "app.badge.checkmark"
-				Image(systemName: symbol)
-					.id(symbol)
-					.transition(.blurReplace)
-			}
-			.animation(.smooth, value: isLogicFocused)
+			.buttonStyle(.glassProminent)
+			.accessibilityLabel("Done")
+			.accessibilityIdentifier("logic.doneButton")
 		}
-		.buttonStyle(.glassProminent)
-		.accessibilityLabel("Done")
-		.accessibilityIdentifier("logic.doneButton")
 	}
 
 	/// A scratchpad that's opened has already been written, no need to wait. One with no logic keeps its English

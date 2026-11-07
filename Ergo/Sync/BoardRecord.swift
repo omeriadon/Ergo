@@ -25,6 +25,7 @@ enum BoardRecord {
 	static func fields(of board: Board) throws -> [String: JSONValue] {
 		try [
 			SyncFieldName.created: SyncCoding.value(board.created),
+			SyncFieldName.name: .string(board.name),
 		]
 	}
 
@@ -35,6 +36,9 @@ enum BoardRecord {
 		guard UUID(uuidString: record.id) != nil else { return false }
 		if let created = record.fields[SyncFieldName.created], (try? SyncCoding.decode(Date.self, from: created.value)) == nil {
 			return false
+		}
+		if let name = record.fields[SyncFieldName.name] {
+			guard case .string = name.value else { return false }
 		}
 		return true
 	}
@@ -105,6 +109,9 @@ enum BoardRecord {
 
 		if let created = records.board.fields[SyncFieldName.created], let date = try? SyncCoding.decode(Date.self, from: created.value) {
 			board.created = date
+		}
+		if case let .string(name)? = records.board.fields[SyncFieldName.name]?.value {
+			board.name = name
 		}
 		if let newest = records.newestStamp {
 			board.modified = newest.date

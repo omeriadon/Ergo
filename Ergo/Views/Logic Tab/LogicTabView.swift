@@ -19,6 +19,8 @@ struct LogicTabView: View {
 
 	@Default(.logicLetters) var logicLetters
 
+	@State private var renaming: Renaming<LogicScratchpad.ID>?
+
 	private var letters: [String] {
 		LogicLetters.resolved(logicLetters)
 	}
@@ -37,8 +39,17 @@ struct LogicTabView: View {
 						scratchpadStore.delete([scratchpad.id])
 					}
 				}
+				.swipeActions(edge: .leading) {
+					renameButton(for: scratchpad)
+				}
+				.contextMenu {
+					renameButton(for: scratchpad)
+				}
 			}
 			.toolbarTitleVire("Logic", "function")
+		}
+		.renameAlert("Rename Scratchpad", renaming: $renaming) { id, name in
+			scratchpadStore.rename(id, to: name)
 		}
 		.overlay {
 			if scratchpadStore.scratchpads.isEmpty {
@@ -65,6 +76,13 @@ struct LogicTabView: View {
 				scratchpadStore.discardCurrentIfEmpty()
 			}
 		}
+	}
+
+	private func renameButton(for scratchpad: LogicScratchpad) -> some View {
+		Button("Rename", systemImage: "pencil") {
+			renaming = Renaming(id: scratchpad.id, name: scratchpad.name)
+		}
+		.tint(.orange)
 	}
 
 	private func open(_ id: LogicScratchpad.ID) {

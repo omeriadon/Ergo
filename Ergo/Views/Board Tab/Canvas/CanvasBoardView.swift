@@ -908,8 +908,8 @@ private final class CanvasHaptics {
 	private let box: UIImpactFeedbackGenerator
 
 	init(view: UIView) {
-		gridLine = UIImpactFeedbackGenerator(style: .medium, view: view)
-		box = UIImpactFeedbackGenerator(style: .heavy, view: view)
+		gridLine = UIImpactFeedbackGenerator(style: .light, view: view)
+		box = UIImpactFeedbackGenerator(style: .medium, view: view)
 	}
 
 	func prepare() {

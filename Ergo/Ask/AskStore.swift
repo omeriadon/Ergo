@@ -112,6 +112,13 @@ final class AskStore {
 		save()
 	}
 
+	/// An empty name goes back to titling the chat from the first question
+	func rename(_ id: AskConversation.ID, to name: String) {
+		guard let index = conversations.firstIndex(where: { $0.id == id }) else { return }
+		conversations[index].name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+		save()
+	}
+
 	// MARK: - asking
 
 	func send(_ text: String, account: TranslationAccount) {

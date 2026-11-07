@@ -114,6 +114,17 @@ final class BoardStore {
 		save()
 	}
 
+	// MARK: - rename
+
+	/// An empty name goes back to titling the board from what's written on it
+	func rename(_ id: Board.ID, to name: String) {
+		guard canEdit(id), let index = boards.firstIndex(where: { $0.id == id }) else { return }
+		boards[index].name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+		boards[index].modified = .now
+		changedIDs.insert(id)
+		scheduleSave()
+	}
+
 	// MARK: - statements
 
 	/// The statement on the current board, nil once it's gone (deleted here or on another device)

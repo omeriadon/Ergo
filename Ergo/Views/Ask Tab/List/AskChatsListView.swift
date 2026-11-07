@@ -23,6 +23,8 @@ struct AskChatsListView: View {
 		)
 	}
 
+	@State private var renaming: Renaming<AskConversation.ID>?
+
 	var body: some View {
 		NavigationStack {
 			List {
@@ -38,7 +40,16 @@ struct AskChatsListView: View {
 							store.delete(conversation.id)
 						}
 					}
+					.swipeActions(edge: .leading) {
+						renameButton(for: conversation)
+					}
+					.contextMenu {
+						renameButton(for: conversation)
+					}
 				}
+			}
+			.renameAlert("Rename Chat", renaming: $renaming) { id, name in
+				store.rename(id, to: name)
 			}
 			.navigationDestination(isPresented: isChatOpen) {
 				AskThreadView()
@@ -51,6 +62,15 @@ struct AskChatsListView: View {
 			.toolbarTitleVire("Ask", "bubble.left.and.text.bubble.right")
 		}
 		.presentationDetents([.medium, .large])
+	}
+}
+
+private extension AskChatsListView {
+	func renameButton(for conversation: AskConversation) -> some View {
+		Button("Rename", systemImage: "pencil") {
+			renaming = Renaming(id: conversation.id, name: conversation.name)
+		}
+		.tint(.orange)
 	}
 }
 

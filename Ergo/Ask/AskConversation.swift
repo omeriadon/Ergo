@@ -14,10 +14,16 @@ struct AskConversation: Codable, Hashable, Identifiable, Defaults.Serializable {
 	var id = UUID()
 	var created = Date.now
 	var modified = Date.now
+
+	/// Given by the person. Empty means it's titled from the first question.
+	var name = ""
 	var messages: [AskMessage] = []
 
-	/// The first thing asked
+	/// Its name, else the first thing asked
 	var title: String {
+		if let name = name.trimmedNonEmpty {
+			return name
+		}
 		let line = messages.first { $0.role == .user }?.text
 			.split(whereSeparator: \.isNewline)
 			.first

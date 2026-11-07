@@ -18,6 +18,9 @@ struct LogicScratchpad: Codable, Hashable, Identifiable, Defaults.Serializable {
 	var created = Date.now
 	var modified = Date.now
 
+	/// Given by its owner. Empty means it's titled from what's written.
+	var name = ""
+
 	/// One per letter slot, at most four words each
 	var descriptors = LogicLetters.emptyDescriptors
 
@@ -50,8 +53,8 @@ struct LogicScratchpad: Codable, Hashable, Identifiable, Defaults.Serializable {
 		return line.isEmpty ? nil : line
 	}
 
-	/// The first line of English, else the first line of logic, else "Untitled"
+	/// Its name, else the first line of English, else the first line of logic, else "Untitled"
 	func title(letters: [String]) -> String {
-		englishLine ?? logicLine(letters: letters) ?? "Untitled"
+		name.trimmedNonEmpty ?? englishLine ?? logicLine(letters: letters) ?? "Untitled"
 	}
 }

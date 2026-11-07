@@ -17,6 +17,9 @@ struct Board: Codable, Hashable, Identifiable, Defaults.Serializable {
 	var created = Date.now
 	var modified = Date.now
 
+	/// Given by its owner. Empty means it's titled from what's written.
+	var name = ""
+
 	var statements = [Statement()]
 	var links: [Link] = []
 	var sources: [BoardSource] = []
@@ -97,9 +100,12 @@ struct Board: Codable, Hashable, Identifiable, Defaults.Serializable {
 		}
 	}
 
-	/// The first English in reading order, else "Untitled"
+	/// Its name, else the first English in reading order, else "Untitled"
 	var title: String {
-		map.topologicalOrder().lazy
+		if let name = name.trimmedNonEmpty {
+			return name
+		}
+		return map.topologicalOrder().lazy
 			.compactMap { statement($0)?.englishLine }
 			.first ?? sources.first?.title ?? "Untitled"
 	}

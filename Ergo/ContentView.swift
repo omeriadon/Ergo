@@ -136,6 +136,7 @@ struct ContentView: View {
 		}
 		.tabViewStyle(.tabBarOnly)
 		.tabBarMinimizeBehavior(.onScrollDown)
+		.tabBarHaptics()
 		.sheet(item: $router.presentedSheet) { sheet in
 			switch sheet {
 				case .scanner:

@@ -94,6 +94,17 @@ final class ScratchpadStore {
 		save()
 	}
 
+	// MARK: - rename
+
+	/// An empty name goes back to titling the scratchpad from what's written on it
+	func rename(_ id: LogicScratchpad.ID, to name: String) {
+		guard let index = scratchpads.firstIndex(where: { $0.id == id }) else { return }
+		scratchpads[index].name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+		scratchpads[index].modified = .now
+		changedIDs.insert(id)
+		scheduleSave()
+	}
+
 	// MARK: - save
 
 	/// What changed since the last save, for sync
