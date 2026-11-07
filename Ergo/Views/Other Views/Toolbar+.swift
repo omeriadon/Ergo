@@ -99,17 +99,47 @@ private struct LibraryDetailTitleModifier: ViewModifier {
 	let hasScrolled: Bool
 
 	@State private var containerWidth: CGFloat = 0
+	@State private var nameHeight: CGFloat = 0
+	@State private var lineHeight: CGFloat = 0
+
 	/// Room for a two-line name plus the category line.
 	@ScaledMetric(relativeTo: .body) private var height = 64
 
+	private var titleHeight: CGFloat {
+		guard nameHeight > 0, lineHeight > 0 else { return height }
+
+		return height * (nameHeight > lineHeight * 1.5 ? 1 : 0.65)
+	}
+
 	func body(content: Content) -> some View {
 		content
-			.onGeometryChange(for: CGFloat.self) { $0.size.width } action: { containerWidth = $0 }
-			.richNavigationTitle(height: height, width: containerWidth * 0.7) {
+			.onGeometryChange(for: CGFloat.self) {
+				$0.size.width
+			} action: {
+				containerWidth = $0
+			}
+			.richNavigationTitle(height: titleHeight, width: containerWidth * 0.7) {
 				VStack {
-					Text(hasScrolled ? name : "")
+					Text(name)
 						.lineLimit(2)
 						.multilineTextAlignment(.center)
+						.opacity(hasScrolled ? 1 : 0)
+						.onGeometryChange(for: CGFloat.self) {
+							$0.size.height
+						} action: {
+							nameHeight = $0
+						}
+						.background {
+							// Single-line reference using the same font.
+							Text("Ag")
+								.fixedSize()
+								.hidden()
+								.onGeometryChange(for: CGFloat.self) {
+									$0.size.height
+								} action: {
+									lineHeight = $0
+								}
+						}
 
 					Text(hasScrolled ? category : "")
 						.textCase(.uppercase)

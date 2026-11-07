@@ -21,6 +21,12 @@ struct AskSelectableText: UIViewRepresentable {
 	@Environment(\.dynamicTypeSize)
 	private var dynamicTypeSize
 
+	@Environment(NavigationManager.self)
+	private var navigation
+
+	@Environment(AskStore.self)
+	private var store
+
 	func makeUIView(context: Context) -> UITextView {
 		let storage = NSTextStorage()
 		let layoutManager = RoundedBackgroundLayoutManager()
@@ -47,6 +53,8 @@ struct AskSelectableText: UIViewRepresentable {
 
 	func updateUIView(_ view: UITextView, context: Context) {
 		context.coordinator.openURL = openURL
+		context.coordinator.navigation = navigation
+		context.coordinator.store = store
 
 		let traits = UITraitCollection(preferredContentSizeCategory: UIContentSizeCategory(dynamicTypeSize))
 		let text = AskAttributedText(traits: traits).attributed(blocks)
@@ -68,11 +76,21 @@ struct AskSelectableText: UIViewRepresentable {
 
 	final class Coordinator: NSObject, UITextViewDelegate {
 		var openURL: OpenURLAction?
+		var navigation: NavigationManager?
+		var store: AskStore?
 
+		/// The app's own links run here, so they never go out to the system and back
 		func textView(_: UITextView, primaryActionFor textItem: UITextItem, defaultAction: UIAction) -> UIAction? {
 			guard case let .link(url) = textItem.content else { return defaultAction }
-			return UIAction { [openURL] _ in
-				openURL?(url)
+			return UIAction { [weak self] _ in
+				guard let self else { return }
+				if let intent = AskIntent(url: url) {
+					if let navigation, let store {
+						AskIntents.run(intent, navigation: navigation, store: store)
+					}
+				} else {
+					openURL?(url)
+				}
 			}
 		}
 	}
