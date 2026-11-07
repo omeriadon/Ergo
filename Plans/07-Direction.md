@@ -6,6 +6,22 @@ Where the product is heading. The tabs and scratchpads are built (see [08-Tabs.m
 
 **Decided:** until v1, migrations and existing data are not a constraint. Don't let them limit any idea here.
 
+## What's next
+
+Adon's checklist, in the order he wrote it. It isn't a schedule.
+
+- Check sharing works well.
+- The Board fully analyses its cards, arrows and links, and potentially gains more on top.
+- Ask gets better thinking, and maybe more interactivity.
+- Widgets for all kinds of things.
+- Teach the user the logic language.
+- An "item of the day" or similar. The library has about 2,000 entries, more than enough for each day to have its own.
+- Potentially a Watch app.
+- Keep finding backend bugs.
+- The UI works on iPhone Duo, then iPad.
+- Clean up the markdown files across the repo.
+- Analysis as we go, as needed.
+
 ## The tabs
 
 **Decided:** Board, Logic, Ask, Library. **Built:** the four tabs, with Ask as a placeholder.
