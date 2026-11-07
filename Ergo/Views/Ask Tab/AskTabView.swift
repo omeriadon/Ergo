@@ -20,21 +20,15 @@ struct AskTabView: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
-	@State private var showingHistory = false
-
 	var body: some View {
 		content
 			.toolbar { toolbar }
-			.sheet(isPresented: $showingHistory) {
-				AskChatsListView()
-			}
 	}
 
 	@ViewBuilder
 	private var content: some View {
 		if account.isSignedInHere {
-			AskThreadView()
-				.id(store.current.id)
+			AskChatsListView()
 		} else {
 			ContentUnavailableView {
 				Label("Sign In to Ask", systemImage: "bubble.left.and.text.bubble.right")
@@ -53,18 +47,11 @@ struct AskTabView: View {
 	@ToolbarContentBuilder
 	private var toolbar: some ToolbarContent {
 		if account.isSignedInHere {
-			ToolbarItem(placement: .topBarLeading) {
-				Button("History", systemImage: "clock.arrow.circlepath") {
-					showingHistory = true
-				}
-				.accessibilityIdentifier("ask.history")
-			}
-
 			ToolbarItem(placement: .topBarTrailing) {
 				Button("New Chat", systemImage: "square.and.pencil") {
 					store.newConversation()
 				}
-				.disabled(store.current.messages.isEmpty)
+				.buttonStyle(.glassProminent)
 				.accessibilityIdentifier("ask.newChat")
 			}
 		}

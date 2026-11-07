@@ -49,6 +49,8 @@ extension Defaults.Keys {
 
 	static let libraryPath = Key<[LibraryRoute]>("libraryPath", default: [])
 
+	static let askThreadSelected = Key<String?>("askThreadSelected", default: nil)
+
 	static let presentedSheet = Key<AppSheet?>("presentedSheet", default: nil)
 
 	static let libraryGeneralSearchText = Key<String>("libraryGeneralSearchText", default: "")

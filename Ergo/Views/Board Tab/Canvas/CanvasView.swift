@@ -321,8 +321,6 @@ struct CanvasView: View {
 	@ToolbarContentBuilder
 	private var toolbar: some ToolbarContent {
 		ToolbarItemGroup(placement: .topBarTrailing) {
-			BoardPeopleButton(board: board)
-
 			Button("Fit", systemImage: "arrow.up.left.and.down.right.magnifyingglass") {
 				fit(animated: true)
 			}
@@ -353,6 +351,10 @@ struct CanvasView: View {
 
 		Section {
 			Button("Arrange", systemImage: "rectangle.3.group") { arrange() }
+		}
+
+		Section {
+			BoardPeopleButton(board: board)
 		}
 	}
 

@@ -26,6 +26,14 @@ final class AskStore {
 		var activity: String?
 	}
 
+	func navigate(to id: AskConversation.ID?) {
+		if let id {
+			open(id)
+		} else {
+			newConversation()
+		}
+	}
+
 	// MARK: - conversations
 
 	private(set) var conversations: [AskConversation]

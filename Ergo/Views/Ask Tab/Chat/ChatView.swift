@@ -72,6 +72,15 @@ struct AskThreadView: View {
 			}
 		}
 		.toolbarTitleVire(conversation.title, "", makeTextSmaller: true)
+		.toolbar {
+			ToolbarItem(placement: .topBarTrailing) {
+				Button("New Chat", systemImage: "square.and.pencil") {
+					store.newConversation()
+				}
+				.buttonStyle(store.currentID == nil ? .glassProminent : .glassProminent)
+				.accessibilityIdentifier("ask.newChat")
+			}
+		}
 		.sensoryFeedback(.impact(weight: .light), trigger: sent) { _, _ in hapticsEnabled }
 		.animation(.smooth, value: run?.activity)
 		.animation(.smooth, value: run == nil)

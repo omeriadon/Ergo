@@ -38,6 +38,7 @@ struct LogicTabView: View {
 					}
 				}
 			}
+			.toolbarTitleVire("Logic", "function")
 		}
 		.overlay {
 			if scratchpadStore.scratchpads.isEmpty {

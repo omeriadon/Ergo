@@ -161,6 +161,7 @@ struct AskCopyButton: View {
 			ZStack {
 				let symbol = copied ? "checkmark" : "doc.on.doc"
 				Image(systemName: symbol)
+					.frame(width: 14, height: 14)
 					.id(symbol)
 					.transition(.blurReplace)
 			}

@@ -27,6 +27,12 @@ final class NavigationManager {
 		}
 	}
 
+	var askThreadSelected: String? {
+		didSet {
+			Defaults[.askThreadSelected] = askThreadSelected
+		}
+	}
+
 	// MARK: - logicPath
 
 	var logicPath: [LogicRoute] = [] {

@@ -20,7 +20,7 @@ struct BoardPeopleButton: View {
 	private var boardStore
 
 	var body: some View {
-		Button("People", systemImage: boardStore.shares[board.id] == nil ? "person.2" : "person.2.fill") {
+		Button(boardStore.shares[board.id] == nil ? "Collaborate" : "People", systemImage: boardStore.shares[board.id] == nil ? "person.2" : "person.2.fill") {
 			navigation.presentSheet(.boardPeople(board.id))
 		}
 		.disabled(board.isEmpty)

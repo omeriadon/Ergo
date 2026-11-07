@@ -75,8 +75,12 @@ private struct ToolbarTitleViewModifier: ViewModifier {
 						Text(title)
 							.font(makeTextSmaller ? .caption : .body)
 					} icon: {
-						Image(systemName: symbol)
-							.foregroundStyle(.accent)
+						if symbol.isEmpty {
+							EmptyView()
+						} else {
+							Image(systemName: symbol)
+								.foregroundStyle(.accent)
+						}
 					}
 					.labelStyle(.titleAndIcon)
 				}

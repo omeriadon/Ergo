@@ -5,22 +5,26 @@
 //  Created by Adon Omeri on 7/11/2026.
 //
 
+import Defaults
 import SwiftUI
 
 struct AskChatsListView: View {
 	@Environment(AskStore.self)
 	private var store
 
-	@Environment(\.dismiss)
-	private var dismiss
+	private var path: Binding<[AskConversation.ID]> {
+		Binding(
+			get: { store.currentID.map { [$0] } ?? [] },
+			set: { store.navigate(to: $0.last) }
+		)
+	}
 
 	var body: some View {
-		NavigationStack {
+		NavigationStack(path: path) {
 			List {
 				ForEach(store.sortedConversations) { conversation in
 					Button {
 						store.open(conversation.id)
-						dismiss()
 					} label: {
 						AskHistoryRow(conversation: conversation, isAnswering: store.runs[conversation.id] != nil)
 					}
@@ -32,20 +36,15 @@ struct AskChatsListView: View {
 					}
 				}
 			}
+			.navigationDestination(for: AskConversation.ID.self) { _ in
+				AskThreadView()
+			}
 			.overlay {
 				if store.conversations.isEmpty {
 					ContentUnavailableView("No Chats", systemImage: "clock.arrow.circlepath")
 				}
 			}
-			.navigationTitle("History")
-			.toolbarTitleDisplayMode(.inline)
-			.toolbar {
-				ToolbarItem(placement: .topBarLeading) {
-					Button(role: .close) {
-						dismiss()
-					}
-				}
-			}
+			.toolbarTitleVire("Ask", "bubble.left.and.text.bubble.right")
 		}
 		.presentationDetents([.medium, .large])
 	}
