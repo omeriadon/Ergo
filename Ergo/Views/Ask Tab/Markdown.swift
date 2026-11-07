@@ -1,5 +1,5 @@
 //
-//  AskMarkdownView.swift
+//  Markdown.swift
 //  Ergo
 //
 //  Created by Adon Omeri on 6/11/2026.

@@ -78,10 +78,6 @@ struct SymbolDetailView: View {
 							.padding(.top)
 							.bounceOnAppear(after: 1)
 
-						NotesSection(list: symbol.englishReadings, title: "English Readings")
-							.padding(.top)
-							.bounceOnAppear(after: 2)
-
 						ExamplesSection(list: symbol.examples)
 							.padding(.top)
 							.bounceOnAppear(after: 3)

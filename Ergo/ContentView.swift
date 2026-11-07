@@ -65,7 +65,6 @@ struct ContentView: View {
 			Tab(value: .board) {
 				NavigationStack {
 					BoardTabView()
-						.toolbarTitleItem()
 				}
 			} label: {
 				Label("Board", systemImage: "flowchart")
@@ -74,7 +73,6 @@ struct ContentView: View {
 			Tab(value: .logic) {
 				NavigationStack(path: logicPath) {
 					LogicTabView()
-						.toolbarTitleItem()
 						.navigationDestination(for: LogicRoute.self) { route in
 							switch route {
 								case .scratchpad:
@@ -89,7 +87,6 @@ struct ContentView: View {
 			Tab(value: .ask) {
 				NavigationStack {
 					AskTabView()
-						.toolbarTitleItem()
 				}
 			} label: {
 				Label("Ask", systemImage: "bubble.left.and.text.bubble.right")

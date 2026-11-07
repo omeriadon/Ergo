@@ -40,7 +40,7 @@ nonisolated struct BoardSource: Codable, Hashable, Identifiable, Sendable {
 	}
 }
 
-extension BoardSource.Content {
+nonisolated extension BoardSource.Content {
 	/// The link's title or where it goes, or the text's first line
 	var title: String {
 		switch self {

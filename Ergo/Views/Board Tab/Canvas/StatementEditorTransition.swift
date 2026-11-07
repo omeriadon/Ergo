@@ -84,7 +84,14 @@ final class StatementEditorPresenterController: UIViewController, UIViewControll
 				settle()
 			}
 		} else if let wanted, let editor {
-			let host = UIHostingController(rootView: editor(wanted))
+			// Held in a plain view controller, since the animator masks the presented view and a hosting view can't take one
+			let hosted = UIHostingController(rootView: editor(wanted))
+			let host = UIViewController()
+			host.addChild(hosted)
+			hosted.view.frame = host.view.bounds
+			hosted.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+			host.view.addSubview(hosted.view)
+			hosted.didMove(toParent: host)
 			host.modalPresentationStyle = .overFullScreen
 			host.transitioningDelegate = self
 			shown = (wanted, host)
