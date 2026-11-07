@@ -75,10 +75,18 @@ private struct AskAnswerView: View {
 			GlassEffectContainer(spacing: 1) {
 				FlowLayout(spacing: 8) {
 					ForEach(actions, id: \.self) { action in
+						var isAskFollowUp: Bool {
+							if case .askFollowUp = action.intent {
+								true
+							} else {
+								false
+							}
+						}
+
 						Button(action.title) {
 							AskIntents.run(action.intent, navigation: navigation, store: store)
 						}
-						.buttonStyle(.glass(.regular.tint(.black.opacity(0.1)).interactive()))
+						.buttonStyle(.glass(.regular.tint(isAskFollowUp ? .black.opacity(0.2) : .accent.opacity(0.6)).interactive()))
 					}
 
 					.padding(.top, 4)

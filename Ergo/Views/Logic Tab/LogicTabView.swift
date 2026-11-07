@@ -55,6 +55,7 @@ struct LogicTabView: View {
 					scratchpadStore.newScratchpad()
 					navigation.logicPath = [.scratchpad]
 				}
+				.buttonStyle(.borderedProminent)
 				.accessibilityIdentifier("logic.newScratchpad")
 			}
 		}

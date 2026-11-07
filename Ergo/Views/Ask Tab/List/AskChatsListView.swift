@@ -12,15 +12,19 @@ struct AskChatsListView: View {
 	@Environment(AskStore.self)
 	private var store
 
-	private var path: Binding<[AskConversation.ID]> {
+	private var isChatOpen: Binding<Bool> {
 		Binding(
-			get: { store.currentID.map { [$0] } ?? [] },
-			set: { store.navigate(to: $0.last) }
+			get: { store.isChatOpen },
+			set: {
+				if !$0 {
+					store.closeChat()
+				}
+			}
 		)
 	}
 
 	var body: some View {
-		NavigationStack(path: path) {
+		NavigationStack {
 			List {
 				ForEach(store.sortedConversations) { conversation in
 					Button {
@@ -36,7 +40,7 @@ struct AskChatsListView: View {
 					}
 				}
 			}
-			.navigationDestination(for: AskConversation.ID.self) { _ in
+			.navigationDestination(isPresented: isChatOpen) {
 				AskThreadView()
 			}
 			.overlay {

@@ -9,7 +9,44 @@ import Defaults
 import ErgoProtocol
 import SwiftUI
 
+/// The open chat. Starting another fades the old one into the new, so each is its own view, tied to its conversation.
 struct AskThreadView: View {
+	@Environment(AskStore.self)
+	private var store
+
+	@Environment(\.accessibilityReduceMotion)
+	private var reduceMotion
+
+	var body: some View {
+		let id = store.current.id
+		ZStack {
+			AskConversationView(conversationID: id)
+				.id(id)
+				.transition(.opacity)
+		}
+		.animation(reduceMotion ? nil : .smooth, value: id)
+		.navigationTitle(store.current.title)
+		.navigationBarTitleDisplayMode(.inline)
+		.toolbar {
+			ToolbarItem(placement: .title) {
+				Text(store.current.title)
+					.font(.caption)
+			}
+		}
+		.toolbar {
+			ToolbarItem(placement: .topBarTrailing) {
+				Button("New Chat", systemImage: "square.and.pencil") {
+					store.newConversation()
+				}
+				.accessibilityIdentifier("ask.newChat")
+			}
+		}
+	}
+}
+
+private struct AskConversationView: View {
+	let conversationID: AskConversation.ID
+
 	@Environment(AskStore.self)
 	private var store
 
@@ -30,8 +67,9 @@ struct AskThreadView: View {
 	@State private var sent = 0
 	@FocusState private var composing: Bool
 
+	/// Looked up by id and not taken from what's current, so a chat that's fading out keeps its own messages
 	private var conversation: AskConversation {
-		store.current
+		store.conversation(conversationID) ?? AskConversation(id: conversationID)
 	}
 
 	private var run: AskStore.Run? {
@@ -71,23 +109,7 @@ struct AskThreadView: View {
 				composing = true
 			}
 		}
-		.navigationTitle(conversation.title)
-		.navigationBarTitleDisplayMode(.inline)
 		.scrollEdgeEffectStyle(.soft, for: .all)
-		.toolbar {
-			ToolbarItem(placement: .title) {
-				Text(conversation.title)
-					.font(.caption)
-			}
-		}
-		.toolbar {
-			ToolbarItem(placement: .topBarTrailing) {
-				Button("New Chat", systemImage: "square.and.pencil") {
-					store.newConversation()
-				}
-				.accessibilityIdentifier("ask.newChat")
-			}
-		}
 		.sensoryFeedback(.impact(weight: .light), trigger: sent) { _, _ in hapticsEnabled }
 		.animation(.smooth, value: run?.activity)
 		.animation(.smooth, value: run == nil)

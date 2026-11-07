@@ -26,14 +26,6 @@ final class AskStore {
 		var activity: String?
 	}
 
-	func navigate(to id: AskConversation.ID?) {
-		if let id {
-			open(id)
-		} else {
-			newConversation()
-		}
-	}
-
 	// MARK: - conversations
 
 	private(set) var conversations: [AskConversation]
@@ -48,6 +40,9 @@ final class AskStore {
 			Defaults[.currentAskConversationID] = currentID
 		}
 	}
+
+	/// Whether the Ask tab has a chat open, as opposed to showing the list
+	private(set) var isChatOpen: Bool
 
 	/// Stays out of the list until something's been asked
 	private var draft = AskConversation()
@@ -66,16 +61,29 @@ final class AskStore {
 
 	init() {
 		conversations = Defaults[.askConversations]
-		currentID = Defaults[.currentAskConversationID]
+		let id = Defaults[.currentAskConversationID]
+		currentID = id
+		isChatOpen = id != nil
 	}
 
+	/// Opens an empty chat. One that's already empty and open is left as it is, with whatever's been typed in it.
 	func newConversation() {
-		draft = AskConversation()
-		currentID = nil
+		if !current.messages.isEmpty {
+			draft = AskConversation()
+			currentID = nil
+		}
+		isChatOpen = true
 	}
 
 	func open(_ id: AskConversation.ID) {
 		currentID = id
+		isChatOpen = true
+	}
+
+	/// Back to the list. The chat stays current for now, so it doesn't change while the screen slides away, but isn't reopened on launch.
+	func closeChat() {
+		isChatOpen = false
+		Defaults[.currentAskConversationID] = nil
 	}
 
 	func startChat(with text: String) {
@@ -98,7 +106,8 @@ final class AskStore {
 		conversations.removeAll { $0.id == id }
 		failures[id] = nil
 		if currentID == id {
-			newConversation()
+			draft = AskConversation()
+			currentID = nil
 		}
 		save()
 	}
@@ -224,7 +233,7 @@ final class AskStore {
 
 	// MARK: - storing
 
-	private func conversation(_ id: AskConversation.ID) -> AskConversation? {
+	func conversation(_ id: AskConversation.ID) -> AskConversation? {
 		conversations.first { $0.id == id } ?? (draft.id == id ? draft : nil)
 	}
 
