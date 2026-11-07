@@ -7,11 +7,26 @@
 
 import SwiftUI
 
-private struct AskActivityHeightKey: PreferenceKey {
-	static var defaultValue: CGFloat = 0
+/// Reports `progress` of its content's own height, so a list can open and close with nothing measured
+private struct AskReveal: Layout {
+	var progress: CGFloat
 
-	static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-		value = nextValue()
+	var animatableData: CGFloat {
+		get { progress }
+		set { progress = newValue }
+	}
+
+	func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache _: inout ()) -> CGSize {
+		let size = subviews.first?.sizeThatFits(ProposedViewSize(width: proposal.width, height: nil)) ?? .zero
+		return CGSize(width: size.width, height: size.height * progress)
+	}
+
+	func placeSubviews(in bounds: CGRect, proposal _: ProposedViewSize, subviews: Subviews, cache _: inout ()) {
+		subviews.first?.place(
+			at: bounds.origin,
+			anchor: .topLeading,
+			proposal: ProposedViewSize(width: bounds.width, height: nil)
+		)
 	}
 }
 
@@ -33,16 +48,13 @@ struct AskActivityHeader: View {
 		tools.isEmpty && run == nil ? ["Didn't check the library"] : tools
 	}
 
-	@State private var containerHeight: CGFloat = 0
-	@State private var expandedContentHeight: CGFloat = 0
-
 	private static let itemDuration = 0.35
 	private static let itemStagger = 0.1
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 0) {
 			Button {
-				toggleExpanded()
+				isExpanded.toggle()
 			} label: {
 				header
 			}
@@ -51,122 +63,44 @@ struct AskActivityHeader: View {
 			.accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
 			.accessibilityIdentifier("ask.activity")
 
-			// Independent measurement. Does not contribute to layout.
-			Color.clear
-				.frame(height: 0)
-				.frame(maxWidth: .infinity)
-				.overlay(alignment: .topLeading) {
-					measuredItems
-						.background {
-							GeometryReader { proxy in
-								Color.clear.preference(
-									key: AskActivityHeightKey.self,
-									value: proxy.size.height
-								)
-							}
-						}
-						.hidden()
-						.accessibilityHidden(true)
-				}
+			list
+		}
+	}
 
-			// Actual displayed content.
+	/// Always there, so its own height is known. The container opens straight away and closes once the items have faded.
+	private var list: some View {
+		AskReveal(progress: isExpanded ? 1 : 0) {
 			VStack(alignment: .leading, spacing: 6) {
-				if isExpanded {
-					ForEach(Array(items.enumerated()), id: \.element) { index, item in
-						Text(item)
-							.font(.caption)
-							.foregroundStyle(.secondary)
-							.fixedSize(horizontal: false, vertical: true)
-							.transition(itemTransition(at: index, total: items.count))
-							.accessibilityIdentifier("ask.tools")
-					}
+				ForEach(Array(items.enumerated()), id: \.element) { index, item in
+					Text(item)
+						.font(.caption)
+						.foregroundStyle(.secondary)
+						.fixedSize(horizontal: false, vertical: true)
+						.opacity(isExpanded ? 1 : 0)
+						.blur(radius: isExpanded || reduceMotion ? 0 : 6)
+						.animation(itemAnimation(at: index), value: isExpanded)
+						.accessibilityIdentifier("ask.tools")
 				}
 			}
 			.padding(.top, 6)
-			.frame(height: containerHeight, alignment: .top)
-			.clipped()
 		}
-		.onPreferenceChange(AskActivityHeightKey.self) { height in
-			guard height > 0 else { return }
-
-			expandedContentHeight = height
-
-			if isExpanded {
-				var transaction = Transaction()
-				transaction.animation = nil
-
-				withTransaction(transaction) {
-					containerHeight = height
-				}
-			}
-		}
+		.animation(listAnimation, value: isExpanded)
+		.clipped()
+		.accessibilityHidden(!isExpanded)
 	}
 
-	private var measuredItems: some View {
-		VStack(alignment: .leading, spacing: 6) {
-			ForEach(items, id: \.self) { item in
-				Text(item)
-					.font(.caption)
-					.foregroundStyle(.secondary)
-					.fixedSize(horizontal: false, vertical: true)
-			}
-		}
-		.padding(.top, 6)
-		.fixedSize(horizontal: false, vertical: true)
+	private var listAnimation: Animation? {
+		guard !reduceMotion else { return .smooth(duration: 0.15) }
+		guard !isExpanded else { return .smooth }
+		return .smooth(duration: Self.itemDuration).delay(Double(max(items.count - 1, 0)) * Self.itemStagger)
 	}
 
-	private func toggleExpanded() {
-		if isExpanded {
-			let totalDuration = Double(max(items.count - 1, 0)) * Self.itemStagger + Self.itemDuration
+	private func itemAnimation(at index: Int) -> Animation {
+		guard !reduceMotion else { return .smooth(duration: 0.15) }
 
-			// Trigger item removal animations
-			withAnimation(.smooth) {
-				isExpanded = false
-			}
-
-			let halfDuration = totalDuration / 2
-
-			guard !reduceMotion else {
-				containerHeight = 0
-				return
-			}
-
-			// Collapse container height after items begin fading out
-			withAnimation(
-				.smooth(duration: halfDuration)
-					.delay(halfDuration)
-			) {
-				containerHeight = 0
-			}
-		} else {
-			// Expand container height and trigger staggered item insertion transitions
-			withAnimation(.smooth) {
-				containerHeight = expandedContentHeight
-				isExpanded = true
-			}
-		}
-	}
-
-	private func itemTransition(at index: Int, total: Int) -> AnyTransition {
-		guard !reduceMotion else {
-			return .opacity.animation(.smooth(duration: 0.15))
-		}
-
-		let insertionDelay = Double(index) * Self.itemStagger
-		let removalDelay = Double(total - index - 1) * Self.itemStagger
-
-		return .asymmetric(
-			insertion: AnyTransition(.blurReplace)
-				.animation(
-					.smooth(duration: Self.itemDuration)
-						.delay(insertionDelay)
-				),
-			removal: AnyTransition(.blurReplace)
-				.animation(
-					.smooth(duration: Self.itemDuration)
-						.delay(removalDelay)
-				)
-		)
+		// Staggered down when opening, and back up when closing
+		let step = isExpanded ? index : items.count - index - 1
+		return .smooth(duration: Self.itemDuration).delay(Double(step) * Self.itemStagger)
 	}
 
 	private var header: some View {
@@ -197,7 +131,6 @@ struct AskActivityHeader: View {
 		.contentShape(Rectangle())
 	}
 
-	/// What its tools are doing right now says more than how long it's been
 	private func title(at date: Date) -> String {
 		guard let run else {
 			return seconds.map { "\(word.past) for \(Self.spelledOut($0))" } ?? word.past
