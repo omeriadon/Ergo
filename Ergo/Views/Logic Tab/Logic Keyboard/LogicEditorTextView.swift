@@ -81,6 +81,18 @@ final class LogicEditorTextView: UITextView, UITextViewDelegate {
 		insertText(entry.glyph(letters: vocabulary.letters))
 	}
 
+	/// By whole entries, since each is one UTF-16 unit. A selection collapses to the side it's moving towards.
+	func moveCursor(by offset: Int) {
+		let selection = selectedRange
+		let location = if selection.length > 0 {
+			offset < 0 ? selection.location : NSMaxRange(selection)
+		} else {
+			min(max(selection.location + offset, 0), textStorage.length)
+		}
+		selectedRange = NSRange(location: location, length: 0)
+		scrollRangeToVisible(selectedRange)
+	}
+
 	// MARK: Input
 
 	override func insertText(_ text: String) {

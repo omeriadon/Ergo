@@ -173,32 +173,10 @@ final class TranslationAccount {
 
 	// MARK: - translate
 
-	/// Translates one statement. `descriptors` are the board's six, with an empty string for a slot nobody has named,
-	/// so the server reuses a letter for a claim the board already calls something. `events` hears each step as the
-	/// server runs it. The server's failures are thrown as `ServiceError`s.
-	func translate(english: String, letters: [String], descriptors: [String], events: (TranslationEvent) -> Void) async throws -> Translation {
-		let (server, token) = try credentials()
-		let request = translateRequest(english: english, letters: letters, descriptors: descriptors)
-
-		return try await signedOutOnUnauthorized(of: server) {
-			for try await message in ErgoClient(server: server, token: token).translate(request) {
-				switch message {
-					case let .event(event):
-						events(event)
-					case let .finished(translation):
-						return translation
-					case let .failed(error):
-						throw error
-				}
-			}
-			try Task.checkCancellation()
-			throw Self.disconnected
-		}
-	}
-
 	/// Splits pasted English into premises, a conclusion and claims, without writing any logic. The breakdown's
 	/// `descriptors` are whatever the caller already names; the board ignores the ones that come back.
-	/// `letters` default to the ones the app shows. Events and failures are the same as `translate`'s.
+	/// `letters` default to the ones the app shows. `events` hears each step as the server runs it. The server's
+	/// failures are thrown as `ServiceError`s.
 	func breakDown(
 		english: String,
 		descriptors: [String],

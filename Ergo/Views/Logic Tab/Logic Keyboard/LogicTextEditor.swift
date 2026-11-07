@@ -38,10 +38,20 @@ nonisolated struct LogicInlineSymbolAppearance {
 	}
 }
 
+/// Lets the arrow keys above the keyboard move the cursor, which only the text view knows about
+final class LogicEditorCursor {
+	fileprivate weak var textView: LogicEditorTextView?
+
+	func move(by offset: Int) {
+		textView?.moveCursor(by: offset)
+	}
+}
+
 struct LogicTextEditor: UIViewRepresentable {
 	@Binding var entries: [LogicKeyboardEntry]
 	@Binding var isFocused: Bool
 	var highlights: [LogicHighlight] = []
+	var cursor: LogicEditorCursor?
 
 	/// The board's, so the letter keys can say what they stand for
 	var descriptors = LogicLetters.emptyDescriptors
@@ -61,6 +71,7 @@ struct LogicTextEditor: UIViewRepresentable {
 		textView.configure()
 		textView.appearance = entryAppearance
 		textView.letters = logicLetters
+		cursor?.textView = textView
 
 		textView.onEntriesChange = { [weak coordinator] entries in
 			coordinator?.parent.entries = entries

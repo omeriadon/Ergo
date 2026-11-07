@@ -29,7 +29,7 @@ struct LogicTabView: View {
 				Button {
 					open(scratchpad.id)
 				} label: {
-					ScratchpadRow(scratchpad: scratchpad, letters: letters, isTranslating: scratchpadStore.run(for: scratchpad.id).isRunning)
+					ScratchpadRow(scratchpad: scratchpad, letters: letters)
 				}
 				.buttonStyle(.plain)
 				.swipeActions {
@@ -74,7 +74,6 @@ struct LogicTabView: View {
 private struct ScratchpadRow: View {
 	let scratchpad: LogicScratchpad
 	let letters: [String]
-	let isTranslating: Bool
 
 	var body: some View {
 		HStack {
@@ -89,11 +88,6 @@ private struct ScratchpadRow: View {
 			}
 
 			Spacer(minLength: 0)
-
-			if isTranslating {
-				ProgressView()
-					.accessibilityLabel("Translating")
-			}
 		}
 		.frame(maxWidth: .infinity, alignment: .leading)
 		.contentShape(Rectangle())

@@ -33,6 +33,26 @@ public struct LogicStatement: Equatable, Sendable {
 	}
 }
 
+/// `X≔Y`. The checker can't use these, so they're reported as unsupported, but they can still be read.
+public struct LogicDefinition: Equatable, Sendable {
+	public enum Side: Equatable, Sendable {
+		case formula(LogicFormula)
+		case term(LogicTerm)
+	}
+
+	public let name: Side
+	public let value: Side
+
+	/// Entry indices in the editor
+	public let range: Range<Int>
+
+	public init(name: Side, value: Side, range: Range<Int>) {
+		self.name = name
+		self.value = value
+		self.range = range
+	}
+}
+
 public struct LogicDiagnostic: Equatable, Sendable, Error {
 	public let problem: LogicProblem
 
@@ -88,6 +108,11 @@ public struct LogicParse: Equatable, Sendable {
 
 	/// The marker that split premises from the conclusion, if any
 	public var marker: LogicKeyboardEntry?
+
+	public var definitions: [LogicDefinition] = []
+
+	/// Ends with ∎
+	public var hasEndMarker = false
 }
 
 public enum LogicParser {
@@ -144,6 +169,7 @@ public enum LogicParser {
 
 				case .symbol("∎"):
 					close(at: index)
+					parse.hasEndMarker = true
 
 					if entries[(index + 1)...].contains(where: { $0 != .delimiter("\n") }) {
 						parse.diagnostics.append(LogicDiagnostic(problem: .misplacedEndMarker, range: index ..< index + 1))
@@ -171,13 +197,17 @@ public enum LogicParser {
 		let end = (entries.lastIndex { $0 != .delimiter("\n") } ?? -1) + 1
 
 		for segment in segments {
-			if let definition = entries[segment.range].firstIndex(of: .symbol("≔")) {
-				parse.diagnostics.append(LogicDiagnostic(problem: .unsupported(.symbol("≔")), range: definition ..< definition + 1))
-				continue
-			}
-
+			let definition = entries[segment.range].firstIndex(of: .symbol("≔"))
 			var parser = FormulaParser(entries: entries, range: segment.range)
 			do {
+				if let definition {
+					var name = FormulaParser(entries: entries, range: segment.range.lowerBound ..< definition)
+					var value = FormulaParser(entries: entries, range: definition + 1 ..< segment.range.upperBound)
+					try parse.definitions.append(LogicDefinition(name: name.parseSide(), value: value.parseSide(), range: segment.range))
+					parse.diagnostics.append(LogicDiagnostic(problem: .unsupported(.symbol("≔")), range: definition ..< definition + 1))
+					continue
+				}
+
 				let statement = try LogicStatement(formula: parser.parseStatement(), range: segment.range)
 				switch segment.side {
 					case .before:
@@ -329,6 +359,19 @@ private struct FormulaParser {
 		}
 
 		return formula
+	}
+
+	/// One side of ≔, where a set is fine on its own
+	mutating func parseSide() throws -> LogicDefinition.Side {
+		var formula = self
+		do {
+			return try .formula(formula.parseStatement())
+		} catch let diagnostic as LogicDiagnostic {
+			guard case .setWithoutRelation = diagnostic.problem else { throw diagnostic }
+			let set = term()
+			guard current == nil else { throw diagnostic }
+			return .term(set)
+		}
 	}
 
 	private mutating func biconditional() throws -> LogicFormula {

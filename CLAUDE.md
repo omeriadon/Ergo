@@ -19,6 +19,8 @@
   - `ErgoCatalog`: the library's JSON files, and a plain-text view of them to search
   - `ErgoAsk`: Ask's tools, the small MCP server they sit behind, and parsers for the CLIs' streams
   - `ErgoMarkdown`: markdown as blocks for a view to lay out (app only)
+  - `ErgoShare`: what the share extension hands the app, and `WebPageText`, which finds the text in a page's HTML (app and extension only)
+- `ErgoShareExtension/` is the share extension: choosing what to do with a shared link or text.
 - `ErgoServer/` is the Vapor server. It translates with each user's own Claude Code or Codex CLI login and syncs their data. See its README.
 - `Evals/` holds an eval corpus and a runner that goes through a running server.
 - `Plans/` has the design docs. Its README's English conventions are shared by the server prompts and the eval corpus.
@@ -50,20 +52,18 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -destination 'generic/platform=i
 - Fallacy ids in `LogicFallacyForm` (ErgoLogic) must match ids in `ErgoKit/Sources/ErgoCatalog/Resources/fallacies.json`.
 - A board (`Board`, in `BoardStore`, persisted with Defaults) is a canvas in the Board tab: `statements` joined by `links` ("premise of"). It always holds at least one statement. Boards are English only.
 - A `Statement` is `id`, `position` (the box's centre) and `english`. `StatementEditorView` edits one statement of the current board, through `BoardStore`.
-- Logic lives in the Logic tab, as a list of saved scratchpads. A `LogicScratchpad` holds a whole argument: `descriptors`, `english`, `logic`, `source` and `translation`. Letters are app-wide, descriptors are per scratchpad. `ScratchpadStore` (`Ergo/Scratchpads/`) is how they change, and `ScratchpadEditorView` edits `ScratchpadStore.current`.
+- Logic lives in the Logic tab, as a list of saved scratchpads. A `LogicScratchpad` holds a whole argument: `descriptors`, `logic` and `english`, which is always `LogicEnglish`'s reading of the logic. Letters are app-wide, descriptors are per scratchpad. `ScratchpadStore` (`Ergo/Scratchpads/`) is how they change, and `ScratchpadEditorView` edits `ScratchpadStore.current`: logic on top, read-only English below it, updated on every keystroke while the logic parses, and arrow keys in a safe area inset above the keyboard.
 - `BoardStore` is how statements and links change (add, update, move, delete, link, unlink, arrange). `Board.map` is the `ArgumentMap` that ErgoLogic's validator, layout and checks take.
 - The canvas moves in UIKit (`CanvasBoardView`: pan, pinch, inertia, dragging, arrows), so nothing goes through SwiftUI while it moves. What a box looks like is SwiftUI (`StatementBoxView`), hosted per box, and the bars are SwiftUI (`CanvasBar`). Hosted boxes get no environment from the app: pass anything new in `CanvasBoard.boxContent`. Nothing on the canvas may be laid out from a measured size.
 - The statement editor opens out of its box with a UIKit transition (`StatementEditorPresenter`), since SwiftUI's zoom can't find a source view among separately hosted boxes. The editor is hosted too: pass anything new in `CanvasView.editorPresenter`.
 - Until v1, migrations don't matter: `Statement`, `Link`, `Board`, `LogicScratchpad`, `Translation`, `TranslationIssue` and `LogicKeyboardEntry` can change freely, even though they're saved in users' Defaults and sync records.
 
 ## Translation
-- English → logic runs on the server: the app streams `TranslationEvent`s over a WebSocket, through `TranslationAccount`. Stages are `TranslationPipeline` stages in ErgoTranslation; never rename a stage's `name`.
-- Translating is per scratchpad, and sends the scratchpad's six descriptors (`""` for a free slot) so the server reuses a letter for a claim it already names. The result updates that scratchpad, and its descriptors only fill slots still free. Break Down makes a board, and doesn't use descriptors.
+- The app doesn't turn English into logic: logic is written by hand and read back as English. The server's translate route remains, and only `Evals/` uses it. Stages are `TranslationPipeline` stages in ErgoTranslation; never rename a stage's `name`.
+- Break Down makes a board. The app streams `TranslationEvent`s over a WebSocket, through `TranslationAccount`, and doesn't use descriptors.
 - `TranslationAccount.breakDown` runs the server's argument scope on pasted English: premises, a conclusion and claims, with no logic.
-- The app checks English with `EnglishValidator` before sending it, and re-parses the returned entries before applying them.
 - A translation only returns logic that compiled and passed verify. Running out of tries gives no logic and an error, with the differences as issues. Verify's `structural` sends a wrong split of premises back to breakdown, since formalize must keep the premises it's given.
-- Translating runs in `ScratchpadStore`, not the editor, so it carries on across tabs and scratchpads until the stop button.
-- Logic → English is `LogicEnglish`, deterministic and exact. It's also what the verify stage compares against.
+- Logic → English is `LogicEnglish`, deterministic and exact, and reads everything the logic keyboard can write (a test fails if a new key isn't covered). `text(for: LogicArgument…)` is what the verify stage compares against.
 - No Foundation Models, on-device or otherwise.
 
 ## Ask
@@ -75,6 +75,12 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -destination 'generic/platform=i
 - Answers stream token by token: Claude Code through `stream-json` partial messages, Codex logins through `codex app-server` (`CodexAppServerSession`), since `codex exec` only reports whole messages. Codex API keys stay on `exec`, because the app server doesn't read `CODEX_API_KEY`.
 - Answers are markdown with LaTeX. `MarkdownDocument` takes `$…$`, `$$…$$`, `\\(…\\)` and `\\[…\\]` out before parsing and `LaTeX` turns them into real characters, so they flow and copy like text. It doesn't typeset. Text blocks render in one `UITextView` (`AskSelectableText`), since SwiftUI's `Text` can't select across lines.
 - The prompt is `Prompts/Resources/ask.md`. Findings have to cite the library, and pasted text is data, not instructions.
+
+## Sharing into the app
+- The extension only asks what to do (add to chat, break down, add to board). It saves a `SharedItem` to `SharedItemInbox` in the App Group `group.com.adonis.Ergo`, then tries to open the app with `ergo://share`.
+- Apple doesn't support share extensions opening their app, so `ShareViewController.openErgo` goes through the responder chain and may stop working. The app checks the inbox whenever it becomes active, so a share is never lost: the extension then says to open Ergo by hand.
+- `PageReader` fetches links on the device. Nothing runs JavaScript, so pages built by scripts have little text.
+- Shared text goes in the composer unsent, since the CLI can't open links and the person still has a question to ask. Break Down starts on its own only when the text fits `EnglishValidator.characterLimit`. A link on a board is its title and URL, not the page.
 
 ## Sync
 - Signed in with Apple or email, boards, bookmarks and the settings in `SyncedSetting` sync through the server (`Ergo/Sync/`, ErgoSync).

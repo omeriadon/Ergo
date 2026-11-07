@@ -7,6 +7,7 @@
 
 import AppIntents
 import CoreSpotlight
+import ErgoShare
 import SwiftUI
 
 @main
@@ -62,8 +63,12 @@ struct ErgoApp: App {
 					// Also signed out when translation finds the server forgot the token
 					sync.accountChanged()
 				}
+				.onOpenURL { _ in
+					receiveShared()
+				}
 				.task {
 					navigation.startup()
+					receiveShared()
 
 					do {
 						try await catalog.load()
@@ -79,8 +84,23 @@ struct ErgoApp: App {
 				boardStore.save()
 				askStore.save()
 				scratchpadStore.save()
+			} else {
+				// The extension can't always open the app, so whatever it left is picked up on the way back in
+				receiveShared()
 			}
 			sync.scenePhaseChanged(phase)
+		}
+	}
+
+	private func receiveShared() {
+		guard let item = SharedItemInbox.shared?.take() else { return }
+
+		if item.action == .ask, case let .text(text) = item.content {
+			askStore.startChat(with: text)
+			navigation.dismissSheet()
+			navigation.selectedTab = .ask
+		} else {
+			navigation.presentSheet(.shared(item))
 		}
 	}
 }

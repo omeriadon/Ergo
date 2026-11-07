@@ -7,6 +7,7 @@
 
 import ErgoLogic
 import ErgoProtocol
+import ErgoShare
 import ErgoTranslation
 import SwiftUI
 
@@ -25,13 +26,25 @@ struct BreakDownSheet: View {
 	@Environment(TranslationAccount.self)
 	private var account
 
-	@State private var english = ""
+	@State private var english: String
 	@FocusState private var englishFocused: Bool
 
 	/// Finished holds what the server found, until you go back to edit the text
 	@State private var run = TranslationRun<ArgumentBreakdown>.idle
 
-	init() {}
+	/// Text from the share sheet starts on its own, since breaking it down is what was chosen
+	private let startsOnAppear: Bool
+
+	init(shared: String? = nil) {
+		_english = State(initialValue: shared ?? "")
+		startsOnAppear = shared.map { $0.count <= EnglishValidator.characterLimit } ?? false
+	}
+
+	/// How far over the limit the text is, nil when it fits. A shared page usually is, and which part matters is the person's call.
+	private var overLimit: Int? {
+		let count = english.trimmingCharacters(in: .whitespacesAndNewlines).count
+		return count > EnglishValidator.characterLimit ? count : nil
+	}
 
 	/// A breakdown with nothing in it only has issues to show, so the text stays editable
 	private var found: ArgumentBreakdown? {
@@ -65,6 +78,11 @@ struct BreakDownSheet: View {
 		// A result is worth a model call, so swiping the sheet away doesn't throw it out. Cancel does.
 		.interactiveDismissDisabled(run.isRunning || found != nil)
 		.onDisappear(perform: stop)
+		.task {
+			if startsOnAppear, !run.isRunning, run.output == nil, run.failure == nil {
+				startBreakDown()
+			}
+		}
 	}
 
 	// MARK: - Parts
@@ -97,7 +115,9 @@ struct BreakDownSheet: View {
 				setUp: setUp,
 				issues: run.output?.issues ?? [],
 				progress: run.progress,
-				canBreakDown: canBreakDown,
+				overLimit: overLimit,
+				keepFirst: { english = SharedText.cut(english, to: EnglishValidator.characterLimit) },
+				canBreakDown: canBreakDown && overLimit == nil,
 				breakDown: startBreakDown,
 				stop: stop
 			)
@@ -198,6 +218,7 @@ struct BreakDownSheet: View {
 	private func create() {
 		guard let found else { return }
 		boardStore.newBoard(from: found)
+		navigation.selectedTab = .board
 		navigation.dismissSheet()
 	}
 }
@@ -216,6 +237,10 @@ private struct BreakDownStatusView: View {
 	/// Nil when not breaking down
 	let progress: TranslationProgress?
 
+	/// How long the text is, when that's over the limit
+	let overLimit: Int?
+	let keepFirst: () -> Void
+
 	let canBreakDown: Bool
 	let breakDown: () -> Void
 	let stop: () -> Void
@@ -233,6 +258,18 @@ private struct BreakDownStatusView: View {
 							.buttonStyle(.glass)
 							.accessibilityIdentifier("board.breakDown.setUp")
 					}
+				}
+			}
+
+			if let overLimit {
+				MessageRow(
+					symbol: "exclamationmark.triangle.fill",
+					color: .orange,
+					title: "Expected at most \(EnglishValidator.characterLimit) characters, found \(overLimit). Cut it down to the part that matters."
+				) {
+					Button("Keep the Start", action: keepFirst)
+						.buttonStyle(.glass)
+						.accessibilityIdentifier("board.breakDown.keepStart")
 				}
 			}
 
@@ -331,5 +368,34 @@ private struct BreakdownResultView: View {
 		return Text("Expected at most \(limit) statements, found \(found). \(application.skipped) won't be added, starting from the last premise.")
 			.foregroundStyle(.orange)
 			.accessibilityIdentifier("board.breakDown.limit")
+	}
+}
+
+/// Laid out like `MessageRow`, with a spinner for the symbol
+struct ProgressRow: View {
+	let progress: TranslationProgress
+
+	var body: some View {
+		HStack(alignment: .firstTextBaseline, spacing: 10) {
+			ProgressView()
+				.frame(width: 22)
+
+			VStack(alignment: .leading, spacing: 2) {
+				Text(progress.title)
+					.font(.headline)
+					.contentTransition(.opacity)
+
+				if let detail = progress.detail {
+					Text(detail)
+						.font(.subheadline)
+						.foregroundStyle(.secondary)
+						.transition(.blurReplace)
+				}
+			}
+
+			Spacer(minLength: 0)
+		}
+		.accessibilityElement(children: .combine)
+		.accessibilityIdentifier("logic.translationProgress")
 	}
 }

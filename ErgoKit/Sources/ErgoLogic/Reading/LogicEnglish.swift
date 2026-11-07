@@ -22,6 +22,38 @@ public enum LogicEnglish {
 		return sentences.joined(separator: "\n")
 	}
 
+	/// Reads everything the logic keyboard can write, in the order it was written. Nil while something doesn't parse,
+	/// so half-written lines don't wipe what was read before.
+	public static func text(for parse: LogicParse, letters: [String], descriptors: [String]) -> String? {
+		let isReadable = parse.diagnostics.allSatisfy { diagnostic in
+			if case .unsupported = diagnostic.problem {
+				return true
+			}
+			return false
+		}
+		guard isReadable else { return nil }
+
+		let reader = Reader(letters: letters, descriptors: descriptors)
+		let premises = parse.argument.premises.map { (position: $0.range.lowerBound, sentence: reader.sentence($0.formula)) }
+		let definitions = parse.definitions.map { (position: $0.range.lowerBound, sentence: reader.sentence($0)) }
+		var sentences = (premises + definitions).sorted { $0.position < $1.position }.map(\.sentence)
+
+		if let conclusion = parse.argument.conclusion {
+			let opening = switch parse.marker {
+				case .symbol("⊢"): "This proves that "
+				case .symbol("⊨"): "This entails that "
+				default: "Therefore, "
+			}
+			sentences.append(opening + reader.phrase(conclusion.formula, nested: false) + ".")
+		}
+
+		if parse.hasEndMarker {
+			sentences.append("This completes the proof.")
+		}
+
+		return sentences.joined(separator: "\n")
+	}
+
 	public static func text(for formula: LogicFormula, letters: [String], descriptors: [String]) -> String {
 		Reader(letters: letters, descriptors: descriptors).sentence(formula)
 	}
@@ -32,7 +64,23 @@ private struct Reader {
 	let descriptors: [String]
 
 	func sentence(_ formula: LogicFormula) -> String {
-		let phrase = phrase(formula, nested: false)
+		capitalized(phrase(formula, nested: false))
+	}
+
+	func sentence(_ definition: LogicDefinition) -> String {
+		capitalized(phrase(definition.name) + " is defined as " + phrase(definition.value))
+	}
+
+	private func phrase(_ side: LogicDefinition.Side) -> String {
+		switch side {
+			case let .formula(formula):
+				phrase(formula, nested: true)
+			case let .term(term):
+				self.term(term, nested: true)
+		}
+	}
+
+	private func capitalized(_ phrase: String) -> String {
 		guard let first = phrase.firstIndex(where: \.isLetter) else { return phrase + "." }
 		return phrase.replacingCharacters(in: first ... first, with: phrase[first].uppercased()) + "."
 	}

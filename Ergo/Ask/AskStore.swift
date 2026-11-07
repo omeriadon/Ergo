@@ -49,6 +49,9 @@ final class AskStore {
 	/// Why the last answer failed, until it's tried again
 	private(set) var failures: [AskConversation.ID: ServiceError] = [:]
 
+	/// Text from the share sheet, until the composer takes it. It isn't sent, so the person can say what to ask about it.
+	private(set) var waitingDraft: String?
+
 	init() {
 		conversations = Defaults[.askConversations]
 		currentID = Defaults[.currentAskConversationID]
@@ -61,6 +64,16 @@ final class AskStore {
 
 	func open(_ id: AskConversation.ID) {
 		currentID = id
+	}
+
+	func startChat(with text: String) {
+		newConversation()
+		waitingDraft = text
+	}
+
+	func takeWaitingDraft() -> String? {
+		defer { waitingDraft = nil }
+		return waitingDraft
 	}
 
 	func delete(_ id: AskConversation.ID) {

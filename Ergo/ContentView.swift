@@ -158,6 +158,9 @@ struct ContentView: View {
 
 				case .boards:
 					BoardsSheet()
+
+				case let .shared(item):
+					SharedItemSheet(item: item)
 			}
 		}
 		.fontDesign(.rounded)

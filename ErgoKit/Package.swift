@@ -19,6 +19,7 @@ let package = Package(
 		.library(name: "ErgoCatalog", targets: ["ErgoCatalog"]),
 		.library(name: "ErgoAsk", targets: ["ErgoAsk"]),
 		.library(name: "ErgoMarkdown", targets: ["ErgoMarkdown"]),
+		.library(name: "ErgoShare", targets: ["ErgoShare"]),
 	],
 	targets: [
 		.target(name: "ErgoLogic"),
@@ -29,6 +30,7 @@ let package = Package(
 		.target(name: "ErgoCatalog", resources: [.process("Resources")]),
 		.target(name: "ErgoAsk", dependencies: ["ErgoCatalog", "ErgoProtocol", "ErgoSync"]),
 		.target(name: "ErgoMarkdown"),
+		.target(name: "ErgoShare"),
 
 		.testTarget(name: "ErgoLogicTests", dependencies: ["ErgoLogic"]),
 		.testTarget(name: "ErgoTranslationTests", dependencies: ["ErgoLogic", "ErgoTranslation"]),
@@ -37,6 +39,7 @@ let package = Package(
 		.testTarget(name: "ErgoClientTests", dependencies: ["ErgoSync", "ErgoProtocol", "ErgoClient"]),
 		.testTarget(name: "ErgoAskTests", dependencies: ["ErgoAsk", "ErgoCatalog", "ErgoProtocol", "ErgoSync"]),
 		.testTarget(name: "ErgoMarkdownTests", dependencies: ["ErgoMarkdown"]),
+		.testTarget(name: "ErgoShareTests", dependencies: ["ErgoShare"]),
 	],
 	swiftLanguageModes: [.v6]
 )

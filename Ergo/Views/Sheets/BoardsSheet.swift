@@ -81,7 +81,7 @@ struct BoardsSheet: View {
 	}
 }
 
-private struct BoardRow: View {
+struct BoardRow: View {
 	let board: Board
 	let isCurrent: Bool
 

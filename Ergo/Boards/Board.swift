@@ -36,6 +36,11 @@ struct Board: Codable, Hashable, Identifiable, Defaults.Serializable {
 		}
 	}
 
+	/// An empty box to write in, or space for a new one
+	var hasRoom: Bool {
+		statements.contains(where: \.isEmpty) || statements.count < ArgumentMapValidator.defaultMaximumStatements
+	}
+
 	func statement(_ id: Statement.ID) -> Statement? {
 		statements.first { $0.id == id }
 	}

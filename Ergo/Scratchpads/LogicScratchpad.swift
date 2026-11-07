@@ -7,19 +7,13 @@
 
 import Defaults
 import ErgoLogic
-import ErgoTranslation
 import Foundation
 
-/// One saved argument on the Logic tab: English over logic, and what each letter stands for.
+/// One saved argument on the Logic tab: logic, what each letter stands for, and the logic read back as English.
 ///
-/// Nothing has reached v1, so the stored properties may change until then. Sync holds `english`, `logic`,
-/// `source` and `translation` together as the record's `content` (`ScratchpadRecord`).
+/// Nothing has reached v1, so the stored properties may change until then. Sync holds `english` and `logic`
+/// together as the record's `content` (`ScratchpadRecord`).
 struct LogicScratchpad: Codable, Hashable, Identifiable, Defaults.Serializable {
-	/// Whichever side was edited last. The other one follows it.
-	enum Source: String, Codable {
-		case english, logic
-	}
-
 	var id = UUID()
 	var created = Date.now
 	var modified = Date.now
@@ -27,28 +21,15 @@ struct LogicScratchpad: Codable, Hashable, Identifiable, Defaults.Serializable {
 	/// One per letter slot, at most four words each
 	var descriptors = LogicLetters.emptyDescriptors
 
+	/// Always `LogicEnglish`'s reading of `logic`, kept here for the list and for other devices.
 	var english = ""
-	var logic: [LogicKeyboardEntry] = []
-	var source = Source.logic
 
-	/// The last English → logic run, with its issues.
 	/// The logic's diagnostics aren't stored, they're recomputed in milliseconds and stay current as the checker improves.
-	var translation: Translation?
+	var logic: [LogicKeyboardEntry] = []
 
 	/// Nothing written yet, so the scratchpad stays out of the list
 	var isEmpty: Bool {
 		english.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && logic.isEmpty
-	}
-
-	/// The English changed since it was last translated, so the logic no longer follows from it
-	var isLogicOutdated: Bool {
-		source == .english && !english.isEmpty && translation?.english != english
-	}
-
-	/// The translation's issues, while they still describe the English
-	var currentIssues: [TranslationIssue] {
-		guard let translation, translation.english == english else { return [] }
-		return translation.issues
 	}
 
 	/// The first line of the English, nil when there is none
@@ -72,13 +53,5 @@ struct LogicScratchpad: Codable, Hashable, Identifiable, Defaults.Serializable {
 	/// The first line of English, else the first line of logic, else "Untitled"
 	func title(letters: [String]) -> String {
 		englishLine ?? logicLine(letters: letters) ?? "Untitled"
-	}
-
-	/// Names the slots that are still free and leaves the rest as they are, so a translation
-	/// never renames a letter the scratchpad already relies on
-	mutating func merge(descriptors new: [String]) {
-		for slot in descriptors.indices where descriptors[slot].isEmpty && new.indices.contains(slot) {
-			descriptors[slot] = LogicLetters.sanitizedDescriptor(new[slot])
-		}
 	}
 }

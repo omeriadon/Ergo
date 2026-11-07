@@ -7,6 +7,7 @@
 
 import AppIntents
 import Defaults
+import ErgoShare
 import SwiftUI
 
 /// Your four root tabs
@@ -41,6 +42,7 @@ enum AppSheet: Hashable, Identifiable, Codable, Defaults.Serializable {
 	case settings(id: String)
 	case logicLetters
 	case boards
+	case shared(SharedItem)
 
 	var id: Self {
 		self

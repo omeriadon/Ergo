@@ -141,6 +141,12 @@ private struct AskThreadView: View {
 				stop: { store.stop(conversation.id) }
 			)
 		}
+		.onChange(of: store.waitingDraft, initial: true) {
+			if let shared = store.takeWaitingDraft() {
+				draft = shared
+				composing = true
+			}
+		}
 		.sensoryFeedback(.impact(weight: .light), trigger: sent) { _, _ in hapticsEnabled }
 		.animation(.smooth, value: run?.activity)
 		.animation(.smooth, value: store.failures[conversation.id])

@@ -7,7 +7,6 @@
 
 import ErgoLogic
 import ErgoProtocol
-import ErgoTranslation
 import Foundation
 
 /// A `LogicScratchpad` as a scratchpad record's fields: `created`, one field per descriptor, so naming different
@@ -20,14 +19,10 @@ enum ScratchpadRecord {
 	struct Content: Codable, Hashable {
 		var english: String
 		var logic: [LogicKeyboardEntry]
-		var source: LogicScratchpad.Source
-		var translation: Translation?
 
 		init(_ scratchpad: LogicScratchpad) {
 			english = scratchpad.english
 			logic = scratchpad.logic
-			source = scratchpad.source
-			translation = scratchpad.translation
 		}
 	}
 
@@ -130,7 +125,5 @@ private extension LogicScratchpad {
 	mutating func apply(_ content: ScratchpadRecord.Content) {
 		english = content.english
 		logic = content.logic
-		source = content.source
-		translation = content.translation
 	}
 }

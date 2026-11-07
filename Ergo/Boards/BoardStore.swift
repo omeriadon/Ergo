@@ -129,6 +129,21 @@ final class BoardStore {
 		return statement.id
 	}
 
+	/// Writes `english` in the current board's empty box if it has one, else in a new box beside the last one.
+	/// Nothing happens when the board is full (`Board.hasRoom`).
+	func addStatement(english: String) {
+		var board = current
+		guard board.hasRoom else { return }
+
+		if let index = board.statements.firstIndex(where: \.isEmpty) {
+			board.statements[index].english = english
+		} else {
+			let position = board.statements.last.map { CanvasLayout.place(newNodeNear: $0.id, in: board.map, side: .below) } ?? .zero
+			board.statements.append(Statement(position: position, english: english))
+		}
+		current = board
+	}
+
 	/// Replaces the statement with the same id. Typing goes through here, so one that changes nothing is skipped.
 	func updateStatement(_ statement: Statement) {
 		var board = current

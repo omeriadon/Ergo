@@ -7,8 +7,6 @@
 
 import Defaults
 import ErgoLogic
-import ErgoProtocol
-import ErgoTranslation
 import SwiftUI
 
 /// Every scratchpad, and which one the Logic tab's editor is showing. Shared so the list and the editor edit
@@ -61,9 +59,6 @@ final class ScratchpadStore {
 		}
 	}
 
-	/// Goes up when another device changes the open scratchpad, so the editor can drop a selection that no longer fits
-	private(set) var remoteEdits = 0
-
 	@ObservationIgnored
 	private var saveTask: Task<Void, Never>?
 
@@ -91,100 +86,12 @@ final class ScratchpadStore {
 	// MARK: - delete
 
 	func delete(_ ids: Set<LogicScratchpad.ID>) {
-		ids.forEach(stopTranslating)
 		scratchpads.removeAll { ids.contains($0.id) }
 		deletedIDs.formUnion(ids)
 		if let currentID, ids.contains(currentID) {
 			newScratchpad()
 		}
 		save()
-	}
-
-	// MARK: - translating
-
-	/// One per scratchpad that's translating or just failed. They're kept here and not on the editor, so a translation
-	/// carries on while you're on another tab or another scratchpad, and only the stop button ends it.
-	private var runs: [LogicScratchpad.ID: TranslationRun<Never>] = [:]
-
-	func run(for id: LogicScratchpad.ID) -> TranslationRun<Never> {
-		runs[id] ?? .idle
-	}
-
-	func translate(_ id: LogicScratchpad.ID, letters: [String], account: TranslationAccount) {
-		guard let scratchpad = scratchpad(id) else { return }
-		let (english, descriptors) = (scratchpad.english, scratchpad.descriptors)
-		runs[id] = nil
-
-		// Obviously bad input never reaches the server, and reads like any other translation issue
-		if let problem = EnglishValidator.problem(with: english) {
-			finish(id, with: Translation(english: english, issues: [TranslationIssue(severity: .error, message: problem)]), english: english)
-			return
-		}
-
-		let task = Task {
-			do {
-				let translation = try await account.translate(english: english, letters: letters, descriptors: descriptors) { event in
-					guard !Task.isCancelled else { return }
-					runs[id]?.apply(event)
-				}
-				guard !Task.isCancelled else { return }
-				runs[id] = nil
-
-				// Never trust the server's logic blindly
-				guard LogicParser.parse(translation.entries).diagnostics.isEmpty else {
-					runs[id] = .failed(ServiceError(code: .internalError, message: "Server sent logic that doesn't parse"))
-					return
-				}
-				finish(id, with: translation, english: english)
-			} catch {
-				guard !Task.isCancelled, !(error is CancellationError) else { return }
-				runs[id] = .failed(
-					error as? ServiceError
-						?? ServiceError(code: .internalError, message: error.localizedDescription)
-				)
-			}
-		}
-		runs[id] = .running(TranslationProgress(), task)
-	}
-
-	/// Closing the socket makes the server stop too
-	func stopTranslating(_ id: LogicScratchpad.ID) {
-		runs[id]?.cancel()
-		runs[id] = nil
-	}
-
-	/// A failure says nothing about English that has since changed. One that's running carries on.
-	func clearFailure(_ id: LogicScratchpad.ID) {
-		if runs[id]?.failure != nil {
-			runs[id] = nil
-		}
-	}
-
-	/// The English must still be what was sent, or the scratchpad has moved on and this says nothing about it.
-	/// The logic and descriptors only change when it produced logic. A failed translation only brings issues, and the
-	/// logic that was there stays.
-	private func finish(_ id: LogicScratchpad.ID, with translation: Translation, english: String) {
-		guard let index = scratchpads.firstIndex(where: { $0.id == id }), scratchpads[index].english == english else { return }
-
-		// Keyed to the English as sent, so the scratchpad never thinks it's out of date
-		scratchpads[index].translation = Translation(
-			english: english,
-			entries: translation.entries,
-			descriptors: translation.descriptors,
-			issues: translation.issues
-		)
-		scratchpads[index].source = .english
-		if !translation.entries.isEmpty {
-			scratchpads[index].logic = translation.entries
-			scratchpads[index].merge(descriptors: translation.descriptors)
-		}
-		scratchpads[index].modified = .now
-		changedIDs.insert(id)
-		scheduleSave()
-	}
-
-	private func scratchpad(_ id: LogicScratchpad.ID) -> LogicScratchpad? {
-		scratchpads.first { $0.id == id }
 	}
 
 	// MARK: - save
@@ -226,7 +133,6 @@ final class ScratchpadStore {
 	/// For leaving the editor: a scratchpad that's been emptied goes, like a board does
 	func discardCurrentIfEmpty() {
 		guard let currentID, current.isEmpty else { return }
-		stopTranslating(currentID)
 		scratchpads.removeAll { $0.id == currentID }
 		deletedIDs.insert(currentID)
 		self.currentID = nil
@@ -242,18 +148,11 @@ final class ScratchpadStore {
 
 		for scratchpad in remote {
 			if let index = scratchpads.firstIndex(where: { $0.id == scratchpad.id }) {
-				// Only the stamps moving isn't an edit
-				var old = scratchpads[index]
-				old.modified = scratchpad.modified
-				if old != scratchpad, scratchpad.id == currentID {
-					remoteEdits += 1
-				}
 				scratchpads[index] = scratchpad
 			} else {
 				scratchpads.append(scratchpad)
 			}
 		}
-		deleted.forEach(stopTranslating)
 		scratchpads.removeAll { deleted.contains($0.id) }
 
 		// Deleted on another device, so it goes the same way as deleting it here
