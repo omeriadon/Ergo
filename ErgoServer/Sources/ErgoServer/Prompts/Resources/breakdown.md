@@ -12,6 +12,8 @@ A JSON object:
 - `maximumClaims`: the most claims you may return (one per available letter).
 - `descriptorWordLimit`: the most words a descriptor may have.
 - `descriptors`: the labels the board already uses for its claims, including claims from other statements. Missing when the board has none.
+- `previous`: your last breakdown, when this is a retry. Missing on the first try.
+- `problems`: what was wrong with `previous`, found by writing it as logic and reading that back. Missing on the first try. Fix exactly these: they usually mean premises you split or merged wrongly.
 
 ## Output
 
@@ -30,6 +32,7 @@ A JSON object matching the schema:
 - A conclusion may come first: "Ella won't make it to dinner, because she's working late" has the conclusion "Ella won't make it to dinner".
 - "So", "therefore", "thus" and "hence" mark the conclusion: in "B, so A" and "B; therefore A", A is the conclusion.
 - Each sentence, or each part separated by one of the markers above, is one premise. Don't split a premise at "and", "or", "but", "neither … nor", "unless" or "if": the logic step writes those as one formula.
+- A comma or semicolon that separates complete claims separates premises, like a full stop would. "A means B, A, therefore B" has two premises, "A means B" and "A", and the conclusion "B". A comma inside one claim's grammar doesn't: "If A, B" and "Either A, or B" are one premise each.
 - Keep the premises in the order they appear in the text.
 - When the text draws no conclusion, every claim-making sentence is a premise and `conclusion` is an empty string.
 - Never add a premise or conclusion the text doesn't state, even when the argument needs one to work. An argument with a missing step is still broken down as written.
@@ -46,6 +49,7 @@ A JSON object matching the schema:
 - **Claims are in order of first appearance** in the text, counting every mention, including inside the conclusion and inside negations. When the conclusion comes first, its claims come first: in "The ground is wet because it rained", the first claim is "The ground is wet".
 - Return at most `maximumClaims` claims. If the text truly needs more, still return only the first `maximumClaims`; the app will report the problem.
 - `meaning` is a full sentence in plain English, with the subject spelled out instead of a pronoun ("Ella is working late", not "She's working late").
+- A word or phrase that stands alone as a claim is one, even when it's made up or isn't a sentence: in "Tiff means toff, tiff, therefore toff" the claims are "Tiff holds" and "Toff holds". "A means B" and "A implies B" are built from the claims A and B, never one claim of their own.
 
 ## Descriptors
 

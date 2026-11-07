@@ -119,3 +119,20 @@ Today `ProtocolVersionMiddleware` requires an exact match with `ErgoProtocol.ver
 - IDs are permanent. Entries can be added and edited, but an ID is never renamed or removed, so an older app only ever lacks new entries. Bookmarks rely on this too.
 - The app sends its catalog version with AI requests, and the server only offers the model entries that version has. Then the model can't cite something the app can't open.
 - The server's catalog updates only once the matching app release is live, not before.
+
+## Built so far: Ask
+
+A preliminary version of the Ask tab exists. See `CLAUDE.md`'s Ask section for how it works.
+
+**Decided along the way:**
+- Translation never returns logic that verify rejected. A wrong split of premises goes back to breakdown instead of failing every retry.
+- The library moved into ErgoKit (`ErgoCatalog`), since the server needs it too.
+- Markdown is a small renderer of our own over Foundation's parser, not a package. It needs no dependency, handles text still arriving, and leaves links to the app.
+- Conversations stay on the device, for now.
+
+**Not built yet:**
+- Tools over the user's own boards and scratchpads.
+- Rich answers beyond markdown and buttons, like entity cards.
+- Answers surviving the app being suspended: iOS closes the socket, so it shows as a lost connection.
+- `Find text` as a tool, and any intent beyond the library and navigation ones.
+- Enforcing that findings quote the source. It's in the prompt, not checked.

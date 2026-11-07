@@ -17,6 +17,10 @@ struct CodexCommand {
 	let credential: ProviderCredential
 	let run: RunDirectory
 
+	/// The URL of Ergo's own tools, for ask. They're the only ones it can use, and with them the answer is free text
+	/// rather than a schema's JSON.
+	var tools: String?
+
 	/// Every tool-like feature in codex-cli 0.166, from `codex features list`
 	static let disabledFeatures = [
 		"shell_tool", "unified_exec", "apps", "plugins", "multi_agent",
@@ -60,14 +64,21 @@ struct CodexCommand {
 				("web_search", "disabled"),
 				choice.effort.map { ("model_reasoning_effort", $0) },
 				("developer_instructions", instructions),
+				tools.map { ("mcp_servers.ergo.url", $0) },
+				tools.map { _ in ("mcp_servers.ergo.default_tools_approval_mode", "approve") },
+				tools.map { _ in ("approval_policy", "never") },
 			]
 		)
 		if let model = choice.model {
 			arguments += ["-m", model]
 		}
+		if tools == nil {
+			arguments += [
+				"--output-schema", schemaFile.path,
+				"-o", answerFile.path,
+			]
+		}
 		arguments += [
-			"--output-schema", schemaFile.path,
-			"-o", answerFile.path,
 			"-C", run.work.path,
 			// The prompt comes on stdin
 			"-",

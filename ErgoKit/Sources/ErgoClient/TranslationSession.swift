@@ -57,3 +57,25 @@ public extension ErgoClient {
 		}
 	}
 }
+
+public extension ErgoClient {
+	/// The answer as it's written, what its tools do and the buttons it adds, finishing with `.finished`. Cancelling the
+	/// consuming task cancels the work on the server.
+	///
+	/// The server's own failures arrive as `.failed`, the last message. Thrown errors mean the server couldn't be reached
+	/// or dropped the connection.
+	func ask(_ request: AskRequest) -> AsyncThrowingStream<AskServerMessage, Error> {
+		messages(
+			at: ErgoProtocol.Path.ask,
+			opening: Self.text(AskClientMessage.ask(request)),
+			closing: Self.text(AskClientMessage.cancel)
+		) { message in
+			switch message {
+				case .finished, .failed:
+					true
+				default:
+					false
+			}
+		}
+	}
+}

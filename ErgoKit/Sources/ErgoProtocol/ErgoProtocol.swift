@@ -17,6 +17,10 @@ import Foundation
 /// `TranslateRequest.scope` picks the answer's type: `.statement` gets `TranslateServerMessage`s, `.argument` gets
 /// `BreakDownServerMessage`s. Failures before the scope is known, like a missing request, use the first.
 ///
+/// The ask socket gets exactly one `AskClientMessage.ask`, answers with any number of `.text`, `.tool` and `.action`
+/// messages, then exactly one `.finished` or `.failed`, and closes. Sending `.cancel` or closing stops the work.
+/// A message type this version doesn't know decodes to `.unknown`, so adding one needs no new protocol version.
+///
 /// The device login socket sends `.code` once, then `.connected` or `.failed`, and closes. Closing it cancels the login.
 ///
 /// Sync needs an account signed in with Apple or an email and password. The sync socket only ever sends `SyncLiveMessage`s and stays open
@@ -55,6 +59,12 @@ public enum ErgoProtocol {
 
 		/// WebSocket of `TranslateClientMessage` and `TranslateServerMessage` (or `BreakDownServerMessage`)
 		public static let translate = "v1/translate"
+
+		/// WebSocket of `AskClientMessage` and `AskServerMessage`. Needs a signed-in account.
+		public static let ask = "v1/ask"
+
+		/// POST of one MCP JSON-RPC message, from the CLI answering an ask. `<token>` is the run's, there's no other auth.
+		public static let askTools = "v1/ask/tools"
 
 		/// POST `SyncRequest` → `SyncResponse`
 		public static let sync = "v1/sync"

@@ -15,6 +15,7 @@ struct ErgoApp: App {
 	@State private var catalog = CatalogStore()
 	@State private var boardStore: BoardStore
 	@State private var scratchpadStore: ScratchpadStore
+	@State private var askStore = AskStore()
 	@State private var translationAccount: TranslationAccount
 	@State private var sync: SyncController
 
@@ -51,6 +52,7 @@ struct ErgoApp: App {
 				.environment(navigation)
 				.environment(boardStore)
 				.environment(scratchpadStore)
+				.environment(askStore)
 				.environment(translationAccount)
 				.environment(sync)
 				.task {
@@ -75,6 +77,7 @@ struct ErgoApp: App {
 			// Saves usually wait for a pause in typing, don't lose that pause to the app closing
 			if phase != .active {
 				boardStore.save()
+				askStore.save()
 				scratchpadStore.save()
 			}
 			sync.scenePhaseChanged(phase)

@@ -13,7 +13,7 @@ struct LogicFallacyFormTests {
 	/// The catalog stays in the app, next to this package
 	static let catalog = URL(filePath: #filePath)
 		.deletingLastPathComponent()
-		.appending(path: "../../../Ergo/Special/Catalog/fallacies.json")
+		.appending(path: "../../Sources/ErgoCatalog/Resources/fallacies.json")
 		.standardizedFileURL
 
 	private struct Catalog: Decodable {

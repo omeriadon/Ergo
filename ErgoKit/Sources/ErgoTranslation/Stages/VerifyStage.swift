@@ -27,14 +27,30 @@ public enum VerifyStage: TranslationStage {
 		public let matches: Bool
 		public let differences: [String]
 
-		public init(matches: Bool, differences: [String]) {
+		/// The premises or conclusion themselves are wrong, split or merged or missing, so rewriting the formulas can't help
+		public let structural: Bool
+
+		public init(matches: Bool, differences: [String], structural: Bool = false) {
 			self.matches = matches
 			self.differences = differences
+			self.structural = structural
+		}
+
+		private enum CodingKeys: String, CodingKey {
+			case matches, differences, structural
+		}
+
+		public init(from decoder: any Decoder) throws {
+			let container = try decoder.container(keyedBy: CodingKeys.self)
+			matches = try container.decode(Bool.self, forKey: .matches)
+			differences = try container.decode([String].self, forKey: .differences)
+			structural = try container.decodeIfPresent(Bool.self, forKey: .structural) ?? false
 		}
 	}
 
 	public static let outputSchema = JSONSchema.object([
 		.init("matches", .boolean(description: "Whether the reading claims exactly what the original does, nothing more and nothing less")),
 		.init("differences", .array(.string(), description: "Each difference in meaning, short, in the style of a compiler error")),
+		.init("structural", .boolean(description: "Whether a difference is premises or a conclusion that are split, merged, missing or extra, rather than how a formula is written")),
 	])
 }

@@ -7,8 +7,13 @@
 
 import SwiftUI
 
-/// The Board tab: the current board as a canvas of statements, and the editor a statement zooms into.
+/// The Board tab: the current board as a canvas of statements, and the sheet a statement zooms into.
 struct BoardTabView: View {
+	/// `sheet(item:)` needs something identifiable, which a statement's id isn't
+	private struct EditingStatement: Identifiable {
+		let id: Statement.ID
+	}
+
 	@Environment(BoardStore.self)
 	private var boardStore
 
@@ -16,7 +21,7 @@ struct BoardTabView: View {
 	@Namespace private var zoom
 
 	/// The statement whose editor is open
-	@State private var editing: Statement.ID?
+	@State private var editing: EditingStatement?
 
 	/// Undo steps belong to the board they were made on, so they live here and are dropped when the board changes
 	@State private var history = CanvasHistory()
@@ -26,7 +31,7 @@ struct BoardTabView: View {
 	var body: some View {
 		ZStack {
 			// A different board starts with its own pan, zoom and selection
-			CanvasView(zoomNamespace: zoom, history: history, isCovered: editing != nil) { editing = $0 }
+			CanvasView(zoomNamespace: zoom, history: history, isCovered: editing != nil) { editing = EditingStatement(id: $0) }
 				.overlay(alignment: .top) {
 					BackdropBlur(radius: 3, fade: .bottom)
 						.frame(height: topInset)
@@ -46,8 +51,8 @@ struct BoardTabView: View {
 				.id(boardStore.current.id)
 		}
 		.containerBackground(for: .navigation) { CanvasBackdrop() }
-		.navigationDestination(item: $editing) { id in
-			StatementEditorScreen(statementID: id, zoomNamespace: zoom)
+		.sheet(item: $editing) { statement in
+			StatementEditorScreen(statementID: statement.id, zoomNamespace: zoom)
 		}
 		.onChange(of: boardStore.current.id) {
 			editing = nil

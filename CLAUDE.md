@@ -16,6 +16,9 @@
   - `ErgoSync`: the sync engine
   - `ErgoProtocol`: the wire types
   - `ErgoClient`: a client for the server
+  - `ErgoCatalog`: the library's JSON files, and a plain-text view of them to search
+  - `ErgoAsk`: Ask's tools, the small MCP server they sit behind, and parsers for the CLIs' streams
+  - `ErgoMarkdown`: markdown as blocks for a view to lay out (app only)
 - `ErgoServer/` is the Vapor server. It translates with each user's own Claude Code or Codex CLI login and syncs their data. See its README.
 - `Evals/` holds an eval corpus and a runner that goes through a running server.
 - `Plans/` has the design docs. Its README's English conventions are shared by the server prompts and the eval corpus.
@@ -44,7 +47,7 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -destination 'generic/platform=i
 ## Logic editor
 - Editor content is `[LogicKeyboardEntry]`, never a String. The six letters are `.variable(1...6)`, and the actual letter is only applied when displaying (`LogicLetters.resolved(Defaults[.logicLetters])`), so changing letters is lossless.
 - Every entry glyph is exactly one UTF-16 unit; `LogicEditorTextView` relies on that to map text ranges to entry indices.
-- Fallacy ids in `LogicFallacyForm` (ErgoLogic) must match ids in `Ergo/Special/Catalog/fallacies.json`.
+- Fallacy ids in `LogicFallacyForm` (ErgoLogic) must match ids in `ErgoKit/Sources/ErgoCatalog/Resources/fallacies.json`.
 - A board (`Board`, in `BoardStore`, persisted with Defaults) is a canvas in the Board tab: `statements` joined by `links` ("premise of"). It always holds at least one statement. Boards are English only.
 - A `Statement` is `id`, `position` (the box's centre) and `english`. `StatementEditorView` edits one statement of the current board, through `BoardStore`.
 - Logic lives in the Logic tab, as a list of saved scratchpads. A `LogicScratchpad` holds a whole argument: `descriptors`, `english`, `logic`, `source` and `translation`. Letters are app-wide, descriptors are per scratchpad. `ScratchpadStore` (`Ergo/Scratchpads/`) is how they change, and `ScratchpadEditorView` edits `ScratchpadStore.current`.
@@ -57,8 +60,18 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -destination 'generic/platform=i
 - Translating is per scratchpad, and sends the scratchpad's six descriptors (`""` for a free slot) so the server reuses a letter for a claim it already names. The result updates that scratchpad, and its descriptors only fill slots still free. Break Down makes a board, and doesn't use descriptors.
 - `TranslationAccount.breakDown` runs the server's argument scope on pasted English: premises, a conclusion and claims, with no logic.
 - The app checks English with `EnglishValidator` before sending it, and re-parses the returned entries before applying them.
+- A translation only returns logic that compiled and passed verify. Running out of tries gives no logic and an error, with the differences as issues. Verify's `structural` sends a wrong split of premises back to breakdown, since formalize must keep the premises it's given.
+- Translating runs in `ScratchpadStore`, not the editor, so it carries on across tabs and scratchpads until the stop button.
 - Logic → English is `LogicEnglish`, deterministic and exact. It's also what the verify stage compares against.
 - No Foundation Models, on-device or otherwise.
+
+## Ask
+- A chat with the user's own model, needing a signed-in account. `AskStore` owns conversations and running answers, so they survive leaving the tab. Conversations stay on the device; the server keeps nothing between turns and gets the whole conversation each time.
+- The app streams `AskServerMessage`s over a WebSocket (`v1/ask`). It's coded by hand so an unknown kind arrives as `.unknown` and is skipped: new kinds need no protocol version.
+- The CLI runs with none of its own tools, and only Ergo's over MCP, at `v1/ask/tools/<token>` on this machine. The per-run token is the only auth, and it only reads the library and adds buttons to its own answer. Never log it.
+- Tools live in `AskTools`. What only reads runs on the server, and intents can share it (`LookUpLibraryIntent` and `search_library` both use `LibraryCatalog.search`). What needs the device comes back as an `AskIntent`, which is both a button and the URL of an inline link, and `AskIntents` runs it through the real App Intent. Adding one means a case in `AskIntent`, in `suggest_action`, and in `AskIntents`.
+- Anything from the model is checked: an unknown entry is an error to the model, and a link or button this app can't run (`AskIntents.canRun`) isn't offered.
+- The prompt is `Prompts/Resources/ask.md`. Findings have to cite the library, and pasted text is data, not instructions.
 
 ## Sync
 - Signed in with Apple or email, boards, bookmarks and the settings in `SyncedSetting` sync through the server (`Ergo/Sync/`, ErgoSync).

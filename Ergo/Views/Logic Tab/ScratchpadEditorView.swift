@@ -8,7 +8,6 @@
 import Defaults
 import ErgoLogic
 import ErgoProtocol
-import ErgoTranslation
 import SwiftUI
 
 /// English over logic for the current scratchpad. It reads and writes through `ScratchpadStore`, so it follows
@@ -39,7 +38,9 @@ struct ScratchpadEditorView: View {
 	@State private var analyzedLogic: [LogicKeyboardEntry] = []
 
 	/// A failure isn't kept on the scratchpad, since it says nothing about the English
-	@State private var run = TranslationRun<Never>.idle
+	private var run: TranslationRun<Never> {
+		scratchpadStore.run(for: scratchpad.id)
+	}
 
 	private var scratchpad: LogicScratchpad {
 		scratchpadStore.current
@@ -162,8 +163,6 @@ struct ScratchpadEditorView: View {
 		}
 		.onChange(of: scratchpadStore.currentID) {
 			// A scratchpad that's opened has already been written, no need to wait
-			stopTranslating()
-			run = .idle
 			englishSelection = nil
 			analyze()
 		}
@@ -172,10 +171,7 @@ struct ScratchpadEditorView: View {
 			englishSelection = nil
 		}
 		.onChange(of: scratchpad.english) {
-			// Only a failure goes, a translation that's running carries on
-			if run.failure != nil {
-				run = .idle
-			}
+			scratchpadStore.clearFailure(scratchpad.id)
 			if englishFocused {
 				scratchpadBinding.wrappedValue.source = .english
 			}
@@ -190,9 +186,6 @@ struct ScratchpadEditorView: View {
 		}
 		.onChange(of: letters) {
 			englishFollowsLogic()
-		}
-		.onDisappear {
-			stopTranslating()
 		}
 		.toolbar {
 			ToolbarItem(placement: .topBarTrailing) {
@@ -251,57 +244,11 @@ struct ScratchpadEditorView: View {
 	// MARK: - Translating
 
 	private func translate() {
-		let english = scratchpad.english
-		run = .idle
-
-		// Obviously bad input never reaches the server, and reads like any other translation issue
-		if let problem = EnglishValidator.problem(with: english) {
-			scratchpadBinding.wrappedValue.translation = Translation(
-				english: english,
-				issues: [TranslationIssue(severity: .error, message: problem)]
-			)
-			return
-		}
-
-		let id = scratchpad.id
-		let descriptors = scratchpad.descriptors
-
-		let task = Task {
-			do {
-				let translation = try await account.translate(english: english, letters: letters, descriptors: descriptors) { event in
-					guard !Task.isCancelled else { return }
-					run.apply(event)
-				}
-				guard !Task.isCancelled else { return }
-				run = .idle
-				apply(translation, english: english, in: id)
-			} catch {
-				guard !Task.isCancelled, !(error is CancellationError) else { return }
-				run = .failed(
-					error as? ServiceError
-						?? ServiceError(code: .internalError, message: error.localizedDescription)
-				)
-			}
-		}
-		run = .running(TranslationProgress(), task)
+		scratchpadStore.translate(scratchpad.id, letters: letters, account: account)
 	}
 
-	/// Closing the socket makes the server stop too
 	private func stopTranslating() {
-		run.cancel()
-	}
-
-	private func apply(_ translation: Translation, english: String, in id: LogicScratchpad.ID) {
-		// The scratchpad or its English changed while the server worked
-		guard scratchpad.id == id, scratchpad.english == english else { return }
-
-		// Never trust the server's logic blindly
-		guard LogicParser.parse(translation.entries).diagnostics.isEmpty else {
-			run = .failed(ServiceError(code: .internalError, message: "Server sent logic that doesn't parse"))
-			return
-		}
-
-		scratchpadStore.applyTranslation(translation, english: english)
+		scratchpadStore.stopTranslating(scratchpad.id)
 	}
 
 	/// Only for errors fixed by connecting a provider in Settings

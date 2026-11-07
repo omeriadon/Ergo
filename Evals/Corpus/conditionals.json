@@ -100,5 +100,17 @@
 		"verdict": "valid",
 		"tags": ["conditional", "whenever"],
 		"note": "'B whenever A', with the consequent first"
-	}
+	},
+  {
+    "id": "means-comma-premises",
+    "english": "Tiff means toff, tiff, therefore toff",
+    "kind": "argument",
+    "expected": {
+      "premises": ["X→Y", "X"],
+      "conclusion": "Y"
+    },
+    "verdict": "valid",
+    "tags": ["conditional", "means"],
+    "note": "Commas separate the premises, 'means' is a conditional, and made-up words are still claims"
+  }
 ]

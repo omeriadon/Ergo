@@ -195,3 +195,68 @@ struct TranslationScopeTests {
 		#expect(backend.requests.isEmpty)
 	}
 }
+
+// MARK: - Premises split wrongly
+
+/// What happened with "Tiff means toff, tiff, therefore toff": breakdown merged two premises, and formalize can't split them
+struct TranslationStructureTests {
+	let vocabulary = LogicInputVocabulary(letters: LogicLetters.defaults)
+	let english = "Tiff means toff, tiff, therefore toff"
+	let gate = #"{"kind": "argument", "reason": ""}"#
+	let claims = #"[{"meaning": "Tiff holds", "descriptor": "tiff"}, {"meaning": "Toff holds", "descriptor": "toff"}]"#
+
+	var merged: String {
+		#"{"premises": ["Tiff means toff, tiff"], "conclusion": "toff", "claims": \#(claims)}"#
+	}
+
+	var split: String {
+		#"{"premises": ["Tiff means toff", "tiff"], "conclusion": "toff", "claims": \#(claims)}"#
+	}
+
+	let different = #"{"matches": false, "differences": ["Expected the premise 'tiff means toff', the reading has none"], "structural": true}"#
+	let matches = #"{"matches": true, "differences": [], "structural": false}"#
+
+	func pipeline(_ backend: ScriptedBackend) -> TranslationPipeline {
+		TranslationPipeline(backend: backend, letters: LogicLetters.defaults)
+	}
+
+	@Test func structuralDifferencesGoBackToBreakdown() async throws {
+		let backend = ScriptedBackend([
+			"gate": [gate], "breakdown": [merged, split], "verify": [different, matches],
+			"formalize": [
+				#"{"premises": ["X"], "conclusion": "Y"}"#,
+				#"{"premises": ["X → Y", "X"], "conclusion": "Y"}"#,
+			],
+		])
+		let translated = try await pipeline(backend).translate(english)
+
+		#expect(translated.entries == vocabulary.entries(in: "X→Y\nX\n∴Y"))
+		#expect(translated.issues.isEmpty)
+
+		let retry = try JSONDecoder().decode(BreakdownStage.Input.self, from: Data(backend.lastInput("breakdown").utf8))
+		#expect(retry.previous?.premises == ["Tiff means toff, tiff"])
+		#expect(retry.problems == ["Expected the premise 'tiff means toff', the reading has none"])
+
+		// A fresh start for formalize, since its last try answered other premises
+		let formalize = try JSONDecoder().decode(FormalizeStage.Input.self, from: Data(backend.lastInput("formalize").utf8))
+		#expect(formalize.previous == nil)
+		#expect(formalize.premises == ["Tiff means toff", "tiff"])
+	}
+
+	@Test func logicThatNeverMatchedIsNotReturned() async throws {
+		let backend = ScriptedBackend([
+			"gate": [gate], "breakdown": [merged, merged, merged], "verify": [different, different, different],
+			"formalize": [#"{"premises": ["X"], "conclusion": "Y"}"#, #"{"premises": ["X"], "conclusion": "Y"}"#, #"{"premises": ["X"], "conclusion": "Y"}"#],
+		])
+		let translated = try await pipeline(backend).translate(english)
+
+		#expect(translated.entries.isEmpty)
+		#expect(translated.issues.first?.severity == .error)
+		#expect(translated.issues.contains { $0.message == "Expected the premise 'tiff means toff', the reading has none" })
+	}
+
+	@Test func anAnswerWithoutStructuralStillDecodes() throws {
+		let verdict = try JSONDecoder().decode(VerifyStage.Output.self, from: Data(#"{"matches": false, "differences": ["x"]}"#.utf8))
+		#expect(!verdict.structural)
+	}
+}

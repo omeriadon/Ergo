@@ -235,3 +235,11 @@ The log says only the event type and whether an account matched. Never the `sub`
 `swift test` is offline. Shell scripts stand in for `claude` and `codex`, so it never uses a real login, and a fake `AppleTokenVerifier` stands in for Apple. The socket and sync tests run a real server on a free port and talk to it with the app's own `ErgoClient`, and two real `SyncReplica`s converge through the actual route.
 
 Codex can't be called from the network this was built on, so its command line follows the 0.166 docs and `codex exec --help`, and is only exercised with fakes.
+
+## Ask
+
+`WS v1/ask` answers one turn of a conversation with the user's own CLI, streaming text, tool activity and buttons. It needs a signed-in account, and shares translation's one call at a time per account. The model comes from the `ask` key of the models file, which defaults to `claude-sonnet-5-5` and `gpt-6-luna`.
+
+- The CLI runs with none of its own tools. It reaches Ergo's over MCP at `http://127.0.0.1:<port>/v1/ask/tools/<token>`, so the runner user needs to reach the server on loopback.
+- The token is random, lasts as long as the answer, and is the route's only auth. It can read the library and add buttons to its own answer. The request log leaves it out.
+- `ErgoCatalog`'s resource bundle has to ship beside the binary. The Dockerfile already copies every `*.resources` directory.

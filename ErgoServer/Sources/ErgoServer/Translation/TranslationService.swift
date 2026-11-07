@@ -54,7 +54,7 @@ final class TranslationService: Sendable {
 			return Translation(english: request.english, issues: [TranslationIssue(severity: .error, message: problem)])
 		}
 
-		return try await run(request, account: account, database: database, logger: logger) { backend in
+		return try await withBackend(provider: request.provider, scope: request.scope.rawValue, account: account, database: database, logger: logger) { backend in
 			try await pipeline(for: request, backend: backend).translate(request.english, events: events)
 		} summary: { translation in
 			["issues": "\(translation.issues.count)"]
@@ -78,7 +78,7 @@ final class TranslationService: Sendable {
 			)
 		}
 
-		return try await run(request, account: account, database: database, logger: logger) { backend in
+		return try await withBackend(provider: request.provider, scope: request.scope.rawValue, account: account, database: database, logger: logger) { backend in
 			try await pipeline(for: request, backend: backend).breakDown(request.english, events: events)
 		} summary: { breakdown in
 			["premises": "\(breakdown.premises.count)", "issues": "\(breakdown.issues.count)"]
@@ -112,16 +112,17 @@ final class TranslationService: Sendable {
 
 	/// Opens the user's connection, runs `work` with it, one at a time per account, and turns whatever goes wrong into
 	/// a `ServiceError`. `summary` is what's worth logging about the result, never its text.
-	private func run<Result: Sendable>(
-		_ request: TranslateRequest,
+	func withBackend<Result: Sendable>(
+		provider: Provider,
+		scope: String,
 		account: UUID,
 		database: any Database,
 		logger: Logger,
 		_ work: (ProviderBackend) async throws -> Result,
 		summary: (Result) -> Logger.Metadata
 	) async throws -> Result {
-		guard let stored = try await Credential.find(request.provider, for: account, on: database), let id = stored.id else {
-			throw ServiceError(code: .notConnected, message: "\(request.provider.displayName) isn't connected")
+		guard let stored = try await Credential.find(provider, for: account, on: database), let id = stored.id else {
+			throw ServiceError(code: .notConnected, message: "\(provider.displayName) isn't connected")
 		}
 		let credential: ProviderCredential
 		do {
@@ -131,8 +132,8 @@ final class TranslationService: Sendable {
 				secret: vault.open(stored.sealed, account: account, provider: stored.provider)
 			)
 		} catch {
-			logger.error("Couldn't unseal a credential", metadata: ["provider": "\(request.provider)"])
-			throw ServiceError(code: .notConnected, message: "Couldn't read the saved \(request.provider.displayName) connection, connect it again")
+			logger.error("Couldn't unseal a credential", metadata: ["provider": "\(provider)"])
+			throw ServiceError(code: .notConnected, message: "Couldn't read the saved \(provider.displayName) connection, connect it again")
 		}
 
 		return try await exclusive(for: account) {
@@ -150,7 +151,7 @@ final class TranslationService: Sendable {
 				try? await Credential.markWorking(id, on: database)
 				var metadata: Logger.Metadata = [
 					"provider": "\(credential.provider)",
-					"scope": "\(request.scope.rawValue)",
+					"scope": "\(scope)",
 					"duration": "\(start.duration(to: .now))",
 				]
 				metadata.merge(summary(result)) { first, _ in first }

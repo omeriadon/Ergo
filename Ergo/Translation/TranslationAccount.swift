@@ -228,6 +228,28 @@ final class TranslationAccount {
 		}
 	}
 
+	/// Answers the last of `messages`. `events` hears the answer as it's written, what its tools do and the buttons it
+	/// adds. The server's failures are thrown as `ServiceError`s.
+	func ask(messages: [AskRequestMessage], events: (AskServerMessage) -> Void) async throws {
+		let (server, token) = try credentials()
+		let request = AskRequest(id: UUID(), provider: Defaults[.translationProvider], messages: messages)
+
+		try await signedOutOnUnauthorized(of: server) {
+			for try await message in ErgoClient(server: server, token: token).ask(request) {
+				switch message {
+					case .finished:
+						return
+					case let .failed(error):
+						throw error
+					default:
+						events(message)
+				}
+			}
+			try Task.checkCancellation()
+			throw Self.disconnected
+		}
+	}
+
 	private func credentials() throws -> (server: URL, token: String) {
 		let provider = Defaults[.translationProvider]
 		guard let server else {
@@ -268,7 +290,7 @@ final class TranslationAccount {
 
 	// MARK: - sign in
 
-	/// Set while this device is signed in, with Apple or an email, on `server`. Sync needs it, translation doesn't.
+	/// Set while this device is signed in, with Apple or an email, on `server`. Sync and Ask need it, translation doesn't.
 	private(set) var signedIn: SignedInAccount? {
 		didSet {
 			Defaults[.signedInAccount] = signedIn
@@ -276,6 +298,11 @@ final class TranslationAccount {
 	}
 
 	/// Signed in on the current server, but the Keychain couldn't be read. Sync backs off rather than signing out.
+	/// Signed in on the server this device is using now
+	var isSignedInHere: Bool {
+		signedIn != nil && signedIn?.server == server
+	}
+
 	var syncTokenUnavailable: Bool {
 		guard let signedIn, signedIn.server == server else { return false }
 		if case .unavailable = AccountKeychain.lookup(for: signedIn.server) {

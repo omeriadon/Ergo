@@ -27,6 +27,7 @@ A JSON object matching the schema:
 
 - `matches`: true when the reading claims exactly what the original does, nothing more and nothing less.
 - `differences`: each real difference in meaning. Empty when `matches` is true.
+- `structural`: true when a difference is about which premises and conclusion exist: one split in two, two merged into one, one missing or extra, or the wrong one marked as the conclusion. False when the premises are right and only how a formula is written is wrong, and when `matches` is true.
 
 ## What counts as a difference
 
@@ -46,6 +47,7 @@ Ergo reads English with these conventions, so these are never differences:
 - "either A or B", or plain "or", read as inclusive or
 - "A but B", "A, yet B" and "A although B" read as "A and B"
 - "whenever A, B" read as "if A, then B"
+- "A means B", "A implies B" and "A entails B" read as "if A, then B"
 - everyday "must", "can't", "has to" and generic "you" read as plain claims, with "it is not the case that" for "can't"
 - one word of an opposite pair read as the negation of the other: "the light is off" as "it is not the case that the light is on"
 - "exactly one of A, B, C" spelled out as at least one of them and no two together

@@ -117,7 +117,7 @@ final class ProcessRunner: Sendable {
 					environment: Self.environment(command.environment),
 					workingDirectory: FilePath(command.directory.path),
 					platformOptions: Self.options,
-					input: .none,
+					input: .string(command.input),
 					output: .sequence,
 					error: .combinedWithOutput
 				) { execution in

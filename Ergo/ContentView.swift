@@ -169,6 +169,7 @@ struct ContentView: View {
 	@Previewable @State var catalog = CatalogStore()
 	@Previewable @State var boardStore = BoardStore()
 	@Previewable @State var scratchpadStore = ScratchpadStore()
+	@Previewable @State var askStore = AskStore()
 	@Previewable @State var account = TranslationAccount()
 
 	ContentView()
@@ -176,6 +177,7 @@ struct ContentView: View {
 		.environment(catalog)
 		.environment(boardStore)
 		.environment(scratchpadStore)
+		.environment(askStore)
 		.environment(account)
 		.onAppear {
 			thing.startup()

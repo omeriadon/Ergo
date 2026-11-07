@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
+import ErgoCatalog
 import Foundation
 import Observation
 
@@ -82,10 +83,7 @@ final class CatalogStore {
 		_ name: String,
 		using index: CatalogIndex
 	) throws -> T {
-		guard let url = Bundle.main.url(
-			forResource: name,
-			withExtension: "json"
-		) else {
+		guard let url = LibraryCatalog.url(of: name) else {
 			throw CocoaError(.fileNoSuchFile)
 		}
 
@@ -150,7 +148,7 @@ final class CatalogStore {
 		category: LibraryContent,
 		in index: inout CatalogIndex
 	) throws {
-		guard let url = Bundle.main.url(forResource: name, withExtension: "json") else {
+		guard let url = LibraryCatalog.url(of: name) else {
 			throw CocoaError(.fileNoSuchFile)
 		}
 

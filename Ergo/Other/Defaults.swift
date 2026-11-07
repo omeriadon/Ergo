@@ -42,6 +42,11 @@ extension Defaults.Keys {
 extension Defaults.Keys {
 	static let selectedTab = Key<AppTab>("selectedTab", default: .board)
 
+	/// Conversations stay on the device for now. The server only ever sees the one being answered.
+	static let askConversations = Key<[AskConversation]>("askConversations", default: [])
+
+	static let currentAskConversationID = Key<AskConversation.ID?>("currentAskConversationID", default: nil)
+
 	static let libraryPath = Key<[LibraryRoute]>("libraryPath", default: [])
 
 	static let presentedSheet = Key<AppSheet?>("presentedSheet", default: nil)

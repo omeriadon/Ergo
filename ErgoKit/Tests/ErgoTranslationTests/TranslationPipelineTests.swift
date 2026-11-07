@@ -103,7 +103,7 @@ struct TranslationPipelineTests {
 
 		#expect(broken.count("formalize") == 3)
 		#expect(gaveUp.entries.isEmpty)
-		#expect(gaveUp.issues.first == TranslationIssue(severity: .error, message: "Couldn't write this as valid logic"))
+		#expect(gaveUp.issues.first == TranslationIssue(severity: .error, message: "Expected logic that means the same as the English, found none in 3 tries"))
 
 		let problems = ["Premise 1 '(': Expected statement inside brackets"]
 		#expect(events.all.dropFirst(3) == [
@@ -139,13 +139,16 @@ struct TranslationPipelineTests {
 		])
 	}
 
-	@Test func stillDifferentKeepsTheLogicAndWarns() async throws {
+	@Test func stillDifferentGivesNoLogic() async throws {
 		let stubborn = ScriptedBackend(["gate": [gate], "breakdown": [breakdown], "formalize": [good], "verify": [differs]])
 		let events = EventLog()
 		let warned = try await translate(stubborn, events: events)
 
-		#expect(!warned.entries.isEmpty)
-		#expect(warned.issues == [TranslationIssue(severity: .warning, message: "Reading says rains, original says rained")])
+		#expect(warned.entries.isEmpty)
+		#expect(warned.issues == [
+			TranslationIssue(severity: .error, message: "Expected logic that means the same as the English, found none in 3 tries"),
+			TranslationIssue(severity: .warning, message: "Reading says rains, original says rained"),
+		])
 		#expect(stubborn.count("verify") == 3)
 		#expect(events.all.filter {
 			if case .retrying = $0 {

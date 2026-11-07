@@ -8,11 +8,12 @@
 import ErgoProtocol
 import Vapor
 
-/// Turns away any app built against another protocol, before it can misread a reply. Apple's notifications are the
-/// one exception, since Apple sends them and has never heard of the header.
+/// Turns away any app built against another protocol, before it can misread a reply. Apple's notifications and the
+/// CLIs' tool calls are the exceptions, since neither comes from the app and neither has heard of the header.
 struct ProtocolVersionMiddleware: AsyncMiddleware {
 	func respond(to request: Request, chainingTo next: any AsyncResponder) async throws -> Response {
 		guard AppleNotificationController.isNotification(request)
+			|| AskToolController.isToolCall(request)
 			|| request.headers.first(name: ErgoProtocol.versionHeader) == String(ErgoProtocol.version)
 		else {
 			throw ServiceError(code: .outdatedApp, message: "Expected Ergo with protocol \(ErgoProtocol.version), update the app")

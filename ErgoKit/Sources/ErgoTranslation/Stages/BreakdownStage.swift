@@ -20,11 +20,26 @@ public enum BreakdownStage: TranslationStage {
 		/// as one of these takes its text as its descriptor, so the claim keeps its letter. Missing when the board has none.
 		public let descriptors: [String]?
 
-		public init(english: String, maximumClaims: Int, descriptorWordLimit: Int, descriptors: [String]? = nil) {
+		/// The last breakdown, when reading its logic back showed it split the text wrongly. Missing on the first try.
+		public let previous: Output?
+
+		/// What was wrong with `previous`. Missing on the first try.
+		public let problems: [String]?
+
+		public init(
+			english: String,
+			maximumClaims: Int,
+			descriptorWordLimit: Int,
+			descriptors: [String]? = nil,
+			previous: Output? = nil,
+			problems: [String]? = nil
+		) {
 			self.english = english
 			self.maximumClaims = maximumClaims
 			self.descriptorWordLimit = descriptorWordLimit
 			self.descriptors = descriptors
+			self.previous = previous
+			self.problems = problems
 		}
 	}
 

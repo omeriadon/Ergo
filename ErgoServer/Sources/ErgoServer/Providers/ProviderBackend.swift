@@ -145,7 +145,7 @@ struct ProviderBackend: TranslationBackend {
 		return try? JSONDecoder().decode(Stage.Output.self, from: Data(answer.utf8))
 	}
 
-	private func saveRefreshedAuth(from file: URL, replacing secret: Secret, in run: RunDirectory) async {
+	func saveRefreshedAuth(from file: URL, replacing secret: Secret, in run: RunDirectory) async {
 		guard let contents = run.read(file), contents != secret.value, CodexAuthFile.problem(with: contents) == nil else {
 			return
 		}

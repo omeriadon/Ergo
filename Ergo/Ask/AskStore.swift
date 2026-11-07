@@ -1,0 +1,202 @@
+//
+//  AskStore.swift
+//  Ergo
+//
+//  Created by Adon Omeri on 6/11/2026.
+//
+
+import Defaults
+import ErgoProtocol
+import SwiftUI
+
+/// Every conversation, and which one the Ask tab is showing. Answers are kept here and not on a view, so one carries on
+/// while you're on another tab or another conversation, and only the stop button ends it.
+@MainActor
+@Observable
+final class AskStore {
+	/// Where an answer that's being written has got to
+	struct Run {
+		let task: Task<Void, Never>
+
+		/// What its tools are doing, while it isn't writing
+		var activity: String?
+	}
+
+	// MARK: - conversations
+
+	private(set) var conversations: [AskConversation]
+
+	/// Newest first
+	var sortedConversations: [AskConversation] {
+		conversations.sorted { $0.modified > $1.modified }
+	}
+
+	private(set) var currentID: AskConversation.ID? {
+		didSet {
+			Defaults[.currentAskConversationID] = currentID
+		}
+	}
+
+	/// Stays out of the list until something's been asked
+	private var draft = AskConversation()
+
+	var current: AskConversation {
+		conversations.first { $0.id == currentID } ?? draft
+	}
+
+	private(set) var runs: [AskConversation.ID: Run] = [:]
+
+	/// Why the last answer failed, until it's tried again
+	private(set) var failures: [AskConversation.ID: ServiceError] = [:]
+
+	init() {
+		conversations = Defaults[.askConversations]
+		currentID = Defaults[.currentAskConversationID]
+	}
+
+	func newConversation() {
+		draft = AskConversation()
+		currentID = nil
+	}
+
+	func open(_ id: AskConversation.ID) {
+		currentID = id
+	}
+
+	func delete(_ id: AskConversation.ID) {
+		stop(id)
+		conversations.removeAll { $0.id == id }
+		failures[id] = nil
+		if currentID == id {
+			newConversation()
+		}
+		save()
+	}
+
+	// MARK: - asking
+
+	func send(_ text: String, account: TranslationAccount) {
+		let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+		guard !text.isEmpty, runs[current.id] == nil else { return }
+
+		var conversation = current
+		conversation.messages.append(AskMessage(role: .user, text: text))
+		write(conversation)
+		answer(conversation.id, account: account)
+	}
+
+	/// Asks the last question again after a failure, without whatever part of an answer it got to
+	func retry(account: TranslationAccount) {
+		var conversation = current
+		if conversation.messages.last?.role == .assistant {
+			conversation.messages.removeLast()
+			write(conversation)
+		}
+		guard conversation.messages.last?.role == .user else { return }
+		answer(conversation.id, account: account)
+	}
+
+	/// Keeps what's been written so far. Closing the socket makes the server stop too.
+	func stop(_ id: AskConversation.ID) {
+		runs[id]?.task.cancel()
+		runs[id] = nil
+		save()
+	}
+
+	private func answer(_ id: AskConversation.ID, account: TranslationAccount) {
+		failures[id] = nil
+		let messages = Self.request(from: conversation(id)?.messages ?? [])
+		// One message for the whole answer, added to as it arrives
+		let answerID = UUID()
+
+		let task = Task {
+			do {
+				try await account.ask(messages: messages) { event in
+					guard !Task.isCancelled else { return }
+					apply(event, to: answerID, in: id)
+				}
+				guard !Task.isCancelled else { return }
+				runs[id] = nil
+				save()
+			} catch {
+				guard !Task.isCancelled, !(error is CancellationError) else { return }
+				runs[id] = nil
+				failures[id] = error as? ServiceError
+					?? ServiceError(code: .internalError, message: error.localizedDescription)
+				save()
+			}
+		}
+		runs[id] = Run(task: task)
+	}
+
+	private func apply(_ event: AskServerMessage, to answerID: AskMessage.ID, in id: AskConversation.ID) {
+		guard var conversation = conversation(id) else { return }
+		func updateAnswer(_ update: (inout AskMessage) -> Void) {
+			if let index = conversation.messages.firstIndex(where: { $0.id == answerID }) {
+				update(&conversation.messages[index])
+			} else {
+				var answer = AskMessage(id: answerID, role: .assistant, text: "")
+				update(&answer)
+				conversation.messages.append(answer)
+			}
+			write(conversation)
+		}
+
+		switch event {
+			case let .text(text):
+				runs[id]?.activity = nil
+				updateAnswer { $0.text += text }
+
+			case let .tool(activity):
+				runs[id]?.activity = activity.summary
+
+			case let .action(action):
+				updateAnswer { answer in
+					if !answer.actions.contains(action) {
+						answer.actions.append(action)
+					}
+				}
+
+			case .finished, .failed, .unknown:
+				break
+		}
+	}
+
+	/// The newest messages that fit, since the server turns away what's longer. A cut can't start on an answer.
+	static func request(from messages: [AskMessage]) -> [AskRequestMessage] {
+		var kept: [AskRequestMessage] = []
+		var characters = 0
+		for message in messages.reversed() where !message.text.isEmpty {
+			characters += message.text.count
+			guard characters <= AskRequest.characterLimit else { break }
+			kept.insert(AskRequestMessage(role: message.role, text: message.text), at: 0)
+		}
+		if kept.first?.role == .assistant {
+			kept.removeFirst()
+		}
+		return kept
+	}
+
+	// MARK: - storing
+
+	private func conversation(_ id: AskConversation.ID) -> AskConversation? {
+		conversations.first { $0.id == id } ?? (draft.id == id ? draft : nil)
+	}
+
+	private func write(_ conversation: AskConversation) {
+		var conversation = conversation
+		conversation.modified = .now
+
+		if let index = conversations.firstIndex(where: { $0.id == conversation.id }) {
+			conversations[index] = conversation
+		} else {
+			conversations.append(conversation)
+			currentID = conversation.id
+		}
+	}
+
+	/// Not on every word of an answer, only when one ends
+	func save() {
+		Defaults[.askConversations] = conversations
+	}
+}

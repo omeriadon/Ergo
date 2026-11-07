@@ -5,6 +5,8 @@
 //  Created by Adon Omeri on 5/11/2026.
 //
 
+import ErgoAsk
+import ErgoCatalog
 import Foundation
 import Vapor
 
@@ -22,6 +24,8 @@ struct ErgoServices: Sendable {
 	/// What an unknown email's password is checked against, so it takes as long as a known one's
 	let dummyPasswordHash: String
 	let translations: TranslationService
+	let ask: AskService
+	let askTools: AskToolServer
 	let verifier: ConnectionVerifier
 	let apple: AppleTokenVerifier
 	let syncLimits: SyncLimits
@@ -46,7 +50,10 @@ struct ErgoServices: Sendable {
 		appleNotificationLimiter = CreateAccountLimiter(limit: config.appleNotificationsPerMinute, window: 60)
 		appleNotifications = SeenNotifications()
 		dummyPasswordHash = try Bcrypt.hash(UUID().uuidString, cost: config.passwordCost)
-		translations = TranslationService(vault: vault, config: config, runner: runner)
+		let translations = TranslationService(vault: vault, config: config, runner: runner)
+		self.translations = translations
+		ask = AskService(translations: translations)
+		askTools = try AskToolServer(tools: AskTools(catalog: LibraryCatalog.load()))
 		self.verifier = verifier ?? .live(config: config, runner: runner)
 		self.apple = apple ?? .live(applicationIdentifier: config.appleApplicationID)
 		syncLimits = SyncLimits(requestsPerMinute: config.syncsPerMinute)

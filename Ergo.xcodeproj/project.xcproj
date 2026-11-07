@@ -84,11 +84,19 @@
           "build-phase": { "build-phase": "frameworks" },
         }, {
           "package": "ErgoKit",
+          "product-name": "ErgoCatalog",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ErgoKit",
           "product-name": "ErgoClient",
           "build-phase": { "build-phase": "frameworks" },
         }, {
           "package": "ErgoKit",
           "product-name": "ErgoLogic",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ErgoKit",
+          "product-name": "ErgoMarkdown",
           "build-phase": { "build-phase": "frameworks" },
         }, {
           "package": "ErgoKit",

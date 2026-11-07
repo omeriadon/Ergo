@@ -13,8 +13,11 @@ import Foundation
 /// 2. Gate: is it an argument, claims, or neither
 /// 3. Breakdown: premises, conclusion, and up to six simple claims with descriptors
 /// 4. Formalize, then compile with `LogicParser`, feeding errors back for another try
-/// 5. Verify: read the logic back with `LogicEnglish` and ask whether it still means the same,
-///    feeding differences back the same way
+/// 5. Verify: read the logic back with `LogicEnglish` and ask whether it still means the same, feeding differences
+///    back the same way, or to breakdown when the premises themselves are wrong, which formalize isn't allowed to change
+///
+/// Logic is only ever returned once it has compiled and been verified. Running out of tries is a failure, and the
+/// differences come back as issues, since logic known to be wrong is worse than none.
 ///
 /// `breakDown` runs only steps 1 to 3, for pasted arguments that become several statements.
 ///
@@ -51,25 +54,23 @@ public struct TranslationPipeline: Sendable {
 			return failed
 		}
 
-		let understood: Understood
+		var understood: Understood
 		switch try await understand(english, calls: &calls) {
 			case let .failure(rejection):
 				return failure(rejection.message)
 			case let .success(found):
 				understood = found
 		}
-		let (gate, breakdown, slots) = (understood.gate, understood.breakdown, understood.slots)
-
-		result.descriptors = slots.descriptors
-
-		let conclusion = gate.kind == .argument && !breakdown.conclusion.isEmpty ? breakdown.conclusion : nil
-		await events(.foundClaims(premises: breakdown.premises, conclusion: conclusion ?? "", descriptors: result.descriptors))
+		result.descriptors = understood.slots.descriptors
+		await events(.foundClaims(premises: understood.breakdown.premises, conclusion: understood.conclusion ?? "", descriptors: result.descriptors))
 
 		var previous: FormalizeStage.Output?
 		var problems: [String] = []
 
 		for attempt in stride(from: 1, through: backend.policy.attempts, by: 1) {
-			/// Only problems that feed into another try are worth announcing
+			let (breakdown, slots, conclusion) = (understood.breakdown, understood.slots, understood.conclusion)
+
+			// Only problems that feed into another try are worth announcing
 			func retry(_ rejected: [String]) async {
 				problems = rejected
 				if attempt < backend.policy.attempts {
@@ -122,13 +123,19 @@ public struct TranslationPipeline: Sendable {
 			}
 
 			await retry(verdict.differences)
-			result.issues = verdict.differences.map { TranslationIssue(severity: .warning, message: $0) }
+
+			// Formalize has to keep the premises it's given, so only breakdown can fix these
+			guard verdict.structural, attempt < backend.policy.attempts else { continue }
+			if case let .success(found) = try await split(english, gate: understood.gate, calls: &calls, previous: breakdown, problems: verdict.differences) {
+				understood = found
+				result.descriptors = found.slots.descriptors
+				previous = nil
+				problems = []
+				await events(.foundClaims(premises: found.breakdown.premises, conclusion: found.conclusion ?? "", descriptors: result.descriptors))
+			}
 		}
 
-		if result.entries.isEmpty {
-			return failure("Couldn't write this as valid logic", notes: problems)
-		}
-		return result
+		return failure("Expected logic that means the same as the English, found none in \(backend.policy.attempts) tries", notes: problems)
 	}
 
 	/// Each statement on its own line, then ∴ and the conclusion. Problems are worded for the model to fix.
@@ -250,6 +257,11 @@ extension TranslationPipeline {
 		let gate: GateStage.Output
 		let breakdown: BreakdownStage.Output
 		let slots: ClaimSlots
+
+		/// Nil when the text only makes claims
+		var conclusion: String? {
+			gate.kind == .argument && !breakdown.conclusion.isEmpty ? breakdown.conclusion : nil
+		}
 	}
 
 	/// Every model call goes through here, so each one is announced and can be cancelled
@@ -281,7 +293,17 @@ extension TranslationPipeline {
 		guard gate.kind != .neither else {
 			return .failure(Rejection(message: gate.reason.isEmpty ? "Expected an argument or a claim" : gate.reason))
 		}
+		return try await split(english, gate: gate, calls: &calls)
+	}
 
+	/// Step 3, and again with what was wrong when verifying finds the premises themselves are off
+	func split(
+		_ english: String,
+		gate: GateStage.Output,
+		calls: inout Calls,
+		previous: BreakdownStage.Output? = nil,
+		problems: [String]? = nil
+	) async throws -> Result<Understood, Rejection> {
 		let own = Self.existing(descriptors)
 		let breakdown = try await calls.run(
 			BreakdownStage.self,
@@ -290,7 +312,9 @@ extension TranslationPipeline {
 				english: english,
 				maximumClaims: LogicLetters.slots.count,
 				descriptorWordLimit: LogicLetters.descriptorWordLimit,
-				descriptors: descriptors == nil ? nil : own.filter { !$0.isEmpty }
+				descriptors: descriptors == nil ? nil : own.filter { !$0.isEmpty },
+				previous: previous,
+				problems: problems
 			)
 		)
 		guard !breakdown.claims.isEmpty else {

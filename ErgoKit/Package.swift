@@ -3,7 +3,7 @@
 import PackageDescription
 
 /// What the app, the server and the evals share: the logic checker, the translation contract,
-/// the sync merge rules, the wire protocol and a client for it
+/// the sync merge rules, the wire protocol, a client for it, the library and what Ask does with it
 let package = Package(
 	name: "ErgoKit",
 	platforms: [
@@ -16,6 +16,9 @@ let package = Package(
 		.library(name: "ErgoSync", targets: ["ErgoSync"]),
 		.library(name: "ErgoProtocol", targets: ["ErgoProtocol"]),
 		.library(name: "ErgoClient", targets: ["ErgoClient"]),
+		.library(name: "ErgoCatalog", targets: ["ErgoCatalog"]),
+		.library(name: "ErgoAsk", targets: ["ErgoAsk"]),
+		.library(name: "ErgoMarkdown", targets: ["ErgoMarkdown"]),
 	],
 	targets: [
 		.target(name: "ErgoLogic"),
@@ -23,12 +26,17 @@ let package = Package(
 		.target(name: "ErgoSync"),
 		.target(name: "ErgoProtocol", dependencies: ["ErgoTranslation", "ErgoSync"]),
 		.target(name: "ErgoClient", dependencies: ["ErgoProtocol"]),
+		.target(name: "ErgoCatalog", resources: [.process("Resources")]),
+		.target(name: "ErgoAsk", dependencies: ["ErgoCatalog", "ErgoProtocol", "ErgoSync"]),
+		.target(name: "ErgoMarkdown"),
 
 		.testTarget(name: "ErgoLogicTests", dependencies: ["ErgoLogic"]),
 		.testTarget(name: "ErgoTranslationTests", dependencies: ["ErgoLogic", "ErgoTranslation"]),
 		.testTarget(name: "ErgoSyncTests", dependencies: ["ErgoSync"]),
 		.testTarget(name: "ErgoProtocolTests", dependencies: ["ErgoLogic", "ErgoTranslation", "ErgoSync", "ErgoProtocol"]),
 		.testTarget(name: "ErgoClientTests", dependencies: ["ErgoSync", "ErgoProtocol", "ErgoClient"]),
+		.testTarget(name: "ErgoAskTests", dependencies: ["ErgoAsk", "ErgoCatalog", "ErgoProtocol", "ErgoSync"]),
+		.testTarget(name: "ErgoMarkdownTests", dependencies: ["ErgoMarkdown"]),
 	],
 	swiftLanguageModes: [.v6]
 )

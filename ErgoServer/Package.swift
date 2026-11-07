@@ -24,6 +24,8 @@ let package = Package(
 				.product(name: "ErgoLogic", package: "ErgoKit"),
 				.product(name: "ErgoTranslation", package: "ErgoKit"),
 				.product(name: "ErgoProtocol", package: "ErgoKit"),
+				.product(name: "ErgoCatalog", package: "ErgoKit"),
+				.product(name: "ErgoAsk", package: "ErgoKit"),
 				.product(name: "Vapor", package: "vapor"),
 				.product(name: "Fluent", package: "fluent"),
 				.product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),

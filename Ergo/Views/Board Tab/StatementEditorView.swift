@@ -22,7 +22,7 @@ struct StatementEditorView: View {
 	@State private var englishSelection: TextSelection?
 	@FocusState private var englishFocused: Bool
 
-	/// Empty once the statement is gone (deleted on another device), until the screen moves on
+	/// Empty once the statement is gone (deleted on another device), until the sheet closes
 	private var statement: Statement {
 		boardStore.statement(statementID) ?? Statement(id: statementID)
 	}
@@ -33,51 +33,38 @@ struct StatementEditorView: View {
 	}
 
 	var body: some View {
-		VStack(alignment: .leading, spacing: 14) {
-			TextEditor(text: statementBinding.english, selection: $englishSelection)
-				.textEditorStyle(.plain)
-				.focused($englishFocused)
-				.accessibilityLabel("English editor")
-				.accessibilityIdentifier("board.englishEditor")
-		}
-		.padding(15)
-		.glassEffect(
-			.regular.interactive(),
-			in: RoundedRectangle(cornerRadius: 20)
-		)
-		.padding(15)
-		.frame(maxWidth: .infinity, maxHeight: .infinity)
-		.onChange(of: statementID) {
-			englishSelection = nil
-		}
-		.onChange(of: boardStore.remoteEdits) {
-			// Another device changed this board, and the selection was into the old English
-			englishSelection = nil
-		}
-		.toolbar {
-			ToolbarItem(placement: .topBarTrailing) {
-				// With the keyboard up the button puts it away, and then it closes the editor
-				Button(role: .confirm) {
-					if englishFocused {
-						englishFocused = false
-					} else {
-						dismiss()
-					}
-				} label: {
-					// Toolbar items don't pick up the animation on the body, so it has to be here
-					ZStack {
-						let symbol = englishFocused ? "checkmark" : "app.badge.checkmark"
-						Image(systemName: symbol)
-							.id(symbol)
-							.transition(.blurReplace)
-					}
-					.animation(.smooth, value: englishFocused)
+		TextEditor(text: statementBinding.english, selection: $englishSelection)
+			.textEditorStyle(.plain)
+			.focused($englishFocused)
+			.padding(.horizontal, 15)
+			.accessibilityLabel("English editor")
+			.accessibilityIdentifier("board.englishEditor")
+			.toolbarTitleDisplayMode(.inline)
+			.navigationTitle("Card")
+			.onAppear {
+				// Nothing to read yet, so it's ready to write in
+				if statement.english.isEmpty {
+					englishFocused = true
 				}
-				.buttonStyle(.glassProminent)
-				.accessibilityLabel("Done")
-				.accessibilityIdentifier("board.doneButton")
 			}
-		}
-		.animation(.easeInOut, value: englishFocused)
+			.onChange(of: statementID) {
+				englishSelection = nil
+			}
+			.onChange(of: boardStore.remoteEdits) {
+				// Another device changed this board, and the selection was into the old English
+				englishSelection = nil
+			}
+			.toolbar {
+				ToolbarItem(placement: .topBarTrailing) {
+					Button(role: .confirm) {
+						boardStore.save()
+						dismiss()
+					} label: {
+						Label("Done", systemImage: "checkmark")
+					}
+					.buttonStyle(.glassProminent)
+					.accessibilityIdentifier("board.doneButton")
+				}
+			}
 	}
 }

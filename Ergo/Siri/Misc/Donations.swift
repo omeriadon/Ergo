@@ -113,7 +113,7 @@ enum IntentDonations {
 	}
 
 	/// Nil when the catalog hasn't loaded or doesn't know the id; the donation is then skipped.
-	private static func entry(category: LibraryContent, id: String, catalog: CatalogStore) -> LibraryEntry? {
+	static func entry(category: LibraryContent, id: String, catalog: CatalogStore) -> LibraryEntry? {
 		switch category {
 			case .biases:
 				catalog.biases.biases.first { $0.id == id }.map { .bias(BiasEntity($0)) }

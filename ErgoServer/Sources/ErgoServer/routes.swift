@@ -19,6 +19,12 @@ func routes(_ app: Application) throws {
 		use: AppleNotificationController.receive
 	)
 
+	// The CLI's, not the app's: the token in the path is all the auth a run's tools have
+	let askTool: [PathComponent] = ErgoProtocol.Path.askTools.pathComponents + [":token"]
+	app.on(.POST, askTool, body: .collect(maxSize: "1mb"), use: AskToolController.receive)
+	app.get(askTool, use: AskToolController.refuse)
+	app.delete(askTool, use: AskToolController.refuse)
+
 	let signedIn = app.grouped(AccountAuthenticator())
 	let connection: [PathComponent] = ErgoProtocol.Path.connections.pathComponents + [":provider"]
 
@@ -46,6 +52,13 @@ func routes(_ app: Application) throws {
 	}
 
 	let synced = signedIn.grouped(RequireSignedIn())
+	// Not the async upgrade, like translate. A whole conversation can be sizeable.
+	synced.webSocket(ErgoProtocol.Path.ask.pathComponents, maxFrameSize: .init(integerLiteral: 1 << 21)) { request, socket in
+		let ask = AskSocket(request: request, socket: socket)
+		Task {
+			await ask.run()
+		}
+	}
 	synced.on(.POST, ErgoProtocol.Path.sync.pathComponents, body: .collect(maxSize: ByteCount(value: SyncLimit.requestBytes)), use: SyncController.sync)
 	// Registers straight away on the socket's event loop, so a push just after the upgrade can't be missed
 	synced.webSocket(ErgoProtocol.Path.syncLive.pathComponents, maxFrameSize: .init(integerLiteral: 1 << 12)) { request, socket in

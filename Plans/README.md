@@ -110,6 +110,7 @@ The formalize prompt (02) and the corpus (04) must agree on these:
 | English | Logic |
 |---|---|
 | if A, B / B if A / A only if B / whenever A, B | A→B, A→B, A→B, A→B |
+| A means B / A implies B / A entails B | A→B |
 | A if and only if B / A exactly when B | A↔B |
 | A unless B | ¬B→A (≡ A∨B) |
 | either A or B | A∨B (inclusive) |
