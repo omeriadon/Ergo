@@ -13,7 +13,7 @@ A JSON object:
 - `descriptorWordLimit`: the most words a descriptor may have.
 - `descriptors`: the labels the board already uses for its claims, including claims from other statements. Missing when the board has none.
 - `previous`: your last breakdown, when this is a retry. Missing on the first try.
-- `problems`: what was wrong with `previous`, found by writing it as logic and reading that back. Missing on the first try. Fix exactly these: they usually mean premises you split or merged wrongly, or a descriptor that doesn't name its claim.
+- `problems`: what was wrong with `previous`, found by writing it as logic and reading that back. Missing on the first try. Fix exactly these: they usually mean premises you split or merged wrongly.
 
 ## Output
 
@@ -31,7 +31,6 @@ A JSON object matching the schema:
 - "Since" and "because" mark a premise, not the conclusion. In "A because B" and "Since B, A", B is a premise and A is the conclusion.
 - A conclusion may come first: "Ella won't make it to dinner, because she's working late" has the conclusion "Ella won't make it to dinner".
 - "So", "therefore", "thus" and "hence" mark the conclusion: in "B, so A" and "B; therefore A", A is the conclusion.
-- "Must have" marks the conclusion when the other sentences give the reasons for it, wherever it comes: "Someone must have used the oven. It's still warm. It only stays warm if someone's using it" has the conclusion "Someone must have used the oven".
 - Each sentence, or each part separated by one of the markers above, is one premise. Don't split a premise at "and", "or", "but", "neither … nor", "unless" or "if": the logic step writes those as one formula.
 - A comma or semicolon that separates complete claims separates premises, like a full stop would. "A means B, A, therefore B" has two premises, "A means B" and "A", and the conclusion "B". A comma inside one claim's grammar doesn't: "If A, B" and "Either A, or B" are one premise each.
 - Keep the premises in the order they appear in the text.
@@ -44,7 +43,6 @@ A JSON object matching the schema:
 
 - **Claims are positive and atomic.** A claim says one simple thing, with no "not", "and", "or", "if", "unless", "because" inside it. "The ground is not wet" is the claim "The ground is wet", negated in the logic. "Kim and Lee passed" is two claims, "Kim passed" and "Lee passed". "Nobody's home" is the negation of "Someone is home".
 - **The same claim reworded is one claim.** Different tense, mood, pronouns or phrasing don't make a new claim: "it rains", "it's raining" and "it rained" are one claim, as are "the ground gets wet" and "the ground is wet", and "the alarm had gone off" and "the alarm didn't go off" (negated). Ask whether the argument treats them as the same fact.
-- **An argument's reasoning usually joins its claims, so check every pair before you answer.** When two wordings could be one fact, they are one claim. "Jake will pick you up" and "Jake can't make it" are one claim, negated in the second. So are "ordering the ice cream" and "getting the ice cream", "make it to dinner" and "come to dinner", and "it's still warm" and "it stays warm". Never split a claim just because the wording changes, even though the argument would then not connect.
 - Different subjects or different facts are different claims: "Kim passed" and "Lee passed" are two claims.
 - **Opposite words are their own claim**, unless the text uses both words of the pair. "The light is off" on its own is the claim "The light is off". But when the text says both "on" and "off" (or "wet" and "dry", "open" and "closed"), they are one claim, written with the positive-sounding word ("The light is on"), and the other is its negation, so the logic connects.
 - Everyday "must", "can't", "has to" and generic "you" don't change the claim: "It must have rained" is the claim "It rained", "Kim can't swim" is the negation of "Kim can swim", and "You get wet if you go out" is about the claims "You get wet" and "You go out".
@@ -60,5 +58,4 @@ A JSON object matching the schema:
 - No full stop or other punctuation at the end.
 - Positive, like the claim: never "not …".
 - Distinct from every other descriptor, and recognisable on its own as that claim.
-- **It still says the claim.** To fit the limit, drop small words and details, never the words that say what the claim is. "I have a library card" is "have library card", never "i have a library", which is a different claim. "Ella makes it to dinner" is "ella attends dinner", never "ella makes dinner", which means cooking it, or "ella makes it", which doesn't say what to.
 - **Reuse the board's `descriptors`.** When a claim means the same as one of them, in any wording, give the claim exactly that descriptor, copied character for character, instead of a new label. Another step uses an exact match to keep the claim's letter. Only write a new descriptor for a claim none of them describes. Never reuse one for a claim that means something different, and never use the same descriptor for two claims.

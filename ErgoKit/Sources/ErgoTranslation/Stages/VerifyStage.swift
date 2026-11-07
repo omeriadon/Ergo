@@ -51,6 +51,6 @@ public enum VerifyStage: TranslationStage {
 	public static let outputSchema = JSONSchema.object([
 		.init("matches", .boolean(description: "Whether the reading claims exactly what the original does, nothing more and nothing less")),
 		.init("differences", .array(.string(), description: "Each difference in meaning, short, in the style of a compiler error")),
-		.init("structural", .boolean(description: "Whether a difference is premises or a conclusion that are split, merged, missing or extra, or a label that names a different claim, rather than how a formula is written")),
+		.init("structural", .boolean(description: "Whether a difference is premises or a conclusion that are split, merged, missing or extra, rather than how a formula is written")),
 	])
 }
