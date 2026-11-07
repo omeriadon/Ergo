@@ -121,7 +121,7 @@ final class ProcessRunner: Sendable {
 					output: .sequence,
 					error: .combinedWithOutput
 				) { execution in
-					for try await line in execution.standardOutput.strings() {
+					for try await line in execution.standardOutput.strings(bufferingPolicy: .maxLineLength(Self.lineLimit)) {
 						await lines(line)
 					}
 				}.terminationStatus
@@ -132,7 +132,61 @@ final class ProcessRunner: Sendable {
 		}
 	}
 
+	/// What to do after hearing a line from a CLI that's talked to as it runs
+	struct Reply: Sendable {
+		var send: [String] = []
+
+		/// Closes its stdin, which is how it's told to exit
+		var isDone = false
+	}
+
+	/// For a CLI that has to be answered as it goes: writes `opening`, hands each line of stdout to `lines`, and writes
+	/// whatever comes back. Stderr is dropped, so it can't land in the middle of a line.
+	func converse(
+		_ command: Command,
+		in directory: RunDirectory,
+		timeout: Duration,
+		opening: String,
+		lines: @escaping @Sendable (String) async -> Reply
+	) async throws -> TerminationStatus {
+		try await withSlot(in: directory) {
+			let (executable, arguments) = self.launch(command)
+
+			let status = try await self.withTimeout(timeout) {
+				try await Subprocess.run(
+					executable,
+					arguments: arguments,
+					environment: Self.environment(command.environment),
+					workingDirectory: FilePath(command.directory.path),
+					platformOptions: Self.options,
+					input: .inputWriter,
+					output: .sequence,
+					error: .discarded
+				) { execution in
+					let writer = execution.standardInputWriter
+					_ = try await writer.write(opening + "\n", using: UTF8.self)
+
+					for try await line in execution.standardOutput.strings(bufferingPolicy: .maxLineLength(Self.lineLimit)) {
+						let reply = await lines(line)
+						for message in reply.send {
+							_ = try await writer.write(message + "\n", using: UTF8.self)
+						}
+						if reply.isDone {
+							try await writer.finish()
+						}
+					}
+				}.terminationStatus
+			}
+
+			try Task.checkCancellation()
+			return status
+		}
+	}
+
 	// MARK: - Helpers
+
+	/// A tool's whole result can come back through the CLI as one line
+	private static let lineLimit = 8 << 20
 
 	private func withSlot<T>(in directory: RunDirectory, _ body: () async throws -> T) async throws -> T {
 		try await slots.acquire()

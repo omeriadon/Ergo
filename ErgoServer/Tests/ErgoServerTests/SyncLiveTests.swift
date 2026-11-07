@@ -177,6 +177,7 @@ struct SyncLiveTests {
 			let newLinkID = newBoardID()
 			let boards = (0 ..< 3).map { _ in newBoardID() }
 			let statements = (0 ..< 3).map { _ in newBoardID() }
+			let scratchpads = (0 ..< 2).map { _ in newBoardID() }
 			let bookmarks = ["fallacy.strawman", "razor.occam"]
 
 			for step in 0 ..< 60 {
@@ -191,8 +192,9 @@ struct SyncLiveTests {
 						let position: JSONValue = ["x": .number(Double(step)), "y": .number(Double(index))]
 						devices[index].replica.recordLocal(kind: .statement, id: statement, fields: ["board": .string(board), "position": position])
 					case 2:
+						let scratchpad = scratchpads.randomElement(using: &random) ?? scratchpads[0]
 						let slot = Int.random(in: 0 ..< SyncFieldName.descriptorSlots, using: &random)
-						devices[index].replica.recordLocal(kind: .board, id: board, fields: [SyncFieldName.descriptor(slot): .string("claim \(step)")])
+						devices[index].replica.recordLocal(kind: .scratchpad, id: scratchpad, fields: [SyncFieldName.descriptor(slot): .string("claim \(step)")])
 					case 3:
 						devices[index].replica.recordLocal(kind: .board, id: board, fields: ["deleted": .bool(Bool.random(using: &random))])
 					case 4:

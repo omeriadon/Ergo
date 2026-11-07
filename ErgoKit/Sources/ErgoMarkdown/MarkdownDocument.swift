@@ -18,21 +18,25 @@ public struct MarkdownDocument: Sendable, Hashable {
 		case list(ordered: Bool, items: [[Block]])
 		case table(header: [AttributedString], rows: [[AttributedString]])
 		case rule
+
+		/// Maths on its own line. It's text marked with `MarkdownMathAttribute`, like maths inside a line.
+		case math(AttributedString)
 	}
 
 	public let blocks: [Block]
 
 	public init(_ markdown: String) {
+		let math = MarkdownMathExtraction(markdown)
 		let options = AttributedString.MarkdownParsingOptions(
 			allowsExtendedAttributes: true,
 			interpretedSyntax: .full,
 			failurePolicy: .returnPartiallyParsedIfPossible
 		)
-		guard let parsed = try? AttributedString(markdown: markdown, options: options) else {
+		guard let parsed = try? AttributedString(markdown: math.markdown, options: options) else {
 			blocks = markdown.isEmpty ? [] : [.paragraph(AttributedString(markdown))]
 			return
 		}
-		blocks = Self.blocks(in: Node.tree(of: parsed).children)
+		blocks = Self.blocks(in: Node.tree(of: parsed).children, math: math)
 	}
 
 	// MARK: - Tree
@@ -70,17 +74,20 @@ public struct MarkdownDocument: Sendable, Hashable {
 		}
 	}
 
-	private static func blocks(in nodes: [Node]) -> [Block] {
-		nodes.compactMap(block)
+	private static func blocks(in nodes: [Node], math: MarkdownMathExtraction) -> [Block] {
+		nodes.compactMap { block($0, math: math) }
 	}
 
-	private static func block(_ node: Node) -> Block? {
+	private static func block(_ node: Node, math: MarkdownMathExtraction) -> Block? {
 		guard let kind = node.kind else { return nil }
 		switch kind {
 			case let .header(level):
-				return .heading(level: level, text: node.text)
+				return .heading(level: level, text: math.restored(node.text))
 			case .paragraph:
-				return .paragraph(node.text)
+				if let display = math.display(in: node.text) {
+					return .math(display)
+				}
+				return .paragraph(math.restored(node.text))
 			case let .codeBlock(language):
 				var code = String(node.text.characters)
 				if code.hasSuffix("\n") {
@@ -88,25 +95,25 @@ public struct MarkdownDocument: Sendable, Hashable {
 				}
 				return .code(language: language, text: code)
 			case .blockQuote:
-				return .quote(blocks(in: node.children))
+				return .quote(blocks(in: node.children, math: math))
 			case .orderedList:
-				return .list(ordered: true, items: node.children.map { blocks(in: $0.children) })
+				return .list(ordered: true, items: node.children.map { blocks(in: $0.children, math: math) })
 			case .unorderedList:
-				return .list(ordered: false, items: node.children.map { blocks(in: $0.children) })
+				return .list(ordered: false, items: node.children.map { blocks(in: $0.children, math: math) })
 			case .thematicBreak:
 				return .rule
 			case .table:
-				return table(node)
+				return table(node, math: math)
 			default:
 				return nil
 		}
 	}
 
-	private static func table(_ node: Node) -> Block {
+	private static func table(_ node: Node, math: MarkdownMathExtraction) -> Block {
 		var header: [AttributedString] = []
 		var rows: [[AttributedString]] = []
 		for row in node.children {
-			let cells = row.children.map(\.text)
+			let cells = row.children.map { math.restored($0.text) }
 			if case .tableHeaderRow = row.kind {
 				header = cells
 			} else {

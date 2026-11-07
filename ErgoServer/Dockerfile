@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-#
 # Ergo's translation server, with Claude Code and Codex. The build context is the repository root, since it needs ../ErgoKit:
 #
 #   docker build -f ErgoServer/Dockerfile -t ergo-server .
@@ -20,11 +18,12 @@ WORKDIR /src
 COPY ErgoKit/ ErgoKit/
 COPY ErgoServer/ ErgoServer/
 
-# .build lives in a cache mount that outlasts each build, so a change only recompiles what it touches
+# .build lives in a cache mount that outlasts each build, so a change only recompiles what it touches.
+# Package.resolved is used as committed, so a deploy never spends time resolving and never picks up a new dependency.
 RUN --mount=type=cache,id=ergo-server-build,target=/src/ErgoServer/.build \
 	cd ErgoServer \
-	&& swift build -c release --product ErgoServer --static-swift-stdlib \
-	&& bin="$(swift build -c release --show-bin-path)" \
+	&& swift build -c release --product ErgoServer --static-swift-stdlib --force-resolved-versions \
+	&& bin="$(swift build -c release --show-bin-path --force-resolved-versions)" \
 	&& mkdir /staging \
 	&& cp "$bin/ErgoServer" /staging/ \
 	&& find -L "$bin" -maxdepth 1 \( -name '*.bundle' -o -name '*.resources' \) -exec cp -RL {} /staging/ \; \

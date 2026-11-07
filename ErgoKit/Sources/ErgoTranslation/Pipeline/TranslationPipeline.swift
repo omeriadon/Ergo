@@ -124,7 +124,7 @@ public struct TranslationPipeline: Sendable {
 
 			await retry(verdict.differences)
 
-			// Formalize has to keep the premises it's given, so only breakdown can fix these
+			// Formalize has to keep the premises and labels it's given, so only breakdown can fix these
 			guard verdict.structural, attempt < backend.policy.attempts else { continue }
 			if case let .success(found) = try await split(english, gate: understood.gate, calls: &calls, previous: breakdown, problems: verdict.differences) {
 				understood = found

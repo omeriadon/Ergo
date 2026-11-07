@@ -164,7 +164,7 @@ struct AskToolServerTests {
 		let (text, isError) = try #require(toolText(reply))
 		#expect(!isError)
 		#expect(text.contains("[Straw man](ergo://intent/open-library-entry?category=fallacies&id=straw-man)"))
-		#expect(await heard.messages == [.tool(AskToolActivity(tool: "search_library", summary: "Searching the library for 'straw'"))])
+		#expect(await heard.messages == [.tool(AskToolActivity(tool: "search_library", summary: "Searching the library for 'straw'", record: "Searched the library for 'straw'"))])
 	}
 
 	@Test func readingAnEntryGivesAllOfIt() async throws {
@@ -246,5 +246,55 @@ struct AskCLIStreamTests {
 		]
 		#expect(lines.compactMap { stream.feed($0) }.joined() == "First\n\nSecond")
 		#expect(String(decoding: stream.output, as: UTF8.self).contains("turn.completed"))
+	}
+}
+
+struct CodexAppServerSessionTests {
+	private func sent(_ outputs: [CodexAppServerSession.Output]) -> [[String: Any]] {
+		outputs.compactMap { output in
+			guard case let .send(line) = output else { return nil }
+			return try? JSONSerialization.jsonObject(with: Data(line.utf8)) as? [String: Any]
+		}
+	}
+
+	@Test func startsAThreadThenATurnWithThePrompt() throws {
+		var session = CodexAppServerSession(prompt: "The prompt", directory: "/work")
+		let opening = try #require(JSONSerialization.jsonObject(with: Data(session.opening.utf8)) as? [String: Any])
+		#expect(opening["method"] as? String == "initialize")
+
+		let afterInitialize = sent(session.feed(#"{"id":1,"result":{"userAgent":"x"}}"#))
+		#expect(afterInitialize.map { $0["method"] as? String } == ["initialized", "thread/start"])
+
+		let afterThread = sent(session.feed(#"{"id":2,"result":{"thread":{"id":"t1","preview":""}}}"#))
+		let turn = try #require(afterThread.first)
+		#expect(turn["method"] as? String == "turn/start")
+		let params = try #require(turn["params"] as? [String: Any])
+		#expect(params["threadId"] as? String == "t1")
+		#expect((params["input"] as? [[String: Any]])?.first?["text"] as? String == "The prompt")
+	}
+
+	@Test func streamsDeltasAndSeparatesMessages() {
+		var session = CodexAppServerSession(prompt: "p", directory: "/w")
+		var outputs = session.feed(#"{"method":"item/agentMessage/delta","params":{"threadId":"t","turnId":"u","itemId":"a","delta":"one "}}"#)
+		outputs += session.feed(#"{"method":"item/agentMessage/delta","params":{"threadId":"t","turnId":"u","itemId":"a","delta":"two"}}"#)
+		outputs += session.feed(#"{"method":"item/agentMessage/delta","params":{"threadId":"t","turnId":"u","itemId":"b","delta":"three"}}"#)
+		#expect(outputs == [.text("one "), .text("two"), .text("\n\nthree")])
+	}
+
+	@Test func retriesItHandlesItselfAreIgnored() {
+		var session = CodexAppServerSession(prompt: "p", directory: "/w")
+		#expect(session.feed(#"{"method":"error","params":{"error":{"message":"Reconnecting... 2/5"}}}"#).isEmpty)
+		#expect(session.feed("not json").isEmpty)
+	}
+
+	@Test func aTurnEndsOneWayOrTheOther() {
+		var session = CodexAppServerSession(prompt: "p", directory: "/w")
+		#expect(session.feed(#"{"method":"turn/completed","params":{"turn":{"status":"completed","error":null}}}"#) == [.finished])
+		#expect(session.feed(#"{"method":"turn/completed","params":{"turn":{"status":"failed","error":{"message":"Usage limit"}}}}"#) == [.failed("Usage limit")])
+	}
+
+	@Test func aRefusedRequestFails() {
+		var session = CodexAppServerSession(prompt: "p", directory: "/w")
+		#expect(session.feed(#"{"id":2,"error":{"code":-32600,"message":"No"}}"#) == [.failed("No")])
 	}
 }

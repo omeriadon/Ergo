@@ -61,12 +61,27 @@ public enum AskClientMessage: Codable, Sendable, Hashable {
 public struct AskToolActivity: Codable, Sendable, Hashable {
 	public let tool: String
 
-	/// "Searching the library for 'straw man'", for showing
+	/// "Searching the library for 'straw man'", for showing while it runs
 	public let summary: String
 
-	public init(tool: String, summary: String) {
+	/// "Searched the library for 'straw man'", for showing afterwards
+	public let record: String
+
+	public init(tool: String, summary: String, record: String? = nil) {
 		self.tool = tool
 		self.summary = summary
+		self.record = record ?? summary
+	}
+
+	private enum CodingKeys: String, CodingKey {
+		case tool, summary, record
+	}
+
+	public init(from decoder: any Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		tool = try container.decode(String.self, forKey: .tool)
+		summary = try container.decode(String.self, forKey: .summary)
+		record = try container.decodeIfPresent(String.self, forKey: .record) ?? summary
 	}
 }
 

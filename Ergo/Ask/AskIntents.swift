@@ -5,12 +5,13 @@
 //  Created by Adon Omeri on 6/11/2026.
 //
 
-import AppIntents
 import ErgoCatalog
 import ErgoProtocol
 import Foundation
 
-/// Runs what a link or a button in an answer asks for, through the same App Intents Siri and Shortcuts use
+/// Does what a link or a button in an answer asks for. Each case calls the same `NavigationManager` method its App Intent
+/// does. It can't call the intent itself: an intent's `@Dependency` only resolves inside the system's own intent flow,
+/// and `perform()` called from here is a crash.
 @MainActor
 enum AskIntents {
 	private static let libraryIDs: Set<String> = Set(LibraryCatalog.shared?.entries.map { "\($0.category)/\($0.id)" } ?? [])
@@ -32,30 +33,23 @@ enum AskIntents {
 		}
 	}
 
-	static func run(_ intent: AskIntent, navigation: NavigationManager, catalog: CatalogStore) async {
+	static func run(_ intent: AskIntent, navigation: NavigationManager) {
 		switch intent {
 			case let .openLibraryEntry(category, id):
-				guard let category = LibraryContent(rawValue: category), let entry = IntentDonations.entry(category: category, id: id, catalog: catalog) else { return }
-				let intent = OpenLibraryEntryIntent()
-				intent.target = entry
-				_ = try? await intent.perform()
+				guard let category = LibraryContent(rawValue: category) else { return }
+				navigation.openLibraryEntry(category: category, id: id)
 
 			case let .showLibraryList(category):
 				guard let category = LibraryContent(rawValue: category) else { return }
-				let intent = ShowLibraryListIntent()
-				intent.category = category
-				_ = try? await intent.perform()
+				navigation.showLibraryList(category)
 
 			case .openBookmarks:
-				// Siri brings the app forward to wherever the library is, a button has to go there itself
 				navigation.selectedTab = .library
-				_ = try? await OpenBookmarksIntent().perform()
+				navigation.libraryPath.append(.bookmarks)
 
 			case let .openTab(tab):
 				guard let tab = AppTab(rawValue: tab) else { return }
-				let intent = OpenTabIntent()
-				intent.tab = tab
-				_ = try? await intent.perform()
+				navigation.selectedTab = tab
 
 			case .unknown:
 				break

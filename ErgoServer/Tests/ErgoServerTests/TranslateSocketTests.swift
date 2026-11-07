@@ -473,7 +473,8 @@ struct TranslateSocketTests {
 		let scratch = try Scratch()
 		defer { scratch.remove() }
 		var config = ServerConfig.testing(scratch)
-		config.stageTimeout = .seconds(1)
+		// Long enough that the script has written its pid before the kill, even with every other test starting too
+		config.stageTimeout = .seconds(10)
 		config.claudePath = try FakeCLI.claude(in: scratch, ["gate": FakeCLI.sleeping(in: scratch)])
 
 		try await withLiveServer(config) { app, server in
@@ -481,7 +482,7 @@ struct TranslateSocketTests {
 
 			#expect(try await messages(client, request()) == [
 				.event(.started(step: .gate, attempt: 1)),
-				.failed(ServiceError(code: .timedOut, message: "Expected an answer from Claude within 1 second")),
+				.failed(ServiceError(code: .timedOut, message: "Expected an answer from Claude within 10 seconds")),
 			])
 			let cli = try #require(pid("pid", in: scratch))
 			#expect(!isRunning(cli))

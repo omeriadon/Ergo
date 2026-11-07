@@ -10,19 +10,17 @@ import SwiftUI
 /// The English of one statement of the current board, in a plain editor. It reads and writes through `BoardStore`,
 /// so it follows what other devices change.
 struct StatementEditorView: View {
-	@Environment(\.dismiss)
-	private var dismiss
-
 	@Environment(BoardStore.self)
 	private var boardStore
 
 	/// A statement of `boardStore.current`
 	let statementID: Statement.ID
+	let close: () -> Void
 
 	@State private var englishSelection: TextSelection?
 	@FocusState private var englishFocused: Bool
 
-	/// Empty once the statement is gone (deleted on another device), until the sheet closes
+	/// Empty once the statement is gone (deleted on another device), until the editor closes
 	private var statement: Statement {
 		boardStore.statement(statementID) ?? Statement(id: statementID)
 	}
@@ -58,7 +56,7 @@ struct StatementEditorView: View {
 				ToolbarItem(placement: .topBarTrailing) {
 					Button(role: .confirm) {
 						boardStore.save()
-						dismiss()
+						close()
 					} label: {
 						Label("Done", systemImage: "checkmark")
 					}

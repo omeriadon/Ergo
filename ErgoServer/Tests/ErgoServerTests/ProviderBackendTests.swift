@@ -110,10 +110,11 @@ struct ProviderBackendTests {
 		let scratch = try Scratch()
 		defer { scratch.remove() }
 		var config = ServerConfig.testing(scratch)
-		config.stageTimeout = .seconds(1)
+		// Long enough that the script has written its pid before the kill, even with every other test starting too
+		config.stageTimeout = .seconds(10)
 		config.claudePath = try FakeCLI.claude(in: scratch, ["gate": FakeCLI.sleeping(in: scratch)])
 
-		await #expect(throws: ProviderFailure.timedOut("Expected an answer from Claude within 1 second")) {
+		await #expect(throws: ProviderFailure.timedOut("Expected an answer from Claude within 10 seconds")) {
 			try await backend(config).run(GateStage.self, GateStage.Input(english: FakeCLI.english))
 		}
 		let pid = try #require(scratch.read("pid").flatMap { Int32($0.trimmingCharacters(in: .whitespacesAndNewlines)) })

@@ -10,3 +10,5 @@
 **/.build
 **/.swiftpm
 **/.DS_Store
+# SwiftPM only needs the test folders to exist, so a commit that only changes tests doesn't rebuild or restart the server
+**/Tests/**/*.swift

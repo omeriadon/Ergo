@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 6/11/2026.
 //
 
+import Defaults
 import ErgoProtocol
 import SwiftUI
 
@@ -80,8 +81,16 @@ private struct AskThreadView: View {
 	@Environment(TranslationAccount.self)
 	private var account
 
+	@Environment(\.accessibilityReduceMotion)
+	private var reduceMotion
+
+	@Default(.hapticsEnabled) private var hapticsEnabled
+
 	@State private var draft = ""
 	@State private var position = ScrollPosition(edge: .bottom)
+
+	/// Goes up with each message sent, for the button's bounce and the haptic
+	@State private var sent = 0
 	@FocusState private var composing: Bool
 
 	private var conversation: AskConversation {
@@ -96,10 +105,11 @@ private struct AskThreadView: View {
 		ScrollView {
 			LazyVStack(alignment: .leading, spacing: 20) {
 				ForEach(conversation.messages) { message in
-					AskMessageView(message: message)
+					AskMessageView(message: message, isAnswering: run != nil && message.id == conversation.messages.last?.id)
+						.transition(.asymmetric(insertion: .askSend, removal: .opacity))
 				}
 
-				if let run, conversation.messages.last?.role != .assistant || run.activity != nil {
+				if let run, isWaiting(for: run) {
 					AskActivityRow(activity: run.activity)
 				}
 
@@ -126,20 +136,51 @@ private struct AskThreadView: View {
 				text: $draft,
 				isFocused: $composing,
 				isRunning: run != nil,
+				sent: sent,
 				send: send,
 				stop: { store.stop(conversation.id) }
 			)
 		}
+		.sensoryFeedback(.impact(weight: .light), trigger: sent) { _, _ in hapticsEnabled }
 		.animation(.smooth, value: run?.activity)
 		.animation(.smooth, value: store.failures[conversation.id])
 	}
 
+	/// Nothing's being written yet, or it's gone off to look something up
+	private func isWaiting(for run: AskStore.Run) -> Bool {
+		guard let last = conversation.messages.last, last.role == .assistant, !last.text.isEmpty else { return true }
+		return run.activity != nil
+	}
+
 	private func send() {
-		store.send(draft, account: account)
-		draft = ""
-		withAnimation(.smooth) {
+		sent += 1
+		withAnimation(reduceMotion ? nil : .spring(duration: 0.45, bounce: 0.25)) {
+			store.send(draft, account: account)
+			draft = ""
 			position.scrollTo(edge: .bottom)
 		}
+	}
+}
+
+private extension AnyTransition {
+	/// A message rises out of the box it was written in, growing from the corner the send button's at
+	static var askSend: AnyTransition {
+		.modifier(
+			active: AskSendEffect(progress: 0),
+			identity: AskSendEffect(progress: 1)
+		)
+	}
+}
+
+private struct AskSendEffect: ViewModifier {
+	let progress: Double
+
+	func body(content: Content) -> some View {
+		content
+			.scaleEffect(0.85 + 0.15 * progress, anchor: .bottomTrailing)
+			.offset(y: 60 * (1 - progress))
+			.opacity(progress)
+			.blur(radius: 6 * (1 - progress))
 	}
 }
 
@@ -147,13 +188,14 @@ private struct AskThreadView: View {
 
 private struct AskMessageView: View {
 	let message: AskMessage
+	let isAnswering: Bool
 
 	var body: some View {
 		switch message.role {
 			case .user:
 				AskUserBubble(text: message.text)
 			case .assistant:
-				AskAnswerView(message: message)
+				AskAnswerView(message: message, isAnswering: isAnswering)
 		}
 	}
 }
@@ -180,41 +222,36 @@ private struct AskUserBubble: View {
 
 private struct AskAnswerView: View {
 	let message: AskMessage
+	let isAnswering: Bool
 
 	@Environment(NavigationManager.self)
 	private var navigation
-
-	@Environment(CatalogStore.self)
-	private var catalog
 
 	private var actions: [AskAction] {
 		message.actions.filter { AskIntents.canRun($0.intent) }
 	}
 
 	var body: some View {
-		VStack(alignment: .leading, spacing: 12) {
-			AskMarkdownView(text: message.text)
-				.textSelection(.enabled)
+		VStack(alignment: .leading, spacing: 8) {
+			AskToolsCaption(tools: message.tools, isAnswering: isAnswering)
 
-			Button("Copy", systemImage: "doc.on.doc") {
-				UIPasteboard.general.string = message.text
+			AskMarkdownView(text: message.text)
+
+			if !isAnswering, !message.text.isEmpty {
+				AskCopyButton(text: message.text)
+					.padding(.top, 2)
 			}
-			.labelStyle(.iconOnly)
-			.font(.footnote)
-			.foregroundStyle(.secondary)
-			.accessibilityLabel("Copy answer")
 
 			if !actions.isEmpty {
 				VStack(alignment: .leading, spacing: 8) {
 					ForEach(actions, id: \.self) { action in
 						Button(action.title) {
-							Task {
-								await AskIntents.run(action.intent, navigation: navigation, catalog: catalog)
-							}
+							AskIntents.run(action.intent, navigation: navigation)
 						}
 						.buttonStyle(.glass)
 					}
 				}
+				.padding(.top, 4)
 			}
 		}
 		.environment(\.openURL, OpenURLAction { url in
@@ -222,11 +259,35 @@ private struct AskAnswerView: View {
 			guard let intent = AskIntent(url: url) else {
 				return .systemAction
 			}
-			Task {
-				await AskIntents.run(intent, navigation: navigation, catalog: catalog)
-			}
+			AskIntents.run(intent, navigation: navigation)
 			return .handled
 		})
+	}
+}
+
+/// What it looked up for this answer. Having looked up nothing is worth saying too, since answers are meant to come from
+/// the library.
+private struct AskToolsCaption: View {
+	let tools: [String]
+	let isAnswering: Bool
+
+	private var caption: String? {
+		if !tools.isEmpty {
+			return tools.joined(separator: " · ")
+		}
+		return isAnswering ? nil : "Didn't check the library"
+	}
+
+	var body: some View {
+		if let caption {
+			Text(caption)
+				.font(.caption)
+				.foregroundStyle(.tertiary)
+				.fixedSize(horizontal: false, vertical: true)
+				.contentTransition(.opacity)
+				.animation(.smooth, value: caption)
+				.accessibilityIdentifier("ask.tools")
+		}
 	}
 }
 
@@ -321,6 +382,7 @@ private struct AskComposer: View {
 	@Binding var text: String
 	var isFocused: FocusState<Bool>.Binding
 	let isRunning: Bool
+	let sent: Int
 	let send: () -> Void
 	let stop: () -> Void
 
@@ -348,6 +410,7 @@ private struct AskComposer: View {
 			} else {
 				Button("Send", systemImage: "arrow.up", action: send)
 					.labelStyle(.iconOnly)
+					.symbolEffect(.bounce.up, value: sent)
 					.buttonStyle(.glassProminent)
 					.buttonBorderShape(.circle)
 					.controlSize(.large)

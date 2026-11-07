@@ -147,6 +147,10 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 
 	// MARK: - From SwiftUI
 
+	func box(_ id: Statement.ID) -> UIView? {
+		cells[id]
+	}
+
 	/// Makes the boxes that aren't on the canvas yet. Called outside `update`'s animation, so a new box is simply at its
 	/// position from the start, with nowhere to slide in from.
 	func addBoxes(_ boxes: [CanvasBoxModel], animated: Bool) {

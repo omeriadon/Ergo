@@ -98,6 +98,31 @@ struct CodexCommand {
 		ProcessRunner.Command(executable: executable, arguments: arguments, environment: environment, directory: run.work, input: prompt)
 	}
 
+	// MARK: - App server
+
+	/// `codex app-server`, the only way it reports tokens as they're written, for ask. It has no `exec`-style flags, so
+	/// everything `arguments` turns off goes in as settings. It doesn't read `CODEX_API_KEY`, so it's for logins only.
+	var appServerCommand: ProcessRunner.Command {
+		var arguments = ["app-server"]
+		for feature in Self.disabledFeatures {
+			arguments += ["-c", "features.\(feature)=false"]
+		}
+		arguments += Self.settings(
+			[
+				("cli_auth_credentials_store", "file"),
+				("web_search", "disabled"),
+				("sandbox_mode", "read-only"),
+				("approval_policy", "never"),
+				choice.model.map { ("model", $0) },
+				choice.effort.map { ("model_reasoning_effort", $0) },
+				("developer_instructions", instructions),
+				tools.map { ("mcp_servers.ergo.url", $0) },
+				tools.map { _ in ("mcp_servers.ergo.default_tools_approval_mode", "approve") },
+			]
+		)
+		return ProcessRunner.Command(executable: executable, arguments: arguments, environment: environment, directory: run.work)
+	}
+
 	// MARK: - Shared with device login
 
 	/// Built from nothing, like Claude's

@@ -34,7 +34,7 @@ nonisolated enum BoxAppearance: Equatable {
 /// Gestures and positioning are added around it by `CanvasBox`; this view only draws, so it can be `Equatable`
 /// and skip being redrawn while the canvas pans.
 struct StatementBoxView: View, Equatable {
-	private static let corner = 18.0
+	static let corner = 18.0
 
 	let statement: Statement
 	let relations: BoxRelations

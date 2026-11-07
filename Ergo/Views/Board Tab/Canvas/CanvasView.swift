@@ -61,18 +61,7 @@ private nonisolated struct CanvasRoom: Equatable {
 /// with the selection. Everything is edited through `BoardStore`; this view only holds what's on screen
 /// (pan, zoom, selection).
 struct CanvasView: View {
-	private struct ZoomSource {
-		let id: Statement.ID
-		let frame: CGRect
-	}
-
-	let zoomNamespace: Namespace.ID
 	let history: CanvasHistory
-
-	/// The editor is open on top, so the bars hide instead of showing around the edge of the zoom
-	var isCovered = false
-
-	let openEditor: (Statement.ID) -> Void
 
 	@Environment(BoardStore.self)
 	private var boardStore
@@ -90,9 +79,12 @@ struct CanvasView: View {
 	@State private var canvasBoard = CanvasBoardController()
 	@State private var room = CanvasRoom()
 
-	/// Where the editor zooms out of. The box itself is hosted separately, out of reach of the zoom transition, so this
-	/// is an invisible stand-in over it.
-	@State private var zoomSource: ZoomSource?
+	/// The statement whose editor is open
+	@State private var editing: Statement.ID?
+
+	/// The editor is on top, or still on its way there or back, so the bars hide instead of showing around the edge of
+	/// the zoom. It outlasts `editing`, because the keyboard going away changes the room while the editor is closing.
+	@State private var isCovered = false
 
 	/// The board as it was when a drag began, for its undo step
 	@State private var dragBefore: CanvasHistory.Snapshot?
@@ -139,7 +131,23 @@ struct CanvasView: View {
 		}
 		.safeAreaInset(edge: .bottom, spacing: 0) { bottomStack }
 		.toolbar { toolbar }
+		.background { editorPresenter }
 		.modifier(lifecycle)
+	}
+
+	private var editorPresenter: some View {
+		StatementEditorPresenter(
+			statementID: editing,
+			canvasBoard: canvasBoard,
+			editor: { [boardStore] id in
+				AnyView(
+					StatementEditorScreen(statementID: id, close: { editing = nil })
+						.environment(boardStore)
+						.fontDesign(.rounded)
+				)
+			},
+			closed: { isCovered = false }
+		)
 	}
 
 	// MARK: - Canvas
@@ -171,20 +179,7 @@ struct CanvasView: View {
 			connectEnded: connectEnded,
 			deleteLink: deleteLink
 		)
-		.overlay(alignment: .topLeading) { zoomSourceAnchor }
 		.ignoresSafeArea()
-	}
-
-	@ViewBuilder
-	private var zoomSourceAnchor: some View {
-		if let zoomSource {
-			Color.clear
-				.frame(width: zoomSource.frame.width, height: zoomSource.frame.height)
-				.matchedTransitionSource(id: zoomSource.id, in: zoomNamespace)
-				.offset(x: zoomSource.frame.minX, y: zoomSource.frame.minY)
-				.allowsHitTesting(false)
-				.accessibilityHidden(true)
-		}
 	}
 
 	// MARK: - Bottom
@@ -369,23 +364,8 @@ struct CanvasView: View {
 	private func edit(_ id: Statement.ID) {
 		pick = nil
 		selection = .statement(id)
-
-		if let statement = board.statement(id) {
-			let box = CanvasRect.box(at: statement.position)
-			let transform = canvasBoard.transform
-			let origin = transform.screen(CanvasPoint(x: box.minX, y: box.minY))
-			zoomSource = ZoomSource(
-				id: id,
-				frame: CGRect(x: origin.x, y: origin.y, width: box.size.width * transform.scale, height: box.size.height * transform.scale)
-			)
-		}
-
-		// A turn isn't enough: the stand-in has to be laid out in the window, which takes a frame or two,
-		// or the transition finds no source view and falls back to a plain push
-		Task {
-			try? await Task.sleep(for: .milliseconds(50))
-			openEditor(id)
-		}
+		isCovered = true
+		editing = id
 	}
 
 	private func dragStarted(_ id: Statement.ID) {

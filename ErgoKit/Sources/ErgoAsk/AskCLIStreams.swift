@@ -119,3 +119,124 @@ public struct CodexAskStream: Sendable {
 		return hasText ? "\n\n" + text : text
 	}
 }
+
+/// One conversation with `codex app-server`, a JSON-RPC message per line both ways. Unlike `codex exec`, it reports each
+/// token as it's written. It has to be answered as it goes, since starting a turn needs the id the thread comes back with.
+public struct CodexAppServerSession: Sendable {
+	public enum Output: Sendable, Hashable {
+		/// Write this line to its stdin
+		case send(String)
+
+		/// More of the answer
+		case text(String)
+
+		case finished
+		case failed(String)
+	}
+
+	private enum Request {
+		static let initialize = 1
+		static let startThread = 2
+		static let startTurn = 3
+	}
+
+	private struct Line: Decodable {
+		struct Failure: Decodable {
+			let message: String?
+		}
+
+		struct Params: Decodable {
+			struct Turn: Decodable {
+				let status: String?
+				let error: Failure?
+			}
+
+			let delta: String?
+			let itemId: String?
+			let turn: Turn?
+		}
+
+		struct Result: Decodable {
+			struct Thread: Decodable {
+				let id: String
+			}
+
+			let thread: Thread?
+		}
+
+		let id: Int?
+		let method: String?
+		let params: Params?
+		let result: Result?
+		let error: Failure?
+	}
+
+	private let prompt: String
+	private let directory: String
+	private var currentItem: String?
+
+	public init(prompt: String, directory: String) {
+		self.prompt = prompt
+		self.directory = directory
+	}
+
+	/// What to write first
+	public var opening: String {
+		Self.line(["id": Request.initialize, "method": "initialize", "params": ["clientInfo": ["name": "ergo", "version": "1"]]])
+	}
+
+	public mutating func feed(_ line: String) -> [Output] {
+		guard let decoded = try? JSONDecoder().decode(Line.self, from: Data(line.utf8)) else { return [] }
+
+		if let id = decoded.id, decoded.method == nil {
+			return reply(to: id, decoded)
+		}
+
+		switch decoded.method {
+			case "item/agentMessage/delta":
+				guard let delta = decoded.params?.delta, !delta.isEmpty else { return [] }
+				// A new message after a tool call, which would otherwise run into the last one
+				let isNewItem = decoded.params?.itemId != currentItem
+				let separator = isNewItem && currentItem != nil ? "\n\n" : ""
+				currentItem = decoded.params?.itemId
+				return [.text(separator + delta)]
+
+			case "turn/completed":
+				guard let turn = decoded.params?.turn, turn.status != "completed" else { return [.finished] }
+				return [.failed(turn.error?.message ?? "The turn ended as \(turn.status ?? "unknown")")]
+
+			default:
+				// Its `error` notifications are mostly retries it's handling itself. One that gives up ends the turn.
+				return []
+		}
+	}
+
+	private func reply(to id: Int, _ line: Line) -> [Output] {
+		if let error = line.error {
+			return [.failed(error.message ?? "Codex refused the request")]
+		}
+		switch id {
+			case Request.initialize:
+				return [
+					.send(Self.line(["method": "initialized"])),
+					.send(Self.line(["id": Request.startThread, "method": "thread/start", "params": ["ephemeral": true, "cwd": directory]])),
+				]
+			case Request.startThread:
+				guard let thread = line.result?.thread?.id else {
+					return [.failed("Expected a thread from Codex, found none")]
+				}
+				return [.send(Self.line([
+					"id": Request.startTurn,
+					"method": "turn/start",
+					"params": ["threadId": thread, "input": [["type": "text", "text": prompt]]],
+				]))]
+			default:
+				return []
+		}
+	}
+
+	private static func line(_ message: [String: Any]) -> String {
+		guard let data = try? JSONSerialization.data(withJSONObject: message, options: [.withoutEscapingSlashes]) else { return "{}" }
+		return String(decoding: data, as: UTF8.self)
+	}
+}

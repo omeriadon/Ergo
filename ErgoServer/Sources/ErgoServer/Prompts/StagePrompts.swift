@@ -52,7 +52,7 @@ enum StagePrompts {
 		\(json)
 		```
 
-		Answer the last message.
+		Answer the last message. Search and read the library first, and only say what the entries you read this turn say. Your own knowledge isn't a source here.
 		"""
 	}
 

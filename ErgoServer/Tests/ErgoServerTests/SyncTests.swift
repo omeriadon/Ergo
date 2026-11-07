@@ -55,6 +55,10 @@ func statementChange(_ id: String, _ fields: [String: SyncField], bases: [String
 	SyncChange(kind: .statement, id: id, fields: fields, bases: bases)
 }
 
+func scratchpadChange(_ id: String, _ fields: [String: SyncField], bases: [String: SyncStamp] = [:]) -> SyncChange {
+	SyncChange(kind: .scratchpad, id: id, fields: fields, bases: bases)
+}
+
 func linkChange(_ id: String, board: String, premise: String, conclusion: String, at stamp: SyncStamp = stamp()) -> SyncChange {
 	SyncChange(kind: .link, id: id, fields: [
 		"board": SyncField(value: .string(board), stamp: stamp),
@@ -184,7 +188,7 @@ struct SyncTests {
 	@Test(arguments: [
 		(
 			SyncChange(kind: "note", id: "1", fields: [:]),
-			"Unknown record kind 'note', expected 'board', 'bookmark', 'setting', 'statement' or 'link'"
+			"Unknown record kind 'note', expected 'board', 'bookmark', 'setting', 'statement', 'link' or 'scratchpad'"
 		),
 		(
 			SyncChange(kind: .board, id: "not-a-uuid", fields: [:]),
@@ -210,6 +214,11 @@ struct SyncTests {
 		(
 			SyncChange(kind: .board, id: UUID().uuidString, fields: ["content": SyncField(value: content("Hi"), stamp: stamp())]),
 			"Unknown field 'content' in a board record"
+		),
+		// Descriptors are per scratchpad, not per board
+		(
+			SyncChange(kind: .board, id: UUID().uuidString, fields: ["descriptor.0": SyncField(value: "rain", stamp: stamp())]),
+			"Unknown field 'descriptor.0' in a board record"
 		),
 		(
 			SyncChange(kind: .statement, id: UUID().uuidString, fields: ["english": SyncField(value: "Hi", stamp: stamp())]),
@@ -282,8 +291,8 @@ struct SyncTests {
 			#expect(error == ServiceError(code: .tooLarge, message: "Expected a statement under 256 KB, found 301 KB"))
 
 			// Over the limit is over the limit for every field
-			let position = boardChange(newBoardID(), ["descriptor.0": SyncField(value: .string(english), stamp: stamp())])
-			let (_, descriptorError) = try await app.syncRefusal(SyncRequest(cursor: nil, changes: [position]), token: device.token)
+			let descriptor = scratchpadChange(newBoardID(), ["descriptor.0": SyncField(value: .string(english), stamp: stamp())])
+			let (_, descriptorError) = try await app.syncRefusal(SyncRequest(cursor: nil, changes: [descriptor]), token: device.token)
 			#expect(descriptorError.code == .tooLarge)
 
 			// Just under is fine
@@ -384,14 +393,14 @@ struct SyncTests {
 
 			_ = try await app.sync(SyncRequest(cursor: nil, changes: [
 				boardChange(deleted, [
-					"descriptor.0": SyncField(value: "gone", stamp: stamp(old)),
+					"created": SyncField(value: 1, stamp: stamp(old)),
 					"deleted": SyncField(value: true, stamp: stamp(old + 1)),
 				]),
 				boardChange(recent, [
-					"descriptor.0": SyncField(value: "just deleted", stamp: stamp(-1000)),
+					"created": SyncField(value: 1, stamp: stamp(-1000)),
 					"deleted": SyncField(value: true, stamp: stamp()),
 				]),
-				boardChange(alive, ["descriptor.0": SyncField(value: "here", stamp: stamp(old))]),
+				boardChange(alive, ["created": SyncField(value: 1, stamp: stamp(old))]),
 			]), token: device.token)
 
 			#expect(try await app.ergo.sync.prune(on: app.db) == 1)

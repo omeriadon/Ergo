@@ -80,8 +80,11 @@ extension ProviderBackend {
 			run: run,
 			tools: tools
 		)
-		if credential.kind == .subscription {
+
+		// A login streams tokens through the app server. An API key can only use `exec`, which gives whole messages.
+		guard credential.kind == .apiKey else {
 			try run.write(secret.value, to: command.authFile)
+			return try await codexAppServerAsk(command, prompt: prompt, secret: secret, in: run, text: text)
 		}
 
 		let stream = AskStreamBox(CodexAskStream())
@@ -97,10 +100,6 @@ extension ProviderBackend {
 			outcome = .failure(error)
 		}
 
-		// Read back however the call ends, since Codex may have rotated the refresh token even if it then failed
-		if credential.kind == .subscription {
-			await saveRefreshedAuth(from: command.authFile, replacing: secret, in: run)
-		}
 		try outcome.get()
 
 		let events = CodexEvents(stream.withLock { $0.output })
@@ -112,11 +111,68 @@ extension ProviderBackend {
 		}
 	}
 
+	private func codexAppServerAsk(
+		_ command: CodexCommand,
+		prompt: String,
+		secret: Secret,
+		in run: RunDirectory,
+		text: @escaping @Sendable (String) async -> Void
+	) async throws {
+		let start = CodexAppServerSession(prompt: prompt, directory: run.work.path)
+		let session = AskStreamBox(start)
+		let finished = AskStreamBox(false)
+		let failure = AskStreamBox<String?>(nil)
+
+		let outcome: Result<Void, any Error>
+		do {
+			try await translatingFailures {
+				_ = try await runner.converse(command.appServerCommand, in: run, timeout: Self.askTimeout, opening: start.opening) { line in
+					var reply = ProcessRunner.Reply()
+					for output in session.withLock({ $0.feed(line) }) {
+						switch output {
+							case let .send(message):
+								reply.send.append(message)
+							case let .text(more):
+								await text(more)
+							case .finished:
+								finished.withLock { $0 = true }
+								reply.isDone = true
+							case let .failed(message):
+								failure.withLock { $0 = message }
+								reply.isDone = true
+						}
+					}
+					return reply
+				}
+			}
+			outcome = .success(())
+		} catch {
+			outcome = .failure(error)
+		}
+
+		// Read back however the call ends, since Codex may have rotated the refresh token even if it then failed
+		await saveRefreshedAuth(from: command.authFile, replacing: secret, in: run)
+		try outcome.get()
+
+		if let message = failure.withLock({ $0 }) {
+			throw CodexEvents.failure(for: message)
+		}
+		guard finished.withLock({ $0 }) else {
+			throw ProviderFailure.unavailable("Codex failed on the Ergo server")
+		}
+	}
+
 	// MARK: - Running
 
 	private func streamAsk(_ command: ProcessRunner.Command, in run: RunDirectory, lines: @escaping @Sendable (String) async -> Void) async throws {
-		do {
+		try await translatingFailures {
 			_ = try await runner.stream(command, in: run, timeout: Self.askTimeout, lines: lines)
+		}
+	}
+
+	private func translatingFailures(_ work: () async throws -> Void) async throws {
+		do {
+			try await work()
 		} catch is ProcessRunner.TimedOut {
 			logger.warning("CLI timed out", metadata: ["stage": "\(StageModels.ask)", "provider": "\(credential.provider)"])
 			throw ProviderFailure.timedOut("Expected an answer from \(credential.provider.displayName) within \(Self.askTimeout.spelledOut)")

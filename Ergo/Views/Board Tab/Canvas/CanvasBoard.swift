@@ -39,6 +39,11 @@ final class CanvasBoardController {
 		view?.hasBeenMoved ?? false
 	}
 
+	/// The view of a box on the canvas, for the editor to zoom out of
+	func box(_ id: Statement.ID) -> UIView? {
+		view?.box(id)
+	}
+
 	func move(to transform: CanvasTransform, animation: Animation?) {
 		if let view {
 			view.move(to: transform, animation: animation)

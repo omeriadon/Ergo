@@ -157,12 +157,15 @@ public struct AskTools: Sendable {
 		}
 		switch name {
 			case "search_library":
-				return AskToolActivity(tool: name, summary: "Searching the library for '\(string("query") ?? "")'")
+				let query = string("query") ?? ""
+				return AskToolActivity(tool: name, summary: "Searching the library for '\(query)'", record: "Searched the library for '\(query)'")
 			case "get_library_entry":
 				let entry = string("category").flatMap { category in string("id").flatMap { catalog.entry(category: category, id: $0) } }
-				return AskToolActivity(tool: name, summary: "Reading \(entry?.name ?? "the library")")
+				let name = entry?.name ?? "the library"
+				return AskToolActivity(tool: "get_library_entry", summary: "Reading \(name)", record: "Read \(name)")
 			case "list_library":
-				return AskToolActivity(tool: name, summary: "Looking through \(string("category") ?? "the library")")
+				let category = string("category") ?? "the library"
+				return AskToolActivity(tool: name, summary: "Looking through \(category)", record: "Looked through \(category)")
 			default:
 				return nil
 		}

@@ -31,6 +31,30 @@ struct CanvasLayoutTests {
 		Int(((statement.position.y - CanvasLayout.boxSize.height / 2) / CanvasLayout.rowPitch).rounded())
 	}
 
+	/// How many arrows run straight through a box they don't belong to
+	func arrowsThroughBoxes(_ map: TestMap) -> Int {
+		var hits = 0
+		for link in map.links {
+			guard let from = map.statement(link.premise)?.position, let to = map.statement(link.conclusion)?.position else { continue }
+			let line = CanvasSegment(start: from, end: to)
+			for statement in map.statements where statement.id != link.premise && statement.id != link.conclusion {
+				let box = CanvasRect(center: statement.position, size: CanvasLayout.boxSize)
+				let corners = [
+					CanvasPoint(x: box.center.x - box.size.width / 2, y: box.center.y - box.size.height / 2),
+					CanvasPoint(x: box.center.x + box.size.width / 2, y: box.center.y - box.size.height / 2),
+					CanvasPoint(x: box.center.x - box.size.width / 2, y: box.center.y + box.size.height / 2),
+					CanvasPoint(x: box.center.x + box.size.width / 2, y: box.center.y + box.size.height / 2),
+				]
+				let across = line.end - line.start
+				let sides = corners.map { across.x * ($0.y - line.start.y) - across.y * ($0.x - line.start.x) }
+				if sides.contains(where: { $0 < 0 }), sides.contains(where: { $0 > 0 }), statement.position.y > min(from.y, to.y), statement.position.y < max(from.y, to.y) {
+					hits += 1
+				}
+			}
+		}
+		return hits
+	}
+
 	/// A deterministic spread of edges that only point forwards, so it is always acyclic
 	func randomMap(count: Int, seed: UInt64) -> TestMap {
 		var state = seed
@@ -92,14 +116,58 @@ struct CanvasLayoutTests {
 		noOverlaps(map, margin: CanvasLayout.minimumGap)
 	}
 
-	@Test func boxesSitOffTheirRowsButTheSameWayEveryTime() {
-		let map = CanvasLayout.arranged(ArgumentFixtures.map(CanvasLayout.maximumRowLength))
-		#expect(Set(map.statements.map(\.position.y)).count > 1, "A row isn't ruled straight")
-		#expect(CanvasLayout.positions(for: map) == CanvasLayout.positions(for: map))
+	@Test func boxesSitOffAGridButTheSameWayEveryTime() {
+		let row = CanvasLayout.arranged(ArgumentFixtures.map(CanvasLayout.maximumRowLength))
+		#expect(Set(row.statements.map(\.position.y)).count > 1, "A row isn't ruled straight")
+		#expect(CanvasLayout.positions(for: row) == CanvasLayout.positions(for: row))
 
-		// Still a column apart, give or take
-		let pitch = map.statements[1].position.x - map.statements[0].position.x
-		#expect(abs(pitch - CanvasLayout.columnPitch) <= 2 * CanvasLayout.jiggle)
+		for seed in 1 ... 5 as ClosedRange<UInt64> {
+			let map = CanvasLayout.arranged(randomMap(count: 20, seed: seed))
+			for statement in map.statements {
+				let steps = (statement.position.x - CanvasLayout.boxSize.width / 2) / (CanvasLayout.columnPitch / 2)
+				let rows = (statement.position.y - CanvasLayout.boxSize.height / 2) / CanvasLayout.rowPitch
+				#expect(abs(steps - steps.rounded()) * CanvasLayout.columnPitch / 2 <= 2 * CanvasLayout.jiggle)
+				#expect(abs(rows - rows.rounded()) * CanvasLayout.rowPitch <= 2 * CanvasLayout.jiggle)
+			}
+		}
+	}
+
+	/// 1 → 2, 1 → 3, 3 → 4, 4 → 6, 5 → 6, 6 → 7: statement 5 has nothing above it, so it sits right above what it feeds
+	@Test func aLonePremiseSitsRightAboveItsConclusion() throws {
+		let map = CanvasLayout.arranged(ArgumentFixtures.map(7, links: [(1, 2), (1, 3), (3, 4), (4, 6), (5, 6), (6, 7)]))
+		#expect(map.statements.map(row) == [0, 1, 1, 2, 2, 3, 4])
+		#expect(arrowsThroughBoxes(map) == 0)
+		noOverlaps(map, margin: CanvasLayout.minimumGap)
+
+		// Forks open evenly, and a chain runs straight down
+		let x = map.statements.map(\.position.x)
+		#expect(abs(x[0] - (x[1] + x[2]) / 2) <= 2 * CanvasLayout.jiggle)
+		#expect(abs(x[2] - x[3]) <= 2 * CanvasLayout.jiggle)
+		#expect(abs(x[5] - (x[3] + x[4]) / 2) <= 2 * CanvasLayout.jiggle)
+		#expect(abs(x[6] - x[5]) <= 2 * CanvasLayout.jiggle)
+	}
+
+	@Test func anArrowThatSkipsARowMissesTheBoxInBetween() {
+		#expect(arrowsThroughBoxes(CanvasLayout.arranged(ArgumentFixtures.map(3, links: [(1, 2), (2, 3), (1, 3)]))) == 0)
+		#expect(arrowsThroughBoxes(CanvasLayout.arranged(ArgumentFixtures.map(4, links: [(1, 2), (2, 3), (3, 4), (1, 4)]))) == 0)
+		#expect(arrowsThroughBoxes(CanvasLayout.arranged(ArgumentFixtures.map(5, links: [(1, 2), (2, 3), (3, 5), (1, 4), (4, 5), (1, 5)]))) == 0)
+	}
+
+	@Test func aFewPremisesWrapWithoutArrowsThroughBoxes() {
+		for count in 2 ... 6 {
+			let map = CanvasLayout.arranged(ArgumentFixtures.map(count + 1, links: (1 ... count).map { ($0, count + 1) }))
+			#expect(arrowsThroughBoxes(map) == 0, "\(count) premises")
+		}
+	}
+
+	@Test func separateArgumentsGoAcross() {
+		let map = CanvasLayout.arranged(ArgumentFixtures.map(7, links: [(1, 3), (2, 3), (4, 6), (5, 6)]))
+		#expect(map.statements.map(row) == [0, 0, 1, 0, 0, 1, 0])
+		noOverlaps(map, margin: CanvasLayout.minimumGap)
+
+		let x = map.statements.map(\.position.x)
+		#expect(x[0 ... 2].max()! < x[3 ... 5].min()!)
+		#expect(x[3 ... 5].max()! < x[6], "Statement 7 links to nothing, so it goes last")
 	}
 
 	@Test func aWrappedLayerStaysAboveWhatItFeeds() throws {

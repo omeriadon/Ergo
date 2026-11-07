@@ -31,6 +31,9 @@ struct AskMessage: Codable, Hashable, Identifiable {
 	var role: AskRequestMessage.Role
 	var text: String
 
+	/// What it looked up for an answer, worded for showing above it
+	var tools: [String] = []
+
 	/// Buttons under an answer
 	var actions: [AskAction] = []
 }

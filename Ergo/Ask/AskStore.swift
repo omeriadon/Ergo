@@ -149,6 +149,11 @@ final class AskStore {
 
 			case let .tool(activity):
 				runs[id]?.activity = activity.summary
+				updateAnswer { answer in
+					if !answer.tools.contains(activity.record) {
+						answer.tools.append(activity.record)
+					}
+				}
 
 			case let .action(action):
 				updateAnswer { answer in
