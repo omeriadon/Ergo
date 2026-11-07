@@ -71,13 +71,20 @@ struct AskThreadView: View {
 				composing = true
 			}
 		}
-		.toolbarTitleVire(conversation.title, "", makeTextSmaller: true)
+		.navigationTitle(conversation.title)
+		.navigationBarTitleDisplayMode(.inline)
+		.scrollEdgeEffectStyle(.soft, for: .all)
+		.toolbar {
+			ToolbarItem(placement: .title) {
+				Text(conversation.title)
+					.font(.caption)
+			}
+		}
 		.toolbar {
 			ToolbarItem(placement: .topBarTrailing) {
 				Button("New Chat", systemImage: "square.and.pencil") {
 					store.newConversation()
 				}
-				.buttonStyle(store.currentID == nil ? .glassProminent : .glassProminent)
 				.accessibilityIdentifier("ask.newChat")
 			}
 		}

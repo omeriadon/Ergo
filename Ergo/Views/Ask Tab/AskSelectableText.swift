@@ -22,7 +22,14 @@ struct AskSelectableText: UIViewRepresentable {
 	private var dynamicTypeSize
 
 	func makeUIView(context: Context) -> UITextView {
-		let view = UITextView()
+		let storage = NSTextStorage()
+		let layoutManager = RoundedBackgroundLayoutManager()
+		let container = NSTextContainer(size: CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude))
+		container.widthTracksTextView = true
+		storage.addLayoutManager(layoutManager)
+		layoutManager.addTextContainer(container)
+
+		let view = UITextView(frame: .zero, textContainer: container)
 		view.isEditable = false
 		view.isSelectable = true
 		view.isScrollEnabled = false
@@ -73,14 +80,44 @@ struct AskSelectableText: UIViewRepresentable {
 
 // MARK: - Building the text
 
+extension NSAttributedString.Key {
+	static let roundedBackground = NSAttributedString.Key("ErgoRoundedBackground")
+}
+
+final class RoundedBackgroundLayoutManager: NSLayoutManager {
+	var cornerRadius: CGFloat = 5
+	var horizontalInset: CGFloat = 2
+
+	override func drawBackground(forGlyphRange glyphsToShow: NSRange, at origin: CGPoint) {
+		super.drawBackground(forGlyphRange: glyphsToShow, at: origin)
+
+		guard let textStorage else { return }
+
+		let characterRange = characterRange(forGlyphRange: glyphsToShow, actualGlyphRange: nil)
+
+		textStorage.enumerateAttribute(.roundedBackground, in: characterRange) { value, range, _ in
+			guard let color = value as? UIColor else { return }
+
+			let glyphRange = self.glyphRange(forCharacterRange: range, actualCharacterRange: nil)
+
+			self.enumerateLineFragments(forGlyphRange: glyphRange) { _, _, container, lineGlyphRange, _ in
+				let intersection = NSIntersectionRange(glyphRange, lineGlyphRange)
+				guard intersection.length > 0 else { return }
+
+				var rect = self.boundingRect(forGlyphRange: intersection, in: container)
+				rect.origin.x += origin.x
+				rect.origin.y += origin.y
+				rect = rect.insetBy(dx: -self.horizontalInset, dy: 0)
+
+				color.setFill()
+				UIBezierPath(roundedRect: rect, cornerRadius: self.cornerRadius).fill()
+			}
+		}
+	}
+}
+
 /// What the blocks look like, as one attributed string
 struct AskAttributedText {
-	/// Maths is a serif monospaced face, set apart from the rounded text around it. Courier New is thin at these sizes, so
-	/// it's stroked a little. It lacks some logic symbols, like ∧ and ∀, which fall back to a system font.
-	private static let mathFontName = "CourierNewPSMT"
-	private static let mathStroke = -1.5
-	private static let indent = 22.0
-
 	let traits: UITraitCollection
 
 	func attributed(_ blocks: [MarkdownDocument.Block]) -> NSAttributedString {
@@ -111,7 +148,16 @@ struct AskAttributedText {
 					if depth == 0 {
 						style.alignment = .center
 					}
-					appendLine(inline, to: text, font: font(.body), color: color, style: style, marker: marker)
+
+					appendLine(
+						inline,
+						to: text,
+						font: font(.body),
+						color: color,
+						style: style,
+						marker: marker,
+						highlightsInline: false
+					)
 
 				case let .list(ordered, items):
 					for (index, item) in items.enumerated() {
@@ -143,7 +189,8 @@ struct AskAttributedText {
 		font base: UIFont,
 		color: UIColor,
 		style: NSParagraphStyle,
-		marker: String?
+		marker: String?,
+		highlightsInline: Bool = true
 	) {
 		let start = text.length
 
@@ -151,19 +198,37 @@ struct AskAttributedText {
 			text.append(NSAttributedString(string: marker + "\t", attributes: [.font: base, .foregroundColor: UIColor.secondaryLabel]))
 		}
 		for run in inline.runs {
-			text.append(NSAttributedString(string: String(inline[run.range].characters), attributes: attributes(of: run, base: base, color: color)))
+			text.append(
+				NSAttributedString(
+					string: String(inline[run.range].characters),
+					attributes: attributes(of: run, base: base, color: color, highlightsInline: highlightsInline)
+				)
+			)
 		}
 		text.append(NSAttributedString(string: "\n", attributes: [.font: base]))
 		text.addAttribute(.paragraphStyle, value: style, range: NSRange(location: start, length: text.length - start))
 	}
 
-	private func attributes(of run: AttributedString.Runs.Run, base: UIFont, color: UIColor) -> [NSAttributedString.Key: Any] {
+	private static let mathStroke = -1.5
+	private static let indent = 22.0
+	private static let mathBackground = UIColor.systemGray6
+	private static let codeBackground = UIColor.systemGray5
+
+	private func attributes(
+		of run: AttributedString.Runs.Run,
+		base: UIFont,
+		color: UIColor,
+		highlightsInline: Bool
+	) -> [NSAttributedString.Key: Any] {
 		var attributes: [NSAttributedString.Key: Any] = [.font: base, .foregroundColor: color]
 
 		if let script = run[MarkdownMathAttribute.self] {
 			let size = script == 0 ? base.pointSize * 1.05 : base.pointSize * 0.75
-			attributes[.font] = UIFont(name: Self.mathFontName, size: size) ?? UIFont.monospacedSystemFont(ofSize: size, weight: .regular)
+			attributes[.font] = UIFont.monospacedSystemFont(ofSize: size, weight: .regular)
 			attributes[.strokeWidth] = Self.mathStroke
+			if highlightsInline {
+				attributes[.roundedBackground] = Self.mathBackground
+			}
 			if script != 0 {
 				attributes[.baselineOffset] = base.pointSize * (script > 0 ? 0.35 : -0.2)
 			}
@@ -173,7 +238,9 @@ struct AskAttributedText {
 		if let intent = run.inlinePresentationIntent {
 			if intent.contains(.code) {
 				attributes[.font] = UIFont.monospacedSystemFont(ofSize: base.pointSize * 0.92, weight: .regular)
-				attributes[.backgroundColor] = UIColor.tertiarySystemFill
+				if highlightsInline {
+					attributes[.roundedBackground] = Self.codeBackground
+				}
 			} else {
 				var symbolic: UIFontDescriptor.SymbolicTraits = base.fontDescriptor.symbolicTraits
 				if intent.contains(.stronglyEmphasized) {

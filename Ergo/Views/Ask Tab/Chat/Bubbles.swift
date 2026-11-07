@@ -72,15 +72,17 @@ private struct AskAnswerView: View {
 					.padding(.top, 2)
 			}
 
-			FlowLayout(spacing: 8) {
-				ForEach(actions, id: \.self) { action in
-					Button(action.title) {
-						AskIntents.run(action.intent, navigation: navigation, store: store)
+			GlassEffectContainer(spacing: 1) {
+				FlowLayout(spacing: 8) {
+					ForEach(actions, id: \.self) { action in
+						Button(action.title) {
+							AskIntents.run(action.intent, navigation: navigation, store: store)
+						}
+						.buttonStyle(.glass(.regular.tint(.black.opacity(0.1)).interactive()))
 					}
-					.buttonStyle(.glass(.regular.tint(.black.opacity(0.3)).interactive()))
-				}
 
-				.padding(.top, 4)
+					.padding(.top, 4)
+				}
 			}
 			.environment(\.openURL, OpenURLAction { url in
 				// A library link is one of the app's intents. Anything else goes wherever a link goes.

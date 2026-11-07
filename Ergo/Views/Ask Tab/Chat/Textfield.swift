@@ -32,6 +32,7 @@ struct AskComposer: View {
 
 				if isRunning {
 					Button("Stop", systemImage: "stop.fill", action: stop)
+						.font(.body.scaled(by: 0.8))
 						.labelStyle(.iconOnly)
 						.buttonStyle(.glass)
 						.buttonBorderShape(.circle)
@@ -39,6 +40,7 @@ struct AskComposer: View {
 						.accessibilityIdentifier("ask.stop")
 				} else {
 					Button("Send", systemImage: "arrow.up", action: send)
+						.font(.body.scaled(by: 0.8))
 						.labelStyle(.iconOnly)
 						.symbolEffect(.bounce.up, value: sent)
 						.buttonStyle(.glassProminent)

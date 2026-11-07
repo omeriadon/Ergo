@@ -77,7 +77,7 @@ private struct AskMarkdownTable: View {
 		var cell = cell
 		for run in cell.runs {
 			if let script = run[MarkdownMathAttribute.self] {
-				cell[run.range].font = .custom("CourierNewPS-BoldMT", size: script == 0 ? 15 : 11, relativeTo: .subheadline)
+				cell[run.range].font = .system(size: script == 0 ? 15 : 11, design: .monospaced)
 				if script != 0 {
 					cell[run.range].baselineOffset = script > 0 ? 5 : -3
 				}

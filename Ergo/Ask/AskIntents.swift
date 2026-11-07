@@ -14,14 +14,19 @@ import Foundation
 /// flow, and `perform()` called from here is a crash.
 @MainActor
 enum AskIntents {
-	private static let libraryIDs: Set<String> = Set(LibraryCatalog.shared?.entries.map { "\($0.category)/\($0.id)" } ?? [])
+	/// Reads the library's ids off the main thread, so the first answer on screen doesn't wait for them
+	static func prepare() {
+		Task.detached(priority: .utility) {
+			_ = LibraryCatalog.entryIDs
+		}
+	}
 
 	/// Whether this version of the app can do it, so a link or a button that goes nowhere is never offered.
 	/// The server's library can be newer than the one in this app.
 	static func canRun(_ intent: AskIntent) -> Bool {
 		switch intent {
 			case let .openLibraryEntry(category, id):
-				libraryIDs.contains("\(category)/\(id)")
+				LibraryCatalog.entryIDs.contains("\(category)/\(id)")
 			case let .showLibraryList(category):
 				LibraryContent(rawValue: category) != nil
 			case .openBookmarks:

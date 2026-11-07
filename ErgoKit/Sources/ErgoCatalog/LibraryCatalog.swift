@@ -15,6 +15,27 @@ public struct LibraryCatalog: Sendable {
 	/// Loaded the first time it's needed. Nil only if the package's resources are broken.
 	public static let shared = try? LibraryCatalog.load()
 
+	/// Every entry as `category/id`, read without building the entries' search text, so checking that one exists stays cheap.
+	/// Empty only if the package's resources are broken.
+	public static let entryIDs: Set<String> = {
+		struct Item: Decodable {
+			let id: String
+		}
+		var ids: Set<String> = []
+		for category in categories {
+			guard
+				let url = url(of: category),
+				let data = try? Data(contentsOf: url),
+				let file = try? JSONDecoder().decode([String: [Item]].self, from: data),
+				let items = file[category]
+			else {
+				continue
+			}
+			ids.formUnion(items.map { "\(category)/\($0.id)" })
+		}
+		return ids
+	}()
+
 	public let entries: [LibraryEntryText]
 
 	public init(entries: [LibraryEntryText]) {

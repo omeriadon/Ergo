@@ -41,6 +41,8 @@ struct ErgoApp: App {
 		let sync = SyncController(account: translationAccount, boardStore: boardStore, scratchpadStore: scratchpadStore, catalog: catalog)
 		_sync = State(initialValue: sync)
 
+		AskIntents.prepare()
+
 		AppDelegate.sync = sync
 		AppDelegate.navigation = navigation
 		AppDelegate.boardStore = boardStore

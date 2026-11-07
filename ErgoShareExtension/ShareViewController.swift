@@ -41,13 +41,22 @@ final class ShareViewController: UIViewController {
 		var text: String?
 		for provider in providers {
 			if url == nil, provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {
-				url = try? await provider.loadItem(forTypeIdentifier: UTType.url.identifier) as? URL
+				url = await load(URL.self, from: provider)
 			} else if text == nil, provider.hasItemConformingToTypeIdentifier(UTType.plainText.identifier) {
-				let item = try? await provider.loadItem(forTypeIdentifier: UTType.plainText.identifier)
-				text = item as? String ?? (item as? Data).map { String(decoding: $0, as: UTF8.self) }
+				text = await load(String.self, from: provider)
 			}
 		}
 		return SharedItem.Content(url: url, text: text)
+	}
+
+	private func load<Object: _ObjectiveCBridgeable & Sendable>(_ type: Object.Type, from provider: NSItemProvider) async -> Object?
+		where Object._ObjectiveCType: NSItemProviderReading
+	{
+		await withCheckedContinuation { continuation in
+			_ = provider.loadObject(ofClass: type) { object, _ in
+				continuation.resume(returning: object)
+			}
+		}
 	}
 
 	/// Apple only lets Today and iMessage extensions open their app through `extensionContext`. Walking up to the
