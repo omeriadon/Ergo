@@ -36,7 +36,11 @@ public enum SyncFieldName {
 	/// board, scratchpad: when it was made
 	public static let created = "created"
 
-	/// statement: the English. scratchpad: `{ english, logic, source, translation }` together, since English and logic
+	/// source (a statement's): the id of the source it was broken down from, or null. That's what makes a region on the canvas,
+	/// and it's on the statement so one device moving a card out never clashes with another adding one.
+	public static let source = "source"
+
+	/// statement: the English. source: `{ type, text, url, title }`. scratchpad: `{ english, logic, source, translation }` together, since English and logic
 	/// follow each other. Opaque to the server. A board record refuses it.
 	public static let content = "content"
 
@@ -58,6 +62,15 @@ public enum SyncFieldName {
 
 	/// setting: the setting's value
 	public static let value = "value"
+
+	/// share: what this account can do on the board, a `BoardRole` raw value
+	public static let role = "role"
+
+	/// share: this account's member id (uppercase UUID string)
+	public static let member = "member"
+
+	/// share: everyone on the board, owner included, as `[BoardMember]`
+	public static let members = "members"
 
 	/// scratchpad: one per letter slot, so naming different letters on two devices keeps both
 	public static func descriptor(_ slot: Int) -> String {

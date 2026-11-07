@@ -74,11 +74,32 @@ public struct SupersededField: Codable, Sendable, Hashable {
 	}
 }
 
+/// A pushed record the server refused, because it's on a board this account may not edit: a viewer, or someone removed
+/// whose device hasn't heard yet. The rest of the request still goes through.
+public struct RejectedChange: Codable, Sendable, Hashable {
+	public var kind: SyncKind
+	public var id: String
+
+	/// What the server has, nil when it has nothing
+	public var current: SyncRecord?
+
+	public init(kind: SyncKind, id: String, current: SyncRecord? = nil) {
+		self.kind = kind
+		self.id = id
+		self.current = current
+	}
+
+	public var key: SyncRecord.Key {
+		SyncRecord.Key(kind: kind, id: id)
+	}
+}
+
 public struct SyncResponse: Codable, Sendable, Hashable {
 	/// Send it next time: the seq of the last record in `changes` while there's `more`, then the account's latest seq
 	public var cursor: Int
 
-	/// Every record changed after the request's cursor, merged, including the ones just pushed
+	/// Every record changed after the request's cursor, merged, including the ones just pushed.
+	/// On a shared board that includes what other members pushed.
 	public var changes: [SyncRecord]
 
 	/// More records after these: ask again with the new cursor straight away
@@ -87,14 +108,19 @@ public struct SyncResponse: Codable, Sendable, Hashable {
 	/// The losing sides of concurrent fields in the request's changes. Only the device that pushed gets these.
 	public var superseded: [SupersededField]
 
+	/// The request's changes the server refused. Optional on the wire, so nil unless there are some: an older app ignores
+	/// them and an older server never sends them. Only the device that pushed gets these.
+	public var rejected: [RejectedChange]?
+
 	/// What corrects this device's clock
 	public var serverTime: Date
 
-	public init(cursor: Int, changes: [SyncRecord], more: Bool, superseded: [SupersededField] = [], serverTime: Date) {
+	public init(cursor: Int, changes: [SyncRecord], more: Bool, superseded: [SupersededField] = [], rejected: [RejectedChange]? = nil, serverTime: Date) {
 		self.cursor = cursor
 		self.changes = changes
 		self.more = more
 		self.superseded = superseded
+		self.rejected = rejected
 		self.serverTime = serverTime
 	}
 }

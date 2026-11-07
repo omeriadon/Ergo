@@ -117,27 +117,34 @@ enum AppleNotificationController {
 			return false
 		}
 
-		let deleted = try await database.transaction { database -> Bool? in
+		let sharing = request.ergo.sharing
+		let vault = request.ergo.vault
+		let logger = request.logger
+		let others = try await sharing.accounts(sharingWith: id, on: database)
+		let (deleted, effects) = try await database.transaction { database -> (Bool?, BoardLedger.Effects) in
+			// Everyone it shares a board with, in order, in case it goes
+			try await BoardLedger.lockInOrder(others + [id], on: database)
 			let account: Account
 			do {
 				account = try await SyncService.lock(id, on: database)
 			} catch let error as ServiceError where error == .unknownAccount {
 				// Deleted since it was found
-				return nil
+				return (nil, BoardLedger.Effects())
 			}
-			guard account.appleSubject == subject else { return nil }
+			guard account.appleSubject == subject else { return (nil, BoardLedger.Effects()) }
 
 			guard account.email == nil else {
 				account.appleSubject = nil
 				try await account.save(on: database)
-				return false
+				return (false, BoardLedger.Effects())
 			}
-			try await AccountController.deleteEverything(of: id, on: database)
-			return true
+			let effects = try await AccountController.deleteEverything(of: id, vault: vault, logger: logger, on: database)
+			return (true, effects)
 		}
 
 		if deleted == true {
 			request.ergo.live.close(account: id)
+			await sharing.finish(effects, caller: nil, token: nil, on: database, logger: logger)
 		}
 		return deleted != nil
 	}

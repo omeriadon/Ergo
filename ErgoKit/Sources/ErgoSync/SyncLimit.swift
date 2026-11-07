@@ -19,6 +19,9 @@ public enum SyncLimit {
 	public static let recordsPerAccount = 50000
 	public static let requestsPerMinute = 60
 
+	/// Everyone on a shared board, owner included
+	public static let membersPerBoard = 30
+
 	/// `SyncRequest.limit`
 	public static let defaultRecords = 500
 	public static let maxRecords = 1000

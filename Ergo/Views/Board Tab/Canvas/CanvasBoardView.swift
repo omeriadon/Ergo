@@ -28,6 +28,9 @@ enum ConnectionDrop {
 /// `content` is a zero-sized view that carries the pan and zoom as its transform. Boxes sit in it at their canvas
 /// positions, so moving the whole canvas is one transform however many boxes there are.
 final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuInteractionDelegate {
+	/// For a board this person can only view: panning and zooming stay, and dragging, connecting and the arrow menu go
+	var isReadOnly = false
+
 	var dragStarted: (Statement.ID) -> Void = { _ in }
 	var moved: (Statement.ID, CanvasPoint) -> Void = { _, _ in }
 	var tapBackground: (CanvasPoint) -> Void = { _ in }
@@ -36,19 +39,26 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 
 	var connectEnded: (Statement.ID, ConnectionDrop) -> Void = { _, _ in }
 	var deleteLink: (Link.ID) -> Void = { _ in }
+	var sourceDragStarted: (BoardSource.ID) -> Void = { _ in }
+	var sourceMoved: (BoardSource.ID, CanvasPoint) -> Void = { _, _ in }
 
 	var boxContent: (CanvasBoxModel, _ isNew: Bool) -> AnyView = { _, _ in AnyView(EmptyView()) }
+	var sourceContent: (CanvasSourceModel, _ isNew: Bool) -> AnyView = { _, _ in AnyView(EmptyView()) }
 	var handleContent: (_ pointsUp: Bool) -> AnyView = { _ in AnyView(EmptyView()) }
 
 	private(set) var canvasTransform = CanvasTransform()
 	private(set) var hasBeenMoved = false
 
 	private let content = UIView()
+	private let regionLayer = CALayer()
 	private let arrowLayer = CALayer()
 
 	private var cells: [Statement.ID: CanvasBoxCell] = [:]
 	private var arrows: [Link.ID: CanvasArrow] = [:]
 	private var links: [Link] = []
+	private var sourceCells: [BoardSource.ID: CanvasSourceCell] = [:]
+	private var regions: [CanvasRegionModel] = []
+	private var regionLayers: [BoardSource.ID: CanvasRegionLayer] = [:]
 	private var selectedStatement: Statement.ID?
 	private var selectedLink: Link.ID?
 
@@ -74,6 +84,9 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 	/// A box under the finger, and where it was picked up
 	private var draggedBox: (id: Statement.ID, origin: CGPoint)?
 
+	/// A source under the finger with where it and its cards were picked up, since they move together
+	private var draggedSource: (id: BoardSource.ID, origin: CGPoint, members: [(id: Statement.ID, origin: CGPoint)])?
+
 	private lazy var haptics = CanvasHaptics(view: self)
 
 	/// The grid point nearest what's being dragged, to tell when it reaches the next one
@@ -93,6 +106,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 		backgroundColor = .clear
 		isOpaque = false
 
+		content.layer.addSublayer(regionLayer)
 		content.layer.addSublayer(arrowLayer)
 		addSubview(content)
 
@@ -109,6 +123,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 
 		registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (view: Self, _) in
 			view.styleArrows()
+			view.styleRegions()
 		}
 	}
 
@@ -159,11 +174,21 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 		}
 	}
 
+	/// The same for sources
+	func addSources(_ sources: [CanvasSourceModel], animated: Bool) {
+		for model in sources where sourceCells[model.source.id] == nil {
+			addSourceCell(for: model, isNew: animated)
+		}
+	}
+
 	func update(
 		boxes: [CanvasBoxModel],
 		links: [Link],
+		sources: [CanvasSourceModel],
+		regions: [CanvasRegionModel],
 		selectedStatement: Statement.ID?,
 		selectedLink: Link.ID?,
+		selectedSource: BoardSource.ID?,
 		animated: Bool
 	) {
 		let wanted = Set(boxes.map(\.statement.id))
@@ -176,18 +201,39 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 			let id = model.statement.id
 			guard let cell = cells[id] else { continue }
 			cell.show(model, content: boxContent)
-			if draggedBox?.id != id {
+			let isHeld = draggedBox?.id == id || draggedSource?.members.contains { $0.id == id } == true
+			if !isHeld {
 				cell.center = model.statement.position.point
+			}
+		}
+
+		let wantedSources = Set(sources.map(\.source.id))
+		for (id, cell) in sourceCells where !wantedSources.contains(id) {
+			sourceCells[id] = nil
+			remove(cell, animated: animated)
+		}
+
+		for model in sources {
+			let id = model.source.id
+			guard let cell = sourceCells[id] else { continue }
+			cell.show(model, content: sourceContent)
+			if draggedSource?.id != id {
+				cell.center = model.source.position.point
 			}
 		}
 
 		if let selectedStatement, draggedBox == nil, let cell = cells[selectedStatement] {
 			content.bringSubviewToFront(cell)
 		}
+		if let selectedSource, draggedSource == nil, let cell = sourceCells[selectedSource] {
+			content.bringSubviewToFront(cell)
+		}
 
 		self.links = links
+		self.regions = regions
 		self.selectedStatement = selectedStatement
 		self.selectedLink = selectedLink
+		updateRegions(animation: animated ? 0.5 : nil)
 		updateArrows(animation: animated ? 0.5 : nil)
 		updateHandles()
 	}
@@ -229,7 +275,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 		cells[model.statement.id] = cell
 	}
 
-	private func remove(_ cell: CanvasBoxCell, animated: Bool) {
+	private func remove(_ cell: UIView, animated: Bool) {
 		guard animated else {
 			cell.removeFromSuperview()
 			return
@@ -262,6 +308,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 				let travel = recognizer.translation(in: content)
 				cell.center = CGPoint(x: draggedBox.origin.x + travel.x, y: draggedBox.origin.y + travel.y)
 				updateArrows(touching: id, animation: nil)
+				updateRegion(holding: id, animation: nil)
 				feelGrid(at: cell.center)
 
 			case .ended, .cancelled, .failed:
@@ -277,12 +324,143 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 					updateHandles()
 				}
 				updateArrows(touching: id, animation: 0.25)
+				updateRegion(holding: id, animation: 0.25)
 				if finished {
 					moved(id, target)
 				}
 
 			default:
 				break
+		}
+	}
+
+	// MARK: - Sources
+
+	private func addSourceCell(for model: CanvasSourceModel, isNew: Bool) {
+		let cell = CanvasSourceCell(model: model, isNew: isNew, content: sourceContent)
+		content.addSubview(cell)
+
+		let drag = UIPanGestureRecognizer(target: self, action: #selector(sourcePanned))
+		drag.maximumNumberOfTouches = 1
+		drag.delegate = self
+		cell.addGestureRecognizer(drag)
+
+		sourceCells[model.source.id] = cell
+	}
+
+	/// The source brings its region along: its cards follow the finger with it, and their arrows and the shape follow them
+	@objc private func sourcePanned(_ recognizer: UIPanGestureRecognizer) {
+		guard let cell = recognizer.view as? CanvasSourceCell else { return }
+		let id = cell.model.source.id
+
+		switch recognizer.state {
+			case .began:
+				stopGlide()
+				let members = regions.first { $0.source == id }?.members ?? []
+				draggedSource = (id, cell.center, members.compactMap { member in cells[member].map { (member, $0.center) } })
+				content.bringSubviewToFront(cell)
+				cell.isLifted = true
+				gridPoint = CanvasGrid.snapped(CanvasPoint(cell.center))
+				haptics.prepare()
+				updateHandles()
+				sourceDragStarted(id)
+
+			case .changed:
+				guard let draggedSource, draggedSource.id == id else { return }
+				let travel = recognizer.translation(in: content)
+				moveHeldSource(draggedSource, by: travel)
+				for member in draggedSource.members {
+					updateArrows(touching: member.id, animation: nil)
+				}
+				updateRegion(of: id, animation: nil)
+				feelGrid(at: cell.center)
+
+			case .ended, .cancelled, .failed:
+				guard let held = draggedSource, held.id == id else { return }
+				draggedSource = nil
+				gridPoint = nil
+				cell.isLifted = false
+
+				let finished = recognizer.state == .ended
+				let travel = recognizer.translation(in: content)
+				let current = CGPoint(x: held.origin.x + travel.x, y: held.origin.y + travel.y)
+				let target = finished ? CanvasGrid.snapped(CanvasPoint(current)) : CanvasPoint(held.origin)
+				let settled = CGPoint(x: target.x - held.origin.x, y: target.y - held.origin.y)
+				UIView.animate(springDuration: 0.25, bounce: 0) {
+					moveHeldSource(held, by: settled)
+				}
+				for member in held.members {
+					updateArrows(touching: member.id, animation: 0.25)
+				}
+				updateRegion(of: id, animation: 0.25)
+				if finished {
+					sourceMoved(id, target)
+				}
+
+			default:
+				break
+		}
+	}
+
+	private func moveHeldSource(_ held: (id: BoardSource.ID, origin: CGPoint, members: [(id: Statement.ID, origin: CGPoint)]), by travel: CGPoint) {
+		sourceCells[held.id]?.center = CGPoint(x: held.origin.x + travel.x, y: held.origin.y + travel.y)
+		for member in held.members {
+			cells[member.id]?.center = CGPoint(x: member.origin.x + travel.x, y: member.origin.y + travel.y)
+		}
+	}
+
+	// MARK: - Regions
+
+	private func updateRegions(animation: TimeInterval?) {
+		let wanted = Set(regions.map(\.source))
+		for (id, layer) in regionLayers where !wanted.contains(id) {
+			regionLayers[id] = nil
+			layer.removeFromSuperlayer()
+		}
+		for region in regions {
+			update(region, animation: animation)
+		}
+		styleRegions()
+	}
+
+	/// While a box moves, only the region it's in changes
+	private func updateRegion(holding id: Statement.ID, animation: TimeInterval?) {
+		for region in regions where region.members.contains(id) {
+			update(region, animation: animation)
+		}
+	}
+
+	private func updateRegion(of id: BoardSource.ID, animation: TimeInterval?) {
+		for region in regions where region.source == id {
+			update(region, animation: animation)
+		}
+	}
+
+	private func update(_ region: CanvasRegionModel, animation: TimeInterval?) {
+		guard let source = sourceCells[region.source]?.center else { return }
+
+		let layer: CanvasRegionLayer
+		if let existing = regionLayers[region.source] {
+			layer = existing
+		} else {
+			layer = CanvasRegionLayer(in: regionLayer)
+			regionLayers[region.source] = layer
+		}
+
+		let members = region.members.compactMap { cells[$0].map { CanvasPoint($0.center) } }
+		let arrows = links.compactMap { link -> CanvasRegion.Arrow? in
+			guard region.members.contains(link.premise), region.members.contains(link.conclusion),
+			      let from = cells[link.premise]?.center, let to = cells[link.conclusion]?.center
+			else { return nil }
+			return CanvasRegion.Arrow(from: CanvasPoint(from), to: CanvasPoint(to))
+		}
+		layer.setOutline(CanvasRegion.outline(source: CanvasPoint(source), members: members, arrows: arrows), animation: animation)
+	}
+
+	private func styleRegions() {
+		let accent = UIColor(Color.accentColor).resolvedColor(with: traitCollection)
+		for layer in regionLayers.values {
+			layer.style(accent: accent)
 		}
 	}
 
@@ -300,7 +478,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 	/// Shows the handles on the selected box. Dragging the one above makes the box a conclusion of what it's dragged to,
 	/// and dragging the one below makes it a premise. Let go on empty canvas, that other box is made there.
 	private func updateHandles() {
-		guard let id = selectedStatement, cells[id] != nil, draggedBox == nil, connection == nil else {
+		guard !isReadOnly, let id = selectedStatement, cells[id] != nil, draggedBox == nil, connection == nil else {
 			for handle in handles where handle.alpha > 0 {
 				UIView.animate(withDuration: 0.12) {
 					handle.alpha = 0
@@ -487,7 +665,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 
 	/// A box has its own menu, so this only answers on the background, near an arrow
 	func contextMenuInteraction(_: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-		guard hitTest(location, with: nil) === self, let id = LinkHitTest.link(
+		guard !isReadOnly, hitTest(location, with: nil) === self, let id = LinkHitTest.link(
 			near: canvasTransform.canvas(location),
 			tolerance: 24 / canvasTransform.scale,
 			in: links,
@@ -677,21 +855,25 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 	/// Panning and tapping the canvas only count on its background. `hitTest` sends a touch here when it's on nothing,
 	/// or when it stops a glide, in which case a drag that follows pans the canvas even over a box.
 	func gestureRecognizer(_ recognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+		// A box that can't be picked up shouldn't get in the way of panning
+		if recognizer === panRecognizer, isReadOnly {
+			return true
+		}
 		if recognizer === panRecognizer || recognizer === tapRecognizer {
 			return touch.view === self
 		}
 		return true
 	}
 
-	/// One thing moves at a time: the canvas, a box, or an arrow being drawn
+	/// One thing moves at a time: the canvas, a box, a source, or an arrow being drawn
 	override func gestureRecognizerShouldBegin(_ recognizer: UIGestureRecognizer) -> Bool {
 		if recognizer === touchDownRecognizer {
 			return true
 		}
 		if recognizer === panRecognizer || recognizer === pinchRecognizer || recognizer === tapRecognizer {
-			return draggedBox == nil && connection == nil
+			return draggedBox == nil && draggedSource == nil && connection == nil
 		}
-		return !isCanvasMoving
+		return !isReadOnly && !isCanvasMoving
 	}
 
 	func gestureRecognizer(_ recognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith other: UIGestureRecognizer) -> Bool {
@@ -799,6 +981,50 @@ private final class CanvasBoxCell: UIView {
 	}
 
 	func show(_ new: CanvasBoxModel, content: (CanvasBoxModel, _ isNew: Bool) -> AnyView) {
+		guard new != model else { return }
+		model = new
+		hosted.rootView = content(new, isNew)
+	}
+}
+
+// MARK: - A source
+
+/// Holds one source's SwiftUI, the same way
+private final class CanvasSourceCell: UIView {
+	private(set) var model: CanvasSourceModel
+	private let isNew: Bool
+	private let hosted: UIHostingController<AnyView>
+
+	/// Picked up by a finger
+	var isLifted = false {
+		didSet {
+			layer.shadowOpacity = isLifted ? 0.3 : 0
+		}
+	}
+
+	init(model: CanvasSourceModel, isNew: Bool, content: (CanvasSourceModel, _ isNew: Bool) -> AnyView) {
+		self.model = model
+		self.isNew = isNew
+		hosted = canvasHost(content(model, isNew))
+		let box = CanvasRect.box(at: model.source.position)
+		super.init(frame: CGRect(x: box.minX, y: box.minY, width: box.size.width, height: box.size.height))
+
+		hosted.view.frame = bounds
+		addSubview(hosted.view)
+
+		layer.shadowColor = UIColor.black.cgColor
+		layer.shadowOpacity = 0
+		layer.shadowRadius = 12
+		layer.shadowOffset = CGSize(width: 0, height: 6)
+		layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: 18).cgPath
+	}
+
+	@available(*, unavailable)
+	required init?(coder _: NSCoder) {
+		fatalError("Use init(model:isNew:content:)")
+	}
+
+	func show(_ new: CanvasSourceModel, content: (CanvasSourceModel, _ isNew: Bool) -> AnyView) {
 		guard new != model else { return }
 		model = new
 		hosted.rootView = content(new, isNew)

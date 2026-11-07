@@ -10,7 +10,7 @@ import ErgoProtocol
 import Foundation
 
 /// A `Statement` as a statement record's fields. `position` is its own field, so dragging a box never clashes with
-/// typing in it. The English is its `content`.
+/// typing in it. The English is its `content`, and `source` is the region it's in.
 enum StatementRecord {
 	/// Never rename a property: it's on the server, and other devices decode it
 	struct Content: Codable, Hashable {
@@ -33,6 +33,7 @@ enum StatementRecord {
 			SyncFieldName.board: .string(BoardRecord.id(board)),
 			SyncFieldName.position: SyncCoding.value(statement.position),
 			SyncFieldName.content: SyncCoding.value(Content(statement)),
+			SyncFieldName.source: statement.source.map { .string(SourceRecord.id($0)) } ?? .null,
 		]
 	}
 
@@ -59,6 +60,14 @@ enum StatementRecord {
 		if let position = record.fields[SyncFieldName.position] {
 			guard let position = try? SyncCoding.decode(CanvasPoint.self, from: position.value) else { return nil }
 			statement.position = position
+		}
+
+		if let source = record.fields[SyncFieldName.source] {
+			if case let .string(id) = source.value {
+				statement.source = UUID(uuidString: id)
+			} else {
+				statement.source = nil
+			}
 		}
 		return statement
 	}

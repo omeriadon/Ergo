@@ -31,8 +31,11 @@ struct ErgoServices: Sendable {
 	let syncLimits: SyncLimits
 	let live: SyncLive
 	let sync: SyncService
+	let push: PushService
+	let sharing: BoardSharing
+	let invitePreviewLimiter: CreateAccountLimiter
 
-	init(config: ServerConfig, verifier: ConnectionVerifier? = nil, apple: AppleTokenVerifier? = nil) throws {
+	init(config: ServerConfig, verifier: ConnectionVerifier? = nil, apple: AppleTokenVerifier? = nil, push sender: PushSender = .disabled) throws {
 		let runner = ProcessRunner(
 			prefix: config.runnerPrefix,
 			owner: config.runnerUser.flatMap(ProcessRunner.Owner.init(named:)),
@@ -59,7 +62,12 @@ struct ErgoServices: Sendable {
 		syncLimits = SyncLimits(requestsPerMinute: config.syncsPerMinute)
 		let live = SyncLive()
 		self.live = live
-		sync = SyncService(vault: vault, live: live, recordsPerAccount: config.recordsPerAccount)
+		let push = PushService(sender: sender, live: live)
+		self.push = push
+		let sharing = BoardSharing(vault: vault, live: live, push: push, publicURL: config.publicURL)
+		self.sharing = sharing
+		invitePreviewLimiter = CreateAccountLimiter(limit: config.invitePreviewsPerMinute, window: 60)
+		sync = SyncService(vault: vault, live: live, sharing: sharing, recordsPerAccount: config.recordsPerAccount)
 	}
 }
 

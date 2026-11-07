@@ -6,12 +6,29 @@
 //
 
 import ErgoLogic
+import ErgoShare
 import SwiftUI
 
-/// What is selected: a box or an arrow, never both
+/// What is selected: a box, a source or an arrow, only one at a time
 enum CanvasSelection: Hashable {
 	case statement(Statement.ID)
 	case link(Link.ID)
+	case source(BoardSource.ID)
+}
+
+/// Which source sheet is open
+private enum SourceSheet: Identifiable {
+	case newText
+	case newLink
+	case edit(BoardSource.ID)
+
+	var id: String {
+		switch self {
+			case .newText: "newText"
+			case .newLink: "newLink"
+			case let .edit(id): id.uuidString
+		}
+	}
 }
 
 /// A box's menu asked for another box, and the next one tapped is the answer
@@ -100,6 +117,8 @@ struct CanvasView: View {
 
 	@State private var pick: BoxPick?
 
+	@State private var sourceSheet: SourceSheet?
+
 	/// Whether the canvas still fits itself to the board as the room changes. Adding a box ends it, so the bar changing
 	/// for the new selection can't move the canvas again afterwards.
 	@State private var keepsFitting = true
@@ -113,6 +132,11 @@ struct CanvasView: View {
 
 	private var board: Board {
 		boardStore.current
+	}
+
+	/// Read every time, so a role changed by the owner applies straight away
+	private var isReadOnly: Bool {
+		!boardStore.canEdit(board.id)
 	}
 
 	/// Animations are skipped entirely under Reduce Motion
@@ -132,6 +156,7 @@ struct CanvasView: View {
 		.safeAreaInset(edge: .bottom, spacing: 0) { bottomStack }
 		.toolbar { toolbar }
 		.background { editorPresenter }
+		.sheet(item: $sourceSheet, content: sourceEditor)
 		.modifier(lifecycle)
 	}
 
@@ -155,31 +180,61 @@ struct CanvasView: View {
 	private var canvas: some View {
 		let relations = boxRelations
 		let connectable = connectableStatements
+		let isReadOnly = isReadOnly
 		let boxes = board.statements.map { statement in
 			CanvasBoxModel(
 				statement: statement,
 				relations: relations[statement.id] ?? BoxRelations(),
-				appearance: appearance(of: statement.id, connectable: connectable)
+				appearance: appearance(of: statement.id, connectable: connectable),
+				isReadOnly: isReadOnly
 			)
 		}
 
 		return CanvasBoard(
 			boxes: boxes,
 			links: board.links,
+			sources: sources,
+			regions: regions,
 			// While picking, a box is tapped rather than dragged from, so its handles stay away
 			selectedStatement: activePick == nil ? selectedStatement : nil,
 			selectedLink: selectedLink,
+			selectedSource: selectedSource,
 			controller: canvasBoard,
+			isReadOnly: isReadOnly,
 			actions: actions(for:),
+			sourceActions: sourceActions(for:),
 			dragStarted: dragStarted,
 			moved: boxMoved,
 			tapBackground: backgroundTapped,
 			connectStarted: connectStarted,
 			connectTargetChanged: { connectTarget = $0 },
 			connectEnded: connectEnded,
-			deleteLink: deleteLink
+			deleteLink: deleteLink,
+			sourceDragStarted: sourceDragStarted,
+			sourceMoved: sourceMoved
 		)
 		.ignoresSafeArea()
+	}
+
+	/// Dimmed while drawing an arrow, since one can't end on a source
+	private var sources: [CanvasSourceModel] {
+		let isReadOnly = isReadOnly
+		return board.sources.map { source in
+			let appearance: BoxAppearance = if linkSource != nil {
+				.unavailable
+			} else {
+				activeSelection == .source(source.id) ? .selected : .normal
+			}
+			return CanvasSourceModel(source: source, appearance: appearance, isReadOnly: isReadOnly)
+		}
+	}
+
+	/// Only sources with cards have a region
+	private var regions: [CanvasRegionModel] {
+		board.sources.compactMap { source in
+			let members = board.members(of: source.id).map(\.id)
+			return members.isEmpty ? nil : CanvasRegionModel(source: source.id, members: members)
+		}
 	}
 
 	// MARK: - Bottom
@@ -211,12 +266,20 @@ struct CanvasView: View {
 	}
 
 	private var barMode: CanvasBarMode {
+		if isReadOnly {
+			return switch activeSelection {
+				case .statement: .viewOnly(.statement)
+				case let .source(id): .viewOnly(.source(isLink: board.source(id)?.link != nil))
+				case .link, nil: .viewOnly(.nothing)
+			}
+		}
 		if let activePick {
 			return .picking(prompt(for: activePick))
 		}
 		return switch activeSelection {
 			case .statement: .statement
 			case .link: .link
+			case let .source(id): .source(isLink: board.source(id)?.link != nil)
 			case nil: .idle
 		}
 	}
@@ -224,15 +287,28 @@ struct CanvasView: View {
 	private var barActions: CanvasBarActions {
 		CanvasBarActions(
 			add: addStatement,
+			addText: { sourceSheet = .newText },
+			addLink: { sourceSheet = .newLink },
 			edit: {
 				if case let .statement(id)? = activeSelection {
 					edit(id)
+				}
+			},
+			openSource: {
+				if case let .source(id)? = activeSelection {
+					open(id)
+				}
+			},
+			breakDown: {
+				if case let .source(id)? = activeSelection {
+					navigation.presentSheet(.breakDownSource(id))
 				}
 			},
 			delete: {
 				switch activeSelection {
 					case let .statement(id)?: delete(id)
 					case let .link(id)?: deleteLink(id)
+					case let .source(id)?: deleteSource(id)
 					case nil: break
 				}
 			},
@@ -245,6 +321,8 @@ struct CanvasView: View {
 	@ToolbarContentBuilder
 	private var toolbar: some ToolbarContent {
 		ToolbarItemGroup(placement: .topBarTrailing) {
+			BoardPeopleButton(board: board)
+
 			Button("Fit", systemImage: "arrow.up.left.and.down.right.magnifyingglass") {
 				fit(animated: true)
 			}
@@ -256,8 +334,11 @@ struct CanvasView: View {
 			.accessibilityIdentifier("board.boardsButton")
 		}
 
-		ToolbarOverflowMenu {
-			menuContent
+		// Everything in it changes the board
+		if !isReadOnly {
+			ToolbarOverflowMenu {
+				menuContent
+			}
 		}
 	}
 
@@ -324,7 +405,8 @@ struct CanvasView: View {
 
 	/// A pick whose box is gone (deleted here, or on another device) is no pick
 	private var activePick: BoxPick? {
-		pick.flatMap { board.statement($0.source) == nil ? nil : $0 }
+		guard !isReadOnly else { return nil }
+		return pick.flatMap { board.statement($0.source) == nil ? nil : $0 }
 	}
 
 	/// A selection that's gone (deleted here, or on another device) is no selection
@@ -334,6 +416,8 @@ struct CanvasView: View {
 				board.statement(id) == nil ? nil : selection
 			case let .link(id)?:
 				board.links.contains { $0.id == id } ? selection : nil
+			case let .source(id)?:
+				board.source(id) == nil ? nil : selection
 			case nil:
 				nil
 		}
@@ -350,6 +434,18 @@ struct CanvasView: View {
 			connect: { pickToConnect(id, asConclusion: $0) },
 			removeLink: { pickToUnlink(id) },
 			nudge: { nudge(id, columns: $0, rows: $1) }
+		)
+	}
+
+	private func sourceActions(for source: BoardSource) -> SourceActions {
+		let id = source.id
+		return SourceActions(
+			select: { selectSource(id) },
+			open: { open(id) },
+			edit: { sourceSheet = .edit(id) },
+			breakDown: { navigation.presentSheet(.breakDownSource(id)) },
+			delete: { deleteSource(id) },
+			nudge: { nudgeSource(id, columns: $0, rows: $1) }
 		)
 	}
 
@@ -389,6 +485,109 @@ struct CanvasView: View {
 		))
 		history.perform("Move Statement") {
 			boardStore.moveStatement(id: id, to: target)
+		}
+	}
+
+	// MARK: - Sources
+
+	/// A source can't be the answer to a pick, so tapping one just ends it
+	private func selectSource(_ id: BoardSource.ID) {
+		pick = nil
+		selection = .source(id)
+	}
+
+	/// Links always go to the browser, never a view in the app. Text opens its editor.
+	private func open(_ id: BoardSource.ID) {
+		pick = nil
+		selection = .source(id)
+		guard let source = board.source(id) else { return }
+
+		if let link = source.link {
+			if link.isWebLink {
+				UIApplication.shared.open(link)
+			}
+		} else {
+			sourceSheet = .edit(id)
+		}
+	}
+
+	private func sourceDragStarted(_ id: BoardSource.ID) {
+		pick = nil
+		selection = .source(id)
+		dragBefore = history.snapshot()
+	}
+
+	private func sourceMoved(_ id: BoardSource.ID, to position: CanvasPoint) {
+		boardStore.moveSource(id: id, to: position)
+		history.register(dragBefore, name: "Move Source")
+		dragBefore = nil
+	}
+
+	private func nudgeSource(_ id: BoardSource.ID, columns: Int, rows: Int) {
+		guard let source = board.source(id) else { return }
+		let target = CanvasGrid.snapped(CanvasPoint(
+			x: source.position.x + Double(columns) * CanvasGrid.step,
+			y: source.position.y + Double(rows) * CanvasGrid.step
+		))
+		history.perform("Move Source") {
+			boardStore.moveSource(id: id, to: target)
+		}
+	}
+
+	private func deleteSource(_ id: BoardSource.ID) {
+		history.perform("Delete Source") {
+			withAnimation(motion) {
+				boardStore.deleteSource(id: id)
+			}
+		}
+	}
+
+	@ViewBuilder
+	private func sourceEditor(_ sheet: SourceSheet) -> some View {
+		switch sheet {
+			case .newText:
+				SourceEditorSheet(kind: .text, save: addSource)
+			case .newLink:
+				SourceEditorSheet(kind: .link, save: addSource)
+			case let .edit(id):
+				if let source = board.source(id) {
+					if isReadOnly {
+						SourceReaderSheet(source: source)
+					} else {
+						SourceEditorSheet(kind: source.link == nil ? .text : .link, content: source.content) { content in
+							boardStore.updateSource(id, content: content)
+							findTitle(of: id)
+						}
+					}
+				}
+		}
+	}
+
+	/// A new source where the person is looking
+	private func addSource(_ content: BoardSource.Content) {
+		var added: BoardSource.ID?
+		history.perform("Add Source") {
+			withAnimation(motion) {
+				let id = boardStore.addSource(content, at: freeSpot(near: viewCentre))
+				selection = .source(id)
+				added = id
+			}
+		}
+		if keepsFitting, !canvasBoard.hasBeenMoved {
+			fit(animated: true)
+		}
+		keepsFitting = false
+		if let added {
+			findTitle(of: added)
+		}
+	}
+
+	/// A link typed in has no title, and the card says more with the page's. It's fine if the page won't load.
+	private func findTitle(of id: BoardSource.ID) {
+		guard case let .link(url, nil)? = board.source(id)?.content else { return }
+		Task {
+			guard let title = try? await PageReader.read(url).title else { return }
+			boardStore.updateSource(id, content: .link(url, title: title))
 		}
 	}
 
@@ -583,7 +782,7 @@ struct CanvasView: View {
 	/// The grid point nearest `point` where a box fits, else the nearest gap on that `side` of it
 	private func freeSpot(near point: CanvasPoint, side: CanvasLayout.Side = .below) -> CanvasPoint {
 		let target = CanvasGrid.snapped(point)
-		let occupied = board.statements.map(\.position)
+		let occupied = board.statements.map(\.position) + board.sources.map(\.position)
 		let box = CanvasRect.box(at: target)
 		if !occupied.contains(where: { box.intersects(.box(at: $0), margin: CanvasLayout.minimumGap) }) {
 			return target
@@ -592,7 +791,7 @@ struct CanvasView: View {
 	}
 
 	private var fitted: CanvasTransform {
-		CanvasTransform.fitting(board.statements.map { .box(at: $0.position) }, in: room.viewport, insets: room.insets)
+		CanvasTransform.fitting(board.occupiedRects, in: room.viewport, insets: room.insets)
 	}
 
 	private func fit(animated: Bool) {
@@ -618,6 +817,14 @@ struct CanvasView: View {
 
 	private var selectedStatement: Statement.ID? {
 		if case let .statement(id)? = activeSelection {
+			id
+		} else {
+			nil
+		}
+	}
+
+	private var selectedSource: BoardSource.ID? {
+		if case let .source(id)? = activeSelection {
 			id
 		} else {
 			nil

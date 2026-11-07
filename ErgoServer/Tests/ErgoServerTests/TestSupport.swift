@@ -153,10 +153,11 @@ func withTestApp(
 	_ config: ServerConfig,
 	verifier: ConnectionVerifier = .accepting,
 	apple: AppleTokenVerifier = .fake,
+	push: PushSender? = nil,
 	_ body: (Application) async throws -> Void
 ) async throws {
 	try await withApp(configure: { app in
-		try await configure(app, config: config, verifier: verifier, apple: apple)
+		try await configure(app, config: config, verifier: verifier, apple: apple, push: push)
 	}, body)
 }
 
@@ -165,9 +166,10 @@ func withLiveServer(
 	_ config: ServerConfig,
 	verifier: ConnectionVerifier = .accepting,
 	apple: AppleTokenVerifier = .fake,
+	push: PushSender? = nil,
 	_ body: (Application, URL) async throws -> Void
 ) async throws {
-	try await withTestApp(config, verifier: verifier, apple: apple) { app in
+	try await withTestApp(config, verifier: verifier, apple: apple, push: push) { app in
 		app.http.server.configuration.hostname = "127.0.0.1"
 		app.http.server.configuration.port = 0
 		try await app.server.start(address: nil)

@@ -66,6 +66,15 @@ final class SyncLive: Sendable {
 		}
 	}
 
+	/// Whether this device has a socket open, so it's already been told and needs no push
+	func isListening(token: UUID) -> Bool {
+		listeners.withLock { listeners in
+			listeners.values.contains { sockets in
+				sockets.values.contains { $0.token == token }
+			}
+		}
+	}
+
 	func count(of account: UUID) -> Int {
 		listeners.withLock { $0[account]?.count ?? 0 }
 	}

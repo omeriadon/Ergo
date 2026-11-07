@@ -10,8 +10,8 @@ import ErgoProtocol
 import ErgoTranslation
 import Foundation
 
-/// A `Board` as a board record's fields: just `created`. Statements and links are records of their own
-/// (`StatementRecord`, `LinkRecord`), so typing in one box, dragging another and drawing an arrow never clash.
+/// A `Board` as a board record's fields: just `created`. Statements, links and sources are records of their own
+/// (`StatementRecord`, `LinkRecord`, `SourceRecord`), so typing in one box, dragging another and drawing an arrow never clash.
 ///
 /// `modified` isn't a field: it's the newest stamp in the board's records, so every device sorts boards the same way.
 enum BoardRecord {
@@ -56,6 +56,7 @@ enum BoardRecord {
 		let wanted = Set(ids.map { id($0) })
 		var statements: [String: [SyncRecord]] = [:]
 		var links: [String: [SyncRecord]] = [:]
+		var sources: [String: [SyncRecord]] = [:]
 		for record in replica.records.values {
 			guard let board = record.owningBoard, wanted.contains(board) else { continue }
 			switch record.kind {
@@ -63,6 +64,8 @@ enum BoardRecord {
 					statements[board, default: []].append(record)
 				case .link:
 					links[board, default: []].append(record)
+				case .source:
+					sources[board, default: []].append(record)
 				default:
 					break
 			}
@@ -75,7 +78,7 @@ enum BoardRecord {
 				rebuilt.deleted.insert(boardID)
 				continue
 			}
-			let records = Records(board: record, statements: statements[id(boardID)] ?? [], links: links[id(boardID)] ?? [])
+			let records = Records(board: record, statements: statements[id(boardID)] ?? [], links: links[id(boardID)] ?? [], sources: sources[id(boardID)] ?? [])
 			if let board = board(from: records, replica: replica, local: local.first { $0.id == boardID }) {
 				rebuilt.boards.append(board)
 			}
@@ -87,10 +90,11 @@ enum BoardRecord {
 		var board: SyncRecord
 		var statements: [SyncRecord]
 		var links: [SyncRecord]
+		var sources: [SyncRecord]
 
 		/// Deleted ones count too: deleting is a change
 		var newestStamp: SyncStamp? {
-			([board] + statements + links).compactMap(\.newestStamp).max()
+			([board] + statements + links + sources).compactMap(\.newestStamp).max()
 		}
 	}
 
@@ -106,13 +110,14 @@ enum BoardRecord {
 			board.modified = newest.date
 		}
 
-		board.statements = statements(of: records.statements, replica: replica, local: local?.statements ?? [])
+		board.sources = sources(of: records.sources, replica: replica, local: local?.sources ?? [])
+		board.statements = statements(of: records.statements, replica: replica, local: local?.statements ?? [], hasSources: !board.sources.isEmpty)
 		board.links = links(of: records.links, replica: replica, local: local?.links ?? [], among: board.statements)
 		return board
 	}
 
 	/// What the replica has, in this device's order, then new ones from the top left
-	private static func statements(of records: [SyncRecord], replica: SyncReplica, local: [Statement]) -> [Statement] {
+	private static func statements(of records: [SyncRecord], replica: SyncReplica, local: [Statement], hasSources: Bool) -> [Statement] {
 		let localByID = Dictionary(local.map { ($0.id, $0) }) { first, _ in first }
 		var remote: [Statement.ID: Statement] = [:]
 		for record in records where !record.isDeleted && !replica.isIgnored(record) {
@@ -134,12 +139,36 @@ enum BoardRecord {
 			(a.position.y, a.position.x, a.id.uuidString) < (b.position.y, b.position.x, b.id.uuidString)
 		}
 
-		if statements.isEmpty {
+		if statements.isEmpty, !hasSources {
 			// An empty one this device already made, so rebuilding doesn't keep making new ones
 			let placeholder = local.first { $0.isEmpty && replica[.statement, StatementRecord.id($0.id)] == nil }
 			statements = [placeholder ?? Statement()]
 		}
 		return statements
+	}
+
+	/// What the replica has, in this device's order, then new ones from the top left
+	private static func sources(of records: [SyncRecord], replica: SyncReplica, local: [BoardSource]) -> [BoardSource] {
+		let localByID = Dictionary(local.map { ($0.id, $0) }) { first, _ in first }
+		var remote: [BoardSource.ID: BoardSource] = [:]
+		for record in records where !record.isDeleted && !replica.isIgnored(record) {
+			if let source = SourceRecord.source(from: record, local: UUID(uuidString: record.id).flatMap { localByID[$0] }) {
+				remote[source.id] = source
+			}
+		}
+
+		var sources: [BoardSource] = []
+		for source in local {
+			if let updated = remote.removeValue(forKey: source.id) {
+				sources.append(updated)
+			} else if replica[.source, SourceRecord.id(source.id)] == nil {
+				// Not recorded yet
+				sources.append(source)
+			}
+		}
+		return sources + remote.values.sorted { a, b in
+			(a.position.y, a.position.x, a.id.uuidString) < (b.position.y, b.position.x, b.id.uuidString)
+		}
 	}
 
 	/// Links the replica doesn't have yet (this device's, before its first pull has finished) stay

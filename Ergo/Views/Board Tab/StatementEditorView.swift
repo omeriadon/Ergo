@@ -30,13 +30,34 @@ struct StatementEditorView: View {
 		boardStore.binding(for: statementID) ?? .constant(statement)
 	}
 
+	/// Comes from the store, so a role changing while this is open applies straight away
+	private var canEdit: Bool {
+		boardStore.canEdit(boardStore.current.id)
+	}
+
+	@ViewBuilder
+	private var content: some View {
+		if canEdit {
+			TextEditor(text: statementBinding.english, selection: $englishSelection)
+				.textEditorStyle(.plain)
+				.focused($englishFocused)
+				.padding(.horizontal, 15)
+				.accessibilityLabel("English editor")
+				.accessibilityIdentifier("board.englishEditor")
+		} else {
+			ScrollView {
+				Text(statement.english.isEmpty ? "Empty statement" : statement.english)
+					.foregroundStyle(statement.english.isEmpty ? .secondary : .primary)
+					.textSelection(.enabled)
+					.frame(maxWidth: .infinity, alignment: .leading)
+					.padding(.horizontal, 20)
+					.accessibilityIdentifier("board.englishReader")
+			}
+		}
+	}
+
 	var body: some View {
-		TextEditor(text: statementBinding.english, selection: $englishSelection)
-			.textEditorStyle(.plain)
-			.focused($englishFocused)
-			.padding(.horizontal, 15)
-			.accessibilityLabel("English editor")
-			.accessibilityIdentifier("board.englishEditor")
+		content
 			.toolbarTitleDisplayMode(.inline)
 			.navigationTitle("Card")
 			.onAppear {

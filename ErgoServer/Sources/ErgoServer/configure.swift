@@ -22,12 +22,14 @@ func configure(_ app: Application) async throws {
 	try await configure(app, config: config)
 }
 
-/// Tests pass their own config, a verifier that doesn't run a CLI, and an Apple check that doesn't need Apple
+/// Tests pass their own config, a verifier that doesn't run a CLI, an Apple check that doesn't need Apple, and a push
+/// sender that doesn't either
 func configure(
 	_ app: Application,
 	config: ServerConfig,
 	verifier: ConnectionVerifier? = nil,
-	apple: AppleTokenVerifier? = nil
+	apple: AppleTokenVerifier? = nil,
+	push: PushSender? = nil
 ) async throws {
 	guard StagePrompts.missing.isEmpty else {
 		throw ServerConfig.Problem(description: "Missing prompts for \(StagePrompts.missing.map { "'\($0)'" }.joined(separator: ", "))")
@@ -36,7 +38,8 @@ func configure(
 	if let user = config.runnerUser, ProcessRunner.Owner(named: user) == nil {
 		throw ServerConfig.Problem(description: "ERGO_RUNNER_USER: Unknown user '\(user)'")
 	}
-	app.ergo = try ErgoServices(config: config, verifier: verifier, apple: apple)
+	let sender = push ?? PushSender.live(config: config, client: { [weak app] in app?.client }, logger: app.logger)
+	app.ergo = try ErgoServices(config: config, verifier: verifier, apple: apple, push: sender)
 	app.passwords.use(.bcrypt(cost: config.passwordCost))
 
 	if let postgres = config.postgres {
@@ -73,6 +76,7 @@ func addMigrations(to app: Application) {
 	app.migrations.add(CreateSyncRecord())
 	app.migrations.add(AddAccountEmail())
 	app.migrations.add(AddSyncRecordBoard())
+	app.migrations.add(CreateBoardSharing())
 }
 
 /// SQLite creates the file with the umask's permissions, which would let the runner user read every sealed credential

@@ -89,7 +89,7 @@ final class SyncLimits: Sendable {
 		}
 		guard kind.isValid(id: id) else {
 			let message = switch kind {
-				case .board, .statement, .link, .scratchpad: "Expected a \(kind.rawValue) id to be an uppercase UUID, found '\(shortened(id))'"
+				case .board, .statement, .link, .scratchpad, .source: "Expected a \(kind.rawValue) id to be an uppercase UUID, found '\(shortened(id))'"
 				case .setting: "Unknown setting '\(shortened(id))'"
 				default: "Expected a \(kind.rawValue) id of 1 to 256 bytes, found \(id.utf8.count)"
 			}

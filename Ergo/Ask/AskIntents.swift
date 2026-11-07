@@ -9,9 +9,9 @@ import ErgoCatalog
 import ErgoProtocol
 import Foundation
 
-/// Does what a link or a button in an answer asks for. Each case calls the same `NavigationManager` method its App Intent
-/// does. It can't call the intent itself: an intent's `@Dependency` only resolves inside the system's own intent flow,
-/// and `perform()` called from here is a crash.
+/// Does what a link or a button in an answer asks for. A case with an App Intent calls the same `NavigationManager` method
+/// the intent does. It can't call the intent itself: an intent's `@Dependency` only resolves inside the system's own intent
+/// flow, and `perform()` called from here is a crash.
 @MainActor
 enum AskIntents {
 	private static let libraryIDs: Set<String> = Set(LibraryCatalog.shared?.entries.map { "\($0.category)/\($0.id)" } ?? [])
@@ -28,12 +28,14 @@ enum AskIntents {
 				true
 			case let .openTab(tab):
 				AppTab(rawValue: tab) != nil
+			case let .askFollowUp(text):
+				!text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
 			case .unknown:
 				false
 		}
 	}
 
-	static func run(_ intent: AskIntent, navigation: NavigationManager) {
+	static func run(_ intent: AskIntent, navigation: NavigationManager, store: AskStore) {
 		switch intent {
 			case let .openLibraryEntry(category, id):
 				guard let category = LibraryContent(rawValue: category) else { return }
@@ -50,6 +52,9 @@ enum AskIntents {
 			case let .openTab(tab):
 				guard let tab = AppTab(rawValue: tab) else { return }
 				navigation.selectedTab = tab
+
+			case let .askFollowUp(text):
+				store.draftFollowUp(text)
 
 			case .unknown:
 				break

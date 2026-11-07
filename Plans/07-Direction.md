@@ -136,3 +136,7 @@ A preliminary version of the Ask tab exists. See `CLAUDE.md`'s Ask section for h
 - Answers surviving the app being suspended: iOS closes the socket, so it shows as a lost connection.
 - `Find text` as a tool, and any intent beyond the library and navigation ones.
 - Enforcing that findings quote the source. It's in the prompt, not checked.
+
+## Built so far: Sharing boards
+
+Boards can be shared with other people by link, who can edit or only view, through the system share sheet with Messages collaboration, and pushes when something changes. See [09-Sharing.md](09-Sharing.md) for the design and what's left, and `CLAUDE.md`'s Sharing boards section for how it works.

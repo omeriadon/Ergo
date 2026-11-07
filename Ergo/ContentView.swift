@@ -161,6 +161,15 @@ struct ContentView: View {
 
 				case let .shared(item):
 					SharedItemSheet(item: item)
+
+				case let .breakDownSource(id):
+					SourceBreakDownSheet(id: id)
+
+				case let .boardPeople(board):
+					BoardPeopleSheet(board: board)
+
+				case let .joinBoard(token):
+					JoinBoardSheet(token: token)
 			}
 		}
 		.fontDesign(.rounded)

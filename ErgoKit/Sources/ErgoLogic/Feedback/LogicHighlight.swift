@@ -51,7 +51,7 @@ public extension LogicAnalysis {
 			// Nothing in particular is to blame for a non sequitur, the conclusion just doesn't follow
 			case let .invalid(_, fallacy):
 				fallacy == nil ? conclusion : involved(fallacy)
-			case let .unchecked(_, fallacy):
+			case let .unchecked(fallacy):
 				involved(fallacy)
 		}
 

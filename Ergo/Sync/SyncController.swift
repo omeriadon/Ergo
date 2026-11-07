@@ -71,8 +71,8 @@ final class SyncController {
 		email != nil && account.signedIn?.hasApple != true
 	}
 
-	@ObservationIgnored private let account: TranslationAccount
-	@ObservationIgnored private let boardStore: BoardStore
+	@ObservationIgnored let account: TranslationAccount
+	@ObservationIgnored let boardStore: BoardStore
 	@ObservationIgnored private let scratchpadStore: ScratchpadStore
 	@ObservationIgnored private let catalog: CatalogStore
 
@@ -89,6 +89,7 @@ final class SyncController {
 		self.catalog = catalog
 		replica = Defaults[.syncState] ?? SyncReplica(device: Self.deviceID())
 		syncingAccount = account.signedIn?.withoutEmail
+		boardStore.shares = BoardShareRecords.shares(in: replica)
 
 		boardStore.didSave = { [weak self] changed, deleted in
 			self?.record(changed, deleted: deleted)
@@ -127,6 +128,7 @@ final class SyncController {
 			recordAll()
 			syncNow()
 			startListening()
+			registerForPush()
 		}
 
 		await withDiscardingTaskGroup { group in
@@ -204,6 +206,7 @@ final class SyncController {
 		stop()
 		// Keeps what's merged and pending, so signing in again, to any account, loses nothing
 		replica.reset()
+		forgetSharedBoards()
 		saveReplica()
 		outcome = nil
 
@@ -212,7 +215,17 @@ final class SyncController {
 			recordAll()
 			syncNow()
 			startListening()
+			registerForPush()
 		}
+	}
+
+	/// Someone else's boards don't stay behind for whoever signs in next. Boards this account owns stay as ordinary local
+	/// ones. Nothing is sent, so this leaves nobody's board: signing back in pulls everything again, these included.
+	private func forgetSharedBoards() {
+		let departure = BoardShareRecords.departure(from: replica)
+		replica.forget(departure.records)
+		boardStore.shares = [:]
+		boardStore.applyRemote([], deleted: departure.boards)
 	}
 
 	func signIn(identityToken: String, nonce: String) async throws {
@@ -267,6 +280,9 @@ final class SyncController {
 	private func record(_ boards: [Board], deleted: Set<Board.ID>) {
 		guard isSignedIn else { return }
 
+		// A viewer's device has nothing to push, not even a rebuilt placeholder. `deleted` still goes: it's leaving.
+		let boards = boards.filter { boardStore.canEdit($0.id) }
+
 		// Before anything is recorded: a link to a statement deleted here only counts as the board's while that statement lives
 		let removed = removedRecords(from: boards)
 
@@ -281,6 +297,10 @@ final class SyncController {
 			}
 			for link in board.links {
 				changed = replica.recordLocal(kind: .link, id: LinkRecord.id(link.id), fields: LinkRecord.fields(of: link, in: board.id)) || changed
+			}
+			for source in board.sources {
+				guard let fields = try? SourceRecord.fields(of: source, in: board.id) else { continue }
+				changed = replica.recordLocal(kind: .source, id: SourceRecord.id(source.id), fields: fields) || changed
 			}
 		}
 		for (kind, id) in removed {
@@ -312,6 +332,10 @@ final class SyncController {
 				case .link:
 					if LinkRecord.link(from: record) != nil, !board.links.contains(where: { LinkRecord.id($0.id) == record.id }) {
 						removed.append((.link, record.id))
+					}
+				case .source:
+					if SourceRecord.canRead(record), !board.sources.contains(where: { SourceRecord.id($0.id) == record.id }) {
+						removed.append((.source, record.id))
 					}
 				default:
 					break
@@ -380,12 +404,14 @@ final class SyncController {
 		recordBookmarks()
 
 		// Deleted here while signed out. Only boards this version could show, so it never deletes one it skipped.
+		// Never a shared one: a board that failed to decode must not become a delete for everyone.
 		let local = Set(boardStore.boards.map { BoardRecord.id($0.id) })
 		let missing = replica.records.values.filter { record in
 			record.kind == .board
 				&& !record.isDeleted
 				&& !local.contains(record.id)
 				&& BoardRecord.canRead(record)
+				&& !BoardShareRecords.isShared(record.id, in: replica)
 		}
 		record(boardStore.boards, deleted: Set(missing.compactMap { UUID(uuidString: $0.id) }))
 
@@ -409,6 +435,7 @@ final class SyncController {
 			.filter { board in
 				oversized.contains(SyncRecord.Key(kind: .board, id: BoardRecord.id(board.id)))
 					|| board.statements.contains { oversized.contains(SyncRecord.Key(kind: .statement, id: StatementRecord.id($0.id))) }
+					|| board.sources.contains { oversized.contains(SyncRecord.Key(kind: .source, id: SourceRecord.id($0.id))) }
 			}
 			.map(\.title)
 
@@ -427,11 +454,11 @@ final class SyncController {
 		var affectedScratchpads: Set<LogicScratchpad.ID> = []
 		for record in applied.changed {
 			switch record.kind {
-				case .board:
+				case .board, .share:
 					if let id = UUID(uuidString: record.id) {
 						affected.insert(id)
 					}
-				case .statement, .link:
+				case .statement, .link, .source:
 					if let id = record.owningBoard.flatMap(UUID.init(uuidString:)) {
 						affected.insert(id)
 					}
@@ -448,6 +475,12 @@ final class SyncController {
 				default:
 					continue
 			}
+		}
+
+		// First, so a copy of what lost an edit below knows whether this person can still edit that board
+		let shares = BoardShareRecords.shares(in: replica)
+		if shares != boardStore.shares {
+			boardStore.shares = shares
 		}
 
 		// Boards are built from the replica as a whole, so the order records arrived in doesn't matter
@@ -495,6 +528,8 @@ final class SyncController {
 
 		let dangling = replica.records.values.filter { record in
 			guard record.kind == .link, !record.isDeleted, let board = record.owningBoard, let ends = record.joined else { return false }
+			// A viewer's cleanup would only be refused, then found again after that sync, for ever
+			guard UUID(uuidString: board).map(boardStore.canEdit) ?? true else { return false }
 			return !isGone(.board, board) && (isGone(.statement, ends.premise) || isGone(.statement, ends.conclusion))
 		}
 
@@ -535,6 +570,34 @@ final class SyncController {
 	/// Waits out a backoff rather than adding to it
 	private func sync() {
 		handle(.requested)
+	}
+
+	/// Syncs now and comes back once it's finished, for what needs the server and this device to agree before going on.
+	/// Throws how it ended, if that's badly.
+	func syncAndWait() async throws {
+		syncNow()
+		while let task = syncing {
+			await task.value
+		}
+		if case let .failed(message, unreachable) = outcome {
+			throw ServiceError(code: unreachable ? .providerUnavailable : .internalError, message: message)
+		}
+	}
+
+	/// A silent push. iOS can start the app just for this, before `run()` has got going. It uses the result to judge how
+	/// often to wake the app.
+	func syncForPush() async -> UIBackgroundFetchResult {
+		if !isReady {
+			try? await catalog.load()
+			isReady = true
+		}
+		let cursor = replica.cursor
+		do {
+			try await syncAndWait()
+		} catch {
+			return .failed
+		}
+		return replica.cursor == cursor ? .noData : .newData
 	}
 
 	private func handle(_ event: SyncSchedule.Event) {

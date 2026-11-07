@@ -7,14 +7,14 @@
 
 import Foundation
 
-// A board is a canvas, and its statements and links are records of their own, so deleting a board can't delete them
+// A board is a canvas, and its statements, links and sources are records of their own, so deleting a board can't delete them
 // in the same write. Instead they're ignored while their board is deleted or missing, and pruned with it:
 // the server when the board's tombstone is pruned, the replica the same way.
 
 public extension SyncRecord {
-	/// The board a statement or link belongs to. Nil for other kinds, or before its `board` field is set.
+	/// The board a statement, link or source belongs to. Nil for other kinds, or before its `board` field is set.
 	var owningBoard: String? {
-		guard kind == .statement || kind == .link, case let .string(board)? = fields[SyncFieldName.board]?.value else {
+		guard kind == .statement || kind == .link || kind == .source, case let .string(board)? = fields[SyncFieldName.board]?.value else {
 			return nil
 		}
 		return board
@@ -33,7 +33,7 @@ public extension SyncRecord {
 }
 
 public extension SyncReplica {
-	/// Whether the app must ignore this record: a statement or link whose board is deleted or missing, or a link
+	/// Whether the app must ignore this record: a statement, link or source whose board is deleted or missing, or a link
 	/// whose premise or conclusion statement is deleted or missing. False for every other kind.
 	///
 	/// Records arrive in the order they changed, so a board can be missing only because it hasn't arrived yet.
@@ -46,7 +46,7 @@ public extension SyncReplica {
 		}
 
 		switch record.kind {
-			case .statement:
+			case .statement, .source:
 				return record.owningBoard.map { missing(.board, $0) } ?? true
 			case .link:
 				guard let board = record.owningBoard, let ends = record.joined else { return true }

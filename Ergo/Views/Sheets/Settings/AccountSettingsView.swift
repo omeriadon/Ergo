@@ -50,7 +50,7 @@ struct AccountSettingsView: View {
 
 // MARK: - Signed out
 
-private struct SignInRow: View {
+struct SignInRow: View {
 	@Environment(SyncController.self)
 	private var sync
 

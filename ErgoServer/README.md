@@ -26,8 +26,16 @@ Every request from the app sends `Ergo-Protocol-Version: 1`, and all but `POST v
 | `POST v1/sync` | signed in | `SyncRequest` → `SyncResponse` |
 | `WS v1/sync/live` | signed in | `SyncLiveMessage.changed(cursor:)` whenever another device pushes |
 | `POST v1/apple/notifications` | Apple's signature | Sign in with Apple's server-to-server notifications. Called by Apple, never the app. |
+| `POST` / `DELETE v1/boards/<board>/invites` | signed in, owner | `CreateBoardInvite` → `BoardInvite`, the first one shares the board. `DELETE` revokes every open link. |
+| `POST` / `DELETE v1/boards/<board>/members/<member>` | signed in, owner | `UpdateBoardMember` → `204`, or removes them |
+| `DELETE v1/boards/<board>/share` | signed in, owner | Stops sharing: everyone else loses the board, the owner keeps it |
+| `POST v1/invites/preview` | version header only | `BoardInviteToken` → `BoardInvitePreview`. 30 a minute per address. |
+| `POST v1/invites/accept` | signed in | `AcceptBoardInvite` → `JoinedBoard`. Accepting twice, or as the owner, keeps the role you have. |
+| `PUT` / `DELETE v1/push/device` | signed in | `PushDevice` → `204`, or forgets this device's token only |
+| `GET /.well-known/apple-app-site-association` | nothing | What makes invite links open the app. No version header. |
+| `GET /join/<token>` | nothing | A small page for someone without the app. No version header, reads nothing from the database, and its path is never logged. |
 
-"Signed in" means an Apple ID, an email, or both, on one account. An anonymous account gets `403` `signInRequired` from both sync routes.
+"Signed in" means an Apple ID, an email, or both, on one account. An anonymous account gets `403` `signInRequired` from both sync routes, and from every signed-in route above.
 
 `invalidCredentials` is `401` like a dead token (`unauthorized`), but it's a different `code` and means the device's token is still good. The app must read the code, never the status.
 
@@ -116,6 +124,13 @@ Everything comes from the environment.
 | `ERGO_MODELS_FILE` | none | JSON overriding the models, see below |
 | `ERGO_APPLE_APP_ID` | `com.adonis.Ergo` | The audience Sign in with Apple tokens must have, the app's bundle id |
 | `ERGO_TRUST_PROXY` | off | `1` or `true` behind a proxy on the same machine or Docker network, such as nginx or Traefik. `compose.yaml` turns it on. Then the per-address limits use the client address the proxy put in `X-Forwarded-For`, see below. Anything but `1`, `true`, `0`, `false` or empty refuses to start. |
+| `ERGO_PUBLIC_URL` | `https://ergo-15.235.184.129.sslip.io` | What invite links are built on |
+| `ERGO_APPLE_TEAM_IDS` | `P6PV2R9443` | Comma separated. The teams in the Apple App Site Association file: the app target's team, not the project's. |
+| `ERGO_APNS_KEY` or `ERGO_APNS_KEY_FILE` | none | The APNs key (`.p8`, PEM; a literal `\n` is accepted in the variable). Unset sends no pushes, and says so once at launch. One that doesn't read refuses to start. |
+| `ERGO_APNS_KEY_ID` | required with a key | The key's id |
+| `ERGO_APNS_TEAM_ID` | `P6PV2R9443` | The team the key belongs to |
+| `ERGO_APNS_TOPIC` | `ERGO_APPLE_APP_ID` | The `apns-topic`, the app's bundle id |
+| `ERGO_APP_STORE_ID` | none | Adds an App Store link and banner to the join page |
 
 Production is `serve --env production`. It refuses to start without a vault key, an unreadable models file, or an unknown runner user.
 
@@ -203,6 +218,17 @@ Sync follows `Plans/05-Sync.md`. The merge rules are ErgoKit's `ErgoSync`, so th
   - Logging in is the Apple flow with a password: it refuses a device that's already signed in as another account ("sign out first"), and otherwise merges the anonymous account in with `AccountMerger`. `isNewAccount` is always `false`, since an email can only be logged in to once registered. `AccountMerger` refuses to merge away an account that has an email.
   - An account with an email isn't deleted when its last device signs out.
 
+## Sharing boards
+
+Sharing follows `Plans/09-Sharing.md`. Each member keeps their own copy of a board's records, sealed for their account, and the server copies every change to the others, each taking that account's own seq. Who's on a board reaches devices as a `share` record, which only the server writes.
+
+- **Tables:** `board_shares` (the board's id, its owner, the title sealed by the vault), `board_members` (role and name, unique per board and account; the owner has a row too), `board_invites` (only the token's hash, 30 days, at most 20 open per board) and `push_devices` (one per APNs token, tied to the account token, so signing out of a device stops its pushes).
+- **Pushing:** a change on a board the caller can't edit, or a pushed `share`, comes back in `SyncResponse.rejected` with what the account has, and the rest of the request goes through. A board record with only `deleted: true` is allowed from anyone: the owner's deletes for everyone, and a member's leaves.
+- **Locks:** everyone on a touched board is locked in sorted order before a shared write, so two pushes can't deadlock on Postgres.
+- **Limits:** 30 people per board. What other members' pushes copy in doesn't count towards the 50,000 records, so nobody's limit can fail someone else's push.
+- **Pushes:** `Sharing/Push/`, with no dependency beyond swift-crypto and Vapor's client. Edits alert at most once per board and person per 15 minutes, otherwise silently at most once per account per minute. A device with a live socket gets nothing. In memory, so a restart forgets. A `410`, `BadDeviceToken` or `Unregistered` deletes the device.
+- **Logs:** never an invite token, an APNs token, a title or a name. The sharing routes use the quiet database handle, and the request log says `/join` for an invite link. Sending only logs Apple's reason or the status.
+
 ## Sign in with Apple notifications
 
 Apple posts to `POST v1/apple/notifications` when someone changes their Hide My Email forwarding, stops using Sign in with Apple with Ergo, or deletes their Apple Account. It's the server's only route that Apple calls rather than the app.
@@ -232,7 +258,7 @@ The log says only the event type and whether an account matched. Never the `sub`
 
 ## Tests
 
-`swift test` is offline. Shell scripts stand in for `claude` and `codex`, so it never uses a real login, and a fake `AppleTokenVerifier` stands in for Apple. The socket and sync tests run a real server on a free port and talk to it with the app's own `ErgoClient`, and two real `SyncReplica`s converge through the actual route.
+`swift test` is offline. Shell scripts stand in for `claude` and `codex`, so it never uses a real login, a fake `AppleTokenVerifier` stands in for Apple, and a `PushSender` that only keeps what it's given stands in for APNs. The socket and sync tests run a real server on a free port and talk to it with the app's own `ErgoClient`, and two real `SyncReplica`s converge through the actual route.
 
 Codex can't be called from the network this was built on, so its command line follows the 0.166 docs and `codex exec --help`, and is only exercised with fakes.
 

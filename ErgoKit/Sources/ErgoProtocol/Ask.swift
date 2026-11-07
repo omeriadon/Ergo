@@ -152,6 +152,9 @@ public enum AskIntent: Sendable, Hashable {
 	case openBookmarks
 	case openTab(String)
 
+	/// Puts a question in the composer. It isn't sent, so the person can change it first.
+	case askFollowUp(String)
+
 	/// From a newer server, so this version has nothing to run
 	case unknown(String)
 
@@ -174,6 +177,9 @@ public enum AskIntent: Sendable, Hashable {
 			case let .openTab(tab):
 				components.path = "/open-tab"
 				components.queryItems = [URLQueryItem(name: "tab", value: tab)]
+			case let .askFollowUp(text):
+				components.path = "/ask-follow-up"
+				components.queryItems = [URLQueryItem(name: "text", value: text)]
 			case let .unknown(text):
 				return URL(string: text)
 		}
@@ -205,6 +211,9 @@ public enum AskIntent: Sendable, Hashable {
 			case "/open-tab":
 				guard let tab = value("tab") else { fallthrough }
 				self = .openTab(tab)
+			case "/ask-follow-up":
+				guard let text = value("text") else { fallthrough }
+				self = .askFollowUp(text)
 			default:
 				self = .unknown(url.absoluteString)
 		}

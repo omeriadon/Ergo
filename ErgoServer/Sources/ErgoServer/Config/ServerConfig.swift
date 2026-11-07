@@ -54,6 +54,26 @@ struct ServerConfig: Sendable {
 	/// on the same machine or private network, since otherwise anyone could write it.
 	var trustProxy = false
 
+	/// What invite links are built on, with no trailing slash
+	var publicURL = "https://ergo-15.235.184.129.sslip.io"
+
+	/// Who the app may be signed by, for the file that makes invite links open it. The app target's team, not the project's.
+	var appleTeamIDs = ["P6PV2R9443"]
+
+	struct APNS: Sendable {
+		/// PEM. The file Apple gives you, a `.p8`, is already that.
+		var key: String
+		var keyID: String
+		var teamID: String
+		var topic: String
+	}
+
+	/// Nil sends no pushes
+	var apns: APNS?
+
+	/// For the join page's App Store link, none until the app is on the store
+	var appStoreID: String?
+
 	// MARK: - Fixed, but shortened by tests
 
 	var requestWait: Duration = .seconds(10)
@@ -64,6 +84,9 @@ struct ServerConfig: Sendable {
 
 	/// Generous, since every user's notifications come from Apple's few addresses
 	var appleNotificationsPerMinute = 120
+
+	/// Someone opening a few links is a few of these. Tokens can't be guessed, so this only slows a script.
+	var invitePreviewsPerMinute = 30
 
 	/// Failed logins per address, and per email, within `loginWindow`
 	var failedLoginsPerWindow = 10
@@ -167,6 +190,8 @@ struct ServerConfig: Sendable {
 			}
 		}
 
+		try loadSharing(from: environment, into: &config)
+
 		if config.claudePath == nil {
 			logger.warning("Couldn't find 'claude' on PATH, Claude connections will fail until ERGO_CLAUDE_PATH is set")
 		}
@@ -175,6 +200,53 @@ struct ServerConfig: Sendable {
 		}
 
 		return config
+	}
+
+	/// After `ERGO_APPLE_APP_ID`, which is the default APNs topic
+	private static func loadSharing(from environment: [String: String], into config: inout ServerConfig) throws {
+		if let url = environment["ERGO_PUBLIC_URL"], !url.isEmpty {
+			var trimmed = url
+			while trimmed.hasSuffix("/") {
+				trimmed.removeLast()
+			}
+			guard trimmed.hasPrefix("https://") || trimmed.hasPrefix("http://"), URL(string: trimmed) != nil else {
+				throw Problem(description: "ERGO_PUBLIC_URL: Expected an http or https URL, found '\(url)'")
+			}
+			config.publicURL = trimmed
+		}
+		if let teams = environment["ERGO_APPLE_TEAM_IDS"], !teams.isEmpty {
+			let ids = teams.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+			guard !ids.isEmpty else {
+				throw Problem(description: "ERGO_APPLE_TEAM_IDS: Expected team ids separated by commas, found none")
+			}
+			config.appleTeamIDs = ids
+		}
+		config.appStoreID = environment["ERGO_APP_STORE_ID"].flatMap { $0.isEmpty ? nil : $0 }
+
+		var pem = environment["ERGO_APNS_KEY"].flatMap { $0.isEmpty ? nil : $0 }
+		if pem == nil, let file = environment["ERGO_APNS_KEY_FILE"], !file.isEmpty {
+			do {
+				pem = try String(contentsOf: URL(filePath: file), encoding: .utf8)
+			} catch {
+				throw Problem(description: "ERGO_APNS_KEY_FILE: Couldn't read '\(file)'")
+			}
+		}
+		guard let pem else { return }
+
+		// Environment files often can't hold a newline. The error never quotes the key.
+		let key = pem.replacingOccurrences(of: "\\n", with: "\n")
+		guard (try? P256.Signing.PrivateKey(pemRepresentation: key)) != nil else {
+			throw Problem(description: "ERGO_APNS_KEY: Expected a P-256 private key in PEM, the .p8 file Apple gives you")
+		}
+		guard let keyID = environment["ERGO_APNS_KEY_ID"], !keyID.isEmpty else {
+			throw Problem(description: "ERGO_APNS_KEY_ID: Expected the key's id to go with ERGO_APNS_KEY")
+		}
+		config.apns = APNS(
+			key: key,
+			keyID: keyID,
+			teamID: environment["ERGO_APNS_TEAM_ID"].flatMap { $0.isEmpty ? nil : $0 } ?? "P6PV2R9443",
+			topic: environment["ERGO_APNS_TOPIC"].flatMap { $0.isEmpty ? nil : $0 } ?? config.appleApplicationID
+		)
 	}
 
 	private static func vaultKey(from environment: [String: String], production: Bool, logger: Logger) throws -> SymmetricKey {

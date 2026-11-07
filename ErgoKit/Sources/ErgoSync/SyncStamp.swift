@@ -32,6 +32,14 @@ public struct SyncStamp: Codable, Sendable, Hashable, Comparable {
 	public static func < (a: SyncStamp, b: SyncStamp) -> Bool {
 		(a.time, a.counter, a.device) < (b.time, b.counter, b.device)
 	}
+
+	/// A stamp for something the server writes itself, always newer than `newest`, the newest stamp of the record it goes in.
+	/// It has no clock to keep, so what's newest is passed in.
+	public static func server(after newest: SyncStamp?, now: Date) -> SyncStamp {
+		let time = max(SyncClock.milliseconds(now), newest?.time ?? .min)
+		let counter = time == newest?.time ? (newest?.counter ?? 0) + 1 : 0
+		return SyncStamp(time: time, counter: counter, device: "server")
+	}
 }
 
 // MARK: - Clock

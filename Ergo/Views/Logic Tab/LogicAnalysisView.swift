@@ -63,15 +63,15 @@ struct LogicAnalysisView: View {
 						)
 					}
 
-				case let .unchecked(symbol, match?):
-					fallacy(match.fallacyID, detail: "Matches this pattern, but \(symbol.map { "'\($0)'" } ?? "this") isn't fully checked yet")
+				case let .unchecked(match?):
+					fallacy(match.fallacyID, detail: "Matches this pattern, but couldn't be proved either way")
 
-				case let .unchecked(symbol, nil):
+				case .unchecked(nil):
 					MessageRow(
 						symbol: "questionmark.circle.fill",
 						color: .secondary,
-						title: symbol.map { "'\($0)' isn't checked yet" } ?? "Can't fully check this yet",
-						detail: "Only ¬ ∧ ∨ ⊕ → ↔ are checked so far"
+						title: "Couldn't be proved either way",
+						detail: "This may be valid or invalid"
 					)
 
 				case let .statuses(statuses):
@@ -146,8 +146,8 @@ struct LogicAnalysisView: View {
 		let title = switch status {
 			case .tautology: "Always true"
 			case .contradiction: "Never true"
-			case .contingent: "Depends on the letters"
-			case .undecided: "Can't fully check this yet"
+			case .contingent: "Could be true or false"
+			case .undecided: "Couldn't be proved either way"
 		}
 
 		let symbol = switch status {
@@ -191,7 +191,7 @@ struct LogicAnalysisView: View {
 			}
 
 		guard let last = parts.last else {
-			return "Conclusion fails whatever the letters are"
+			return "Premises can be true while the conclusion is false"
 		}
 
 		let joined = parts.count == 1 ? last : parts.dropLast().joined(separator: ", ") + " and " + last

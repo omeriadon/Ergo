@@ -25,6 +25,13 @@ func routes(_ app: Application) throws {
 	app.get(askTool, use: AskToolController.refuse)
 	app.delete(askTool, use: AskToolController.refuse)
 
+	// Not the app's either: Apple's CDN and browsers
+	let joinPage: [PathComponent] = ErgoProtocol.Path.join.pathComponents + [":token"]
+	app.get(ErgoProtocol.Path.appleAppSiteAssociation.pathComponents, use: JoinController.association)
+	app.get(joinPage, use: JoinController.page)
+	// Someone may not have an account yet when they open a link
+	app.post(ErgoProtocol.Path.invitePreview.pathComponents, use: BoardSharingController.preview)
+
 	let signedIn = app.grouped(AccountAuthenticator())
 	let connection: [PathComponent] = ErgoProtocol.Path.connections.pathComponents + [":provider"]
 
@@ -67,4 +74,15 @@ func routes(_ app: Application) throws {
 		}
 		request.ergo.live.listen(socket, account: account, token: token, pingInterval: request.ergo.config.pingInterval)
 	}
+
+	let boardInvites = ErgoProtocol.Path.boardInvites(":board").pathComponents
+	let boardMember = ErgoProtocol.Path.boardMember(":board", ":member").pathComponents
+	synced.post(boardInvites, use: BoardSharingController.createInvite)
+	synced.delete(boardInvites, use: BoardSharingController.revokeInvites)
+	synced.post(boardMember, use: BoardSharingController.updateMember)
+	synced.delete(boardMember, use: BoardSharingController.removeMember)
+	synced.delete(ErgoProtocol.Path.boardShare(":board").pathComponents, use: BoardSharingController.stopSharing)
+	synced.post(ErgoProtocol.Path.inviteAccept.pathComponents, use: BoardSharingController.accept)
+	synced.put(ErgoProtocol.Path.pushDevice.pathComponents, use: PushController.register)
+	synced.delete(ErgoProtocol.Path.pushDevice.pathComponents, use: PushController.unregister)
 }

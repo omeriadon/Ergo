@@ -15,10 +15,18 @@ struct SharedItemSheet: View {
 	private enum Phase {
 		case reading
 		case failed(String)
+
+		/// The text to break down
 		case ready(String)
+
+		/// What's going on the board
+		case forBoard(BoardSource.Content)
 	}
 
 	let item: SharedItem
+
+	/// The source on the current board this is a breakdown of, when it didn't come from the share sheet
+	private let existing: BoardSource.ID?
 
 	@Environment(NavigationManager.self)
 	private var navigation
@@ -29,9 +37,12 @@ struct SharedItemSheet: View {
 	@State private var phase: Phase
 	@State private var attempt = 0
 
-	init(item: SharedItem) {
+	init(item: SharedItem, existing: BoardSource.ID? = nil) {
 		self.item = item
-		if case let .text(text) = item.content {
+		self.existing = existing
+		if item.action == .board, case .text = item.content {
+			_phase = State(initialValue: .forBoard(BoardSource.Content(item.content)))
+		} else if case let .text(text) = item.content {
 			_phase = State(initialValue: .ready(text))
 		} else {
 			_phase = State(initialValue: .reading)
@@ -41,10 +52,12 @@ struct SharedItemSheet: View {
 	var body: some View {
 		content
 			.task(id: attempt) {
-				if case .ready = phase {
-					return
+				switch phase {
+					case .reading, .failed:
+						await read()
+					case .ready, .forBoard:
+						break
 				}
-				await read()
 			}
 	}
 
@@ -73,15 +86,10 @@ struct SharedItemSheet: View {
 				}
 
 			case let .ready(text):
-				switch item.action {
-					case .breakDown:
-						BreakDownSheet(shared: text)
-					case .board:
-						AddToBoardSheet(english: text)
-					case .ask:
-						// Already gone to the chat, and this sheet with it
-						EmptyView()
-				}
+				BreakDownSheet(shared: text, input: BoardSource.Content(item.content), existing: existing)
+
+			case let .forBoard(content):
+				AddToBoardSheet(content: content)
 		}
 	}
 
@@ -125,7 +133,7 @@ struct SharedItemSheet: View {
 						await Self.pageTitle(of: url)
 					}
 					guard !Task.isCancelled else { return }
-					phase = .ready([found, url.absoluteString].compactMap(\.self).joined(separator: "\n"))
+					phase = .forBoard(.link(url, title: found))
 			}
 		} catch {
 			guard !Task.isCancelled, !(error is CancellationError) else { return }
@@ -139,17 +147,17 @@ struct SharedItemSheet: View {
 		return SharedText.cut("\(source)\n\n\(page.text)", to: SharedItem.textLimit)
 	}
 
-	/// A box still says something with only the link, so a page that won't load is no reason to stop
+	/// A card still says something with only the link, so a page that won't load is no reason to stop
 	private static func pageTitle(of url: URL) async -> String? {
 		try? await PageReader.read(url).title
 	}
 }
 
-// MARK: - Add to Board
+// MARK: - Breaking down a source
 
-/// Which board the shared text goes on. It's chosen here and not in the extension, since boards are only the app's to read.
-private struct AddToBoardSheet: View {
-	let english: String
+/// Breaks down a source already on the board, reading the page first when it's a link
+struct SourceBreakDownSheet: View {
+	let id: BoardSource.ID
 
 	@Environment(NavigationManager.self)
 	private var navigation
@@ -158,10 +166,40 @@ private struct AddToBoardSheet: View {
 	private var boardStore
 
 	var body: some View {
+		if let source = boardStore.source(id) {
+			SharedItemSheet(item: SharedItem(content: source.content.shared, action: .breakDown), existing: id)
+		} else {
+			// Gone since this sheet was last open, on another board or another device
+			Color.clear
+				.onAppear {
+					navigation.dismissSheet()
+				}
+		}
+	}
+}
+
+// MARK: - Add to Board
+
+/// Which board what was shared goes on, as a source. It's chosen here and not in the extension, since boards are only the app's to read.
+private struct AddToBoardSheet: View {
+	let content: BoardSource.Content
+
+	@Environment(NavigationManager.self)
+	private var navigation
+
+	@Environment(BoardStore.self)
+	private var boardStore
+
+	/// A board this person can only view can't take a source
+	private var choices: [Board] {
+		boardStore.sortedBoards.filter { boardStore.canEdit($0.id) }
+	}
+
+	var body: some View {
 		NavigationStack {
 			List {
 				Section {
-					Text(english)
+					Text(content.title)
 						.lineLimit(4)
 						.foregroundStyle(.secondary)
 				}
@@ -173,16 +211,15 @@ private struct AddToBoardSheet: View {
 					.accessibilityIdentifier("share.board.new")
 				}
 
-				if !boardStore.boards.isEmpty {
+				if !choices.isEmpty {
 					Section("Boards") {
-						ForEach(boardStore.sortedBoards) { board in
+						ForEach(choices) { board in
 							Button {
 								add(to: board.id)
 							} label: {
 								BoardRow(board: board, isCurrent: false)
 							}
 							.buttonStyle(.plain)
-							.disabled(!board.hasRoom)
 						}
 					}
 				}
@@ -206,7 +243,7 @@ private struct AddToBoardSheet: View {
 		} else {
 			boardStore.newBoard()
 		}
-		boardStore.addStatement(english: english)
+		boardStore.addSource(content)
 		navigation.selectedTab = .board
 		navigation.dismissSheet()
 	}

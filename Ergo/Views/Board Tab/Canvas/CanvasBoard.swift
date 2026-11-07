@@ -13,6 +13,22 @@ struct CanvasBoxModel: Equatable {
 	let statement: Statement
 	let relations: BoxRelations
 	let appearance: BoxAppearance
+
+	/// In the model so a role changing redraws the box. A hosted box can't read it from the app's environment.
+	var isReadOnly = false
+}
+
+/// What one source shows, compared the same way
+struct CanvasSourceModel: Equatable {
+	let source: BoardSource
+	let appearance: BoxAppearance
+	var isReadOnly = false
+}
+
+/// A source and the cards in its region. Where they are is read from the views, so the shape follows a drag.
+struct CanvasRegionModel: Equatable {
+	let source: BoardSource.ID
+	let members: [Statement.ID]
 }
 
 /// How SwiftUI reaches the pan and zoom, which live in `CanvasBoardView` so they never have to go through a SwiftUI update
@@ -58,12 +74,19 @@ final class CanvasBoardController {
 struct CanvasBoard: UIViewRepresentable {
 	let boxes: [CanvasBoxModel]
 	let links: [Link]
+	let sources: [CanvasSourceModel]
+	let regions: [CanvasRegionModel]
 	let selectedStatement: Statement.ID?
 	let selectedLink: Link.ID?
+	let selectedSource: BoardSource.ID?
 	let controller: CanvasBoardController
+
+	/// Nothing can be dragged or connected, for someone who can only view this board
+	let isReadOnly: Bool
 
 	/// A hosted box has its own SwiftUI environment, so anything it needs from the app's has to be passed in
 	let actions: (Statement) -> BoxActions
+	let sourceActions: (BoardSource) -> SourceActions
 	let dragStarted: (Statement.ID) -> Void
 	let moved: (Statement.ID, CanvasPoint) -> Void
 	let tapBackground: (CanvasPoint) -> Void
@@ -71,6 +94,8 @@ struct CanvasBoard: UIViewRepresentable {
 	let connectTargetChanged: (Statement.ID?) -> Void
 	let connectEnded: (Statement.ID, ConnectionDrop) -> Void
 	let deleteLink: (Link.ID) -> Void
+	let sourceDragStarted: (BoardSource.ID) -> Void
+	let sourceMoved: (BoardSource.ID, CanvasPoint) -> Void
 
 	func makeUIView(context _: Context) -> CanvasBoardView {
 		let view = CanvasBoardView()
@@ -79,6 +104,7 @@ struct CanvasBoard: UIViewRepresentable {
 	}
 
 	func updateUIView(_ view: CanvasBoardView, context: Context) {
+		view.isReadOnly = isReadOnly
 		view.dragStarted = dragStarted
 		view.moved = moved
 		view.tapBackground = tapBackground
@@ -86,17 +112,24 @@ struct CanvasBoard: UIViewRepresentable {
 		view.connectTargetChanged = connectTargetChanged
 		view.connectEnded = connectEnded
 		view.deleteLink = deleteLink
+		view.sourceDragStarted = sourceDragStarted
+		view.sourceMoved = sourceMoved
 		view.boxContent = boxContent
+		view.sourceContent = sourceContent
 		view.handleContent = handleContent
 
 		let animated = context.transaction.animation != nil
 		view.addBoxes(boxes, animated: animated)
+		view.addSources(sources, animated: animated)
 		context.animate {
 			view.update(
 				boxes: boxes,
 				links: links,
+				sources: sources,
+				regions: regions,
 				selectedStatement: selectedStatement,
 				selectedLink: selectedLink,
+				selectedSource: selectedSource,
 				animated: animated
 			)
 		}
@@ -105,6 +138,14 @@ struct CanvasBoard: UIViewRepresentable {
 	private func boxContent(_ model: CanvasBoxModel, isNew: Bool) -> AnyView {
 		AnyView(
 			CanvasBox(model: model, actions: actions(model.statement))
+				.modifier(BoxEntrance(isNew: isNew))
+				.fontDesign(.rounded)
+		)
+	}
+
+	private func sourceContent(_ model: CanvasSourceModel, isNew: Bool) -> AnyView {
+		AnyView(
+			CanvasSourceBox(model: model, actions: sourceActions(model.source))
 				.modifier(BoxEntrance(isNew: isNew))
 				.fontDesign(.rounded)
 		)

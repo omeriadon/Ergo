@@ -59,6 +59,16 @@ struct CredentialVault: Sendable, CustomStringConvertible {
 		Data("\(account)/sync/\(record.kind.rawValue)/\(record.id)".utf8)
 	}
 
+	// MARK: - Board titles
+
+	func seal(title: String, board: UUID) throws -> Data {
+		try seal(Data(title.utf8), as: Data("board/\(board)/title".utf8))
+	}
+
+	func openTitle(_ sealed: Data, board: UUID) throws -> String {
+		try String(decoding: open(sealed, as: Data("board/\(board)/title".utf8)), as: UTF8.self)
+	}
+
 	// MARK: - Sealing
 
 	private func seal(_ data: Data, as associatedData: Data) throws -> Data {

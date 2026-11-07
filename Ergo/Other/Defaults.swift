@@ -82,6 +82,10 @@ extension Defaults.Keys {
 	/// Named for the canvas: the older `syncState` held board records with `content`, which the server now refuses,
 	/// so keeping it would leave sync failing forever.
 	static let syncState = Key<SyncReplica?>("canvasSyncState", default: nil)
+
+	/// What other people see this person called on a board they share. Only ever typed in here, never taken from the
+	/// email. Not synced: the server keeps the name that each board was joined with, and this only fills in the next one.
+	static let sharingName = Key<String>("sharingName", default: "")
 }
 
 extension Provider: @retroactive Defaults.Serializable {}

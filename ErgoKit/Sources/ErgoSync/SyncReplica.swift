@@ -170,7 +170,7 @@ public struct SyncReplica: Sendable, Hashable {
 
 	// MARK: - Responses
 
-	/// Merges what the server sent, acknowledges what `sent` pushed, and corrects the clock.
+	/// Merges what the server sent, acknowledges what `sent` pushed, takes back what it refused, and corrects the clock.
 	///
 	/// `sent` must be the request this answers. A response to a request made before a `reset` still merges
 	/// (merging is always safe) but doesn't move the cursor, so the reset's full pull still happens.
@@ -210,9 +210,9 @@ public struct SyncReplica: Sendable, Hashable {
 			}
 
 			// The server's copy is missing something this replica has, after a reset or the server pruning a
-			// tombstone. Pushing it back is what makes every copy agree.
+			// tombstone. Pushing it back is what makes every copy agree. What only the server writes stays as it is.
 			let missing = merged.fields.filter { name, field in incoming.fields[name] != field && pending[key]?.fields[name] == nil }
-			if !missing.isEmpty {
+			if !missing.isEmpty, !key.kind.isServerOwned {
 				pending[key, default: SyncChange(kind: key.kind, id: key.id, fields: [:])].fields.merge(missing) { pending, _ in pending }
 			}
 		}
@@ -230,6 +230,13 @@ public struct SyncReplica: Sendable, Hashable {
 		}
 
 		clock.adjust(serverTime: response.serverTime, at: deviceNow)
+		for rejected in response.rejected ?? [] {
+			if undo(rejected, at: deviceNow), !changed.contains(rejected.key) {
+				changed.append(rejected.key)
+			}
+			// A copy of a refused edit would only be refused too
+			superseded.removeAll { $0.key == rejected.key }
+		}
 		if isCurrent {
 			cursor = response.cursor
 			if !response.more, !isCaughtUp {
@@ -271,11 +278,32 @@ public struct SyncReplica: Sendable, Hashable {
 		}
 	}
 
+	/// Takes back a change the server refused: everything unsent goes too, typing since the request included, and the
+	/// record becomes what the server has. Returns whether there's a record for the app to write back.
+	private mutating func undo(_ rejected: RejectedChange, at deviceNow: Date) -> Bool {
+		let key = rejected.key
+		pending[key] = nil
+		seeds?[key] = nil
+		unconfirmed?.remove(key)
+
+		if let current = rejected.current {
+			if let stamp = current.newestStamp {
+				clock.receive(stamp)
+			}
+			records[key] = current
+			return true
+		}
+		// The server has nothing, so this is a phantom only this device knows of. The tombstone tells the app to drop it.
+		guard records[key] != nil else { return false }
+		records[key]?.fields[SyncFieldName.deleted] = SyncField(value: true, stamp: clock.tick(at: deviceNow))
+		return true
+	}
+
 	/// The full pull is done, so whatever the server didn't have goes up
 	private mutating func finishCatchingUp() {
 		var pushes: [SyncRecord.Key: [String: SyncField]] = [:]
 		// In order, since whether a statement or link is ignored depends on the seeds merged before it
-		for (key, seed) in (seeds ?? [:]).sorted(by: { Self.pushesBefore($0.key, $1.key) }) where !seed.isDeleted && !isIgnored(seed) {
+		for (key, seed) in (seeds ?? [:]).sorted(by: { Self.pushesBefore($0.key, $1.key) }) where !seed.isDeleted && !isIgnored(seed) && !key.kind.isServerOwned {
 			let missing = seed.fields.filter { records[key]?.fields[$0.key] == nil }
 			if !missing.isEmpty {
 				records[key, default: SyncRecord(kind: key.kind, id: key.id)].merge(missing)
@@ -283,6 +311,12 @@ public struct SyncReplica: Sendable, Hashable {
 			}
 		}
 		for key in unconfirmed ?? [] {
+			// The server no longer has it for this account, and only the server can write one
+			if key.kind.isServerOwned {
+				records[key] = nil
+				pending[key] = nil
+				continue
+			}
 			// Ignored records are what the server pruned with their board, so they stay down
 			guard let record = records[key], !record.isDeleted, !isIgnored(record) else { continue }
 			pushes[key, default: [:]].merge(record.fields) { a, _ in a }
@@ -360,6 +394,17 @@ public struct SyncReplica: Sendable, Hashable {
 		unconfirmed = Set(records.keys).union(unconfirmed ?? [])
 	}
 
+	/// Removes records outright, with nothing left to push or merge, for signing out of a board that isn't yours.
+	/// Unlike a tombstone, this says nothing to the server.
+	public mutating func forget(_ keys: Set<SyncRecord.Key>) {
+		for key in keys {
+			records[key] = nil
+			pending[key] = nil
+			seeds?[key] = nil
+			unconfirmed?.remove(key)
+		}
+	}
+
 	/// For when the server refuses a stamp as too far ahead: the next sync measures the clock before pushing,
 	/// and `apply` then restamps what was refused
 	public mutating func recalibrate() {
@@ -371,7 +416,8 @@ public struct SyncReplica: Sendable, Hashable {
 public struct SyncApplied: Sendable, Hashable {
 	/// Every record whose merged state changed, for the app to write back. Includes tombstones (`isDeleted`),
 	/// and kinds or fields this version doesn't know, which the app skips. A stamp-only change counts too,
-	/// since `isDeleted` and `newestStamp` follow the stamps.
+	/// since `isDeleted` and `newestStamp` follow the stamps. Records the server refused are here as well, so what the
+	/// app shows goes back to what the server has, or goes away if that's nothing.
 	public var changed: [SyncRecord]
 
 	/// The losing sides of concurrent edits this device made, found by the server or by this replica.

@@ -16,6 +16,7 @@ import SQLKit
 struct SyncService: Sendable {
 	let vault: CredentialVault
 	let live: SyncLive
+	let sharing: BoardSharing
 	var recordsPerAccount = SyncLimit.recordsPerAccount
 
 	/// A response's records stop here, even under `limit`, so a board of big records stays a sensible size
@@ -32,12 +33,23 @@ struct SyncService: Sendable {
 		logger: Logger,
 		now: Date = .now
 	) async throws -> SyncResponse {
-		try SyncLimits.check(request, now: now)
-		let changes = request.changes.filter { !$0.fields.isEmpty }
+		// Only the server writes these, so they're turned back here. The checks would fail the whole request.
+		let serverOwned = request.changes.filter(\.kind.isServerOwned)
+		var checked = request
+		checked.changes.removeAll { $0.kind.isServerOwned }
+		try SyncLimits.check(checked, now: now)
+		let changes = checked.changes.filter { !$0.fields.isEmpty }
 		let limit = min(request.limit ?? SyncLimit.defaultRecords, SyncLimit.maxRecords)
 
-		let (response, changed, latest) = try await database.transaction { database in
-			let account = try await Self.lock(id, on: database)
+		// Before the transaction, so everyone on a shared board it touches can be locked in order, the caller among them
+		let locking = try await sharing.accounts(touchedBy: changes, caller: id, on: database)
+
+		let (response, changed, effects) = try await database.transaction { database in
+			var ledger = BoardLedger(vault: vault, logger: logger, now: now)
+			try await ledger.lock(locking, on: database)
+			guard let account = ledger.accounts[id] else {
+				throw ServiceError.unknownAccount
+			}
 			if let cursor = request.cursor, cursor < account.prunedThrough {
 				throw ServiceError(code: .syncResetRequired, message: "Expected a full sync, old deletions this device hasn't seen were cleaned up")
 			}
@@ -47,11 +59,21 @@ struct SyncService: Sendable {
 			}
 
 			var superseded: [SupersededField] = []
+			var rejected: [RejectedChange] = []
 			var changed = 0
 			var count: Int?
+			for change in serverOwned {
+				let row = try await SyncRecordRow.find(change.key, for: id, on: database)
+				try rejected.append(RejectedChange(kind: change.kind, id: change.id, current: row.map { try open($0, logger: logger) }))
+			}
 			for change in changes {
 				let row = try await SyncRecordRow.find(change.key, for: id, on: database)
 				let stored = try row.map { try open($0, logger: logger) }
+				let access = try await ledger.access(for: change, row: row, account: id, on: database)
+				if case .rejected = access {
+					rejected.append(RejectedChange(kind: change.kind, id: change.id, current: stored))
+					continue
+				}
 				if row == nil {
 					let existing = if let count {
 						count
@@ -69,15 +91,11 @@ struct SyncService: Sendable {
 				superseded += record.apply(change)
 				guard record != stored else { continue }
 
-				account.seq += 1
-				let updated = row ?? SyncRecordRow(account: id, key: change.key)
-				try updated.store(record, seq: account.seq, vault: vault, now: now)
-				try await updated.save(on: database)
+				try await ledger.store(record, in: row, of: id, on: database)
 				changed += 1
+				try await ledger.applied(record, access: access, account: id, on: database)
 			}
-			if changed > 0 {
-				try await account.save(on: database)
-			}
+			let effects = try await ledger.finish(on: database)
 
 			let (records, more) = try await board(of: account, after: request.cursor ?? 0, limit: limit, on: database, logger: logger)
 			let response = SyncResponse(
@@ -85,9 +103,10 @@ struct SyncService: Sendable {
 				changes: records.map(\.record),
 				more: more,
 				superseded: superseded,
+				rejected: rejected.isEmpty ? nil : rejected,
 				serverTime: now
 			)
-			return (response, changed, account.seq)
+			return (response, changed, effects)
 		}
 
 		logger.info("Synced", metadata: [
@@ -95,10 +114,9 @@ struct SyncService: Sendable {
 			"changed": "\(changed)",
 			"returned": "\(response.changes.count)",
 			"superseded": "\(response.superseded.count)",
+			"rejected": "\(response.rejected?.count ?? 0)",
 		])
-		if changed > 0 {
-			live.changed(account: id, cursor: latest, except: token)
-		}
+		await sharing.finish(effects, caller: id, token: token, on: database, logger: logger)
 		return response
 	}
 
@@ -177,8 +195,8 @@ struct SyncService: Sendable {
 		return pruned
 	}
 
-	/// Statements and links, the kinds that belong to a board
-	private static let childKinds = [SyncKind.statement.rawValue, SyncKind.link.rawValue]
+	/// Statements, links and sources, the kinds that belong to a board
+	private static let childKinds = [SyncKind.statement.rawValue, SyncKind.link.rawValue, SyncKind.source.rawValue]
 
 	private func prune(_ account: Account, before cutoff: Date, on database: any Database) async throws -> Int {
 		let id = try account.requireID()

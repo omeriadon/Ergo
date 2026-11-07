@@ -34,6 +34,9 @@ struct AskMessage: Codable, Hashable, Identifiable {
 	/// What it looked up for an answer, worded for showing above it
 	var tools: [String] = []
 
+	/// How long an answer took, once it's finished
+	var seconds: Int?
+
 	/// Buttons under an answer
 	var actions: [AskAction] = []
 }

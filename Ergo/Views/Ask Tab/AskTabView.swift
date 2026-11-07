@@ -86,8 +86,10 @@ private struct AskThreadView: View {
 
 	@Default(.hapticsEnabled) private var hapticsEnabled
 
+	/// The last thing in the list, to scroll to
+	private static let end = "ask.end"
+
 	@State private var draft = ""
-	@State private var position = ScrollPosition(edge: .bottom)
 
 	/// Goes up with each message sent, for the button's bounce and the haptic
 	@State private var sent = 0
@@ -102,15 +104,56 @@ private struct AskThreadView: View {
 	}
 
 	var body: some View {
+		ScrollViewReader { proxy in
+			thread
+				.overlay {
+					if conversation.messages.isEmpty {
+						AskEmptyView { draft = $0; composing = true }
+					}
+				}
+				.safeAreaInset(edge: .bottom, spacing: 0) {
+					AskComposer(
+						text: $draft,
+						isFocused: $composing,
+						isRunning: run != nil,
+						sent: sent,
+						send: send,
+						stop: { store.stop(conversation.id) }
+					)
+				}
+				.onChange(of: sent) {
+					// In a task so the end has moved to below what was just sent
+					Task {
+						withAnimation(reduceMotion ? nil : .smooth) {
+							proxy.scrollTo(Self.end, anchor: .bottom)
+						}
+					}
+				}
+		}
+		.onChange(of: store.waitingDraft, initial: true) {
+			if let waiting = store.takeWaitingDraft() {
+				draft = draft.isEmpty ? waiting : "\(draft) \(waiting)"
+				composing = true
+			}
+		}
+		.sensoryFeedback(.impact(weight: .light), trigger: sent) { _, _ in hapticsEnabled }
+		.animation(.smooth, value: run?.activity)
+		.animation(.smooth, value: run == nil)
+		.animation(.smooth, value: store.failures[conversation.id])
+	}
+
+	private var thread: some View {
 		ScrollView {
 			LazyVStack(alignment: .leading, spacing: 20) {
 				ForEach(conversation.messages) { message in
-					AskMessageView(message: message, isAnswering: run != nil && message.id == conversation.messages.last?.id)
-						.transition(.asymmetric(insertion: .askSend, removal: .opacity))
+					AskMessageView(message: message, run: message.id == run?.answerID ? run : nil)
+						.transition(transition(for: message))
 				}
 
-				if let run, isWaiting(for: run) {
-					AskActivityRow(activity: run.activity)
+				// Until something arrives for the answer, which then shows this same line in the same place
+				if let run, conversation.messages.last?.id != run.answerID {
+					AskActivityHeader(word: .for(run.answerID), tools: [], seconds: nil, run: run)
+						.transition(.identity)
 				}
 
 				if let failure = store.failures[conversation.id] {
@@ -118,44 +161,23 @@ private struct AskThreadView: View {
 						store.retry(account: account)
 					}
 				}
+
+				Color.clear
+					.frame(height: 0)
+					.id(Self.end)
 			}
-			.padding(16)
+			.padding(.horizontal, 16)
+			.padding(.top, 16)
 			.frame(maxWidth: .infinity, alignment: .leading)
 		}
-		.scrollPosition($position)
-		// Stays at the end while an answer grows, unless you've scrolled up to read
+		// Opens on the newest messages, and stays at the end while an answer grows, unless you've scrolled up to read
+		.defaultScrollAnchor(.bottom, for: .initialOffset)
 		.defaultScrollAnchor(.bottom, for: .sizeChanges)
 		.scrollDismissesKeyboard(.interactively)
-		.overlay {
-			if conversation.messages.isEmpty {
-				AskEmptyView { draft = $0; composing = true }
-			}
-		}
-		.safeAreaInset(edge: .bottom, spacing: 0) {
-			AskComposer(
-				text: $draft,
-				isFocused: $composing,
-				isRunning: run != nil,
-				sent: sent,
-				send: send,
-				stop: { store.stop(conversation.id) }
-			)
-		}
-		.onChange(of: store.waitingDraft, initial: true) {
-			if let shared = store.takeWaitingDraft() {
-				draft = shared
-				composing = true
-			}
-		}
-		.sensoryFeedback(.impact(weight: .light), trigger: sent) { _, _ in hapticsEnabled }
-		.animation(.smooth, value: run?.activity)
-		.animation(.smooth, value: store.failures[conversation.id])
 	}
 
-	/// Nothing's being written yet, or it's gone off to look something up
-	private func isWaiting(for run: AskStore.Run) -> Bool {
-		guard let last = conversation.messages.last, last.role == .assistant, !last.text.isEmpty else { return true }
-		return run.activity != nil
+	private func transition(for message: AskMessage) -> AnyTransition {
+		.asymmetric(insertion: message.role == .user ? .askSend : .identity, removal: .opacity)
 	}
 
 	private func send() {
@@ -163,7 +185,6 @@ private struct AskThreadView: View {
 		withAnimation(reduceMotion ? nil : .spring(duration: 0.45, bounce: 0.25)) {
 			store.send(draft, account: account)
 			draft = ""
-			position.scrollTo(edge: .bottom)
 		}
 	}
 }
@@ -194,14 +215,16 @@ private struct AskSendEffect: ViewModifier {
 
 private struct AskMessageView: View {
 	let message: AskMessage
-	let isAnswering: Bool
+
+	/// Set while this is the answer being written
+	let run: AskStore.Run?
 
 	var body: some View {
 		switch message.role {
 			case .user:
 				AskUserBubble(text: message.text)
 			case .assistant:
-				AskAnswerView(message: message, isAnswering: isAnswering)
+				AskAnswerView(message: message, run: run)
 		}
 	}
 }
@@ -228,22 +251,28 @@ private struct AskUserBubble: View {
 
 private struct AskAnswerView: View {
 	let message: AskMessage
-	let isAnswering: Bool
+
+	/// Set while it's being written
+	let run: AskStore.Run?
 
 	@Environment(NavigationManager.self)
 	private var navigation
 
+	@Environment(AskStore.self)
+	private var store
+
+	/// They wait for the end, so they don't push the answer around while it's being read
 	private var actions: [AskAction] {
-		message.actions.filter { AskIntents.canRun($0.intent) }
+		run == nil ? message.actions.filter { AskIntents.canRun($0.intent) } : []
 	}
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 8) {
-			AskToolsCaption(tools: message.tools, isAnswering: isAnswering)
+			AskActivityHeader(word: .for(message.id), tools: message.tools, seconds: message.seconds, run: run)
 
 			AskMarkdownView(text: message.text)
 
-			if !isAnswering, !message.text.isEmpty {
+			if run == nil, !message.text.isEmpty {
 				AskCopyButton(text: message.text)
 					.padding(.top, 2)
 			}
@@ -252,7 +281,7 @@ private struct AskAnswerView: View {
 				VStack(alignment: .leading, spacing: 8) {
 					ForEach(actions, id: \.self) { action in
 						Button(action.title) {
-							AskIntents.run(action.intent, navigation: navigation)
+							AskIntents.run(action.intent, navigation: navigation, store: store)
 						}
 						.buttonStyle(.glass)
 					}
@@ -265,54 +294,103 @@ private struct AskAnswerView: View {
 			guard let intent = AskIntent(url: url) else {
 				return .systemAction
 			}
-			AskIntents.run(intent, navigation: navigation)
+			AskIntents.run(intent, navigation: navigation, store: store)
 			return .handled
 		})
 	}
 }
 
-/// What it looked up for this answer. Having looked up nothing is worth saying too, since answers are meant to come from
-/// the library.
-private struct AskToolsCaption: View {
+/// One line above an answer, "Contemplated for 12 seconds", that opens to show what it did on the way
+private struct AskActivityHeader: View {
+	let word: AskThinkingWord
 	let tools: [String]
-	let isAnswering: Bool
+	let seconds: Int?
 
-	private var caption: String? {
-		if !tools.isEmpty {
-			return tools.joined(separator: " · ")
-		}
-		return isAnswering ? nil : "Didn't check the library"
+	/// Set while it's being written
+	let run: AskStore.Run?
+
+	@Environment(\.accessibilityReduceMotion)
+	private var reduceMotion
+
+	@State private var isExpanded = false
+
+	/// Having looked up nothing is worth saying too, since answers are meant to come from the library
+	private var items: [String] {
+		tools.isEmpty && run == nil ? ["Didn't check the library"] : tools
 	}
 
 	var body: some View {
-		if let caption {
-			Text(caption)
-				.font(.caption)
-				.foregroundStyle(.tertiary)
-				.fixedSize(horizontal: false, vertical: true)
-				.contentTransition(.opacity)
-				.animation(.smooth, value: caption)
-				.accessibilityIdentifier("ask.tools")
+		VStack(alignment: .leading, spacing: 6) {
+			Button {
+				withAnimation(.smooth) {
+					isExpanded.toggle()
+				}
+			} label: {
+				header
+			}
+			.buttonStyle(.plain)
+			.disabled(items.isEmpty)
+			.accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
+			.accessibilityIdentifier("ask.activity")
+
+			if isExpanded {
+				ForEach(Array(items.enumerated()), id: \.element) { index, item in
+					Text(item)
+						.font(.caption)
+						.foregroundStyle(.secondary)
+						.fixedSize(horizontal: false, vertical: true)
+						.transition(itemTransition(at: index))
+						.accessibilityIdentifier("ask.tools")
+				}
+			}
 		}
 	}
-}
 
-private struct AskActivityRow: View {
-	/// What its tools are doing, nil while it's only thinking
-	let activity: String?
+	private var header: some View {
+		HStack(spacing: 5) {
+			if run != nil {
+				ProgressView()
+					.controlSize(.mini)
+			}
 
-	var body: some View {
-		HStack(spacing: 8) {
-			ProgressView()
-				.controlSize(.small)
+			TimelineView(.animation(minimumInterval: 1, paused: run == nil)) { context in
+				let title = title(at: context.date)
+				Text(title)
+					.lineLimit(1)
+					.contentTransition(.numericText())
+					.animation(.smooth, value: title)
+			}
 
-			Text(activity ?? "Thinking")
-				.font(.subheadline)
-				.foregroundStyle(.secondary)
-				.contentTransition(.opacity)
+			if !items.isEmpty {
+				Image(systemName: "chevron.right")
+					.font(.caption2.weight(.semibold))
+					.rotationEffect(.degrees(isExpanded ? 90 : 0))
+					.transition(.opacity)
+			}
 		}
-		.accessibilityElement(children: .combine)
-		.accessibilityIdentifier("ask.activity")
+		.font(.caption)
+		.foregroundStyle(.tertiary)
+		.contentShape(Rectangle())
+	}
+
+	/// What its tools are doing right now says more than how long it's been
+	private func title(at date: Date) -> String {
+		guard let run else {
+			return seconds.map { "\(word.past) for \(Self.spelledOut($0))" } ?? word.past
+		}
+		return run.activity ?? "\(word.gerund) for \(Self.spelledOut(Int(date.timeIntervalSince(run.started))))"
+	}
+
+	private static func spelledOut(_ seconds: Int) -> String {
+		Duration.seconds(max(seconds, 1)).formatted(.units(allowed: [.minutes, .seconds], width: .wide))
+	}
+
+	/// Each one a beat after the last, falling out of the header
+	private func itemTransition(at index: Int) -> AnyTransition {
+		guard !reduceMotion else { return .opacity }
+		return AnyTransition.opacity
+			.combined(with: .offset(y: -6))
+			.animation(.smooth.delay(Double(index) * 0.03))
 	}
 }
 

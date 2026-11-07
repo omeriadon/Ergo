@@ -11,15 +11,16 @@ import SwiftUI
 /// Undo and redo for the canvas, one step per drag, delete, link, add or arrange, through the window's `UndoManager`
 /// so shake to undo works too.
 ///
-/// A step is a snapshot of the statements and links from before the change. Going back to it puts back positions,
-/// links, and statements that were deleted, but keeps the words of statements that are still there, so undoing a
-/// move never throws away what was typed in the editor since.
+/// A step is a snapshot of the statements, links and sources from before the change. Going back to it puts back positions,
+/// links, regions, and what was deleted, but keeps the words of what's still there, so undoing a move never throws away
+/// what was typed in the editor since.
 @MainActor
 final class CanvasHistory {
 	struct Snapshot: Equatable, Sendable {
 		let boardID: Board.ID
 		let statements: [Statement]
 		let links: [Link]
+		let sources: [BoardSource]
 	}
 
 	var undoManager: UndoManager?
@@ -30,7 +31,7 @@ final class CanvasHistory {
 
 	func snapshot() -> Snapshot? {
 		guard let board = store?.current else { return nil }
-		return Snapshot(boardID: board.id, statements: board.statements, links: board.links)
+		return Snapshot(boardID: board.id, statements: board.statements, links: board.links, sources: board.sources)
 	}
 
 	/// Runs `change` and makes it one undo step, if it changed anything
@@ -59,15 +60,22 @@ final class CanvasHistory {
 	}
 
 	private func restore(_ snapshot: Snapshot, name: String) {
-		guard let store, store.current.id == snapshot.boardID, let now = self.snapshot() else { return }
+		// Steps from before someone's role changed to View only, and shake to undo can still reach them
+		guard let store, store.canEdit(snapshot.boardID), store.current.id == snapshot.boardID, let now = self.snapshot() else { return }
 
 		var board = store.current
 		board.statements = snapshot.statements.map { old in
 			guard var kept = board.statements.first(where: { $0.id == old.id }) else { return old }
 			kept.position = old.position
+			kept.source = old.source
 			return kept
 		}
 		board.links = snapshot.links
+		board.sources = snapshot.sources.map { old in
+			guard var kept = board.source(old.id) else { return old }
+			kept.position = old.position
+			return kept
+		}
 		store.current = board
 
 		// Registered while undoing, so the manager files it as the redo (and the other way round)

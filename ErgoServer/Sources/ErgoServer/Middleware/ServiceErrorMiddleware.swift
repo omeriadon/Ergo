@@ -17,7 +17,7 @@ struct ServiceErrorMiddleware: AsyncMiddleware {
 		} catch {
 			let failure = Self.serviceError(for: error, path: request.url.path)
 			if failure.code == .internalError {
-				request.logger.error("Request failed", metadata: ["path": "\(request.url.path)", "error": "\(String(reflecting: error))"])
+				request.logger.error("Request failed", metadata: ["path": "\(JoinController.loggablePath(of: request))", "error": "\(String(reflecting: error))"])
 			}
 			return try Response.json(failure, status: failure.status)
 		}

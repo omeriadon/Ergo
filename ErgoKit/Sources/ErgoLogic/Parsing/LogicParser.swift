@@ -33,26 +33,6 @@ public struct LogicStatement: Equatable, Sendable {
 	}
 }
 
-/// `X≔Y`. The checker can't use these, so they're reported as unsupported, but they can still be read.
-public struct LogicDefinition: Equatable, Sendable {
-	public enum Side: Equatable, Sendable {
-		case formula(LogicFormula)
-		case term(LogicTerm)
-	}
-
-	public let name: Side
-	public let value: Side
-
-	/// Entry indices in the editor
-	public let range: Range<Int>
-
-	public init(name: Side, value: Side, range: Range<Int>) {
-		self.name = name
-		self.value = value
-		self.range = range
-	}
-}
-
 public struct LogicDiagnostic: Equatable, Sendable, Error {
 	public let problem: LogicProblem
 
@@ -99,7 +79,16 @@ public enum LogicProblem: Equatable, Sendable {
 	case missingConclusion(marker: LogicKeyboardEntry)
 	case extraConclusions(marker: LogicKeyboardEntry)
 	case misplacedEndMarker
-	case unsupported(LogicKeyboardEntry)
+
+	/// Something other than one letter before ≔
+	case definitionNeedsLetter
+	case definitionAsConclusion
+	case redefined(letter: Int)
+	case circularDefinition(letter: Int)
+
+	/// Sets hold members, never other sets
+	case usedAsSetAndMember(letter: Int)
+	case setAsMember
 }
 
 public struct LogicParse: Equatable, Sendable {
@@ -197,14 +186,10 @@ public enum LogicParser {
 		let end = (entries.lastIndex { $0 != .delimiter("\n") } ?? -1) + 1
 
 		for segment in segments {
-			let definition = entries[segment.range].firstIndex(of: .symbol("≔"))
 			var parser = FormulaParser(entries: entries, range: segment.range)
 			do {
-				if let definition {
-					var name = FormulaParser(entries: entries, range: segment.range.lowerBound ..< definition)
-					var value = FormulaParser(entries: entries, range: definition + 1 ..< segment.range.upperBound)
-					try parse.definitions.append(LogicDefinition(name: name.parseSide(), value: value.parseSide(), range: segment.range))
-					parse.diagnostics.append(LogicDiagnostic(problem: .unsupported(.symbol("≔")), range: definition ..< definition + 1))
+				if let marker = entries[segment.range].firstIndex(of: .symbol("≔")) {
+					try parse.definitions.append(definition(at: marker, in: segment, marker: parse.marker, entries: entries, after: parse.definitions))
 					continue
 				}
 
@@ -221,6 +206,10 @@ public enum LogicParser {
 				parse.diagnostics.append(diagnostic)
 				failedSides.insert(segment.side)
 			} catch {}
+		}
+
+		if let circular = parse.definitions.firstCircular {
+			parse.diagnostics.append(LogicDiagnostic(problem: .circularDefinition(letter: circular.name), range: circular.range))
 		}
 
 		switch parse.marker {
@@ -243,7 +232,58 @@ public enum LogicParser {
 				}
 		}
 
+		if parse.diagnostics.isEmpty {
+			parse.diagnostics += sortDiagnostics(for: parse)
+		}
+
 		return parse
+	}
+
+	/// The first statement that uses a letter as both a set and a member of one
+	private static func sortDiagnostics(for parse: LogicParse) -> [LogicDiagnostic] {
+		let argument = parse.expandedArgument
+		let statements = (argument.premises + [argument.conclusion].compactMap(\.self)).sorted { $0.range.lowerBound < $1.range.lowerBound }
+
+		var sorts = LogicSorts()
+		var next = LogicDefinition.firstRenamed * 1000
+		for statement in statements {
+			let formula = statement.formula.uniquelyBound(next: &next, sorts: &sorts)
+			sorts.add(formula)
+
+			switch sorts.conflict {
+				case nil:
+					continue
+				case let .letter(letter) where LogicLetters.slots.contains(letter):
+					return [LogicDiagnostic(problem: .usedAsSetAndMember(letter: letter), range: statement.range)]
+				case .letter, .setAsMember:
+					return [LogicDiagnostic(problem: .setAsMember, range: statement.range)]
+			}
+		}
+		return []
+	}
+
+	private static func definition(
+		at marker: Int,
+		in segment: Segment,
+		marker argumentMarker: LogicKeyboardEntry?,
+		entries: [LogicKeyboardEntry],
+		after earlier: [LogicDefinition]
+	) throws -> LogicDefinition {
+		let markerRange = marker ..< marker + 1
+		let isConclusion = argumentMarker == .symbol("∵") ? segment.side == .before : segment.side == .after && argumentMarker != nil
+		guard !isConclusion else {
+			throw LogicDiagnostic(problem: .definitionAsConclusion, range: markerRange)
+		}
+
+		guard segment.range.lowerBound + 1 == marker, case let .variable(name) = entries[segment.range.lowerBound] else {
+			throw LogicDiagnostic(problem: .definitionNeedsLetter, range: markerRange)
+		}
+		guard !earlier.contains(where: { $0.name == name }) else {
+			throw LogicDiagnostic(problem: .redefined(letter: name), range: segment.range.lowerBound ..< marker)
+		}
+
+		var value = FormulaParser(entries: entries, range: marker + 1 ..< segment.range.upperBound)
+		return try LogicDefinition(name: name, value: value.parseDefinitionValue(), range: segment.range)
 	}
 
 	private static func conclusionDiagnostic(count: Int, entries: [LogicKeyboardEntry], end: Int) -> LogicDiagnostic {
@@ -361,8 +401,8 @@ private struct FormulaParser {
 		return formula
 	}
 
-	/// One side of ≔, where a set is fine on its own
-	mutating func parseSide() throws -> LogicDefinition.Side {
+	/// After ≔, where a set is fine on its own
+	mutating func parseDefinitionValue() throws -> LogicDefinition.Value {
 		var formula = self
 		do {
 			return try .formula(formula.parseStatement())

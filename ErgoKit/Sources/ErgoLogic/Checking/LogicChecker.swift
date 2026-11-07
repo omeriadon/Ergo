@@ -13,9 +13,11 @@ public enum LogicVerdict: Equatable, Sendable {
 
 	/// A row where the premises are true and the conclusion is false, keyed by letter slot.
 	/// Only has the letters that matter, the argument fails however the others are set.
+	/// Empty beyond a truth table, where the situation it fails in isn't just true and false letters.
 	case invalid(counterexample: [Int: Bool])
 
-	/// Needs modal, quantifier, identity or set reasoning, which isn't built yet
+	/// Couldn't be proved either way. Nothing can always settle arguments with relations like R(X,Y), and a ∀ or ∃
+	/// over sets is out of reach.
 	case undecided
 }
 
@@ -68,22 +70,38 @@ public enum LogicChecker {
 		var analysis = LogicAnalysis(parse: LogicParser.parse(entries))
 		guard analysis.parse.diagnostics.isEmpty else { return analysis }
 
-		let premises = analysis.parse.argument.premises.map(\.formula)
+		let argument = analysis.parse.expandedArgument
+		let premises = argument.premises.map(\.formula)
 
-		guard let conclusion = analysis.parse.argument.conclusion?.formula else {
-			analysis.statuses = premises.map(status(of:))
+		guard let conclusion = argument.conclusion?.formula else {
+			analysis.statuses = premises.map { status(of: $0, context: premises) }
 			return analysis
 		}
 
-		let table = TruthTable(premises + [conclusion])
-		let verdict = verdict(of: premises, conclusion, in: table)
-		analysis.verdict = verdict
+		let formulas = premises + [conclusion]
+		if formulas.allSatisfy(\.isPropositional) {
+			let table = TruthTable(formulas)
+			analysis.verdict = verdict(of: premises, conclusion, in: table)
 
-		if !premises.isEmpty, table.fits,
-		   !table.rows.contains(where: { row in premises.allSatisfy { table.evaluate($0, row: row) } })
-		{
-			analysis.warnings.append(.inconsistentPremises)
+			if !premises.isEmpty, table.fits,
+			   !table.rows.contains(where: { row in premises.allSatisfy { table.evaluate($0, row: row) } })
+			{
+				analysis.warnings.append(.inconsistentPremises)
+			}
+		} else {
+			let prover = LogicProver(context: formulas)
+			analysis.verdict = switch prover.check(truths: premises, falsehoods: [conclusion]) {
+				case .impossible: .valid
+				case .possible: .invalid(counterexample: [:])
+				case .unknown: .undecided
+			}
+
+			if !premises.isEmpty, prover.check(truths: premises) == .impossible {
+				analysis.warnings.append(.inconsistentPremises)
+			}
 		}
+
+		guard let verdict = analysis.verdict else { return analysis }
 
 		switch verdict {
 			case .valid:
@@ -98,7 +116,7 @@ public enum LogicChecker {
 				}
 
 			case .undecided:
-				// Can't prove these invalid yet, but a known bad shape is still worth calling out
+				// Couldn't be settled, but a known bad shape is still worth calling out
 				analysis.fallacies = LogicFallacyForm.matches(premises: premises, conclusion: conclusion)
 		}
 
@@ -106,6 +124,25 @@ public enum LogicChecker {
 	}
 
 	public static func status(of formula: LogicFormula) -> LogicStatus {
+		status(of: formula, context: [formula])
+	}
+
+	/// `context` is what it's written with, so a letter means the same thing in all of it
+	private static func status(of formula: LogicFormula, context: [LogicFormula]) -> LogicStatus {
+		guard formula.isPropositional else {
+			let prover = LogicProver(context: context)
+			switch (prover.check(truths: [formula]), prover.check(truths: [], falsehoods: [formula])) {
+				case (.impossible, _):
+					return .contradiction
+				case (_, .impossible):
+					return .tautology
+				case (.possible, .possible):
+					return .contingent
+				default:
+					return .undecided
+			}
+		}
+
 		let table = TruthTable([formula])
 		guard table.fits else { return .undecided }
 
@@ -116,7 +153,7 @@ public enum LogicChecker {
 		if !results.contains(true) {
 			return .contradiction
 		}
-		return table.isPropositional ? .contingent : .undecided
+		return .contingent
 	}
 
 	private static func verdict(of premises: [LogicFormula], _ conclusion: LogicFormula, in table: TruthTable) -> LogicVerdict {
@@ -129,9 +166,6 @@ public enum LogicChecker {
 		guard let counterexample = table.rows.first(where: fails) else {
 			return .valid
 		}
-
-		// Anything non-propositional was treated as an opaque atom, so a failing row might not be a real model
-		guard table.isPropositional else { return .undecided }
 
 		// Let go of each atom in turn, keeping it free if the argument still fails every way it could be set
 		var free = 0
@@ -157,12 +191,9 @@ public enum LogicChecker {
 	}
 }
 
-/// Anything a truth table can't look inside (□P, ∀X P(X), X = Y…) becomes its own atom.
-/// That keeps "valid" sound, but "invalid" only means something when everything is propositional.
+/// For what's only made of letters and ¬ ∧ ∨ ⊕ → ↔. `LogicProver` takes everything else.
 struct TruthTable {
 	private var atoms: [LogicFormula: Int] = [:]
-	private(set) var isPropositional = true
-
 	init(_ formulas: [LogicFormula]) {
 		for formula in formulas {
 			collect(formula)
@@ -226,7 +257,6 @@ struct TruthTable {
 				collect(left)
 				collect(right)
 			case .necessarily, .possibly, .forAll, .exists, .predicate, .relation:
-				isPropositional = false
 				add(formula)
 		}
 	}

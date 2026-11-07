@@ -32,19 +32,36 @@ enum AccountController {
 	/// Everything the server keeps for the account, on every device. Data on the devices stays.
 	static func delete(_ request: Request) async throws -> Response {
 		let id = try request.accountID
-		try await request.db.transaction { database in
-			try await deleteEverything(of: id, on: database)
+		let sharing = request.ergo.sharing
+		let vault = request.ergo.vault
+		let logger = request.logger
+		let others = try await sharing.accounts(sharingWith: id, on: request.db)
+		let effects = try await request.db.transaction { database in
+			try await BoardLedger.lockInOrder(others + [id], on: database)
+			return try await deleteEverything(of: id, vault: vault, logger: logger, on: database)
 		}
 		request.ergo.live.close(account: id)
+		await sharing.finish(effects, caller: nil, token: nil, on: request.db, logger: logger)
 		return Response(status: .noContent)
 	}
 
-	/// The foreign keys cascade too, but SQLite only honours them when foreign keys are switched on
-	static func deleteEverything(of account: UUID, on database: any Database) async throws {
+	/// The foreign keys cascade too, but SQLite only honours them when foreign keys are switched on.
+	///
+	/// Boards it owned go for everyone, and it leaves the others, which writes to those people's records. What to tell them
+	/// comes back, for the caller to hand to `BoardSharing.finish` after committing. Only an account that's anonymous can
+	/// be on no boards, so a caller deleting one of those can ignore it.
+	@discardableResult
+	static func deleteEverything(of account: UUID, vault: CredentialVault, logger: Logger, on database: any Database) async throws -> BoardLedger.Effects {
+		var ledger = BoardLedger(vault: vault, logger: logger)
+		try await ledger.removeAccount(account, on: database)
+		let effects = try await ledger.finish(on: database)
+
+		try await PushDeviceRow.query(on: database).filter(\.$account.$id == account).delete()
 		try await SyncRecordRow.query(on: database).filter(\.$account.$id == account).delete()
 		try await AccountToken.query(on: database).filter(\.$account.$id == account).delete()
 		try await Credential.query(on: database).filter(\.$account.$id == account).delete()
 		try await Account.query(on: database).filter(\.$id == account).delete()
+		return effects
 	}
 
 	// MARK: - Devices
@@ -54,13 +71,15 @@ enum AccountController {
 	static func signOut(_ request: Request) async throws -> Response {
 		let accountID = try request.accountID
 		let tokenID = try request.tokenID
+		let vault = request.ergo.vault
+		let logger = request.logger
 		try await request.db.transaction { database in
 			try await AccountToken.query(on: database).filter(\.$id == tokenID).delete()
 
 			let account = try await Account.find(accountID, on: database)
 			let remaining = try await AccountToken.query(on: database).filter(\.$account.$id == accountID).count()
 			if account?.isSignedIn == false, remaining == 0 {
-				try await deleteEverything(of: accountID, on: database)
+				try await deleteEverything(of: accountID, vault: vault, logger: logger, on: database)
 			}
 		}
 		request.ergo.live.close(token: tokenID, account: accountID)

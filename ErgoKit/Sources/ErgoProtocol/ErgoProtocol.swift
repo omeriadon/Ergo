@@ -9,8 +9,8 @@ import Foundation
 
 /// How the app and the Ergo server talk.
 ///
-/// REST sends `versionHeader` on every request, and `Authorization: Bearer <token>` on all but `Path.accounts`.
-/// Errors come back as a non-2xx status with a `ServiceError` body.
+/// REST sends `versionHeader` on every request, and `Authorization: Bearer <token>` on all but `Path.accounts` and
+/// `Path.invitePreview`. Errors come back as a non-2xx status with a `ServiceError` body.
 ///
 /// The translate socket gets exactly one `TranslateClientMessage.translate`, answers with any number of `.event`s,
 /// then exactly one `.finished` or `.failed`, and closes. Sending `.cancel` or closing stops the work.
@@ -25,6 +25,11 @@ import Foundation
 ///
 /// Sync needs an account signed in with Apple or an email and password. The sync socket only ever sends `SyncLiveMessage`s and stays open
 /// until either end closes it; the server pings it every 20 s.
+///
+/// A shared board's records are copied by the server into every member's account, so a member hears about them through
+/// their own sync and socket, with their own cursor. Who's on a board arrives the same way, as `share` records only the
+/// server writes. A push to a board the account may not edit doesn't fail the request: it comes back in
+/// `SyncResponse.rejected`. Invite tokens go in bodies, never in API paths, so they can't land in logs.
 public enum ErgoProtocol {
 	public static let version = 1
 	public static let versionHeader = "Ergo-Protocol-Version"

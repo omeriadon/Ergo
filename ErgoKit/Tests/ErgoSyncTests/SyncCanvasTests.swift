@@ -43,8 +43,9 @@ struct SyncCanvasTests {
 	// MARK: - Kinds
 
 	@Test func kindsKnowTheirFields() {
-		#expect(SyncKind.known == [.board, .bookmark, .setting, .statement, .link, .scratchpad])
-		#expect(SyncKind.statement.fieldNames == ["board", "position", "content", "deleted"])
+		#expect(SyncKind.known == [.board, .bookmark, .setting, .statement, .link, .scratchpad, .source])
+		#expect(SyncKind.statement.fieldNames == ["board", "position", "content", "source", "deleted"])
+		#expect(SyncKind.source.fieldNames == ["board", "position", "content", "deleted"])
 		#expect(SyncKind.link.fieldNames == ["board", "premise", "conclusion", "deleted"])
 		#expect(!SyncKind.board.fieldNames.contains(SyncFieldName.content))
 		#expect(!SyncKind.board.fieldNames.contains("descriptor.5"))
@@ -53,12 +54,24 @@ struct SyncCanvasTests {
 	}
 
 	@Test func statementAndLinkIDsAreUppercaseUUIDs() {
-		for kind in [SyncKind.statement, .link] {
+		for kind in [SyncKind.statement, .link, .source] {
 			#expect(kind.isValid(id: Self.statementID))
 			#expect(!kind.isValid(id: Self.statementID.lowercased()))
 			#expect(!kind.isValid(id: "statement-1"))
 			#expect(!kind.isValid(id: ""))
 		}
+	}
+
+	@Test func aSourceGoesWithItsBoard() throws {
+		let (server, a, _) = Self.twoDevices()
+		var device = a
+		device.edit(.source, Self.linkID, ["board": .string(Self.boardID), "position": Self.position(0, 0), "content": ["type": "text", "text": "A source"]], server)
+		let source = try #require(device.replica[.source, Self.linkID])
+		#expect(source.owningBoard == Self.boardID)
+		#expect(!device.replica.isIgnored(source))
+
+		device.edit(.board, Self.boardID, ["deleted": true], server)
+		#expect(device.replica.isIgnored(source))
 	}
 
 	@Test func recordsPerAccountFitsBigBoards() {

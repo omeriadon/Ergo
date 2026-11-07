@@ -7,11 +7,14 @@
 
 import AppIntents
 import CoreSpotlight
+import ErgoProtocol
 import ErgoShare
 import SwiftUI
 
 @main
 struct ErgoApp: App {
+	@UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
 	@State private var navigation = NavigationManager()
 	@State private var catalog = CatalogStore()
 	@State private var boardStore: BoardStore
@@ -35,7 +38,12 @@ struct ErgoApp: App {
 		_boardStore = State(initialValue: boardStore)
 		_scratchpadStore = State(initialValue: scratchpadStore)
 		_translationAccount = State(initialValue: translationAccount)
-		_sync = State(initialValue: SyncController(account: translationAccount, boardStore: boardStore, scratchpadStore: scratchpadStore, catalog: catalog))
+		let sync = SyncController(account: translationAccount, boardStore: boardStore, scratchpadStore: scratchpadStore, catalog: catalog)
+		_sync = State(initialValue: sync)
+
+		AppDelegate.sync = sync
+		AppDelegate.navigation = navigation
+		AppDelegate.boardStore = boardStore
 
 		AppDependencyManager.shared.add(
 			dependency: navigation
@@ -63,8 +71,13 @@ struct ErgoApp: App {
 					// Also signed out when translation finds the server forgot the token
 					sync.accountChanged()
 				}
-				.onOpenURL { _ in
-					receiveShared()
+				// Universal links arrive here too
+				.onOpenURL { url in
+					if let token = BoardInviteLink.token(from: url) {
+						navigation.presentSheet(.joinBoard(token))
+					} else {
+						receiveShared()
+					}
 				}
 				.task {
 					navigation.startup()

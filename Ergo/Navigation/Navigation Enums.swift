@@ -43,6 +43,11 @@ enum AppSheet: Hashable, Identifiable, Codable, Defaults.Serializable {
 	case logicLetters
 	case boards
 	case shared(SharedItem)
+	case breakDownSource(BoardSource.ID)
+	case boardPeople(Board.ID)
+
+	/// The invite link's token, kept with the sheet like `shared`'s item, so a link opened before the app was killed still opens
+	case joinBoard(String)
 
 	var id: Self {
 		self

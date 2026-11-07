@@ -20,6 +20,9 @@ nonisolated struct Statement: Codable, Hashable, Identifiable, Sendable, Argumen
 
 	var english: String
 
+	/// The source this card was broken down from, which puts it in that source's region
+	var source: BoardSource.ID?
+
 	init(
 		id: UUID = UUID(),
 		position: CanvasPoint = .zero,

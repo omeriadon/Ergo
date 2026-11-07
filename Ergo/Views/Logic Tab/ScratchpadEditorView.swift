@@ -66,7 +66,7 @@ struct ScratchpadEditorView: View {
 			try? await Task.sleep(for: .seconds(1))
 			guard !Task.isCancelled else { return }
 
-			analyze()
+			await analyze()
 		}
 		.onAppear(perform: opened)
 		.onChange(of: scratchpadStore.currentID, opened)
@@ -193,15 +193,24 @@ struct ScratchpadEditorView: View {
 	/// A scratchpad that's opened has already been written, no need to wait. One with no logic keeps its English
 	/// until there's logic to read, so opening an old one doesn't wipe it.
 	private func opened() {
-		analyze()
+		Task {
+			await analyze()
+		}
 		if !scratchpad.logic.isEmpty {
 			englishFollowsLogic()
 		}
 	}
 
-	private func analyze() {
+	/// Off the main actor, since a hard argument can take a moment to prove
+	private func analyze() async {
 		let logic = scratchpad.logic
-		analysis = logic.isEmpty ? nil : LogicChecker.analyze(logic)
+		let result = logic.isEmpty ? nil : await Task.detached(priority: .userInitiated) {
+			LogicChecker.analyze(logic)
+		}.value
+
+		// The logic moved on while it was checking, and that change has its own check coming
+		guard logic == scratchpad.logic else { return }
+		analysis = result
 		analyzedLogic = logic
 	}
 

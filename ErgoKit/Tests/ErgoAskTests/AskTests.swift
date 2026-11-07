@@ -42,6 +42,7 @@ struct AskIntentTests {
 			.showLibraryList(category: "biases"),
 			.openBookmarks,
 			.openTab("board"),
+			.askFollowUp("Is this valid & sound?"),
 		]
 		for intent in intents {
 			#expect(try AskIntent(url: #require(intent.url)) == intent)
@@ -190,6 +191,19 @@ struct AskToolServerTests {
 		let heard = Heard()
 		_ = try await send(#"{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"suggest_action","arguments":{"title":"Open it","action":"open_library_entry","category":"fallacies","id":"straw-man"}}}"#, heard: heard)
 		#expect(await heard.messages == [.action(AskAction(title: "Open it", intent: .openLibraryEntry(category: "fallacies", id: "straw-man")))])
+	}
+
+	@Test func aSuggestedFollowUpReachesTheApp() async throws {
+		let heard = Heard()
+		_ = try await send(#"{"jsonrpc":"2.0","id":8,"method":"tools/call","params":{"name":"suggest_action","arguments":{"title":"Ask more","action":"ask_follow_up","text":"Is it also circular?"}}}"#, heard: heard)
+		#expect(await heard.messages == [.action(AskAction(title: "Ask more", intent: .askFollowUp("Is it also circular?")))])
+	}
+
+	@Test func aSuggestedFollowUpNeedsItsText() async throws {
+		let heard = Heard()
+		let reply = try await send(#"{"jsonrpc":"2.0","id":9,"method":"tools/call","params":{"name":"suggest_action","arguments":{"title":"Ask more","action":"ask_follow_up"}}}"#, heard: heard)
+		#expect(try #require(toolText(reply)).1)
+		#expect(await heard.messages.isEmpty)
 	}
 
 	@Test func aSuggestedActionForNothingIsRefused() async throws {

@@ -26,8 +26,8 @@ public enum LogicFeedback: Equatable, Sendable {
 	/// `fallacy` is nil when it doesn't match any named form
 	case invalid(counterexample: [Int: Bool], fallacy: LogicFallacyMatch?)
 
-	/// `symbol` is the first thing the checker can't look inside yet, like ∀ or □
-	case unchecked(symbol: String?, fallacy: LogicFallacyMatch?)
+	/// Couldn't be proved either way
+	case unchecked(fallacy: LogicFallacyMatch?)
 
 	/// No conclusion, so each statement on its own
 	case statuses([LogicStatus])
@@ -62,34 +62,7 @@ public extension LogicAnalysis {
 				return .invalid(counterexample: counterexample, fallacy: fallacies.first { $0.fallacyID != "non-sequitur" })
 
 			case .undecided:
-				let argument = parse.argument
-				let formulas = argument.premises.map(\.formula) + [argument.conclusion?.formula].compactMap(\.self)
-				return .unchecked(symbol: formulas.lazy.compactMap(\.uncheckedSymbol).first, fallacy: fallacies.first)
-		}
-	}
-}
-
-private extension LogicFormula {
-	/// The first part a truth table has to treat as a black box
-	var uncheckedSymbol: String? {
-		switch self {
-			case .atom, .truth, .predicate:
-				nil
-			case let .not(value):
-				value.uncheckedSymbol
-			case let .and(left, right), let .or(left, right), let .xor(left, right),
-			     let .implies(left, right), let .iff(left, right):
-				left.uncheckedSymbol ?? right.uncheckedSymbol
-			case .necessarily:
-				"□"
-			case .possibly:
-				"◇"
-			case .forAll:
-				"∀"
-			case .exists:
-				"∃"
-			case let .relation(relation, _, _):
-				relation.glyph
+				return .unchecked(fallacy: fallacies.first)
 		}
 	}
 }
@@ -144,8 +117,18 @@ extension LogicProblem {
 				"Expected one conclusion after \(glyph(marker))"
 			case .misplacedEndMarker:
 				"'∎' must come last"
-			case let .unsupported(entry):
-				"\(glyph(entry)) isn't supported yet"
+			case let .usedAsSetAndMember(letter):
+				"\(glyph(.variable(letter))) is used as both a set and a member"
+			case .setAsMember:
+				"Expected a member, found a set"
+			case .definitionNeedsLetter:
+				"Expected one letter before '≔'"
+			case .definitionAsConclusion:
+				"Expected a statement as the conclusion, found a definition"
+			case let .redefined(letter):
+				"\(glyph(.variable(letter))) is already defined"
+			case let .circularDefinition(letter):
+				"\(glyph(.variable(letter))) is defined in terms of itself"
 		}
 	}
 
@@ -162,6 +145,10 @@ extension LogicProblem {
 				"Use ⊕ for 'exclusive or'"
 			case .unexpected(.delimiter(",")):
 				"Commas separate premises"
+			case .usedAsSetAndMember, .setAsMember:
+				"Sets hold members, never other sets"
+			case .definitionAsConclusion:
+				"Move the definition before the premises"
 			case .extraArgumentMarker:
 				"An argument has one marker, between the premises and the conclusion"
 			case .extraConclusions(.symbol("∵")):

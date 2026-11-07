@@ -63,11 +63,12 @@ public struct AskTools: Sendable {
 		),
 		definition(
 			"suggest_action",
-			"Adds a button under your answer that the user can tap. Use it sparingly, for the one or two next steps that matter.",
+			"Adds a button under your answer that the user can tap. ask_follow_up puts a question in the box they type in, for them to edit or send. The others open part of the app.",
 			schema(
 				[
 					"title": .object(["type": .string("string"), "description": .string("What the button says, at most four words")]),
-					"action": .object(["type": .string("string"), "enum": .array(["open_library_entry", "show_library_list", "open_bookmarks", "open_tab"].map(JSONValue.string))]),
+					"action": .object(["type": .string("string"), "enum": .array(["ask_follow_up", "open_library_entry", "show_library_list", "open_bookmarks", "open_tab"].map(JSONValue.string))]),
+					"text": .object(["type": .string("string"), "description": .string("For ask_follow_up: the question, as the user would ask it")]),
 					"category": categoryProperty,
 					"id": .object(["type": .string("string"), "description": .string("For open_library_entry")]),
 					"tab": .object(["type": .string("string"), "enum": .array(["board", "logic", "ask", "library"].map(JSONValue.string))]),
@@ -115,7 +116,7 @@ public struct AskTools: Sendable {
 				return try .text(Self.encoded(catalog.list(category: required("category"), tag: string("tag")).map(Self.brief)))
 
 			case "suggest_action":
-				let action = try action(title: required("title"), kind: required("action"), category: string("category"), id: string("id"), tab: string("tab"))
+				let action = try action(title: required("title"), kind: required("action"), text: string("text"), category: string("category"), id: string("id"), tab: string("tab"))
 				return .action(action, text: "Added the button '\(action.title)'")
 
 			default:
@@ -123,9 +124,14 @@ public struct AskTools: Sendable {
 		}
 	}
 
-	private func action(title: String, kind: String, category: String?, id: String?, tab: String?) throws(Failure) -> AskAction {
+	private func action(title: String, kind: String, text: String?, category: String?, id: String?, tab: String?) throws(Failure) -> AskAction {
 		let intent: AskIntent
 		switch kind {
+			case "ask_follow_up":
+				guard let text else {
+					throw Failure(message: "Expected the 'text' of the question")
+				}
+				intent = .askFollowUp(text)
 			case "open_library_entry":
 				guard let category, let id, catalog.entry(category: category, id: id) != nil else {
 					throw Failure(message: "Expected the 'category' and 'id' of a library entry")

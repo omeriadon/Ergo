@@ -34,7 +34,8 @@ struct AccountMerger {
 		token.$account.id = targetID
 		try await token.save(on: database)
 
-		try await AccountController.deleteEverything(of: sourceID, on: database)
+		// Anonymous, so on no boards, and nobody to tell
+		try await AccountController.deleteEverything(of: sourceID, vault: vault, logger: logger, on: database)
 		return changed
 	}
 

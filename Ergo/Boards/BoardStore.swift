@@ -7,13 +7,14 @@
 
 import Defaults
 import ErgoLogic
+import ErgoProtocol
 import ErgoTranslation
 import SwiftUI
 
 /// Every board, and which one the Board tab is showing. Shared so the boards list
 /// and the editor edit the same board.
 ///
-/// Statements and links are edited on the current board through the methods under "statements" and "links". Each
+/// Statements, links and sources are edited on the current board through the methods under "statements", "links" and "sources". Each
 /// one bumps `modified` and goes through `current`, so it's saved after a pause and reported to sync with the board.
 @MainActor
 @Observable
@@ -43,6 +44,9 @@ final class BoardStore {
 			boards.first { $0.id == currentID } ?? draft
 		}
 		set {
+			// Every edit comes through here, so this is the one place a viewer is stopped
+			guard canEdit(newValue.id) else { return }
+
 			var board = newValue
 			board.modified = .now
 
@@ -70,6 +74,17 @@ final class BoardStore {
 	init() {
 		boards = Defaults[.boards]
 		currentID = Defaults[.currentBoardID]
+	}
+
+	// MARK: - sharing
+
+	/// Who's on each shared board, read from the replica's `share` records by `SyncController` on launch and after every
+	/// sync. Not on `Board`, so it can't go stale.
+	var shares: [Board.ID: BoardShare] = [:]
+
+	/// True for a board that isn't shared, or one this person's role can edit
+	func canEdit(_ id: Board.ID) -> Bool {
+		shares[id]?.role.canEdit ?? true
 	}
 
 	// MARK: - newBoard
@@ -123,25 +138,11 @@ final class BoardStore {
 		var board = current
 		guard board.statements.count < ArgumentMapValidator.defaultMaximumStatements else { return nil }
 
-		let statement = Statement(position: position)
+		var statement = Statement(position: position)
+		statement.source = board.home(of: statement)
 		board.statements.append(statement)
 		current = board
 		return statement.id
-	}
-
-	/// Writes `english` in the current board's empty box if it has one, else in a new box beside the last one.
-	/// Nothing happens when the board is full (`Board.hasRoom`).
-	func addStatement(english: String) {
-		var board = current
-		guard board.hasRoom else { return }
-
-		if let index = board.statements.firstIndex(where: \.isEmpty) {
-			board.statements[index].english = english
-		} else {
-			let position = board.statements.last.map { CanvasLayout.place(newNodeNear: $0.id, in: board.map, side: .below) } ?? .zero
-			board.statements.append(Statement(position: position, english: english))
-		}
-		current = board
 	}
 
 	/// Replaces the statement with the same id. Typing goes through here, so one that changes nothing is skipped.
@@ -152,11 +153,13 @@ final class BoardStore {
 		current = board
 	}
 
-	/// Sets the centre of the box. Call it when a drag ends: sync writes the position as its own field, and every call restarts the save timer.
+	/// Sets the centre of the box, which can take it in or out of a region. Call it when a drag ends: sync writes the
+	/// position as its own field, and every call restarts the save timer.
 	func moveStatement(id: Statement.ID, to position: CanvasPoint) {
 		var board = current
 		guard let index = board.statements.firstIndex(where: { $0.id == id }), board.statements[index].position != position else { return }
 		board.statements[index].position = position
+		board.statements[index].source = board.home(of: board.statements[index])
 		current = board
 	}
 
@@ -168,7 +171,7 @@ final class BoardStore {
 		let position = board.statements[index].position
 		board.statements.remove(at: index)
 		board.links.removeAll { $0.premise == id || $0.conclusion == id }
-		if board.statements.isEmpty {
+		if board.statements.isEmpty, board.sources.isEmpty {
 			board.statements = [Statement(position: position)]
 		}
 		current = board
@@ -202,22 +205,119 @@ final class BoardStore {
 	/// Lays every statement out again (`CanvasLayout.arranged`)
 	func arrange() {
 		var board = current
-		let map = CanvasLayout.arranged(board.map)
-		guard map.statements != board.statements else { return }
-		board.map = map
+		board.map = CanvasLayout.arranged(board.map)
+		board.settleSources()
+		guard board != current else { return }
 		current = board
 	}
 
 	// MARK: - breaking down
 
 	/// Opens a new board holding a server breakdown: a statement per premise and one for the conclusion, every premise linked
-	/// to it (`ArgumentBreakdown.applied`). The breakdown's claims are dropped, since a board holds English only.
-	/// Statements past the limit are left out.
-	func newBoard(from breakdown: ArgumentBreakdown) {
+	/// to it (`ArgumentBreakdown.applied`), all in a region on `content`, which is what was broken down. The breakdown's
+	/// claims are dropped, since a board holds English only. Statements past the limit are left out.
+	func newBoard(from breakdown: ArgumentBreakdown, source content: BoardSource.Content) {
 		newBoard()
 
 		var board = current
-		board.map = breakdown.applied(to: board.map, replacing: true).map
+		let source = BoardSource(position: .zero, content: content)
+		board.sources = [source]
+		put(breakdown, into: &board, from: source.id)
+		current = board
+	}
+
+	/// Puts a breakdown of one of the current board's sources under everything on the board, and moves the source onto it.
+	/// Nothing already there moves.
+	func breakDown(_ breakdown: ArgumentBreakdown, into source: BoardSource.ID) {
+		var board = current
+		put(breakdown, into: &board, from: source)
+		current = board
+	}
+
+	private func put(_ breakdown: ArgumentBreakdown, into board: inout Board, from source: BoardSource.ID) {
+		let application = breakdown.applied(to: board.map, replacing: board.hasOnlyPlaceholder)
+		board.map = application.map
+
+		// `applied` only knows about statements, so it's kept clear of other sources here
+		let added = Set(application.added)
+		let top = board.statements.filter { added.contains($0.id) }.map(\.position.y).min() ?? 0
+		let room = CanvasRegion.padding + CanvasLayout.boxSize.height * 2 + CanvasLayout.rowGap
+		let lowest = board.sources.filter { $0.id != source }.map(\.position.y).max()
+		let shift = lowest.map { max($0 + room - top, 0) } ?? 0
+
+		for index in board.statements.indices where added.contains(board.statements[index].id) {
+			board.statements[index].position.y += shift
+			board.statements[index].source = source
+		}
+
+		let cards = board.members(of: source).map(\.position)
+		if let position = CanvasRegion.sourcePosition(above: cards), let index = board.sources.firstIndex(where: { $0.id == source }) {
+			board.sources[index].position = position
+		}
+	}
+
+	// MARK: - sources
+
+	func source(_ id: BoardSource.ID) -> BoardSource? {
+		current.source(id)
+	}
+
+	/// A new source at `position`, in place of the empty card a new board starts with
+	@discardableResult
+	func addSource(_ content: BoardSource.Content, at position: CanvasPoint) -> BoardSource.ID {
+		var board = current
+		if board.hasOnlyPlaceholder {
+			board.statements = []
+		}
+		let source = BoardSource(position: position, content: content)
+		board.sources.append(source)
+		current = board
+		return source.id
+	}
+
+	/// A new source under everything on the board, for when nobody's looking at the canvas to say where
+	func addSource(_ content: BoardSource.Content) {
+		let board = current
+		let rects = board.hasOnlyPlaceholder ? board.sources.map { CanvasRect.box(at: $0.position) } : board.occupiedRects
+		let position = if let left = rects.map(\.minX).min(), let bottom = rects.map(\.maxY).max() {
+			CanvasGrid.snapped(CanvasPoint(x: left + CanvasLayout.boxSize.width / 2, y: bottom + CanvasLayout.rowGap))
+		} else {
+			CanvasPoint.zero
+		}
+		addSource(content, at: position)
+	}
+
+	func updateSource(_ id: BoardSource.ID, content: BoardSource.Content) {
+		var board = current
+		guard let index = board.sources.firstIndex(where: { $0.id == id }), board.sources[index].content != content else { return }
+		board.sources[index].content = content
+		current = board
+	}
+
+	/// Moves the source and its cards together, so the region keeps its shape
+	func moveSource(id: BoardSource.ID, to position: CanvasPoint) {
+		var board = current
+		guard let index = board.sources.firstIndex(where: { $0.id == id }), board.sources[index].position != position else { return }
+		let travel = position - board.sources[index].position
+		board.sources[index].position = position
+		for card in board.statements.indices where board.statements[card].source == id {
+			board.statements[card].position = board.statements[card].position + travel
+		}
+		current = board
+	}
+
+	/// The cards stay, without the region around them. A board never ends up with nothing on it.
+	func deleteSource(id: BoardSource.ID) {
+		var board = current
+		guard let index = board.sources.firstIndex(where: { $0.id == id }) else { return }
+		let position = board.sources[index].position
+		board.sources.remove(at: index)
+		for card in board.statements.indices where board.statements[card].source == id {
+			board.statements[card].source = nil
+		}
+		if board.statements.isEmpty, board.sources.isEmpty {
+			board.statements = [Statement(position: position)]
+		}
 		current = board
 	}
 
@@ -258,7 +358,8 @@ final class BoardStore {
 	}
 
 	private func discardCurrentIfEmpty() {
-		guard let currentID, current.isEmpty else { return }
+		// A shared board's tombstone would be a leave, or a delete for everyone
+		guard let currentID, current.isEmpty, shares[currentID] == nil else { return }
 		boards.removeAll { $0.id == currentID }
 		deletedIDs.insert(currentID)
 		save()
@@ -297,7 +398,7 @@ final class BoardStore {
 	/// A statement holding what lost a simultaneous edit on another device, on the board it was edited on.
 	/// It syncs like any new statement, and isn't held to the statement limit, since nothing may be lost.
 	func insertStatementCopy(_ statement: Statement, into boardID: Board.ID) {
-		guard let index = boards.firstIndex(where: { $0.id == boardID }) else { return }
+		guard canEdit(boardID), let index = boards.firstIndex(where: { $0.id == boardID }) else { return }
 		boards[index].statements.append(statement)
 		boards[index].modified = .now
 		changedIDs.insert(boardID)

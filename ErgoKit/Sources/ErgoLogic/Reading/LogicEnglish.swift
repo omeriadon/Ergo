@@ -25,13 +25,7 @@ public enum LogicEnglish {
 	/// Reads everything the logic keyboard can write, in the order it was written. Nil while something doesn't parse,
 	/// so half-written lines don't wipe what was read before.
 	public static func text(for parse: LogicParse, letters: [String], descriptors: [String]) -> String? {
-		let isReadable = parse.diagnostics.allSatisfy { diagnostic in
-			if case .unsupported = diagnostic.problem {
-				return true
-			}
-			return false
-		}
-		guard isReadable else { return nil }
+		guard parse.diagnostics.isEmpty else { return nil }
 
 		let reader = Reader(letters: letters, descriptors: descriptors)
 		let premises = parse.argument.premises.map { (position: $0.range.lowerBound, sentence: reader.sentence($0.formula)) }
@@ -68,11 +62,11 @@ private struct Reader {
 	}
 
 	func sentence(_ definition: LogicDefinition) -> String {
-		capitalized(phrase(definition.name) + " is defined as " + phrase(definition.value))
+		capitalized(claim(definition.name) + " is defined as " + phrase(definition.value))
 	}
 
-	private func phrase(_ side: LogicDefinition.Side) -> String {
-		switch side {
+	private func phrase(_ value: LogicDefinition.Value) -> String {
+		switch value {
 			case let .formula(formula):
 				phrase(formula, nested: true)
 			case let .term(term):

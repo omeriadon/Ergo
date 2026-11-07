@@ -43,9 +43,9 @@ struct CanvasBox: View {
 
 	var body: some View {
 		box
-			.modifier(BoxActionsModifier(actions: actions))
+			.modifier(BoxActionsModifier(actions: actions, isReadOnly: model.isReadOnly))
 			.modifier(BoxSpeech(text: spokenText, summary: spokenSummary, appearance: appearance, id: statement.id))
-			.modifier(BoxMovesModifier(nudge: actions.nudge))
+			.modifier(BoxMovesModifier(nudge: actions.nudge, isReadOnly: model.isReadOnly))
 	}
 
 	private var box: some View {
@@ -57,7 +57,14 @@ struct CanvasBox: View {
 		.equatable()
 		.onTapGesture(perform: actions.select)
 		.simultaneousGesture(TapGesture(count: 2).onEnded(actions.edit))
-		.contextMenu {
+		.contextMenu { menu }
+	}
+
+	@ViewBuilder
+	private var menu: some View {
+		if model.isReadOnly {
+			Button("Open", systemImage: "doc.text", action: actions.edit)
+		} else {
 			Button("Edit", systemImage: "square.and.pencil", action: actions.edit)
 			Button("Make Premise of…", systemImage: "arrow.down") { actions.connect(false) }
 			Button("Make Conclusion of…", systemImage: "arrow.up") { actions.connect(true) }
@@ -145,27 +152,39 @@ private struct BoxSpeech: ViewModifier {
 /// What VoiceOver can do to a box in place of the gestures it can't make
 private struct BoxActionsModifier: ViewModifier {
 	let actions: BoxActions
+	let isReadOnly: Bool
 
 	func body(content: Content) -> some View {
-		content
-			.accessibilityAction(.default, actions.select)
-			.accessibilityAction(named: Text("Edit"), actions.edit)
-			.accessibilityAction(named: Text("Make premise of…")) { actions.connect(false) }
-			.accessibilityAction(named: Text("Make conclusion of…")) { actions.connect(true) }
-			.accessibilityAction(named: Text("Remove link…"), actions.removeLink)
-			.accessibilityAction(named: Text("Delete"), actions.delete)
+		if isReadOnly {
+			content
+				.accessibilityAction(.default, actions.select)
+				.accessibilityAction(named: Text("Open"), actions.edit)
+		} else {
+			content
+				.accessibilityAction(.default, actions.select)
+				.accessibilityAction(named: Text("Edit"), actions.edit)
+				.accessibilityAction(named: Text("Make premise of…")) { actions.connect(false) }
+				.accessibilityAction(named: Text("Make conclusion of…")) { actions.connect(true) }
+				.accessibilityAction(named: Text("Remove link…"), actions.removeLink)
+				.accessibilityAction(named: Text("Delete"), actions.delete)
+		}
 	}
 }
 
 /// Moving a box a grid step at a time, for people who can't drag
-private struct BoxMovesModifier: ViewModifier {
+struct BoxMovesModifier: ViewModifier {
 	let nudge: (_ columns: Int, _ rows: Int) -> Void
+	let isReadOnly: Bool
 
 	func body(content: Content) -> some View {
-		content
-			.accessibilityAction(named: Text("Move up")) { nudge(0, -1) }
-			.accessibilityAction(named: Text("Move down")) { nudge(0, 1) }
-			.accessibilityAction(named: Text("Move left")) { nudge(-1, 0) }
-			.accessibilityAction(named: Text("Move right")) { nudge(1, 0) }
+		if isReadOnly {
+			content
+		} else {
+			content
+				.accessibilityAction(named: Text("Move up")) { nudge(0, -1) }
+				.accessibilityAction(named: Text("Move down")) { nudge(0, 1) }
+				.accessibilityAction(named: Text("Move left")) { nudge(-1, 0) }
+				.accessibilityAction(named: Text("Move right")) { nudge(1, 0) }
+		}
 	}
 }

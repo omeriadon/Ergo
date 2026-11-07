@@ -50,12 +50,24 @@ public struct SyncKind: RawRepresentable, Codable, Sendable, Hashable, Comparabl
 	/// id: the scratchpad's `UUID.uuidString`, uppercase. A saved argument on the Logic tab, with no children.
 	public static let scratchpad: SyncKind = "scratchpad"
 
-	public static let known: [SyncKind] = [.board, .bookmark, .setting, .statement, .link, .scratchpad]
+	/// id: the source's `UUID.uuidString`, uppercase. A block of text or a web link on a board's canvas.
+	public static let source: SyncKind = "source"
+
+	/// id: the board's `UUID.uuidString`, uppercase. Who's on a shared board, as this account sees it. Only the server
+	/// writes it, so it isn't in `known`, which is what a device may push.
+	public static let share: SyncKind = "share"
+
+	public static let known: [SyncKind] = [.board, .bookmark, .setting, .statement, .link, .scratchpad, .source]
 }
 
 // MARK: - Checks
 
 public extension SyncKind {
+	/// Only the server writes these, so a replica never pushes one
+	var isServerOwned: Bool {
+		self == .share
+	}
+
 	/// The field names a record of this kind may have. Empty for a kind this version doesn't know.
 	var fieldNames: Set<String> {
 		switch self {
@@ -65,6 +77,8 @@ public extension SyncKind {
 				Set([SyncFieldName.created, SyncFieldName.content, SyncFieldName.deleted]
 					+ (0 ..< SyncFieldName.descriptorSlots).map(SyncFieldName.descriptor))
 			case .statement:
+				[SyncFieldName.board, SyncFieldName.position, SyncFieldName.content, SyncFieldName.source, SyncFieldName.deleted]
+			case .source:
 				[SyncFieldName.board, SyncFieldName.position, SyncFieldName.content, SyncFieldName.deleted]
 			case .link:
 				[SyncFieldName.board, SyncFieldName.premise, SyncFieldName.conclusion, SyncFieldName.deleted]
@@ -72,6 +86,8 @@ public extension SyncKind {
 				[SyncFieldName.present]
 			case .setting:
 				[SyncFieldName.value]
+			case .share:
+				[SyncFieldName.role, SyncFieldName.member, SyncFieldName.members, SyncFieldName.deleted]
 			default:
 				[]
 		}
@@ -80,7 +96,7 @@ public extension SyncKind {
 	/// Whether `id` can name a record of this kind
 	func isValid(id: String) -> Bool {
 		switch self {
-			case .board, .statement, .link, .scratchpad:
+			case .board, .statement, .link, .scratchpad, .source, .share:
 				UUID(uuidString: id)?.uuidString == id
 			case .bookmark:
 				!id.isEmpty && id.utf8.count <= 256

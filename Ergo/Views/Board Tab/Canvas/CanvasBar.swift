@@ -13,13 +13,30 @@ enum CanvasBarMode: Equatable {
 	case statement
 	case link
 
+	/// A source, which a link's button opens in the browser rather than editing
+	case source(isLink: Bool)
+
 	/// Waiting for a box to be tapped, with what to tap
 	case picking(String)
+
+	/// A board this person can only view, with what can be opened
+	case viewOnly(CanvasBarViewOnlySelection)
+}
+
+/// What's selected on a board this person can only view
+enum CanvasBarViewOnlySelection: Equatable {
+	case nothing
+	case statement
+	case source(isLink: Bool)
 }
 
 struct CanvasBarActions {
 	var add: () -> Void
+	var addText: () -> Void
+	var addLink: () -> Void
 	var edit: () -> Void
+	var openSource: () -> Void
+	var breakDown: () -> Void
 	var delete: () -> Void
 	var cancelPick: () -> Void
 }
@@ -38,10 +55,20 @@ struct CanvasBar: View {
 				switch mode {
 					case .idle:
 						barButton("Add Statement", symbol: "plus", id: "add", action: actions.add)
+						addSourceMenu
 
 					case .statement:
 						barButton("Edit", symbol: "square.and.pencil", id: "edit", action: actions.edit)
 						barButton("Delete", symbol: "trash", id: "delete", role: .destructive, action: actions.delete)
+
+					case let .source(isLink):
+						if isLink {
+							barButton("Open", symbol: "safari", id: "openSource", action: actions.openSource)
+						} else {
+							barButton("Edit", symbol: "square.and.pencil", id: "editSource", action: actions.openSource)
+						}
+						barButton("Break Down", symbol: "arrow.triangle.branch", id: "breakDownSource", action: actions.breakDown)
+						barButton("Delete", symbol: "trash", id: "deleteSource", role: .destructive, action: actions.delete)
 
 					case .link:
 						barButton("Delete Arrow", symbol: "trash", id: "deleteLink", role: .destructive, action: actions.delete)
@@ -54,10 +81,48 @@ struct CanvasBar: View {
 							.glassEffect(.regular, in: Capsule())
 
 						barButton("Cancel", symbol: "xmark", id: "cancelPick", action: actions.cancelPick)
+
+					case let .viewOnly(selection):
+						viewOnly(selection)
 				}
 			}
 		}
 		.animation(reduceMotion ? nil : .smooth, value: mode)
+	}
+
+	@ViewBuilder
+	private func viewOnly(_ selection: CanvasBarViewOnlySelection) -> some View {
+		Label("View only", systemImage: "eye")
+			.font(.subheadline.weight(.medium))
+			.padding(.horizontal, 14)
+			.padding(.vertical, 10)
+			.glassEffect(.regular, in: Capsule())
+			.accessibilityIdentifier("board.bar.viewOnly")
+
+		switch selection {
+			case .nothing:
+				EmptyView()
+			case .statement:
+				barButton("Open", symbol: "doc.text", id: "open", action: actions.edit)
+			case let .source(isLink):
+				barButton("Open", symbol: isLink ? "safari" : "doc.text", id: "openSource", action: actions.openSource)
+		}
+	}
+
+	private var addSourceMenu: some View {
+		Menu {
+			Button("Text", systemImage: "doc.text", action: actions.addText)
+				.accessibilityIdentifier("board.bar.addText")
+			Button("Web Link", systemImage: "safari", action: actions.addLink)
+				.accessibilityIdentifier("board.bar.addLink")
+		} label: {
+			Label("Add Source", systemImage: "doc.badge.plus")
+				.font(.subheadline.weight(.medium))
+				.padding(.horizontal, 5)
+				.padding(.vertical, 4)
+		}
+		.buttonStyle(.glass)
+		.accessibilityIdentifier("board.bar.addSource")
 	}
 
 	private func barButton(

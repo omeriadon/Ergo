@@ -12,7 +12,8 @@ import ErgoTranslation
 import SwiftUI
 
 /// Pastes English and lets the server split it into premises and a conclusion, with no logic written. What it finds becomes
-/// a new board of statements joined by arrows (`BoardStore.newBoard(from:)`). The claims it names are dropped, since a board holds English only.
+/// statements joined by arrows, in a region on the source they came from: a new board (`BoardStore.newBoard(from:source:)`),
+/// or the current one when it's one of its sources being broken down. The claims it names are dropped, since a board holds English only.
 struct BreakDownSheet: View {
 	@Environment(\.dismiss)
 	private var dismiss
@@ -35,8 +36,16 @@ struct BreakDownSheet: View {
 	/// Text from the share sheet starts on its own, since breaking it down is what was chosen
 	private let startsOnAppear: Bool
 
-	init(shared: String? = nil) {
+	/// What the new board's source is. The text itself when it's nil.
+	private let input: BoardSource.Content?
+
+	/// The source on the current board that this is a breakdown of
+	private let existing: BoardSource.ID?
+
+	init(shared: String? = nil, input: BoardSource.Content? = nil, existing: BoardSource.ID? = nil) {
 		_english = State(initialValue: shared ?? "")
+		self.input = input
+		self.existing = existing
 		startsOnAppear = shared.map { $0.count <= EnglishValidator.characterLimit } ?? false
 	}
 
@@ -62,10 +71,10 @@ struct BreakDownSheet: View {
 				if let found {
 					BreakdownResultView(
 						breakdown: found,
-						application: found.applied(to: Board().map, replacing: true)
+						application: application(of: found)
 					)
 				} else {
-					input
+					inputForm
 				}
 			}
 			.animation(.smooth, value: found != nil)
@@ -85,9 +94,18 @@ struct BreakDownSheet: View {
 		}
 	}
 
+	/// What creating would do to the board it goes on, for saying what won't fit
+	private func application(of found: ArgumentBreakdown) -> ArgumentBreakdownApplication<Statement, Link> {
+		guard existing != nil else {
+			return found.applied(to: Board().map, replacing: true)
+		}
+		let board = boardStore.current
+		return found.applied(to: board.map, replacing: board.hasOnlyPlaceholder)
+	}
+
 	// MARK: - Parts
 
-	private var input: some View {
+	private var inputForm: some View {
 		VStack(alignment: .leading, spacing: 14) {
 			ZStack(alignment: .topLeading) {
 				TextEditor(text: $english)
@@ -217,7 +235,11 @@ struct BreakDownSheet: View {
 	/// Closes the boards sheet too, since the new board is what's open now
 	private func create() {
 		guard let found else { return }
-		boardStore.newBoard(from: found)
+		if let existing, boardStore.source(existing) != nil {
+			boardStore.breakDown(found, into: existing)
+		} else {
+			boardStore.newBoard(from: found, source: input ?? .text(english.trimmingCharacters(in: .whitespacesAndNewlines)))
+		}
 		navigation.selectedTab = .board
 		navigation.dismissSheet()
 	}

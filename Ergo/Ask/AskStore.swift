@@ -18,6 +18,10 @@ final class AskStore {
 	struct Run {
 		let task: Task<Void, Never>
 
+		/// The message it's writing, which doesn't exist until something arrives for it
+		let answerID: AskMessage.ID
+		let started: Date
+
 		/// What its tools are doing, while it isn't writing
 		var activity: String?
 	}
@@ -71,6 +75,11 @@ final class AskStore {
 		waitingDraft = text
 	}
 
+	/// Leaves a question in the composer of the conversation that's open, to edit or send
+	func draftFollowUp(_ text: String) {
+		waitingDraft = text
+	}
+
 	func takeWaitingDraft() -> String? {
 		defer { waitingDraft = nil }
 		return waitingDraft
@@ -112,8 +121,18 @@ final class AskStore {
 	/// Keeps what's been written so far. Closing the socket makes the server stop too.
 	func stop(_ id: AskConversation.ID) {
 		runs[id]?.task.cancel()
-		runs[id] = nil
+		end(id)
 		save()
+	}
+
+	/// Notes how long the answer took, for the line above it
+	private func end(_ id: AskConversation.ID) {
+		guard let run = runs.removeValue(forKey: id),
+		      var conversation = conversation(id),
+		      let index = conversation.messages.firstIndex(where: { $0.id == run.answerID })
+		else { return }
+		conversation.messages[index].seconds = Int(Date.now.timeIntervalSince(run.started).rounded())
+		write(conversation)
 	}
 
 	private func answer(_ id: AskConversation.ID, account: TranslationAccount) {
@@ -129,17 +148,17 @@ final class AskStore {
 					apply(event, to: answerID, in: id)
 				}
 				guard !Task.isCancelled else { return }
-				runs[id] = nil
+				end(id)
 				save()
 			} catch {
 				guard !Task.isCancelled, !(error is CancellationError) else { return }
-				runs[id] = nil
+				end(id)
 				failures[id] = error as? ServiceError
 					?? ServiceError(code: .internalError, message: error.localizedDescription)
 				save()
 			}
 		}
-		runs[id] = Run(task: task)
+		runs[id] = Run(task: task, answerID: answerID, started: .now)
 	}
 
 	private func apply(_ event: AskServerMessage, to answerID: AskMessage.ID, in id: AskConversation.ID) {

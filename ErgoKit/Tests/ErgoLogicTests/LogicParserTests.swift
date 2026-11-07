@@ -94,9 +94,9 @@ struct LogicParserTests {
 		#expect(analyze("X→X,X∴X").fallacies.isEmpty)
 	}
 
-	/// Modal and first order shapes, named without a full decision procedure
+	/// Modal and first order shapes, named as well as proved invalid
 	@Test func modalAndFirstOrderShapes() {
-		#expect(analyze("□(X→Y),X∴□Y").verdict == .undecided)
+		#expect(analyze("□(X→Y),X∴□Y").verdict == .invalid(counterexample: [:]))
 		#expect(fallacies("□(X→Y),X∴□Y") == ["modal-scope-fallacy"])
 		#expect(fallacies("□(X→Y)∴X→□Y") == ["modal-scope-fallacy"])
 		#expect(fallacies("∀X∃YR(X,Y)∴∃Y∀XR(X,Y)") == ["quantifier-shift-fallacy"])
@@ -104,7 +104,7 @@ struct LogicParserTests {
 		#expect(fallacies("∀X(P(X)→Q(X))∴∀X(Q(X)→P(X))") == ["illicit-conversion"])
 		#expect(fallacies("∀X(P(X)→R(X)),∀X(Q(X)→R(X))∴∀X(Q(X)→P(X))") == ["undistributed-middle"])
 		#expect(analyze("□X→□Y,□X∴□Y").verdict == .valid, "Valid by propositional form alone")
-		#expect(analyze("X=Y,Y=Z∴X=Z").verdict == .undecided)
+		#expect(analyze("X=Y,Y=Z∴X=Z").verdict == .valid)
 		#expect(analyze("X=Y,Y=Z∴X=Z").fallacies.isEmpty)
 	}
 
@@ -117,7 +117,7 @@ struct LogicParserTests {
 	/// No conclusion: each line on its own
 	@Test func statusesWithoutAConclusion() {
 		#expect(analyze("X∨¬X\nX∧¬X\nX→Y").statuses == [.tautology, .contradiction, .contingent])
-		#expect(analyze("□X").statuses == [.undecided])
+		#expect(analyze("□X").statuses == [.contingent])
 		#expect(analyze("□X∨¬□X").statuses == [.tautology])
 	}
 
@@ -137,7 +137,12 @@ struct LogicParserTests {
 		#expect(problems("X∴Y→") == [.expectedFormula(after: .symbol("→"))], "A broken conclusion isn't also a missing one")
 		#expect(problems("P,∴(X∪P)") == [.setWithoutRelation(.symbol("∪"))])
 		#expect(problems("(X,Y)") == [.unexpected(.delimiter(","))])
-		#expect(problems("X≔Y") == [.unsupported(.symbol("≔"))])
+		#expect(problems("X∧Y≔Z") == [.definitionNeedsLetter])
+		#expect(problems("X∴Y≔Z") == [.definitionAsConclusion])
+		#expect(problems("X≔Y∵Z") == [.definitionAsConclusion])
+		#expect(problems("X≔Y,X≔Z") == [.redefined(letter: 1)])
+		#expect(problems("X≔X∧Y") == [.circularDefinition(letter: 1)])
+		#expect(problems("X≔Y,Y≔X") == [.circularDefinition(letter: 1)])
 		#expect(problems("X∎Y") == [.misplacedEndMarker])
 		#expect(problems("→X") == [.unexpected(.symbol("→"))])
 		#expect(analyze("X∧").parse.diagnostics.first?.range == 1 ..< 2)
@@ -195,6 +200,29 @@ struct LogicParserTests {
 		#expect(analyze("X∅").parse.diagnostics.first?.fix == nil)
 	}
 
+	/// A defined letter is checked as what it stands for
+	@Test func definitions() {
+		#expect(analyze("X≔Y∧Z,X∴Y").verdict == .valid)
+		#expect(analyze("X≔Y,X∴Z").verdict == .invalid(counterexample: [2: true, 3: false]))
+		#expect(analyze("X≔Y,Y≔Z,X∴Z").verdict == .valid, "Through another definition")
+		#expect(analyze("X,X≔Y∴Y").verdict == .valid, "Wherever it's written")
+		#expect(analyze("X≔Y∨¬Y\nX").statuses == [.tautology])
+		#expect(analyze("Z≔X∪Y,P∈Z∴P∈X∪Y").verdict == .valid, "A set")
+		#expect(analyze("Z≔X,P∈Z∴P∈X").verdict == .valid, "A name for a set")
+		#expect(analyze("X≔Y,∀XP(X)∴∀XP(X)").verdict == .valid, "A bound letter isn't the defined one")
+		#expect(analyze("X≔Y,∀Y(P(X)→Q(Y))∴∀Y(P(Y)→Q(Y))").verdict == .invalid(counterexample: [:]), "Not captured by ∀Y")
+		#expect(analyze("X≔Y,∀Y(P(X)→Q(Y)),P(Y)∴∀YQ(Y)").verdict == .valid, "The Y outside ∀Y")
+		#expect(analyze("X≔Y,∀Y(X→P(Y))∴∀Y(Y→P(Y))").verdict == .valid, "A statement letter isn't bound")
+		#expect(analyze("X≔Y").feedback == nil, "Claims nothing, so there's nothing to say")
+		#expect(analyze("X≔").feedback.map {
+			if case .unfinished = $0 {
+				true
+			} else {
+				false
+			}
+		} == true)
+	}
+
 	/// One result
 	@Test func oneResult() {
 		#expect(analyze("X→Y,X∴Y").feedback == .valid)
@@ -202,7 +230,7 @@ struct LogicParserTests {
 		#expect(analyze("X,¬X∴Y").feedback == .contradictoryPremises)
 		#expect(analyze("X∴Y").feedback == .invalid(counterexample: [1: true, 2: false], fallacy: nil), "No named form, so no non sequitur on top")
 		#expect(analyze("X→Y,Y∴X").feedback == .invalid(counterexample: [1: false, 2: true], fallacy: LogicFallacyMatch(fallacyID: "affirming-the-consequent", premises: [0, 1])))
-		#expect(analyze("∀X(X∈Y)\nX∴Y=X").feedback == .unchecked(symbol: "∀", fallacy: nil))
+		#expect(analyze("∀X(X⊆Y)∴Y=Y").feedback == .unchecked(fallacy: nil))
 		#expect(analyze("X∨¬X").feedback == .statuses([.tautology]))
 	}
 

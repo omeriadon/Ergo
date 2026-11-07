@@ -46,8 +46,9 @@ public struct SignedIn: Codable, Sendable, Hashable {
 
 // MARK: - Live
 
-/// What the sync socket sends. It never tells the device that pushed, only the account's other devices.
+/// What the sync socket sends. It never tells the device that pushed, only the account's other devices and the other
+/// members of a shared board it pushed to.
 public enum SyncLiveMessage: Codable, Sendable, Hashable {
-	/// Another device pushed. Sync if `cursor` is ahead of this device's.
+	/// Another device or member pushed. Sync if `cursor` is ahead of this device's: it's this account's own seq.
 	case changed(cursor: Int)
 }

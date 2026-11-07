@@ -105,8 +105,8 @@ public struct ErgoClient: Sendable {
 		return request
 	}
 
-	func request(_ method: String, _ path: String, body: some Encodable) throws -> URLRequest {
-		var request = request(method, path)
+	func request(_ method: String, _ path: String, authorized: Bool = true, body: some Encodable) throws -> URLRequest {
+		var request = request(method, path, authorized: authorized)
 		request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 		do {
 			request.httpBody = try ErgoProtocol.encoder.encode(body)
@@ -145,7 +145,7 @@ public struct ErgoClient: Sendable {
 		return data
 	}
 
-	private func send<Response: Decodable>(_ request: URLRequest) async throws -> Response {
+	func send<Response: Decodable>(_ request: URLRequest) async throws -> Response {
 		let data = try await data(for: request)
 		do {
 			return try ErgoProtocol.decoder.decode(Response.self, from: data)
