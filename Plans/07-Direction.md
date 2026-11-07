@@ -139,4 +139,4 @@ A preliminary version of the Ask tab exists. See `CLAUDE.md`'s Ask section for h
 
 ## Built so far: Sharing boards
 
-Boards can be shared with other people by link, who can edit or only view, through the system share sheet with Messages collaboration, and pushes when something changes. See [09-Sharing.md](09-Sharing.md) for the design and what's left, and `CLAUDE.md`'s Sharing boards section for how it works.
+Boards can be shared with other people by link, who can edit or only view, through the system share sheet, and pushes when something changes. See [09-Sharing.md](09-Sharing.md) for the design and what's left, and `CLAUDE.md`'s Sharing boards section for how it works.

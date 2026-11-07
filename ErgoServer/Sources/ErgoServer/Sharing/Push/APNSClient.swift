@@ -36,7 +36,6 @@ final class APNSClient: Sendable {
 			return .failed("no client")
 		}
 		do {
-			let host = message.environment == .production ? "api.push.apple.com" : "api.sandbox.push.apple.com"
 			var headers = HTTPHeaders()
 			try headers.add(name: .authorization, value: "bearer \(bearer())")
 			headers.add(name: "apns-topic", value: config.topic)
@@ -46,7 +45,7 @@ final class APNSClient: Sendable {
 
 			let request = try ClientRequest(
 				method: .POST,
-				url: URI(string: "https://\(host)/3/device/\(message.deviceToken)"),
+				url: URI(string: "https://api.push.apple.com/3/device/\(message.deviceToken)"),
 				headers: headers,
 				body: ByteBuffer(bytes: Self.payload(for: message)),
 				timeout: .seconds(15)

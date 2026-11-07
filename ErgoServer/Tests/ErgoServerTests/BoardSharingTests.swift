@@ -724,7 +724,7 @@ struct BoardSharingTests {
 			let token = try #require(BoardInviteLink.token(from: invite.url))
 			_ = try await member.previewBoardInvite(token: token)
 			_ = try await member.acceptBoardInvite(token: token, name: "Member canary")
-			try await member.registerPushDevice(token: "abcdef0123456789", environment: .sandbox)
+			try await member.registerPushDevice(token: "abcdef0123456789")
 
 			let (_, response) = try await URLSession.shared.data(from: server.appending(path: "join/\(token)"))
 			#expect((response as? HTTPURLResponse)?.statusCode == 200)

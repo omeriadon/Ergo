@@ -157,18 +157,11 @@ public enum BoardInviteLink {
 
 // MARK: - Push
 
-/// Which APNs host a device's token works with
-public enum PushEnvironment: String, Codable, Sendable, Hashable {
-	case sandbox, production
-}
-
 public struct PushDevice: Codable, Sendable, Hashable {
 	/// The APNs device token, as hex
 	public let token: String
-	public let environment: PushEnvironment
 
-	public init(token: String, environment: PushEnvironment) {
+	public init(token: String) {
 		self.token = token
-		self.environment = environment
 	}
 }

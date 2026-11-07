@@ -71,7 +71,6 @@ struct PushService: Sendable {
 				for device in devices {
 					let message = PushMessage(
 						deviceToken: device.apnsToken,
-						environment: PushEnvironment(rawValue: device.environment) ?? .production,
 						board: event.board,
 						alert: alert
 					)

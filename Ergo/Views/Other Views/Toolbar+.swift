@@ -52,8 +52,8 @@ struct ToolbarTitleView: View {
 }
 
 extension View {
-	func toolbarTitleVire(_ title: String, _ symbol: String) -> some View {
-		modifier(ToolbarTitleViewModifier(title: title, symbol: symbol))
+	func toolbarTitleVire(_ title: String, _ symbol: String, makeTextSmaller: Bool = false) -> some View {
+		modifier(ToolbarTitleViewModifier(title: title, symbol: symbol, makeTextSmaller: makeTextSmaller))
 	}
 }
 
@@ -62,6 +62,7 @@ private struct ToolbarTitleViewModifier: ViewModifier {
 
 	let title: String
 	let symbol: String
+	let makeTextSmaller: Bool
 
 	func body(content: Content) -> some View {
 		content
@@ -72,6 +73,7 @@ private struct ToolbarTitleViewModifier: ViewModifier {
 				ToolbarItem(placement: .title) {
 					Label {
 						Text(title)
+							.font(makeTextSmaller ? .caption : .body)
 					} icon: {
 						Image(systemName: symbol)
 							.foregroundStyle(.accent)

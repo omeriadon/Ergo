@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>aps-environment</key>
-	<string>development</string>
+	<string>production</string>
 	<key>com.apple.developer.applesignin</key>
 	<array>
 		<string>Default</string>
@@ -12,8 +12,6 @@
 	<array>
 		<string>applinks:ergo-15.235.184.129.sslip.io</string>
 	</array>
-	<key>com.apple.developer.shared-with-you</key>
-	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>group.com.adonis.Ergo</string>

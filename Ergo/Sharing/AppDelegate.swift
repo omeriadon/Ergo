@@ -5,12 +5,11 @@
 //  Created by Adon Omeri on 7/11/2026.
 //
 
-import SharedWithYouCore
 import UIKit
 import UserNotifications
 
-/// The only way iOS hands an app its push token, silent pushes and notification taps, and where Apple says to set up the
-/// collaboration coordinator. SwiftUI has nothing for these, so this is a thin layer that passes them on.
+/// The only way iOS hands an app its push token, silent pushes and notification taps. SwiftUI has nothing for these, so
+/// this is a thin layer that passes them on.
 ///
 /// iOS can start the app in the background for a push, with no view on screen, so what it needs is set in `ErgoApp.init`
 /// rather than read from the environment.
@@ -19,14 +18,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
 	static var navigation: NavigationManager?
 	static var boardStore: BoardStore?
 
-	/// The coordinator only holds on to it weakly
-	private let collaboration = CollaborationHandler()
-
 	func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
 		UNUserNotificationCenter.current().delegate = self
-		if BoardInvitation.usesMessagesCollaboration {
-			SWCollaborationCoordinator.shared.actionHandler = collaboration
-		}
 		return true
 	}
 

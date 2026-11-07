@@ -5,7 +5,6 @@
 //  Created by Adon Omeri on 7/11/2026.
 //
 
-import ErgoProtocol
 import Fluent
 import Foundation
 
@@ -25,10 +24,6 @@ final class PushDeviceRow: Model, @unchecked Sendable {
 	/// As hex, and never logged
 	@Field(key: "apns_token")
 	var apnsToken: String
-
-	/// A `PushEnvironment` raw value, `sandbox` or `production`
-	@Field(key: "environment")
-	var environment: String
 
 	@Field(key: "updated")
 	var updated: Date

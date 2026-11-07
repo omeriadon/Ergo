@@ -52,8 +52,7 @@ struct SharingProtocolTests {
 	}
 
 	@Test func pushDevices() throws {
-		try expectRoundTrip(PushDevice(token: "ab12", environment: .sandbox), #"{"environment":"sandbox","token":"ab12"}"#)
-		try expectRoundTrip(PushDevice(token: "ab12", environment: .production), #"{"environment":"production","token":"ab12"}"#)
+		try expectRoundTrip(PushDevice(token: "ab12"), #"{"token":"ab12"}"#)
 	}
 
 	@Test func paths() {

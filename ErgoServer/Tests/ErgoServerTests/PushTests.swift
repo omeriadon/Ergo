@@ -38,8 +38,8 @@ final class FakePush: Sendable {
 }
 
 extension Application {
-	func registerPush(_ apnsToken: String, environment: PushEnvironment = .production, token: String) async throws {
-		let response = try await call(.PUT, ErgoProtocol.Path.pushDevice, token: token, body(PushDevice(token: apnsToken, environment: environment)))
+	func registerPush(_ apnsToken: String, token: String) async throws {
+		let response = try await call(.PUT, ErgoProtocol.Path.pushDevice, token: token, body(PushDevice(token: apnsToken)))
 		#expect(response.status == .noContent)
 	}
 }
@@ -97,7 +97,7 @@ struct PushTests {
 		try await withTestApp(.sharing(scratch), push: push.sender) { app in
 			let owner = try await app.signedInAccount("owner")
 			let member = try await app.signedInAccount("member")
-			try await app.registerPush("aa11", environment: .sandbox, token: owner.token)
+			try await app.registerPush("aa11", token: owner.token)
 			let (board, _) = try await app.syncedBoard(owner: owner)
 			let token = try await app.invite(board, token: owner.token)
 			try await app.accept(token, token: member.token)
@@ -105,7 +105,6 @@ struct PushTests {
 			#expect(try await eventually { push.sent.count == 1 })
 			#expect(push.sent == [PushMessage(
 				deviceToken: "aa11",
-				environment: .sandbox,
 				board: board,
 				alert: PushMessage.Alert(title: "Sam joined", body: "Secret canary title")
 			)])
@@ -166,8 +165,8 @@ struct PushTests {
 			let (phone, owner) = try await live.device(server, "owner")
 			let (pad, _) = try await live.device(server, "owner")
 			let (member, _) = try await live.device(server, "member")
-			try await phone.registerPushDevice(token: "aa11", environment: .production)
-			try await pad.registerPushDevice(token: "bb22", environment: .production)
+			try await phone.registerPushDevice(token: "aa11")
+			try await pad.registerPushDevice(token: "bb22")
 
 			let heard = SyncLiveTests.Heard()
 			let listening = heard.listen(phone)
@@ -223,7 +222,7 @@ struct PushTests {
 			#expect(try await PushDeviceRow.query(on: app.db).all().map(\.apnsToken) == ["aa11"])
 
 			// A new APNs token for this device
-			try await app.registerPush("bb22", environment: .sandbox, token: phone.token)
+			try await app.registerPush("bb22", token: phone.token)
 			#expect(try await PushDeviceRow.query(on: app.db).all().map(\.apnsToken) == ["bb22"])
 			try await app.registerPush("cc33", token: pad.token)
 			#expect(try await PushDeviceRow.query(on: app.db).count() == 2)
@@ -250,7 +249,7 @@ struct PushTests {
 
 		try await withTestApp(.sharing(scratch)) { app in
 			let device = try await app.signedInAccount()
-			let response = try await app.call(.PUT, ErgoProtocol.Path.pushDevice, token: device.token, body(PushDevice(token: token, environment: .production)))
+			let response = try await app.call(.PUT, ErgoProtocol.Path.pushDevice, token: device.token, body(PushDevice(token: token)))
 			#expect(response.status == .badRequest)
 		}
 	}
@@ -261,7 +260,7 @@ struct PushTests {
 
 		try await withTestApp(.sharing(scratch)) { app in
 			let account = try await app.createAccount()
-			let response = try await app.call(.PUT, ErgoProtocol.Path.pushDevice, token: account.token, body(PushDevice(token: "aa11", environment: .production)))
+			let response = try await app.call(.PUT, ErgoProtocol.Path.pushDevice, token: account.token, body(PushDevice(token: "aa11")))
 			#expect(response.status == .forbidden)
 		}
 	}
@@ -270,7 +269,7 @@ struct PushTests {
 
 	@Test func thePayloadIsWhatApnsExpects() throws {
 		let board = newBoardID()
-		let alert = PushMessage(deviceToken: "aa11", environment: .production, board: board, alert: PushMessage.Alert(title: "Sam edited", body: "Rain"))
+		let alert = PushMessage(deviceToken: "aa11", board: board, alert: PushMessage.Alert(title: "Sam edited", body: "Rain"))
 		let loud = try #require(try JSONSerialization.jsonObject(with: APNSClient.payload(for: alert)) as? [String: Any])
 		let aps = try #require(loud["aps"] as? [String: Any])
 		#expect(loud["board"] as? String == board)
@@ -281,7 +280,7 @@ struct PushTests {
 		// It's the device's address, not something to tell it
 		#expect(try !String(decoding: APNSClient.payload(for: alert), as: UTF8.self).contains("aa11"))
 
-		let silent = PushMessage(deviceToken: "aa11", environment: .sandbox, board: board, alert: nil)
+		let silent = PushMessage(deviceToken: "aa11", board: board, alert: nil)
 		let quiet = try #require(try JSONSerialization.jsonObject(with: APNSClient.payload(for: silent)) as? [String: Any])
 		#expect((quiet["aps"] as? [String: Any])?.keys.sorted() == ["content-available"])
 	}

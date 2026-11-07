@@ -27,7 +27,6 @@ enum PushController {
 
 		let account = try request.accountID
 		let token = try request.tokenID
-		let environment = body.environment.rawValue
 		try await request.quietDB.transaction { database in
 			try await PushDeviceRow.query(on: database).filter(\.$token.$id == token).filter(\.$apnsToken != apnsToken).delete()
 
@@ -35,7 +34,6 @@ enum PushController {
 			row.$account.id = account
 			row.$token.id = token
 			row.apnsToken = apnsToken
-			row.environment = environment
 			row.updated = .now
 			try await row.save(on: database)
 		}

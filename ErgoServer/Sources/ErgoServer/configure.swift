@@ -77,6 +77,7 @@ func addMigrations(to app: Application) {
 	app.migrations.add(AddAccountEmail())
 	app.migrations.add(AddSyncRecordBoard())
 	app.migrations.add(CreateBoardSharing())
+	app.migrations.add(DropPushDeviceEnvironment())
 }
 
 /// SQLite creates the file with the umask's permissions, which would let the runner user read every sealed credential

@@ -5,7 +5,6 @@
 //  Created by Adon Omeri on 7/11/2026.
 //
 
-import ErgoProtocol
 import Foundation
 import Logging
 import Vapor
@@ -19,7 +18,6 @@ struct PushMessage: Sendable, Hashable {
 
 	/// The APNs device token, never logged
 	let deviceToken: String
-	let environment: PushEnvironment
 	let board: String
 
 	/// Nil for a silent push

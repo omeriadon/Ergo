@@ -60,7 +60,7 @@ Anonymous accounts are one per install, so they can't link devices. Signing in w
 
 ### Apple setup Adon has to do
 
-- The app needs the Sign in with Apple capability (`com.apple.developer.applesignin = ["Default"]`). Add `Ergo/Ergo.entitlements` and set `CODE_SIGN_ENTITLEMENTS`. Automatic signing with team `C2HN547N49` should update the App ID, but Adon has to check that in the developer portal.
+- The app needs the Sign in with Apple capability (`com.apple.developer.applesignin = ["Default"]`). Add `Ergo/Special/Ergo.entitlements` and set `CODE_SIGN_ENTITLEMENTS`. Automatic signing with team `C2HN547N49` should update the App ID, but Adon has to check that in the developer portal.
 - Server: `ERGO_APPLE_APP_ID`, default `com.adonis.Ergo`.
 
 ## The data model

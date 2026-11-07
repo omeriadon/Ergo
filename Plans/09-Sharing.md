@@ -9,8 +9,8 @@ Read [README.md](README.md) and [05-Sync.md](05-Sync.md) first. No migrations of
 - **Each member keeps their own copy of a shared board's records, and the server copies every change to the others ("fan-out").** The app keeps one replica and one cursor per account, so offline edits, conflict copies, paging, pruning and resets all work unchanged. A single shared copy with its own cursor was rejected: turning a private board into one would move its records out of the owner's account, which breaks the owner's other devices if they have offline edits.
 - **Who's on a board travels through sync**, as a server-written record of a new kind, `share`. The app needs no "fetch members" call, works offline, and every device of every member hears about changes the usual way.
 - **Leaving is just deleting.** A member's board tombstone means "leave", and the owner's means "delete for everyone". It works offline and needs no extra route.
-- **Apple's parts:** the system share sheet, with `SWCollaborationMetadata` so Messages shows it as a collaboration with Apple's own permission picker, and a universal link. `UICloudSharingController` and the manage button of `SWCollaborationView` are CloudKit only (Apple's docs say a custom infrastructure must provide its own), so managing people is our own sheet.
-- **A link is the only way in.** Anyone holding an unexpired link can join with its role. The owner is told, and can remove them or revoke links. Messages' cryptographic per-person identities (`SWPerson.Identity`, Merkle proofs) are not verified in this version: `SWUpdateCollaborationParticipantsAction` is simply fulfilled.
+- **Apple's parts:** the system share sheet with a plain link, and a universal link. Managing people is our own sheet. Messages collaboration (`SWCollaborationMetadata`) was tried and removed: sharing a board failed with "this file isn't stored in iCloud".
+- **A link is the only way in.** Anyone holding an unexpired link can join with its role. The owner is told, and can remove them or revoke links.
 
 ## Sync records
 
@@ -90,7 +90,7 @@ GET    /join/<token>                        small HTML page for someone without 
 - `board_shares`: `id` (the board's UUID), `owner_id` → accounts (cascade), `sealed_title` (data, nullable, sealed by the vault), `created`
 - `board_members`: `id`, `board_id` → board_shares (cascade), `account_id` → accounts (cascade), `role`, `name`, `joined`. Unique (board, account). Index on account. The owner has a row too.
 - `board_invites`: `id`, `board_id` → board_shares (cascade), `token_hash` (`Account.hash`, unique), `role`, `created`, `expires` (30 days). Never store the token. At most 20 open per board, oldest deleted first; expired ones are deleted when a new one is made.
-- `push_devices`: `id`, `account_id` → accounts (cascade), `token_id` → account_tokens (cascade), `apns_token` (unique), `environment` (`sandbox`/`production`), `updated`
+- `push_devices`: `id`, `account_id` → accounts (cascade), `token_id` → account_tokens (cascade), `apns_token` (unique), `updated`
 
 Limit: 30 members per board (`SyncLimit.membersPerBoard`).
 
@@ -126,7 +126,7 @@ Pruning needs no change.
 
 No new dependency: `APNSClient` signs an ES256 JWT with swift-crypto (`P256.Signing.PrivateKey(pemRepresentation:)`, raw signature, base64url, cached 40 minutes) and posts with `application.client`, which negotiates HTTP/2. Behind a closure-holding struct `PushSender`, like `AppleTokenVerifier`, so tests swap it. With no key configured it does nothing and logs once at launch. A `410` or `BadDeviceToken`/`Unregistered` deletes the device row. Failures are logged without the token or the title, and never fail a request.
 
-Headers: `apns-topic`, `apns-push-type` (`alert` or `background`), `apns-priority` (10 or 5), `apns-collapse-id` (the board). Hosts: `api.push.apple.com`, `api.sandbox.push.apple.com` by the device's `environment`.
+Headers: `apns-topic`, `apns-push-type` (`alert` or `background`), `apns-priority` (10 or 5), `apns-collapse-id` (the board). Host: always `api.push.apple.com`, never the sandbox.
 
 ```json
 { "aps": { "alert": { "title": "…", "body": "…" }, "sound": "default", "thread-id": "<board>", "content-available": 1 }, "board": "<board>" }
@@ -187,8 +187,7 @@ New files in `Ergo/Sharing/`.
 - **Canvas toolbar:** a People button (`person.2`, with a filled symbol when shared), opening `BoardPeopleSheet`. Hidden or disabled for an empty draft.
 - **`BoardPeopleSheet`:** signed out, it says sharing needs an account and links to the sign-in in Settings. **Owner / not yet shared:** a name field the first time (`Defaults[.sharingName]`, this device only), a `Can edit` / `View only` picker, **Send Invite**, the people (swipe or menu to change role or remove), Revoke Links, Stop Sharing with confirmation. **Member:** read-only list, and Leave with confirmation.
 - **Send Invite** is one tap: create the invite, then present the system share sheet (`UIActivityViewController` in a very small representable, Adon doesn't write UIKit, so explain it plainly in comments).
-- **`BoardInvitation`:** builds `UIActivityItemsConfiguration` with an `NSItemProvider` holding the URL and, when `usesMessagesCollaboration` (a `static let` so it can be switched off if it misbehaves on a device), an `SWCollaborationMetadata` with `defaultShareOptions` non-nil (a `SWCollaborationOptionsPickerGroup` of the two roles, with the chosen one selected: Apple's forums report that nil makes it not appear), title, and `initiatorNameComponents`. `LPLinkMetadata` for the preview.
-- **`CollaborationHandler`**, an `SWCollaborationActionHandler` set on `SWCollaborationCoordinator.shared` in `didFinishLaunching`. Start: read `userSelectedShareOptions`; the same role as the invite just made fulfills with its URL, another role makes a new invite; `collaborationIdentifier` is the board's id. Update participants: `fulfill()`.
+- **`BoardInvitation`:** builds `UIActivityItemsConfiguration` with an `NSItemProvider` holding the URL, and `LPLinkMetadata` for the preview.
 - **`JoinBoardSheet`** (a new `AppSheet.joinBoard(String)` case): loads the preview, shows the title, who invited you and the role, the name field, and Join. Signed out, sign-in comes first, using the same controls as Settings. A bad or expired link shows the message. Joining syncs, opens the board, goes to the Board tab and dismisses.
 - **`BoardsSheet`:** rows show "Shared by Sam" or "Shared" and the role. The swipe action is Delete on private boards, Leave for members, and for owners of a shared board Delete with a confirmation that says it deletes it for everyone. `SharedItemSheet`'s board choices leave out boards that can't be edited.
 - **Read-only canvas:** with `!canEdit` no add, edit, delete, drag, connect, arrange or undo. The bar shows a "View only" notice, boxes open read-only editors. Role changes apply live. Remember hosted boxes and the hosted editor get no environment (CLAUDE.md): pass it in `CanvasBoard.boxContent` and `CanvasView.editorPresenter`.
@@ -199,27 +198,25 @@ New files in `Ergo/Sharing/`.
 
 ### Push
 
-- `AppDelegate` via `@UIApplicationDelegateAdaptor`: registers with APNs when signed in, hands the token to the server (`PUT v1/push/device`, `sandbox` in `DEBUG`, else `production`), does a sync on a silent push, and on tapping a notification opens `userInfo["board"]` on the Board tab. Foreground banners show unless that board is the one open.
+- `AppDelegate` via `@UIApplicationDelegateAdaptor`: registers with APNs when signed in, hands the token to the server (`PUT v1/push/device`), does a sync on a silent push, and on tapping a notification opens `userInfo["board"]` on the Board tab. Foreground banners show unless that board is the one open.
 - Notification permission is asked only at the moment it makes sense: after the first invite is made, and after joining.
 
 ### Project
 
-- `Ergo.entitlements`: `aps-environment` = `development`, `com.apple.developer.associated-domains` = `["applinks:ergo-15.235.184.129.sslip.io"]`, `com.apple.developer.shared-with-you` = true.
+- `Ergo/Special/Ergo.entitlements`: `aps-environment` = `development`, which Xcode changes to `production` when it exports a build for TestFlight or the App Store, `com.apple.developer.associated-domains` = `["applinks:ergo-15.235.184.129.sslip.io"]`.
 - `Ergo/Special/Info.plist`: `UIBackgroundModes` = `["remote-notification"]`.
 - New Defaults key: `sharingName`, this device only.
 
 ## What Adon has to do
 
-1. Enable Push Notifications, Associated Domains and Shared with You for `com.adonis.Ergo` under team **P6PV2R9443** (automatic signing may do this).
+1. Enable Push Notifications and Associated Domains for `com.adonis.Ergo` under team **P6PV2R9443** (automatic signing may do this).
 2. Create an APNs key (.p8) in the same team and set `ERGO_APNS_KEY`, `ERGO_APNS_KEY_ID`.
 3. Rebuild and redeploy ErgoServer. Check `https://<host>/.well-known/apple-app-site-association` returns the JSON with no redirect. Apple's CDN can take up to a day to pick it up.
 4. Before shipping, consider a real domain. Universal links are tied to this hostname, and an sslip.io name changes if the server's IP does, which would break every link already sent.
 
 ## Not in this version
 
-- Verifying Messages' per-person identities, which would stop a forwarded link working
 - Approving people before they join, and transferring ownership
-- `SWHighlightCenter` notices in the Messages thread, and `SWCollaborationView`
 - Who changed what, presence, and live cursors
 - Two people typing in one box at once still gives a conflict copy, as with two devices
 

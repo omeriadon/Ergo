@@ -71,7 +71,7 @@ struct AskThreadView: View {
 				composing = true
 			}
 		}
-		.toolbarTitleVire(conversation.title, "")
+		.toolbarTitleVire(conversation.title, "", makeTextSmaller: true)
 		.sensoryFeedback(.impact(weight: .light), trigger: sent) { _, _ in hapticsEnabled }
 		.animation(.smooth, value: run?.activity)
 		.animation(.smooth, value: run == nil)

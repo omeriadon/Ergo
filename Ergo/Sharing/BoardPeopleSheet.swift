@@ -239,9 +239,7 @@ private struct OwnerPeopleList: View {
 			defer { isSending = false }
 			do {
 				let invite = try await sync.invite(to: board, role: role, title: title, name: name)
-				let made = BoardInvitation(board: board, url: invite.url, role: role, title: title, name: name)
-				BoardInvitation.latest = made
-				invitation = made
+				invitation = BoardInvitation(url: invite.url, title: title)
 			} catch {
 				problem = error.sharingMessage
 			}

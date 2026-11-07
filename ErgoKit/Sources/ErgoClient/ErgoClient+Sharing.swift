@@ -51,9 +51,8 @@ public extension ErgoClient {
 
 	// MARK: - Push
 
-	func registerPushDevice(token: String, environment: PushEnvironment) async throws {
-		let body = PushDevice(token: token, environment: environment)
-		_ = try await data(for: request("PUT", ErgoProtocol.Path.pushDevice, body: body))
+	func registerPushDevice(token: String) async throws {
+		_ = try await data(for: request("PUT", ErgoProtocol.Path.pushDevice, body: PushDevice(token: token)))
 	}
 
 	/// Forgets only this device's push token

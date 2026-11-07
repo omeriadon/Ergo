@@ -27,7 +27,7 @@ struct SharingClientTests {
 		try await client.updateBoardMember(board: Self.board, member: Self.member, role: .viewer)
 		try await client.removeBoardMember(board: Self.board, member: Self.member)
 		try await client.stopSharingBoard(board: Self.board)
-		try await client.registerPushDevice(token: "ab12", environment: .sandbox)
+		try await client.registerPushDevice(token: "ab12")
 		try await client.unregisterPushDevice()
 	}
 
@@ -108,7 +108,7 @@ final class SharingStub: URLProtocol {
 			case ("POST", "/v1/boards/\(board)/members/\(member)"):
 				return (try? ErgoProtocol.decoder.decode(UpdateBoardMember.self, from: body)) == UpdateBoardMember(role: .viewer) ? (204, Data()) : (400, Data())
 			case ("PUT", "/v1/push/device"):
-				return (try? ErgoProtocol.decoder.decode(PushDevice.self, from: body)) == PushDevice(token: "ab12", environment: .sandbox) ? (204, Data()) : (400, Data())
+				return (try? ErgoProtocol.decoder.decode(PushDevice.self, from: body)) == PushDevice(token: "ab12") ? (204, Data()) : (400, Data())
 			case ("POST", "/v1/invites/accept"):
 				guard let accept = try? ErgoProtocol.decoder.decode(AcceptBoardInvite.self, from: body) else { return (400, Data()) }
 				return accept.token == "abc" ? (200, StubServer.json(JoinedBoard(board: board, role: .editor))) : (400, StubServer.json(expired))

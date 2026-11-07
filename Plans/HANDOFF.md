@@ -55,7 +55,7 @@ Verified by the lead (Nov 5): ErgoKit tests (~155), ErgoServer tests (166), Eval
 - **Known limitation, accepted by Adon:** if the server's reply is lost at the exact moment two devices edited the same board, one version can be lost without a copy.
 - **Sign in with Apple:** the native flow needs no key. Revoking a user's Apple sign-in on account deletion (App Store requirement, guideline 5.1.1(v)) needs a `.p8` key, Key ID, Team ID (`C2HN547N49`) on the server, and the app sending the sign-in `authorizationCode`. Not built. Ask Adon whether he created the key ("the certificate thing" he mentioned is unexplained: did he enable the capability on `com.adonis.Ergo`, create a `.p8`, or something else?).
 - **Apple notifications:** once the server has a real host, register `https://<host>/v1/apple/notifications` in the Apple developer portal (Sign in with Apple → Server-to-Server Notification Endpoint). Replay protection (`jti`) is in memory only.
-- **Entitlements:** `Ergo/Ergo.entitlements` (Sign in with Apple) is wired; the App ID needs the capability in the portal.
+- **Entitlements:** `Ergo/Special/Ergo.entitlements` (Sign in with Apple) is wired; the App ID needs the capability in the portal.
 
 ## What happened to his server (rackmill) and why it is being wiped
 `ssh rackmill` (root). On Nov 5 the deploy agent found, and the lead confirmed read-only, that the server is compromised. Nothing was deleted or stopped. The only change made: `chattr -ia` on 40 attacker files (Adon asked), so they can be deleted.
