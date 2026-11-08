@@ -118,15 +118,15 @@ public extension LiquidLens {
 				guard let lensView,
 				      let selector = Runtime.selector(for: method),
 				      lensView.responds(to: selector),
-				      let runtimeMethod = class_getInstanceMethod(type(of: lensView), selector),
-				      method_getNumberOfArguments(runtimeMethod) == 2,
-				      String(cString: method_getTypeEncoding(runtimeMethod)!).hasPrefix("v"),
-				      let address = lensView.method(for: selector)
+				      let runtimeMethod = unsafe class_getInstanceMethod(type(of: lensView), selector),
+				      unsafe method_getNumberOfArguments(runtimeMethod) == 2,
+				      unsafe String(cString: method_getTypeEncoding(runtimeMethod)!).hasPrefix("v"),
+				      let address = unsafe lensView.method(for: selector)
 				else {
 					return false
 				}
 				typealias Function = @convention(c) (AnyObject, Selector) -> Void
-				unsafeBitCast(address, to: Function.self)(lensView, selector)
+				unsafe unsafeBitCast(address, to: Function.self)(lensView, selector)
 				return true
 			}
 		#else

@@ -46,7 +46,7 @@ extension Color {
 			var blue: CGFloat = 0
 			var alpha: CGFloat = 0
 
-			guard UIColor(self).getRed(
+			guard unsafe UIColor(self).getRed(
 				&red,
 				green: &green,
 				blue: &blue,

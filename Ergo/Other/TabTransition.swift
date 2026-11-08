@@ -75,7 +75,7 @@ private struct TabTransition: UIViewControllerRepresentable {
 	}
 }
 
-private final class TabTransitionDelegate: NSObject, UITabBarControllerDelegate {
+private final nonisolated class TabTransitionDelegate: NSObject, UITabBarControllerDelegate {
 	weak var forwardee: UITabBarControllerDelegate?
 	var onReselect: () -> Void = {}
 
@@ -124,7 +124,7 @@ private final class TabBlurAnimator: NSObject, UIViewControllerAnimatedTransitio
 		context.containerView.addSubview(to)
 		to.alpha = 0
 
-		let blurs = !UIAccessibility.isReduceMotionEnabled
+		let blurs = unsafe !UIAccessibility.isReduceMotionEnabled
 		if blurs {
 			Self.blur(to, from: Self.radius, to: 0)
 			Self.blur(from, from: 0, to: Self.radius)

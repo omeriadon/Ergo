@@ -23,22 +23,22 @@ import SwiftUI
 		static func makeLens(restingBackgroundView: UIView?) -> UIView? {
 			guard let lensClass = NSClassFromString(lensClassName),
 			      lensClass is UIView.Type,
-			      let allocMethod = class_getClassMethod(lensClass, NSSelectorFromString("alloc")),
-			      let initializer = class_getInstanceMethod(lensClass, NSSelectorFromString("initWithRestingBackground:")),
-			      signature(initializer, returns: "@", arguments: ["@"])
+			      let allocMethod = unsafe class_getClassMethod(lensClass, NSSelectorFromString("alloc")),
+			      let initializer = unsafe class_getInstanceMethod(lensClass, NSSelectorFromString("initWithRestingBackground:")),
+			      unsafe signature(initializer, returns: "@", arguments: ["@"])
 			else {
 				return nil
 			}
 			typealias Alloc = @convention(c) (AnyClass, Selector) -> Unmanaged<AnyObject>
 			typealias Initializer = @convention(c) (UnsafeMutableRawPointer, Selector, UIView?) -> Unmanaged<AnyObject>?
 			// Keep alloc's +1 unmanaged until init returns it. Consume that ownership exactly once.
-			let allocated = unsafeBitCast(method_getImplementation(allocMethod), to: Alloc.self)(
+			let allocated = unsafe unsafeBitCast(method_getImplementation(allocMethod), to: Alloc.self)(
 				lensClass, NSSelectorFromString("alloc")
 			)
-			let initialized = unsafeBitCast(method_getImplementation(initializer), to: Initializer.self)(
+			let initialized = unsafe unsafeBitCast(method_getImplementation(initializer), to: Initializer.self)(
 				allocated.toOpaque(), NSSelectorFromString("initWithRestingBackground:"), restingBackgroundView
 			)
-			return initialized?.takeRetainedValue() as? UIView
+			return unsafe initialized?.takeRetainedValue() as? UIView
 		}
 
 		static func apply(_ c: LiquidLens.Configuration, to view: UIView, defaults: inout [String: Any]) {
@@ -91,14 +91,14 @@ import SwiftUI
 		}
 
 		static func signature(_ method: Method, returns result: String, arguments: [String]) -> Bool {
-			guard method_getNumberOfArguments(method) == arguments.count + 2 else { return false }
-			let returnType = method_copyReturnType(method)
-			defer { free(returnType) }
-			guard String(cString: returnType) == result else { return false }
+			guard unsafe method_getNumberOfArguments(method) == arguments.count + 2 else { return false }
+			let returnType = unsafe method_copyReturnType(method)
+			defer { unsafe free(returnType) }
+			guard unsafe String(cString: returnType) == result else { return false }
 			for (index, expected) in arguments.enumerated() {
-				guard let type = method_copyArgumentType(method, UInt32(index + 2)) else { return false }
-				defer { free(type) }
-				guard String(cString: type) == expected else { return false }
+				guard let type = unsafe method_copyArgumentType(method, UInt32(index + 2)) else { return false }
+				defer { unsafe free(type) }
+				guard unsafe String(cString: type) == expected else { return false }
 			}
 			return true
 		}
@@ -111,14 +111,14 @@ import SwiftUI
 			on view: UIView
 		) {
 			let selector = NSSelectorFromString("setLifted:animated:alongsideAnimations:completion:")
-			guard let method = class_getInstanceMethod(type(of: view), selector),
-			      signature(method, returns: "v", arguments: ["B", "B", "@?", "@?"]),
-			      let address = view.method(for: selector)
+			guard let method = unsafe class_getInstanceMethod(type(of: view), selector),
+			      unsafe signature(method, returns: "v", arguments: ["B", "B", "@?", "@?"]),
+			      let address = unsafe view.method(for: selector)
 			else {
 				return
 			}
 			typealias Function = @convention(c) (AnyObject, Selector, Bool, Bool, @escaping () -> Void, (() -> Void)?) -> Void
-			unsafeBitCast(address, to: Function.self)(
+			unsafe unsafeBitCast(address, to: Function.self)(
 				view,
 				selector,
 				lifted,
@@ -144,12 +144,12 @@ import SwiftUI
 			var object = root
 			for (index, key) in parts.enumerated() {
 				let getter = NSSelectorFromString(key)
-				guard let method = class_getInstanceMethod(type(of: object), getter),
-				      method_getNumberOfArguments(method) == 2 else { return nil }
+				guard let method = unsafe class_getInstanceMethod(type(of: object), getter),
+				      unsafe method_getNumberOfArguments(method) == 2 else { return nil }
 				if index == parts.count - 1 {
 					return (object, key)
 				}
-				guard signature(method, returns: "@", arguments: []),
+				guard unsafe signature(method, returns: "@", arguments: []),
 				      let next = object.value(forKey: key) as? NSObject else { return nil }
 				object = next
 			}
@@ -160,18 +160,18 @@ import SwiftUI
 		static func setValue(_ value: Any?, keyPath: String, on root: NSObject) -> Bool {
 			guard let target = target(keyPath: keyPath, on: root) else { return false }
 			let setter = NSSelectorFromString("set\(target.key.prefix(1).uppercased())\(target.key.dropFirst()):")
-			guard let method = class_getInstanceMethod(type(of: target.object), setter),
-			      method_getNumberOfArguments(method) == 3,
-			      let argument = method_copyArgumentType(method, 2) else { return false }
-			defer { free(argument) }
-			switch String(cString: argument) {
+			guard let method = unsafe class_getInstanceMethod(type(of: target.object), setter),
+			      unsafe method_getNumberOfArguments(method) == 3,
+			      let argument = unsafe method_copyArgumentType(method, 2) else { return false }
+			defer { unsafe free(argument) }
+			switch unsafe String(cString: argument) {
 				case "@":
 					// Check the declared class where Objective-C metadata supplies one.
 					if let value = value as? NSObject,
-					   let property = class_getProperty(type(of: target.object), target.key),
-					   let attributes = property_getAttributes(property)
+					   let property = unsafe class_getProperty(type(of: target.object), target.key),
+					   let attributes = unsafe property_getAttributes(property)
 					{
-						let type = String(cString: attributes)
+						let type = unsafe String(cString: attributes)
 						if type.hasPrefix("T@\""),
 						   let end = type.dropFirst(3).firstIndex(of: "\""),
 						   let expected = NSClassFromString(String(type[type.index(type.startIndex, offsetBy: 3) ..< end])),

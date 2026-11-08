@@ -11,7 +11,7 @@ import AppIntents
 
 @AppIntent(schema: .system.searchInApp)
 struct SearchLibraryIntent: ShowInAppSearchResultsIntent {
-	static var searchScopes: [StringSearchScope] = [.general]
+	static let searchScopes: [StringSearchScope] = [.general]
 
 	var criteria: StringSearchCriteria
 

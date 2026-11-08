@@ -77,7 +77,7 @@ nonisolated enum ParadoxTag: String, Codable, Defaults.Serializable, CaseIterabl
 		TypeDisplayRepresentation(name: "Fallacy Tag")
 	}
 
-	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+	static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
 		.ethicsAndValue: DisplayRepresentation(title: "Ethics & Value"),
 		.knowledgeAndMeaning: DisplayRepresentation(title: "Knowledge & Meaning"),
 		.logicAndLanguage: DisplayRepresentation(title: "Logic & Language"),

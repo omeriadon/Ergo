@@ -98,27 +98,27 @@ struct AskSelectableText: UIViewRepresentable {
 
 // MARK: - Building the text
 
-extension NSAttributedString.Key {
+nonisolated extension NSAttributedString.Key {
 	static let roundedBackground = NSAttributedString.Key("ErgoRoundedBackground")
 }
 
-final class RoundedBackgroundLayoutManager: NSLayoutManager {
+final nonisolated class RoundedBackgroundLayoutManager: NSLayoutManager {
 	var cornerRadius: CGFloat = 5
 	var horizontalInset: CGFloat = 2
 
 	override func drawBackground(forGlyphRange glyphsToShow: NSRange, at origin: CGPoint) {
 		super.drawBackground(forGlyphRange: glyphsToShow, at: origin)
 
-		guard let textStorage else { return }
+		guard let textStorage = unsafe self.textStorage else { return }
 
-		let characterRange = characterRange(forGlyphRange: glyphsToShow, actualGlyphRange: nil)
+		let characterRange = unsafe characterRange(forGlyphRange: glyphsToShow, actualGlyphRange: nil)
 
-		textStorage.enumerateAttribute(.roundedBackground, in: characterRange) { value, range, _ in
+		unsafe textStorage.enumerateAttribute(.roundedBackground, in: characterRange) { value, range, _ in
 			guard let color = value as? UIColor else { return }
 
-			let glyphRange = self.glyphRange(forCharacterRange: range, actualCharacterRange: nil)
+			let glyphRange = unsafe self.glyphRange(forCharacterRange: range, actualCharacterRange: nil)
 
-			self.enumerateLineFragments(forGlyphRange: glyphRange) { _, _, container, lineGlyphRange, _ in
+			unsafe self.enumerateLineFragments(forGlyphRange: glyphRange) { _, _, container, lineGlyphRange, _ in
 				let intersection = NSIntersectionRange(glyphRange, lineGlyphRange)
 				guard intersection.length > 0 else { return }
 

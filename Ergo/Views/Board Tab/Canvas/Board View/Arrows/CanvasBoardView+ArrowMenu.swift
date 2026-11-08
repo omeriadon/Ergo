@@ -52,12 +52,12 @@ extension CanvasBoardView {
 		guard let id = identifier as? NSUUID, let path = arrows[id as UUID]?.path else { return nil }
 
 		var toScreen = content.transform
-		guard let onScreen = path.copy(using: &toScreen) else { return nil }
+		guard let onScreen = unsafe path.copy(using: &toScreen) else { return nil }
 		let frame = onScreen.boundingBoxOfPath.insetBy(dx: -12, dy: -12)
 
 		var toPreview = CGAffineTransform(translationX: -frame.minX, y: -frame.minY)
 		let shape = CAShapeLayer()
-		shape.path = onScreen.copy(using: &toPreview)
+		shape.path = unsafe onScreen.copy(using: &toPreview)
 		shape.fillColor = nil
 		shape.strokeColor = UIColor(Color.accent).resolvedColor(with: traitCollection).cgColor
 		shape.lineWidth = 3.5

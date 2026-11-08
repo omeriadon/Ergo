@@ -80,7 +80,7 @@ enum BackdropBlurFilter {
 			return nil
 		}
 		let type = fade == nil ? "gaussianBlur" : "variableBlur"
-		guard let filter = filterClass.perform(factory, with: type)?.takeUnretainedValue() as? NSObject else {
+		guard let filter = unsafe filterClass.perform(factory, with: type)?.takeUnretainedValue() as? NSObject else {
 			log.error("Factory gave no filter for \(type)")
 			return nil
 		}
@@ -101,11 +101,11 @@ enum BackdropBlurFilter {
 	private static func mask(fade: Edge) -> CGImage? {
 		let size = 64
 		guard let space = CGColorSpace(name: CGColorSpace.linearGray),
-		      let context = CGContext(
+		      let context = unsafe CGContext(
 		      	data: nil, width: size, height: size, bitsPerComponent: 8,
 		      	bytesPerRow: 0, space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
 		      ),
-		      let ramp = CGGradient(colorSpace: space, colorComponents: [0, 1, 0, 0], locations: [0, 1], count: 2)
+		      let ramp = unsafe CGGradient(colorSpace: space, colorComponents: [0, 1, 0, 0], locations: [0, 1], count: 2)
 		else {
 			return nil
 		}

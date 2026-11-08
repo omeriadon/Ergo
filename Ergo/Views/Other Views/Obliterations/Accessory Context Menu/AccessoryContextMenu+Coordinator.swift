@@ -120,7 +120,7 @@ public extension AccessoryContextMenu {
 			tapOpening = true
 
 			guard let interaction,
-			      let method = class_getInstanceMethod(
+			      let method = unsafe class_getInstanceMethod(
 			      	type(of: interaction),
 			      	NSSelectorFromString("_presentMenuAtLocation:")
 			      )
@@ -129,31 +129,31 @@ public extension AccessoryContextMenu {
 			}
 
 			let selector = NSSelectorFromString("_presentMenuAtLocation:")
-			guard method_getNumberOfArguments(method) == 3,
-			      let argumentType = method_copyArgumentType(method, 2)
+			guard unsafe method_getNumberOfArguments(method) == 3,
+			      let argumentType = unsafe method_copyArgumentType(method, 2)
 			else {
 				return resetTapOpening()
 			}
-			let returnType = method_copyReturnType(method)
+			let returnType = unsafe method_copyReturnType(method)
 			defer {
-				free(UnsafeMutableRawPointer(mutating: argumentType))
-				free(UnsafeMutableRawPointer(mutating: returnType))
+				unsafe free(UnsafeMutableRawPointer(mutating: argumentType))
+				unsafe free(UnsafeMutableRawPointer(mutating: returnType))
 			}
 
 			var argumentSize = 0
 			var argumentAlignment = 0
-			guard String(cString: argumentType).hasPrefix("{CGPoint=") else {
+			guard unsafe String(cString: argumentType).hasPrefix("{CGPoint=") else {
 				return resetTapOpening()
 			}
-			NSGetSizeAndAlignment(argumentType, &argumentSize, &argumentAlignment)
+			unsafe NSGetSizeAndAlignment(argumentType, &argumentSize, &argumentAlignment)
 			guard argumentSize == MemoryLayout<CGPoint>.size,
-			      String(cString: returnType) == "v"
+			      unsafe String(cString: returnType) == "v"
 			else {
 				return resetTapOpening()
 			}
 
-			let implementation = method_getImplementation(method)
-			let call = unsafeBitCast(
+			let implementation = unsafe method_getImplementation(method)
+			let call = unsafe unsafeBitCast(
 				implementation,
 				to: (@convention(c) (AnyObject, Selector, CGPoint) -> Void).self
 			)
@@ -298,17 +298,17 @@ public extension AccessoryContextMenu {
 
 		func setTopTrailingAnchor(on view: UIView, class accessoryClass: UIView.Type) {
 			let selector = NSSelectorFromString("setAnchor:")
-			guard let method = class_getInstanceMethod(accessoryClass, selector),
-			      let encoding = method_copyArgumentType(method, 2)
+			guard let method = unsafe class_getInstanceMethod(accessoryClass, selector),
+			      let encoding = unsafe method_copyArgumentType(method, 2)
 			else {
 				return
 			}
-			defer { free(UnsafeMutableRawPointer(mutating: encoding)) }
+			defer { unsafe free(UnsafeMutableRawPointer(mutating: encoding)) }
 
 			var size = 0
 			var alignment = 0
-			NSGetSizeAndAlignment(encoding, &size, &alignment)
-			guard String(cString: encoding).hasPrefix("{"),
+			unsafe NSGetSizeAndAlignment(encoding, &size, &alignment)
+			guard unsafe String(cString: encoding).hasPrefix("{"),
 			      size == 40,
 			      size == MemoryLayout<Anchor>.size,
 			      alignment == MemoryLayout<Anchor>.alignment
@@ -318,7 +318,7 @@ public extension AccessoryContextMenu {
 
 			var anchor = Anchor()
 			let value = withUnsafePointer(to: &anchor) { pointer in
-				NSValue(bytes: pointer, objCType: encoding)
+				unsafe NSValue(bytes: pointer, objCType: encoding)
 			}
 			view.setValue(value, forKey: "anchor")
 		}

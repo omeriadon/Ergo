@@ -74,7 +74,7 @@ nonisolated enum RazorTag: String, Codable, Defaults.Serializable, CaseIterable,
 		TypeDisplayRepresentation(name: "Razor Tag")
 	}
 
-	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+	static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
 		.attribution: DisplayRepresentation(title: "Attribution"),
 		.decisionMaking: DisplayRepresentation(title: "Decision making"),
 		.evidence: DisplayRepresentation(title: "Evidence"),

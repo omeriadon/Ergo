@@ -10,7 +10,7 @@ import ErgoProtocol
 import Foundation
 
 /// One chat on the Ask tab
-struct AskConversation: Codable, Hashable, Identifiable, Defaults.Serializable {
+nonisolated struct AskConversation: Codable, Hashable, Identifiable, Defaults.Serializable {
 	var id = UUID()
 	var created = Date.now
 	var modified = Date.now
@@ -46,7 +46,7 @@ struct AskConversation: Codable, Hashable, Identifiable, Defaults.Serializable {
 	}
 }
 
-struct AskMessage: Codable, Hashable, Identifiable {
+nonisolated struct AskMessage: Codable, Hashable, Identifiable, Sendable {
 	var id = UUID()
 	var role: AskRequestMessage.Role
 	var text: String

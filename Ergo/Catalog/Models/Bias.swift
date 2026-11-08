@@ -84,7 +84,7 @@ nonisolated enum BiasTag: String, Codable, Defaults.Serializable, CaseIterable, 
 		TypeDisplayRepresentation(name: "Bias Tag")
 	}
 
-	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+	static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
 		.attention: DisplayRepresentation(title: "Attention"),
 		.attribution: DisplayRepresentation(title: "Attribution"),
 		.beliefAssessment: DisplayRepresentation(title: "Belief Assessment"),

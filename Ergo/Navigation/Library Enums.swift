@@ -63,7 +63,7 @@ nonisolated enum LibraryContent: String, Hashable, CaseIterable, Codable, Sendab
 		TypeDisplayRepresentation(name: "Library Category")
 	}
 
-	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+	static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
 		.biases: DisplayRepresentation(title: "Biases", image: .init(systemName: "distribute.vertical.center")),
 		.razors: DisplayRepresentation(title: "Razors", image: .init(systemName: "scissors")),
 		.symbols: DisplayRepresentation(title: "Symbols", image: .init(systemName: "f.cursive")),
@@ -76,7 +76,7 @@ nonisolated enum LibraryContent: String, Hashable, CaseIterable, Codable, Sendab
 }
 
 /// the actual library route, middle plus detail
-enum LibraryRoute: Hashable, Codable, Defaults.Serializable {
+nonisolated enum LibraryRoute: Hashable, Codable, Defaults.Serializable {
 	case category(LibraryContent)
 	case detail(category: LibraryContent, id: String)
 

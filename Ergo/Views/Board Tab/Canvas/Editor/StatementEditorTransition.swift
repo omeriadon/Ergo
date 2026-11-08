@@ -164,7 +164,7 @@ private final class StatementEditorAnimator: NSObject, UIViewControllerAnimatedT
 			context.completeTransition(!context.transitionWasCancelled)
 		}
 
-		if let box, !UIAccessibility.isReduceMotionEnabled {
+		if let box, unsafe !UIAccessibility.isReduceMotionEnabled {
 			zoom(editor, box: box, in: context.containerView, finish: finish)
 		} else {
 			fade(editor, finish: finish)

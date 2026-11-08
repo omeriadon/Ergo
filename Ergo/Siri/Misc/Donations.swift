@@ -146,7 +146,7 @@ enum IntentDonations {
 	/// Fire and forget: a failed donation only means one less hint for the system, so the error is dropped.
 	private static func donate(_ intent: some AppIntent) {
 		Task {
-			_ = try? await IntentDonationManager.shared.donate(intent: intent)
+			_ = try? await unsafe IntentDonationManager.shared.donate(intent: intent)
 		}
 	}
 }

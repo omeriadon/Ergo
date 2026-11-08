@@ -82,7 +82,7 @@ extension CanvasBoardView {
 		stopGlide()
 
 		let speed = hypot(velocity.width, velocity.height)
-		guard !UIAccessibility.isReduceMotionEnabled, speed > Glide.smallestFlick else { return }
+		guard unsafe !UIAccessibility.isReduceMotionEnabled, speed > Glide.smallestFlick else { return }
 
 		let scale = min(speed, Glide.fastestFlick) / speed
 		glideVelocity = CGSize(width: velocity.width * scale, height: velocity.height * scale)

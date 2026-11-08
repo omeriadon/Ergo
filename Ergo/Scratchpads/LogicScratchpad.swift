@@ -13,7 +13,7 @@ import Foundation
 ///
 /// Nothing has reached v1, so the stored properties may change until then. Sync holds `english` and `logic`
 /// together as the record's `content` (`ScratchpadRecord`).
-struct LogicScratchpad: Codable, Hashable, Identifiable, Defaults.Serializable {
+nonisolated struct LogicScratchpad: Codable, Hashable, Identifiable, Defaults.Serializable {
 	var id = UUID()
 	var created = Date.now
 	var modified = Date.now

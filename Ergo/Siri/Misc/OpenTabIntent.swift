@@ -10,9 +10,9 @@ import Foundation
 
 @AppIntent(.tool)
 struct OpenTabIntent: AppIntent {
-	static var title: LocalizedStringResource = "Open Tab"
+	static let title: LocalizedStringResource = "Open Tab"
 
-	static var description = IntentDescription(
+	static let description = IntentDescription(
 		"Opens a tab in Ergo."
 	)
 
@@ -26,7 +26,7 @@ struct OpenTabIntent: AppIntent {
 	@Dependency
 	private var navigation: NavigationManager
 
-	static var supportedModes: IntentModes = [
+	static let supportedModes: IntentModes = [
 		.foreground(.immediate),
 	]
 

@@ -12,7 +12,7 @@ import Foundation
 /// One board: statements holding English, joined by "premise of" links, and sources they can be broken down from.
 ///
 /// It always holds at least one statement or source, so the Board tab is never empty.
-struct Board: Codable, Hashable, Identifiable, Defaults.Serializable {
+nonisolated struct Board: Codable, Hashable, Identifiable, Defaults.Serializable {
 	var id = UUID()
 	var created = Date.now
 	var modified = Date.now

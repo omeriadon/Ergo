@@ -6,7 +6,7 @@
 import Foundation
 
 /// Something that goes along with a message in a chat
-struct AskAttachment: Codable, Hashable, Identifiable {
+nonisolated struct AskAttachment: Codable, Hashable, Identifiable {
 	enum Content: Codable, Hashable {
 		case library(CatalogReference)
 		case text(String)

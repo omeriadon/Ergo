@@ -141,7 +141,7 @@ import SwiftUI
 						let headerHosting = UIHostingController(rootView: parent.header())
 						headerHosting.view.backgroundColor = .clear
 						configureHeaderSizing(headerHosting)
-						alert.perform(selector, with: headerHosting)
+						unsafe alert.perform(selector, with: headerHosting)
 						self.headerHosting = headerHosting
 					} else if !didLogHeaderAPIError {
 						didLogHeaderAPIError = true
@@ -174,13 +174,13 @@ import SwiftUI
 				self.alert = alert
 				isPresentationPending = false
 				let preparationMilliseconds = (CACurrentMediaTime() - requestStarted) * 1000
-				print("[CustomAlert] presentation setup completed in \(String(format: "%.1f", preparationMilliseconds)) ms")
+				print(unsafe "[CustomAlert] presentation setup completed in \(String(format: "%.1f", preparationMilliseconds)) ms")
 				let presentationStarted = CACurrentMediaTime()
 				print("[CustomAlert] UIKit presentation started")
 				presentingController.present(alert, animated: true) { [self] in
 					let presentationMilliseconds = (CACurrentMediaTime() - presentationStarted) * 1000
 					let totalMilliseconds = (CACurrentMediaTime() - requestStarted) * 1000
-					print("[CustomAlert] UIKit presentation completed in \(String(format: "%.1f", presentationMilliseconds)) ms (total \(String(format: "%.1f", totalMilliseconds)) ms)")
+					print(unsafe "[CustomAlert] UIKit presentation completed in \(String(format: "%.1f", presentationMilliseconds)) ms (total \(String(format: "%.1f", totalMilliseconds)) ms)")
 					if isDismantled || !parent.isPresented {
 						dismissPresentedAlertIfNeeded()
 					}
@@ -298,7 +298,7 @@ import SwiftUI
 
 			func installContentController(_ hosting: UIViewController, in alert: UIAlertController) -> Bool {
 				let selector = NSSelectorFromString("setContentViewController:")
-				guard alert.responds(to: selector), let method = alert.method(for: selector) else {
+				guard alert.responds(to: selector), let method = unsafe alert.method(for: selector) else {
 					if !didLogContentAPIError {
 						didLogContentAPIError = true
 						print("[CustomAlert] private content view controller setter is unavailable; dismissing the custom alert request.")
@@ -306,7 +306,7 @@ import SwiftUI
 					return false
 				}
 				typealias Setter = @convention(c) (AnyObject, Selector, UIViewController) -> Void
-				let setter = unsafeBitCast(method, to: Setter.self)
+				let setter = unsafe unsafeBitCast(method, to: Setter.self)
 				setter(alert, selector, hosting)
 				return true
 			}

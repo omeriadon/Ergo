@@ -65,7 +65,7 @@ nonisolated enum ArgumentTag: String, Codable, Defaults.Serializable, CaseIterab
 		TypeDisplayRepresentation(name: "Argument Tag")
 	}
 
-	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+	static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
 		.ethics: DisplayRepresentation(title: "Ethics"),
 		.epistemology: DisplayRepresentation(title: "Epistemology"),
 		.metaphysics: DisplayRepresentation(title: "Metaphysics"),

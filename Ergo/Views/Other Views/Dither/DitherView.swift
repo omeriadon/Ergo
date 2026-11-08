@@ -796,7 +796,7 @@ private final class DitherMetalRenderer {
 				guard let baseAddress = bytes.baseAddress else {
 					return nil as MTLBuffer?
 				}
-				return device.makeBuffer(bytes: baseAddress, length: bytes.count, options: .storageModeShared)
+				return unsafe device.makeBuffer(bytes: baseAddress, length: bytes.count, options: .storageModeShared)
 			}) else {
 				throw NSError(domain: "DitherMetal", code: 11, userInfo: [NSLocalizedDescriptionKey: "Could not allocate palette buffer"])
 			}
@@ -822,14 +822,14 @@ private final class DitherMetalRenderer {
 			computeEncoder.setComputePipelineState(pipeline)
 			computeEncoder.setTexture(cellTexture, index: 0)
 			computeEncoder.setTexture(gradientTexture, index: 1)
-			computeEncoder.setBytes(&field, length: MemoryLayout<FieldUniforms>.stride, index: 0)
-			computeEncoder.setBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 1)
+			unsafe computeEncoder.setBytes(&field, length: MemoryLayout<FieldUniforms>.stride, index: 0)
+			unsafe computeEncoder.setBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 1)
 			computeEncoder.setBuffer(paletteBuffer, offset: 0, index: 2)
 			themePositions.withUnsafeBytes { bytes in
-				computeEncoder.setBytes(bytes.baseAddress!, length: bytes.count, index: 3)
+				unsafe computeEncoder.setBytes(bytes.baseAddress!, length: bytes.count, index: 3)
 			}
 			themeColors.withUnsafeBytes { bytes in
-				computeEncoder.setBytes(bytes.baseAddress!, length: bytes.count, index: 4)
+				unsafe computeEncoder.setBytes(bytes.baseAddress!, length: bytes.count, index: 4)
 			}
 			dispatch(
 				computeEncoder,
@@ -852,7 +852,7 @@ private final class DitherMetalRenderer {
 				throw NSError(domain: "DitherMetal", code: 8, userInfo: [NSLocalizedDescriptionKey: "Could not create field encoder"])
 			}
 			fieldEncoder.setRenderPipelineState(fieldPipeline)
-			fieldEncoder.setFragmentBytes(&field, length: MemoryLayout<FieldUniforms>.stride, index: 0)
+			unsafe fieldEncoder.setFragmentBytes(&field, length: MemoryLayout<FieldUniforms>.stride, index: 0)
 			fieldEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
 			fieldEncoder.endEncoding()
 			renderPassCount += 1
@@ -866,13 +866,13 @@ private final class DitherMetalRenderer {
 			}
 			cellEncoder.setRenderPipelineState(cellPipeline)
 			cellEncoder.setFragmentTexture(fieldTexture, index: 0)
-			cellEncoder.setFragmentBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
+			unsafe cellEncoder.setFragmentBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
 			cellEncoder.setFragmentBuffer(paletteBuffer, offset: 0, index: 1)
 			themePositions.withUnsafeBytes { bytes in
-				cellEncoder.setFragmentBytes(bytes.baseAddress!, length: bytes.count, index: 2)
+				unsafe cellEncoder.setFragmentBytes(bytes.baseAddress!, length: bytes.count, index: 2)
 			}
 			themeColors.withUnsafeBytes { bytes in
-				cellEncoder.setFragmentBytes(bytes.baseAddress!, length: bytes.count, index: 3)
+				unsafe cellEncoder.setFragmentBytes(bytes.baseAddress!, length: bytes.count, index: 3)
 			}
 			cellEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
 			cellEncoder.endEncoding()
@@ -895,7 +895,7 @@ private final class DitherMetalRenderer {
 				let pipeline = try resources.coverageComputePipelineState()
 				computeEncoder.setComputePipelineState(pipeline)
 				computeEncoder.setTexture(texture, index: 0)
-				computeEncoder.setBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
+				unsafe computeEncoder.setBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
 				dispatch(
 					computeEncoder,
 					width: cell,
@@ -928,7 +928,7 @@ private final class DitherMetalRenderer {
 			encoder.setComputePipelineState(pipeline)
 			encoder.setTexture(cellTexture, index: 0)
 			encoder.setTexture(joinMaskTexture, index: 1)
-			encoder.setBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
+			unsafe encoder.setBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
 			dispatch(
 				encoder,
 				width: columns,
@@ -1002,13 +1002,13 @@ private final class DitherMetalRenderer {
 			try finalEncoder.setRenderPipelineState(sharedResources.ditherPipelineState(fused: usesFusedFieldAndCellPass))
 		}
 		finalEncoder.setFragmentTexture(cellTexture, index: 0)
-		finalEncoder.setFragmentBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
+		unsafe finalEncoder.setFragmentBytes(&dither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
 		finalEncoder.setFragmentBuffer(paletteBuffer, offset: 0, index: 1)
 		themePositions.withUnsafeBytes { bytes in
-			finalEncoder.setFragmentBytes(bytes.baseAddress!, length: bytes.count, index: 2)
+			unsafe finalEncoder.setFragmentBytes(bytes.baseAddress!, length: bytes.count, index: 2)
 		}
 		themeColors.withUnsafeBytes { bytes in
-			finalEncoder.setFragmentBytes(bytes.baseAddress!, length: bytes.count, index: 3)
+			unsafe finalEncoder.setFragmentBytes(bytes.baseAddress!, length: bytes.count, index: 3)
 		}
 		let stripHeight = usesTopBlur ? min(height, Self.topBlurStripPixels(scale: scale)) : 0
 		if stripHeight < height {
@@ -1152,13 +1152,13 @@ private final class DitherMetalRenderer {
 			sourceEncoder.setFragmentTexture(coverageTexture, index: 1)
 			sourceEncoder.setFragmentTexture(joinMaskTexture, index: 2)
 		}
-		sourceEncoder.setFragmentBytes(&sourceDither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
+		unsafe sourceEncoder.setFragmentBytes(&sourceDither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
 		sourceEncoder.setFragmentBuffer(paletteBuffer, offset: 0, index: 1)
 		themePositions.withUnsafeBytes { bytes in
-			sourceEncoder.setFragmentBytes(bytes.baseAddress!, length: bytes.count, index: 2)
+			unsafe sourceEncoder.setFragmentBytes(bytes.baseAddress!, length: bytes.count, index: 2)
 		}
 		themeColors.withUnsafeBytes { bytes in
-			sourceEncoder.setFragmentBytes(bytes.baseAddress!, length: bytes.count, index: 3)
+			unsafe sourceEncoder.setFragmentBytes(bytes.baseAddress!, length: bytes.count, index: 3)
 		}
 		sourceEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
 		sourceEncoder.endEncoding()
@@ -1235,7 +1235,7 @@ private final class DitherMetalRenderer {
 					pixelWeights: pixelWeights
 				)
 				guard let horizontalBuffer = horizontal.withUnsafeBytes({ bytes in
-					device.makeBuffer(bytes: bytes.baseAddress!, length: bytes.count, options: .storageModeShared)
+					unsafe device.makeBuffer(bytes: bytes.baseAddress!, length: bytes.count, options: .storageModeShared)
 				}) else {
 					throw NSError(domain: "DitherMetal", code: 18, userInfo: [NSLocalizedDescriptionKey: "Could not allocate cell blur weights"])
 				}
@@ -1257,7 +1257,7 @@ private final class DitherMetalRenderer {
 					}
 				}
 				guard let verticalBuffer = vertical.withUnsafeBytes({ bytes in
-					device.makeBuffer(bytes: bytes.baseAddress!, length: bytes.count, options: .storageModeShared)
+					unsafe device.makeBuffer(bytes: bytes.baseAddress!, length: bytes.count, options: .storageModeShared)
 				}) else {
 					throw NSError(domain: "DitherMetal", code: 18, userInfo: [NSLocalizedDescriptionKey: "Could not allocate cell blur vertical weights"])
 				}
@@ -1267,7 +1267,7 @@ private final class DitherMetalRenderer {
 				Self.topBlurSigma(at: (Float(y) + 0.5) / Float(Self.topBlurStripPixels(scale: scale)))
 			}
 			guard let profileBuffer = profile.withUnsafeBytes({ bytes in
-				device.makeBuffer(bytes: bytes.baseAddress!, length: bytes.count, options: .storageModeShared)
+				unsafe device.makeBuffer(bytes: bytes.baseAddress!, length: bytes.count, options: .storageModeShared)
 			}) else {
 				throw NSError(domain: "DitherMetal", code: 18, userInfo: [NSLocalizedDescriptionKey: "Could not allocate cell blur profile"])
 			}
@@ -1301,14 +1301,14 @@ private final class DitherMetalRenderer {
 		var sourceDither = dither
 		encoder.setComputePipelineState(horizontalPipeline)
 		encoder.setTexture(cellTexture, index: 0)
-		encoder.setBytes(&sourceDither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
+		unsafe encoder.setBytes(&sourceDither, length: MemoryLayout<DitherUniforms>.stride, index: 0)
 		for level in sigmas.indices {
 			uniforms.radius = Int32(radii[level])
 			uniforms.cellRadius = Int32(ceil(Double(radii[level]) / Double(cell)) + 1)
 			uniforms.weightStride = uniforms.cellRadius * 2 + 1
 			encoder.setTexture(resources.levels[level], index: 1)
 			encoder.setBuffer(resources.horizontalWeights[level], offset: 0, index: 1)
-			encoder.setBytes(&uniforms, length: MemoryLayout<CellBlurUniforms>.stride, index: 2)
+			unsafe encoder.setBytes(&uniforms, length: MemoryLayout<CellBlurUniforms>.stride, index: 2)
 			dispatch(
 				encoder,
 				width: cell == 4 ? width / 4 : width,
@@ -1343,7 +1343,7 @@ private final class DitherMetalRenderer {
 		}
 		encoder.setFragmentTexture(cellTexture, index: 3)
 		encoder.setFragmentBuffer(resources.profile, offset: 0, index: 3)
-		encoder.setFragmentBytes(&uniforms, length: MemoryLayout<CellBlurCompositeUniforms>.stride, index: 4)
+		unsafe encoder.setFragmentBytes(&uniforms, length: MemoryLayout<CellBlurCompositeUniforms>.stride, index: 4)
 		encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
 	}
 
@@ -1375,7 +1375,7 @@ private final class DitherMetalRenderer {
 				pixels[center * 4 + channel] = 1
 			}
 			pixels.withUnsafeBytes {
-				source.replace(region: MTLRegionMake2D(0, 0, side, 1), mipmapLevel: 0, withBytes: $0.baseAddress!, bytesPerRow: side * 16)
+				unsafe source.replace(region: MTLRegionMake2D(0, 0, side, 1), mipmapLevel: 0, withBytes: $0.baseAddress!, bytesPerRow: side * 16)
 			}
 			let kernel = MPSImageGaussianBlur(device: device, sigma: sigma)
 			kernel.edgeMode = .clamp
@@ -1386,7 +1386,7 @@ private final class DitherMetalRenderer {
 				throw error
 			}
 			pixels.withUnsafeMutableBytes {
-				destination.getBytes($0.baseAddress!, bytesPerRow: side * 16, from: MTLRegionMake2D(0, 0, side, 1), mipmapLevel: 0)
+				unsafe destination.getBytes($0.baseAddress!, bytesPerRow: side * 16, from: MTLRegionMake2D(0, 0, side, 1), mipmapLevel: 0)
 			}
 			let weights = (-radius ... radius).map { pixels[(center + $0) * 4] }
 			let sum = weights.reduce(0, +)
@@ -1430,7 +1430,7 @@ private final class DitherMetalRenderer {
 		for (index, level) in resources.levels.enumerated() {
 			encoder.setFragmentTexture(level, index: index + 1)
 		}
-		encoder.setFragmentBytes(&uniforms, length: MemoryLayout<TopBlurUniforms>.stride, index: 0)
+		unsafe encoder.setFragmentBytes(&uniforms, length: MemoryLayout<TopBlurUniforms>.stride, index: 0)
 		encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
 	}
 }

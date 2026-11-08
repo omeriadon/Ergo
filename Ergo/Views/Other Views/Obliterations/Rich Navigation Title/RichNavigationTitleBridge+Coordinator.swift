@@ -109,8 +109,8 @@ import SwiftUI
 				{
 					let heightSelector = NSSelectorFromString("setHeight:")
 					let hideSelector = NSSelectorFromString("setHideStandardTitle:")
-					if scalarImplementation(on: privateClass, selector: heightSelector, argument: "d") != nil,
-					   scalarImplementation(on: privateClass, selector: hideSelector, argument: "B") != nil
+					if unsafe scalarImplementation(on: privateClass, selector: heightSelector, argument: "d") != nil,
+					   unsafe scalarImplementation(on: privateClass, selector: hideSelector, argument: "B") != nil
 					{
 						return privateClass.init(frame: frame)
 					}
@@ -147,8 +147,8 @@ import SwiftUI
 				titleView.frame.size.width = max(1, parent.width)
 				let heightSelector = NSSelectorFromString("setHeight:")
 				let hideSelector = NSSelectorFromString("setHideStandardTitle:")
-				guard let heightMethod = scalarImplementation(on: titleView, selector: heightSelector, argument: "d"),
-				      let hideMethod = scalarImplementation(on: titleView, selector: hideSelector, argument: "B")
+				guard let heightMethod = unsafe scalarImplementation(on: titleView, selector: heightSelector, argument: "d"),
+				      let hideMethod = unsafe scalarImplementation(on: titleView, selector: hideSelector, argument: "B")
 				else {
 					logSetterFailure()
 					titleView.frame.size.height = 44
@@ -158,8 +158,8 @@ import SwiftUI
 				}
 				typealias HeightSetter = @convention(c) (AnyObject, Selector, CGFloat) -> Void
 				typealias HideSetter = @convention(c) (AnyObject, Selector, Bool) -> Void
-				unsafeBitCast(heightMethod, to: HeightSetter.self)(titleView, heightSelector, max(1, parent.height))
-				unsafeBitCast(hideMethod, to: HideSetter.self)(titleView, hideSelector, true)
+				unsafe unsafeBitCast(heightMethod, to: HeightSetter.self)(titleView, heightSelector, max(1, parent.height))
+				unsafe unsafeBitCast(hideMethod, to: HideSetter.self)(titleView, hideSelector, true)
 				navigation.navigationBar.setNeedsLayout()
 			}
 
@@ -189,21 +189,21 @@ import SwiftUI
 
 			func scalarImplementation(on view: UIView, selector: Selector, argument: String) -> IMP? {
 				guard view.responds(to: selector) else { return nil }
-				return scalarImplementation(on: type(of: view), selector: selector, argument: argument)
+				return unsafe scalarImplementation(on: type(of: view), selector: selector, argument: argument)
 			}
 
 			func scalarImplementation(on viewClass: UIView.Type, selector: Selector, argument: String) -> IMP? {
-				guard let method = class_getInstanceMethod(viewClass, selector),
-				      method_getNumberOfArguments(method) == 3,
-				      let argumentType = method_copyArgumentType(method, 2) else { return nil }
-				let resultType = method_copyReturnType(method)
+				guard let method = unsafe class_getInstanceMethod(viewClass, selector),
+				      unsafe method_getNumberOfArguments(method) == 3,
+				      let argumentType = unsafe method_copyArgumentType(method, 2) else { return nil }
+				let resultType = unsafe method_copyReturnType(method)
 				defer {
-					free(resultType)
-					free(argumentType)
+					unsafe free(resultType)
+					unsafe free(argumentType)
 				}
-				guard String(cString: resultType) == "v",
-				      String(cString: argumentType) == argument else { return nil }
-				return method_getImplementation(method)
+				guard unsafe String(cString: resultType) == "v",
+				      unsafe String(cString: argumentType) == argument else { return nil }
+				return unsafe method_getImplementation(method)
 			}
 		}
 	}

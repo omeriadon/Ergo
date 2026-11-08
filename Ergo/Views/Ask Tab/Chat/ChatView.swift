@@ -183,7 +183,7 @@ private struct AskConversationView: View {
 	}
 
 	private func transition(for message: AskMessage) -> AnyTransition {
-		.asymmetric(insertion: message.role == .user ? .askSend : .identity, removal: .opacity)
+		unsafe .asymmetric(insertion: message.role == .user ? .askSend : .identity, removal: .opacity)
 	}
 
 	/// Typing only adds a little at a time, so this much arriving at once is a paste

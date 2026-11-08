@@ -67,7 +67,7 @@ import SwiftUI
 					.margins(.all, 0)
 					.makeContentView()
 				}
-				guard let element = elementClass.perform(selector, with: provider)?.takeUnretainedValue() as? UIMenuElement else {
+				guard let element = unsafe elementClass.perform(selector, with: provider)?.takeUnretainedValue() as? UIMenuElement else {
 					logElementAPIError()
 					return nil
 				}
@@ -79,7 +79,7 @@ import SwiftUI
 
 			func installHeaderProvider(_ header: @escaping () -> Header, on element: UIMenu) {
 				let selector = NSSelectorFromString("setHeaderViewProvider:")
-				guard element.responds(to: selector), let method = element.method(for: selector) else {
+				guard element.responds(to: selector), let method = unsafe element.method(for: selector) else {
 					if !didLogHeaderAPIError {
 						didLogHeaderAPIError = true
 						print("[CustomViewMenu] private header setter is unavailable; ignoring the requested menu header.")
@@ -97,12 +97,12 @@ import SwiftUI
 					.makeContentView()
 				}
 				typealias Setter = @convention(c) (AnyObject, Selector, @escaping @convention(block) () -> UIView) -> Void
-				unsafeBitCast(method, to: Setter.self)(element, selector, provider)
+				unsafe unsafeBitCast(method, to: Setter.self)(element, selector, provider)
 			}
 
 			func installPrimaryActionHandler(_ handler: @escaping () -> Void, on element: UIMenuElement) {
 				let selector = NSSelectorFromString("setPrimaryActionHandler:")
-				guard element.responds(to: selector), let method = element.method(for: selector) else {
+				guard element.responds(to: selector), let method = unsafe element.method(for: selector) else {
 					if !didLogOnSelectAPIError {
 						didLogOnSelectAPIError = true
 						print("[CustomViewMenu] private primary-action setter is unavailable; ignoring the requested onSelect handler.")
@@ -111,7 +111,7 @@ import SwiftUI
 				}
 				let block: @convention(block) () -> Void = handler
 				typealias Setter = @convention(c) (AnyObject, Selector, @escaping @convention(block) () -> Void) -> Void
-				unsafeBitCast(method, to: Setter.self)(element, selector, block)
+				unsafe unsafeBitCast(method, to: Setter.self)(element, selector, block)
 			}
 
 			func logElementAPIError() {

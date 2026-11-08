@@ -17,7 +17,7 @@ final class CanvasDropLensView: UIView {
 
 	/// Fading is all that's left under Reduce Motion
 	private var hiddenTransform: CGAffineTransform {
-		UIAccessibility.isReduceMotionEnabled ? .identity : CGAffineTransform(scaleX: 0.5, y: 0.5)
+		unsafe UIAccessibility.isReduceMotionEnabled ? .identity : CGAffineTransform(scaleX: 0.5, y: 0.5)
 	}
 
 	init() {

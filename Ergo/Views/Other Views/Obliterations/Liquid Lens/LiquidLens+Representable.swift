@@ -85,7 +85,7 @@ extension LiquidLens {
 				let selector = NSSelectorFromString("setLiftedContainerView:")
 
 				if lens.responds(to: selector) {
-					_ = lens.perform(selector, with: self)
+					_ = unsafe lens.perform(selector, with: self)
 				}
 			}
 

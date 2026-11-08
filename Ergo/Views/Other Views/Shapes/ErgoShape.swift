@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ErgoShape: Shape {
+nonisolated struct ErgoShape: Shape {
 	func path(in rect: CGRect) -> Path {
 		var path = Path()
 

@@ -175,7 +175,7 @@ final class TranslationAccount {
 // MARK: - SignedInAccount
 
 /// Which account this device signed in to, and on which server
-struct SignedInAccount: Codable, Hashable, Defaults.Serializable {
+nonisolated struct SignedInAccount: Codable, Hashable, Defaults.Serializable {
 	var server: URL
 
 	/// Nil after registering an email while signed out, since that reply doesn't say. Only ever compared.

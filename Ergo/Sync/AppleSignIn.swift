@@ -17,12 +17,12 @@ struct AppleSignIn {
 
 	init() {
 		var generator = SystemRandomNumberGenerator()
-		nonce = (0 ..< 32).map { _ in String(format: "%02x", UInt8.random(in: .min ... .max, using: &generator)) }.joined()
+		nonce = (0 ..< 32).map { _ in unsafe String(format: "%02x", UInt8.random(in: .min ... .max, using: &generator)) }.joined()
 	}
 
 	/// Goes in the Apple request
 	var hashedNonce: String {
-		SHA256.hash(data: Data(nonce.utf8)).map { String(format: "%02x", $0) }.joined()
+		SHA256.hash(data: Data(nonce.utf8)).map { unsafe String(format: "%02x", $0) }.joined()
 	}
 
 	func prepare(_ request: ASAuthorizationAppleIDRequest) {

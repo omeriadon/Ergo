@@ -13,7 +13,7 @@ struct Renaming<ID: Hashable> {
 	var name: String
 }
 
-extension String {
+nonisolated extension String {
 	/// Nil when there's nothing but white space
 	var trimmedNonEmpty: String? {
 		let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)

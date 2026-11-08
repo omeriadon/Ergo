@@ -25,7 +25,7 @@ nonisolated enum SymbolGroup: String, Codable, CaseIterable, Identifiable, Senda
 		TypeDisplayRepresentation(name: "Symbol Group")
 	}
 
-	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+	static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
 		.connective: DisplayRepresentation(title: "Connective"),
 		.quantifier: DisplayRepresentation(title: "Quantifier"),
 		.modal: DisplayRepresentation(title: "Modal"),
@@ -115,7 +115,7 @@ enum SymbolTag: String, Codable, Hashable, Identifiable, CaseIterable, Sendable,
 		TypeDisplayRepresentation(name: "Symbol Tag")
 	}
 
-	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+	static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
 		.modalLogic: DisplayRepresentation(title: "Modal logic"),
 		.predicateLogic: DisplayRepresentation(title: "Predicate logic"),
 		.proofNotation: DisplayRepresentation(title: "Proof notation"),
@@ -124,7 +124,7 @@ enum SymbolTag: String, Codable, Hashable, Identifiable, CaseIterable, Sendable,
 	]
 }
 
-enum SymbolSearchToken: Hashable, Identifiable, Codable, Defaults.Serializable {
+nonisolated enum SymbolSearchToken: Hashable, Identifiable, Codable, Defaults.Serializable {
 	case group(SymbolGroup)
 	case tag(SymbolTag)
 

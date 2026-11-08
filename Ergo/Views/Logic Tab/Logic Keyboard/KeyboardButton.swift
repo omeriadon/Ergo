@@ -77,7 +77,7 @@ struct KeyboardButton: View {
 	@ViewBuilder
 	private var alternateBubble: some View {
 		if showingAlternate, let alternate = entry.alternate {
-			Text(alternate.glyph(letters: letters))
+			unsafe Text(alternate.glyph(letters: letters))
 				.font(.title2)
 				.frame(width: 54, height: 54)
 				.glassEffect(

@@ -81,7 +81,7 @@ nonisolated enum FallacyTag: String, Codable, Defaults.Serializable, CaseIterabl
 		TypeDisplayRepresentation(name: "Fallacy Tag")
 	}
 
-	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+	static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
 		.causalReasoning: DisplayRepresentation(title: "Causal Reasoning"),
 		.ethicsHistoryAndEconomics: DisplayRepresentation(title: "Ethics, History & Economics"),
 		.formalLogic: DisplayRepresentation(title: "Formal Logic"),

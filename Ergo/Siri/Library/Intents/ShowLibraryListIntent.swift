@@ -36,7 +36,7 @@ struct ShowLibraryListIntent: AppIntent {
 	@Dependency
 	private var navigation: NavigationManager
 
-	static var supportedModes: IntentModes = [
+	static let supportedModes: IntentModes = [
 		.foreground(.immediate),
 	]
 

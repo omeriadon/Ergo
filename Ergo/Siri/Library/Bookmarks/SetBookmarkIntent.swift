@@ -46,7 +46,7 @@ struct SetBookmarkIntent: AppIntent {
 		Summary("\(\.$action) bookmark for \(\.$item)")
 	}
 
-	static var supportedModes: IntentModes = [
+	static let supportedModes: IntentModes = [
 		.background,
 	]
 

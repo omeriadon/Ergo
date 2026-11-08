@@ -77,7 +77,7 @@ extension SyncController {
 
 	/// iOS hands the token over on every launch, so a failed upload gets another go on the next one
 	func uploadPushToken(_ token: Data) {
-		let hex = token.map { String(format: "%02x", $0) }.joined()
+		let hex = token.map { unsafe String(format: "%02x", $0) }.joined()
 		Task {
 			try? await withSyncClient { try await $0.registerPushDevice(token: hex) }
 		}

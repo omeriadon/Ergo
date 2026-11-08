@@ -50,11 +50,11 @@ struct ErgoApp: App {
 		AppDelegate.navigation = navigation
 		AppDelegate.boardStore = boardStore
 
-		AppDependencyManager.shared.add(
+		unsafe AppDependencyManager.shared.add(
 			dependency: navigation
 		)
 
-		AppDependencyManager.shared.add(
+		unsafe AppDependencyManager.shared.add(
 			dependency: catalog
 		)
 	}

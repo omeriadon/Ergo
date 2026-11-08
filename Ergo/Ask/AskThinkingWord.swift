@@ -19,7 +19,7 @@ struct AskThinkingWord: Hashable {
 
 	/// Worked out from the answer's id and not stored, so an answer keeps its word from start to finish and after a relaunch
 	static func `for`(_ id: UUID) -> AskThinkingWord {
-		let sum = withUnsafeBytes(of: id.uuid) { $0.reduce(0) { $0 + Int($1) } }
+		let sum = withUnsafeBytes(of: id.uuid) { unsafe $0.reduce(0) { $0 + Int($1) } }
 		return all[sum % all.count]
 	}
 

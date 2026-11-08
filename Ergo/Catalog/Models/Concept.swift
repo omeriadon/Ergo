@@ -81,7 +81,7 @@ nonisolated enum ConceptTag: String, Codable, Defaults.Serializable, CaseIterabl
 		TypeDisplayRepresentation(name: "Concept Tag")
 	}
 
-	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+	static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
 		.aestheticsAndCulture: DisplayRepresentation(title: "Aesthetics & Culture"),
 		.decisionTheorySystemsAndMethods: DisplayRepresentation(title: "Decision Theory Systems & Methods"),
 		.epistemologyAndPhilosophyOfScience: DisplayRepresentation(title: "Epistemology & Philosophy of Science"),

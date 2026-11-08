@@ -22,7 +22,7 @@ enum AppTab: String, Hashable, Codable, Defaults.Serializable, AppEnum {
 		TypeDisplayRepresentation(name: "Ergo Tab")
 	}
 
-	static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+	static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
 		.board: DisplayRepresentation(title: "Board", image: .init(systemName: "flowchart")),
 		.logic: DisplayRepresentation(title: "Logic", image: .init(systemName: "function")),
 		.ask: DisplayRepresentation(title: "Ask", image: .init(systemName: "bubble.left.and.text.bubble.right")),
@@ -31,11 +31,11 @@ enum AppTab: String, Hashable, Codable, Defaults.Serializable, AppEnum {
 }
 
 /// Pushed on the Logic tab's list. The editor shows `ScratchpadStore.current`, so the route needs no id.
-enum LogicRoute: Hashable, Codable, Defaults.Serializable {
+nonisolated enum LogicRoute: Hashable, Codable, Defaults.Serializable {
 	case scratchpad
 }
 
-enum AppSheet: Hashable, Identifiable, Codable, Defaults.Serializable {
+nonisolated enum AppSheet: Hashable, Identifiable, Codable, Defaults.Serializable {
 	case scanner
 	case paste
 	case result(id: String)

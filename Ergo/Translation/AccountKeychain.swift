@@ -27,7 +27,7 @@ enum AccountKeychain {
 		query[kSecMatchLimit as String] = kSecMatchLimitOne
 
 		var result: AnyObject?
-		switch SecItemCopyMatching(query as CFDictionary, &result) {
+		switch unsafe SecItemCopyMatching(query as CFDictionary, &result) {
 			case errSecSuccess:
 				guard let data = result as? Data, let token = String(data: data, encoding: .utf8) else {
 					return .unavailable
