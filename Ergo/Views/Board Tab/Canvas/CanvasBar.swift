@@ -41,14 +41,6 @@ struct CanvasBarActions {
 	var cancelPick: () -> Void
 }
 
-private extension View {
-	/// One piece of the bar's glass, which materializes and dematerializes in place
-	func barGlass(_ id: String, in namespace: Namespace.ID) -> some View {
-		glassEffectID(id, in: namespace)
-			.glassEffectTransition(.materialize)
-	}
-}
-
 /// The glass bar above the tab bar
 struct CanvasBar: View {
 	let mode: CanvasBarMode
@@ -57,7 +49,7 @@ struct CanvasBar: View {
 	@Environment(\.accessibilityReduceMotion)
 	private var reduceMotion
 
-	/// Gives each piece of glass an identity, so it fades out as it came in rather than vanishing
+	/// Gives each piece of glass an identity, so it joins with its neighbours as the bar changes
 	@Namespace private var glass
 
 	var body: some View {
@@ -90,7 +82,7 @@ struct CanvasBar: View {
 							.padding(.horizontal, 14)
 							.padding(.vertical, 10)
 							.glassEffect(.regular, in: Capsule())
-							.barGlass("prompt", in: glass)
+							.glassEffectID("prompt", in: glass)
 
 						barButton("Cancel", symbol: "xmark", id: "cancelPick", action: actions.cancelPick)
 
@@ -109,7 +101,7 @@ struct CanvasBar: View {
 			.padding(.horizontal, 14)
 			.padding(.vertical, 10)
 			.glassEffect(.regular, in: Capsule())
-			.barGlass("viewOnly", in: glass)
+			.glassEffectID("viewOnly", in: glass)
 			.accessibilityIdentifier("board.bar.viewOnly")
 
 		switch selection {
@@ -122,6 +114,8 @@ struct CanvasBar: View {
 		}
 	}
 
+	/// The glass goes around the menu rather than coming from `.buttonStyle(.glass)`. A menu with that style only gets its
+	/// glass a few frames after it appears, so the container has nothing to join to and the whole bar cuts.
 	private var addSourceMenu: some View {
 		Menu {
 			Button("Text", systemImage: "doc.text", action: actions.addText)
@@ -131,11 +125,14 @@ struct CanvasBar: View {
 		} label: {
 			Label("Add Source", systemImage: "doc.badge.plus")
 				.font(.subheadline.weight(.medium))
-				.padding(.horizontal, 5)
-				.padding(.vertical, 4)
+				.foregroundStyle(.primary)
+				.padding(.horizontal, 18)
+				.padding(.vertical, 10)
+				.contentShape(Capsule())
 		}
-		.buttonStyle(.glass)
-		.barGlass("addSource", in: glass)
+		.buttonStyle(.plain)
+		.glassEffect(.regular.interactive(), in: Capsule())
+		.glassEffectID("addSource", in: glass)
 		.accessibilityIdentifier("board.bar.addSource")
 	}
 
@@ -153,7 +150,7 @@ struct CanvasBar: View {
 				.padding(.vertical, 4)
 		}
 		.buttonStyle(.glass)
-		.barGlass(id, in: glass)
+		.glassEffectID(id, in: glass)
 		.tint(role == .destructive ? .red : nil)
 		.accessibilityIdentifier("board.bar.\(id)")
 	}

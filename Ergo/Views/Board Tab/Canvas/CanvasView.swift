@@ -814,9 +814,7 @@ struct CanvasView: View {
 			in: board.links,
 			positions: Dictionary(board.statements.map { ($0.id, $0.position) }, uniquingKeysWith: { first, _ in first })
 		)
-		withAnimation(motion) {
-			selection = link.map { .link($0) }
-		}
+		selection = link.map { .link($0) }
 	}
 
 	private var selectedStatement: Statement.ID? {

@@ -32,18 +32,21 @@ extension UIViewController {
 	}
 }
 
-/// Changing tab blurs and fades one tab into the other instead of cutting. SwiftUI's `TabView` has no way to animate that, so this gives its tab bar controller an animator, through a delegate that hands everything else to the delegate SwiftUI had already set.
+/// Changing tab blurs and fades one tab into the other instead of cutting, and tapping the selected tab again is reported. SwiftUI's `TabView` has no way to animate that, so this gives its tab bar controller an animator, through a delegate that hands everything else to the delegate SwiftUI had already set.
 private struct TabTransition: UIViewControllerRepresentable {
+	let onReselect: () -> Void
+
 	func makeUIViewController(context _: Context) -> Finder {
 		Finder()
 	}
 
 	func updateUIViewController(_ finder: Finder, context _: Context) {
+		finder.proxy.onReselect = onReselect
 		finder.install()
 	}
 
 	final class Finder: UIViewController {
-		private let proxy = TabTransitionDelegate()
+		let proxy = TabTransitionDelegate()
 		private weak var host: UITabBarController?
 
 		override func viewDidAppear(_ animated: Bool) {
@@ -74,6 +77,16 @@ private struct TabTransition: UIViewControllerRepresentable {
 
 private final class TabTransitionDelegate: NSObject, UITabBarControllerDelegate {
 	weak var forwardee: UITabBarControllerDelegate?
+	var onReselect: () -> Void = {}
+
+	/// UIKit asks this for every tap on a tab, including the one that's already selected, which SwiftUI's `TabView` never reports.
+	func tabBarController(_ tabBarController: UITabBarController, shouldSelectTab tab: UITab) -> Bool {
+		if tab.identifier == tabBarController.selectedTab?.identifier {
+			onReselect()
+		}
+
+		return forwardee?.tabBarController?(tabBarController, shouldSelectTab: tab) ?? true
+	}
 
 	func tabBarController(_: UITabBarController, animationControllerForTransitionFrom _: UIViewController, to _: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		TabBlurAnimator()
@@ -90,7 +103,7 @@ private final class TabTransitionDelegate: NSObject, UITabBarControllerDelegate 
 
 /// Blurs with the same private filter as `BackdropBlur`, on the tabs' own layers. The tab bar isn't in the transition's container, so it stays sharp.
 private final class TabBlurAnimator: NSObject, UIViewControllerAnimatedTransitioning {
-	private static let duration: TimeInterval = 0.35
+	private static let duration: TimeInterval = 0.25
 	private static let radius: CGFloat = 16
 	private static let filterName = "tabTransitionBlur"
 
@@ -154,7 +167,8 @@ private final class TabBlurAnimator: NSObject, UIViewControllerAnimatedTransitio
 }
 
 extension View {
-	func tabTransition() -> some View {
-		background { TabTransition() }
+	/// `onReselect` runs when the tab that's already selected is tapped.
+	func tabTransition(onReselect: @escaping () -> Void) -> some View {
+		background { TabTransition(onReselect: onReselect) }
 	}
 }
