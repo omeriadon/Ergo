@@ -79,7 +79,7 @@ final class CatalogStore {
 		index = newIndex
 	}
 
-	private nonisolated static func decode<T: Decodable & Sendable>(
+	nonisolated static func decode<T: Decodable & Sendable>(
 		_ name: String,
 		using index: CatalogIndex
 	) throws -> T {
@@ -130,7 +130,7 @@ final class CatalogStore {
 		)
 	}
 
-	private nonisolated static func makeIndex() throws -> CatalogIndex {
+	nonisolated static func makeIndex() throws -> CatalogIndex {
 		var newIndex = CatalogIndex()
 		try registerMetadata("symbols", category: .symbols, in: &newIndex)
 		try registerMetadata("fallacies", category: .fallacies, in: &newIndex)

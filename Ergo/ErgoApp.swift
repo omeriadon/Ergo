@@ -77,6 +77,8 @@ struct ErgoApp: App {
 				.onOpenURL { url in
 					if let token = BoardInviteLink.token(from: url) {
 						navigation.presentSheet(.joinBoard(token))
+					} else if let entry = ItemOfTheDayItem.entry(from: url) {
+						navigation.openLibraryEntry(category: entry.category, id: entry.id)
 					} else {
 						receiveShared()
 					}
