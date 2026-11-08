@@ -46,8 +46,8 @@ struct LogicTabView: View {
 					renameButton(for: scratchpad)
 				}
 			}
-			.toolbarTitleVire("Logic", "function")
 		}
+		.toolbarTitleVire("Logic", "function")
 		.renameAlert("Rename Scratchpad", renaming: $renaming) { id, name in
 			scratchpadStore.rename(id, to: name)
 		}
@@ -108,6 +108,9 @@ private struct ScratchpadRow: View {
 			}
 
 			Spacer(minLength: 0)
+
+			Image(systemName: "chevron.right")
+				.foregroundStyle(.secondary)
 		}
 		.frame(maxWidth: .infinity, alignment: .leading)
 		.contentShape(Rectangle())

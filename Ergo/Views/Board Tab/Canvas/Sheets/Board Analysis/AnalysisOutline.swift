@@ -76,6 +76,7 @@ struct AnalysisOutline {
 			)
 		}
 
+		@MainActor
 		private func arrow(_ link: Link) -> Thing {
 			let found = annotations(of: .link(link.id))
 			let premise = board.statement(link.premise).map(StatementBoxView.title(of:)) ?? "Missing statement"

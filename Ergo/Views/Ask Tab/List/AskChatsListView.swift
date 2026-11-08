@@ -96,6 +96,9 @@ struct AskHistoryRow: View {
 				ProgressView()
 					.accessibilityLabel("Answering")
 			}
+
+			Image(systemName: "chevron.right")
+				.foregroundStyle(.secondary)
 		}
 		.contentShape(Rectangle())
 	}
