@@ -1,6 +1,6 @@
 # 07 · Direction
 
-Where the product is heading. The tabs and scratchpads are built (see [08-Tabs.md](08-Tabs.md)); the rest isn't built or scheduled. It's a living record of the conversation, so it changes as the thinking does.
+Where the product is heading. The four tabs, scratchpads, a first Ask and sharing boards are built; the rest isn't built or scheduled. It's a living record of the conversation, so it changes as the thinking does.
 
 **Decided** means Adon has settled it. **Proposed** means it's on the table but not agreed.
 
@@ -20,17 +20,20 @@ Adon's checklist, in the order he wrote it. It isn't a schedule.
 - Keep finding backend bugs.
 - The UI works on iPhone Duo, then iPad.
 - Clean up the markdown files across the repo.
-- Analysis as we go, as needed.
+- Analytics as we go: log events when a feature needs them, rather than as a project of its own.
+- Send the current board into a chat.
+- Chat modes. Give the model a plain text argument, then debate it, or be mentored on it.
+- Find the fallacies and other problems in a text or web page. See [Finding problems in a text](#finding-problems-in-a-text).
 
 ## The tabs
 
-**Decided:** Board, Logic, Ask, Library. **Built:** the four tabs, with Ask as a placeholder.
+**Decided:** Board, Logic, Ask, Library. **Built:** all four.
 
 | Tab | What it is | State today |
 |---|---|---|
-| **Board** | A workspace for pulling arguments out of what you find and analysing them | The Check tab, renamed. Symbol `flowchart` (**Proposed**, not yet checked at tab bar size) |
-| **Logic** | Writing and converting formal logic | Moves out of the canvas |
-| **Ask** | An AI chat with tools over the library and your work | Replaces the Debate placeholder, which was going to be a kind of chatbot anyway |
+| **Board** | A workspace for pulling arguments out of what you find and analysing them | Built: a canvas of cards, arrows and sources, with Break Down. No analysis yet |
+| **Logic** | Writing and converting formal logic | Built: saved scratchpads |
+| **Ask** | An AI chat with tools over the library and your work | Built, early: tools over the library only |
 | **Library** | The catalog | Exists, and is the most settled part of the app |
 
 A More tab is only for the distant future, if the app ever gets past four or five tabs.
@@ -49,7 +52,7 @@ You paste in links, blocks of text and documents. They become arguments, diagram
 
 **Decided:** Logic is its own tool, separate from the Board.
 
-- No canvas. It's a split view, English on one side and logic on the other.
+- No canvas. As built, logic is on top with its English reading below it, rather than side by side.
 - The Board does not formalise cards or use logic to back its arrows. Real-world articles argue from evidence, analogy and best explanation, so very few of them would benefit from formal logic.
 
 **Decided:** the Logic tab is a list of saved scratchpads, each holding a whole argument. **Built:** statements on the Board are English only, and logic lives in scratchpads.
@@ -58,11 +61,19 @@ You paste in links, blocks of text and documents. They become arguments, diagram
 
 **Decided:** Edit as Text goes away. Turning a block of text into cards is Break Down's job, and writing logic is the Logic tab's. The sheet is removed from the app.
 
-`ArgumentText` and its related types in ErgoKit are still there, with no callers outside ErgoKit and its tests. The argument checks don't depend on them.
-
-**Proposed:** Break Down also adds to an existing board, not only a new one, because pasting more material into a board is the core of the Board's future. `ArgumentBreakdown.applied(to:replacing:)` already takes a `replacing` flag, though every caller passes `true` today. Adding never edits or deletes existing cards.
+**Built:** Break Down also adds to an existing board, and breaks down a source already on it, because pasting more material into a board is the core of the Board's future. Adding never edits, moves or deletes existing cards.
 
 Accepted cost: pasting a whole argument into cards now needs AI, and without it cards are added one at a time.
+
+## Finding problems in a text
+
+Adon's idea: paste text or a web page, and the model finds the fallacies and other problems in it. It could share chat's backend with a different front end. Two shapes are open: an AI version of Break Down that makes a new board taking it apart, or the text kept whole with comments and annotations on it.
+
+**Proposed:** both, as two views of one result, with annotations first.
+- One analysis returns findings, each with a library entry and an exact quote, as in AI grounding below. Annotations are those quotes highlighted in the text, so every finding can be checked against its words.
+- Most of a real article isn't premises or a conclusion, so the text keeps everything a board would leave out.
+- It isn't a separate mode. A board's source is already a block of text or a link, so annotating a source is the Board's analysis. A board can then be made from it, with each card keeping the findings whose quotes fall in its claim.
+- Size matters. Break Down stops at 1,500 characters, while a page can be much longer, so long texts need to be analysed in parts.
 
 ## AI grounding
 

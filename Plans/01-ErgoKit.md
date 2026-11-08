@@ -1,5 +1,7 @@
 # Phase 1: ErgoKit
 
+> **Historical.** Built. Its README is now [00-Translation.md](00-Translation.md). Where this differs from the code or `CLAUDE.md`, they win.
+
 Pull the logic and translation code out of the app into a shared Swift package. Add the wire protocol and a client. Link the package back into the app so it builds exactly as before.
 
 Read [README.md](README.md) first: ground rules, layout, decisions.

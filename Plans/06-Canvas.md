@@ -1,5 +1,7 @@
 # 06 · Canvas
 
+> **Historical.** Built, then changed by [08-Tabs.md](08-Tabs.md): statements are English only, logic lives in scratchpads, and `ArgumentText` and the checks on the canvas are gone. "Nothing here is built yet" below dates from before any of it.
+
 The canvas replaces the single English-over-logic screen. A board becomes a map of **statements** joined by arrows. You pinch into a statement to edit it (the screen the Check tab has today, for one statement) and pinch out to see the whole argument. Nothing here is built yet.
 
 No migrations: nothing is shipped and the server doesn't exist yet, so `LogicBoard`, the sync records and the server change freely. Boards already saved in Defaults on Adon's devices will fail to decode and be dropped.

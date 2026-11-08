@@ -1,5 +1,7 @@
 # Phase 2b: App integration
 
+> **Historical.** Built. Its README is now [00-Translation.md](00-Translation.md). Where this differs from the code or `CLAUDE.md`, they win.
+
 The Check tab translates through the server, with live progress and a way to stop it. Settings connects Claude or ChatGPT.
 
 Read these first:

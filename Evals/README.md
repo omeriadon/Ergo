@@ -1,6 +1,6 @@
 # Evals
 
-English arguments with the logic they should become, and `ErgoEval`, which sends each one through a running Ergo server the way the app does and scores the result by meaning.
+English arguments with the logic they should become, and `ErgoEval`, which sends each one through a running Ergo server's translate route and scores the result by meaning. The app no longer translates, so this route is only here for the evals.
 
 Every command below needs the beta toolchain:
 

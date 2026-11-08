@@ -1,5 +1,7 @@
 # Phase 2a: ErgoServer (Vapor)
 
+> **Historical.** Built. Its README is now [00-Translation.md](00-Translation.md). Where this differs from the code or `CLAUDE.md`, they win.
+
 A Vapor 4 server that runs `TranslationPipeline` from ErgoKit, using each user's own Claude Code or Codex credentials, and streams progress over a WebSocket.
 
 Read [README.md](README.md) and [01-ErgoKit.md](01-ErgoKit.md), and the real ErgoKit sources, since those are the contract. You own `ErgoServer/` only.

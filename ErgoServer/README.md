@@ -1,8 +1,8 @@
 # ErgoServer
 
-Ergo's English → logic translation server. It runs ErgoKit's `TranslationPipeline` through the official `claude` and `codex` CLIs, each user with their own Claude or ChatGPT credential, and streams progress to the app over a WebSocket. Ergo provides no model access of its own.
+Ergo's server. It runs Ask, Break Down and English → logic translation through the official `claude` and `codex` CLIs, each user with their own Claude or ChatGPT credential, and streams to the app over WebSockets. Ergo provides no model access of its own. The app no longer translates, so only `Evals/` uses the translate route.
 
-It also syncs boards, bookmarks and a few settings between a user's devices, once they sign in, with Apple or with an email and password.
+It also syncs boards, bookmarks and a few settings between a user's devices, once they sign in, with Apple or with an email and password, and shares boards between people.
 
 The wire protocol is `ErgoProtocol` in ErgoKit. The design is in `Plans/02-Server.md` and `Plans/05-Sync.md`.
 

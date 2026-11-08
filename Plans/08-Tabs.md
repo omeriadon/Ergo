@@ -1,5 +1,7 @@
 # 08 · Board, Logic, Ask, Library
 
+> **Historical.** Built.
+
 The first slice of [07-Direction.md](07-Direction.md): the four tabs, with logic moved off the Board and into saved scratchpads. The AI research features, MCP, shared intent functions, analytics, API version changes and account gating are not part of this.
 
 No migrations: nothing has reached v1. Saved logic on boards is dropped. This overrides the "never rename" rules on `Statement` and its neighbours in CLAUDE.md for this work.

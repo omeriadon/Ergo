@@ -1,5 +1,7 @@
 # Phase 2c: Evals
 
+> **Historical.** Built. Its README is now [00-Translation.md](00-Translation.md). Where this differs from the code or `CLAUDE.md`, they win.
+
 A corpus of English arguments with the logic they should become, and a runner that sends each one through a **running server**, exactly as the app does, and scores the result by meaning.
 
 Read [README.md](README.md) (especially **English conventions**), [01-ErgoKit.md](01-ErgoKit.md), and the real ErgoKit sources. You own `Evals/` only.

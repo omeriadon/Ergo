@@ -1,5 +1,7 @@
 # Dither: hide squares under device corners
 
+> **Historical.** A note on a change that was made.
+
 ## Request
 Adon asked for the dither grid to know the device's screen corner radius and not draw squares that would be cut off by the rounded corners. Squares should follow the curve with as little padding as possible.
 

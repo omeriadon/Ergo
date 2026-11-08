@@ -1,5 +1,7 @@
 # Phase 5: Sync
 
+> **Historical.** Built, then extended by the canvas, scratchpads, sources and sharing ([06](06-Canvas.md), [08](08-Tabs.md), [09](09-Sharing.md)). `CLAUDE.md`'s Sync section is current.
+
 Everything the user makes or chooses in Ergo follows them to their other devices, through the Ergo server. It works offline, merges edits made on two devices at once without losing typing, and never needs a "which version do you want to keep" prompt.
 
 Read [README.md](README.md) first. Its ground rules apply here too.
