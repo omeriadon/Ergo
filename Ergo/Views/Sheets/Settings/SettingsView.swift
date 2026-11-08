@@ -29,6 +29,12 @@ struct SettingsView: View {
 					Label("UI", systemImage: "widget.small")
 				}
 
+				NavigationLink {
+					WidgetsSettingsView()
+				} label: {
+					Label("Widgets", systemImage: "widget.small")
+				}
+
 				Section {
 					NavigationLink {
 						AccountSettingsView()

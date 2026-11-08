@@ -8,67 +8,6 @@
 import ErgoLogic
 import SwiftUI
 
-/// What one box shows. Compared before its SwiftUI is touched, so a box only redraws when this changes.
-struct CanvasBoxModel: Equatable {
-	let statement: Statement
-	let relations: BoxRelations
-	let appearance: BoxAppearance
-
-	/// In the model so a role changing redraws the box. A hosted box can't read it from the app's environment.
-	var isReadOnly = false
-}
-
-/// What one source shows, compared the same way
-struct CanvasSourceModel: Equatable {
-	let source: BoardSource
-	let appearance: BoxAppearance
-	var isReadOnly = false
-}
-
-/// A source and the cards in its region. Where they are is read from the views, so the shape follows a drag.
-struct CanvasRegionModel: Equatable {
-	let source: BoardSource.ID
-	let members: [Statement.ID]
-}
-
-/// How SwiftUI reaches the pan and zoom, which live in `CanvasBoardView` so they never have to go through a SwiftUI update
-@MainActor
-final class CanvasBoardController {
-	var view: CanvasBoardView? {
-		didSet {
-			if let pending, let view {
-				view.move(to: pending, animation: nil)
-				self.pending = nil
-			}
-		}
-	}
-
-	/// A fit asked for before the view exists
-	private var pending: CanvasTransform?
-
-	var transform: CanvasTransform {
-		view?.canvasTransform ?? pending ?? CanvasTransform()
-	}
-
-	/// Whether the person has panned or zoomed yet
-	var hasBeenMoved: Bool {
-		view?.hasBeenMoved ?? false
-	}
-
-	/// The view of a box on the canvas, for the editor to zoom out of
-	func box(_ id: Statement.ID) -> UIView? {
-		view?.box(id)
-	}
-
-	func move(to transform: CanvasTransform, animation: Animation?) {
-		if let view {
-			view.move(to: transform, animation: animation)
-		} else {
-			pending = transform
-		}
-	}
-}
-
 /// The board's boxes and arrows, with pan and zoom. `CanvasBoardView` does the moving in UIKit, and each box is
 /// still the SwiftUI `CanvasBox`, hosted on its own.
 struct CanvasBoard: UIViewRepresentable {

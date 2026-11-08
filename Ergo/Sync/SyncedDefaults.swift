@@ -54,6 +54,8 @@ extension SyncedSetting {
 				.translationProvider
 			case .hapticsEnabled:
 				.hapticsEnabled
+			case .itemOfTheDayCategories:
+				.itemOfTheDayCategories
 		}
 	}
 
@@ -67,6 +69,8 @@ extension SyncedSetting {
 				try? SyncCoding.value(Defaults[.translationProvider])
 			case .hapticsEnabled:
 				try? SyncCoding.value(Defaults[.hapticsEnabled])
+			case .itemOfTheDayCategories:
+				try? SyncCoding.value(Defaults[.itemOfTheDayCategories])
 		}
 	}
 
@@ -81,6 +85,8 @@ extension SyncedSetting {
 				(try? SyncCoding.decode(Provider.self, from: value)) != nil
 			case .hapticsEnabled:
 				(try? SyncCoding.decode(Bool.self, from: value)) != nil
+			case .itemOfTheDayCategories:
+				(try? SyncCoding.decode([String].self, from: value)) != nil
 		}
 	}
 
@@ -102,6 +108,10 @@ extension SyncedSetting {
 			case .hapticsEnabled:
 				if let enabled = try? SyncCoding.decode(Bool.self, from: value), enabled != Defaults[.hapticsEnabled] {
 					Defaults[.hapticsEnabled] = enabled
+				}
+			case .itemOfTheDayCategories:
+				if let categories = try? SyncCoding.decode([String].self, from: value), categories != Defaults[.itemOfTheDayCategories] {
+					Defaults[.itemOfTheDayCategories] = categories
 				}
 		}
 	}

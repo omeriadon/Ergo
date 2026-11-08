@@ -16,4 +16,5 @@ public enum SyncedSetting: String, Codable, Sendable, CaseIterable, Hashable {
 	case ditherEnabled
 	case translationProvider
 	case hapticsEnabled
+	case itemOfTheDayCategories
 }
