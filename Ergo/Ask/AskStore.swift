@@ -69,10 +69,18 @@ final class AskStore {
 		isChatOpen = id != nil
 	}
 
+	/// A new chat with things attached and nothing sent yet, which is kept while other chats are open
+	var unsentDraft: AskConversation? {
+		guard attachments[draft.id]?.isEmpty == false, !conversations.contains(where: { $0.id == draft.id }) else { return nil }
+		return draft
+	}
+
 	/// Opens an empty chat. One that's already empty and open is left as it is, with whatever's been typed in it.
 	func newConversation() {
 		if !current.messages.isEmpty {
-			draft = AskConversation()
+			if unsentDraft == nil {
+				draft = AskConversation()
+			}
 			currentID = nil
 		}
 		isChatOpen = true
@@ -92,8 +100,12 @@ final class AskStore {
 	/// A chat that's still empty takes it too, so a few things can be gathered up before asking
 	func startChat(attaching content: AskAttachment.Content) {
 		newConversation()
-		guard attachments[current.id]?.contains(where: { $0.content == content }) != true else { return }
-		attachments[current.id, default: []].append(AskAttachment(content: content))
+		attach(content, to: current.id)
+	}
+
+	func attach(_ content: AskAttachment.Content, to conversation: AskConversation.ID) {
+		guard attachments[conversation]?.contains(where: { $0.content == content }) != true else { return }
+		attachments[conversation, default: []].append(AskAttachment(content: content))
 	}
 
 	func removeAttachment(_ id: AskAttachment.ID, from conversation: AskConversation.ID) {

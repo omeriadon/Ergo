@@ -34,11 +34,13 @@ struct AskThreadView: View {
 			}
 		}
 		.toolbar {
-			ToolbarItem(placement: .topBarTrailing) {
-				Button("New Chat", systemImage: "square.and.pencil") {
-					store.newConversation()
+			if !store.current.messages.isEmpty {
+				ToolbarItem(placement: .topBarTrailing) {
+					Button("New Chat", systemImage: "square.and.pencil") {
+						store.newConversation()
+					}
+					.accessibilityIdentifier("ask.newChat")
 				}
-				.accessibilityIdentifier("ask.newChat")
 			}
 		}
 	}
@@ -94,7 +96,7 @@ private struct AskConversationView: View {
 						AskEmptyView { draft = $0; composing = true }
 					}
 				}
-				.safeAreaInset(edge: .bottom, spacing: 0) {
+				.safeAreaBar(edge: .bottom, spacing: 0) {
 					composer
 				}
 				.onChange(of: sent) {
@@ -112,6 +114,7 @@ private struct AskConversationView: View {
 				composing = true
 			}
 		}
+		.onChange(of: draft, takePaste)
 		.scrollEdgeEffectStyle(.soft, for: .all)
 		.sensoryFeedback(.impact(weight: .light), trigger: sent) { _, _ in hapticsEnabled }
 		.sensoryFeedback(.impact(weight: .light, intensity: 0.5), trigger: streamed) { old, new in hapticsEnabled && run != nil && new > old }
@@ -181,6 +184,17 @@ private struct AskConversationView: View {
 
 	private func transition(for message: AskMessage) -> AnyTransition {
 		.asymmetric(insertion: message.role == .user ? .askSend : .identity, removal: .opacity)
+	}
+
+	/// Typing only adds a little at a time, so this much arriving at once is a paste
+	private func takePaste(from old: String, to new: String) {
+		let start = zip(old, new).prefix { $0 == $1 }.count
+		let end = zip(old.dropFirst(start).reversed(), new.dropFirst(start).reversed()).prefix { $0 == $1 }.count
+		let pasted = new.dropFirst(start).dropLast(end)
+		guard pasted.split(whereSeparator: \.isWhitespace).count > AskAttachment.pasteWordLimit else { return }
+
+		draft = String(new.prefix(start)) + String(new.suffix(end))
+		store.attach(.text(pasted.trimmingCharacters(in: .whitespacesAndNewlines)), to: conversationID)
 	}
 
 	private func send() {

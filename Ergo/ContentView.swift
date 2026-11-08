@@ -168,6 +168,9 @@ struct ContentView: View {
 
 				case let .joinBoard(token):
 					JoinBoardSheet(token: token)
+
+				case let .addToChat(content):
+					AddToChatSheet(content: content)
 			}
 		}
 		.fontDesign(.rounded)

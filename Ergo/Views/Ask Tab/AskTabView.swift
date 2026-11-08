@@ -46,7 +46,7 @@ struct AskTabView: View {
 
 	@ToolbarContentBuilder
 	private var toolbar: some ToolbarContent {
-		if account.isSignedInHere {
+		if account.isSignedInHere, !store.isChatOpen || !store.current.messages.isEmpty {
 			ToolbarItem(placement: .topBarTrailing) {
 				Button("New Chat", systemImage: "square.and.pencil") {
 					store.newConversation()

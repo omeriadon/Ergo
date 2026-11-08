@@ -20,16 +20,12 @@ struct LibraryDetailMenu: ToolbarContent {
 private struct AddToChatButton: View {
 	let reference: CatalogReference
 
-	@Environment(AskStore.self)
-	private var store
-
 	@Environment(NavigationManager.self)
 	private var navigation
 
 	var body: some View {
 		Button("Add to Chat", systemImage: "bubble.left.and.text.bubble.right") {
-			store.startChat(attaching: .library(reference))
-			navigation.selectedTab = .ask
+			navigation.presentSheet(.addToChat(.library(reference)))
 		}
 		.accessibilityIdentifier("addToChat.\(reference.category).\(reference.id)")
 	}

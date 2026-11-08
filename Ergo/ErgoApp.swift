@@ -113,9 +113,7 @@ struct ErgoApp: App {
 		guard let item = SharedItemInbox.shared?.take() else { return }
 
 		if item.action == .ask, case let .text(text) = item.content {
-			askStore.startChat(attaching: .text(text))
-			navigation.dismissSheet()
-			navigation.selectedTab = .ask
+			navigation.presentSheet(.addToChat(.text(text)))
 		} else {
 			navigation.presentSheet(.shared(item))
 		}

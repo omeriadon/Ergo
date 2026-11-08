@@ -48,6 +48,7 @@ enum AppSheet: Hashable, Identifiable, Codable, Defaults.Serializable {
 
 	/// The invite link's token, kept with the sheet like `shared`'s item, so a link opened before the app was killed still opens
 	case joinBoard(String)
+	case addToChat(AskAttachment.Content)
 
 	var id: Self {
 		self

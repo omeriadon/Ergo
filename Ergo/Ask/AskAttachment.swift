@@ -15,6 +15,9 @@ struct AskAttachment: Codable, Hashable, Identifiable {
 		case link(URL, title: String?, text: String?)
 	}
 
+	/// Pasted text longer than this goes in as a block of its own, so it doesn't fill the composer
+	static let pasteWordLimit = 50
+
 	var id = UUID()
 	var content: Content
 

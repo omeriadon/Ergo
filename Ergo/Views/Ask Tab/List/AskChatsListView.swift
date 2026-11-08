@@ -74,7 +74,7 @@ private extension AskChatsListView {
 	}
 }
 
-private struct AskHistoryRow: View {
+struct AskHistoryRow: View {
 	let conversation: AskConversation
 	let isAnswering: Bool
 

@@ -31,9 +31,6 @@ struct SharedItemSheet: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
-	@Environment(AskStore.self)
-	private var askStore
-
 	@State private var phase: Phase
 	@State private var attempt = 0
 
@@ -117,9 +114,7 @@ struct SharedItemSheet: View {
 				case .ask:
 					let page = try await PageReader.read(url)
 					guard !Task.isCancelled else { return }
-					askStore.startChat(attaching: .link(url, title: page.title, text: SharedText.cut(page.text, to: SharedItem.textLimit)))
-					navigation.selectedTab = .ask
-					navigation.dismissSheet()
+					navigation.presentSheet(.addToChat(.link(url, title: page.title, text: SharedText.cut(page.text, to: SharedItem.textLimit))))
 
 				case .breakDown:
 					let page = try await PageReader.read(url)
