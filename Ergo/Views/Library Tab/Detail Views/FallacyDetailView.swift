@@ -1,4 +1,3 @@
-import Defaults
 import SwiftUI
 
 struct FallacyDetailView: View {
@@ -9,8 +8,6 @@ struct FallacyDetailView: View {
 
 	@State private var hasScrolled = false
 	@State private var isOpening = true
-
-	@Default(.bookmarks) var bookmarks
 
 	var body: some View {
 		ZStack {
@@ -124,14 +121,11 @@ struct FallacyDetailView: View {
 						Text("")
 					}
 
-					ToolbarItem(placement: .topBarTrailing) {
-						let reference = CatalogReference(
-							id: fallacy.id,
-							name: fallacy.name,
-							category: .fallacies
-						)
-						BookmarkToolbarButton(reference: reference)
-					}
+					LibraryDetailMenu(reference: CatalogReference(
+						id: fallacy.id,
+						name: fallacy.name,
+						category: .fallacies
+					))
 				}
 			} else {
 				ContentUnavailableView("Fallacy Not Found", systemImage: "repeat.badge.xmark")

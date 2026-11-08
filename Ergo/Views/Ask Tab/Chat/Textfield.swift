@@ -10,13 +10,14 @@ import SwiftUI
 struct AskComposer: View {
 	@Binding var text: String
 	var isFocused: FocusState<Bool>.Binding
+	let hasAttachments: Bool
 	let isRunning: Bool
 	let sent: Int
 	let send: () -> Void
 	let stop: () -> Void
 
 	private var canSend: Bool {
-		!text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+		hasAttachments || !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
 	}
 
 	var body: some View {

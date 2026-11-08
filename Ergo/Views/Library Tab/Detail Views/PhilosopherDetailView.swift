@@ -5,7 +5,6 @@
 //  Created by Adon Omeri on 2/11/2026.
 //
 
-import Defaults
 import SwiftUI
 
 struct PhilosopherDetailView: View {
@@ -15,8 +14,6 @@ struct PhilosopherDetailView: View {
 
 	@Environment(NavigationManager.self)
 	private var navigation
-
-	@Default(.bookmarks) var bookmarks
 
 	@State private var showAliases = false
 
@@ -138,32 +135,11 @@ struct PhilosopherDetailView: View {
 						Text("")
 					}
 
-					ToolbarItem(placement: .topBarTrailing) {
-						let reference = CatalogReference(
-							id: philosopher.id,
-							name: philosopher.name,
-							category: .philosophers
-						)
-
-						let isBookmarked = bookmarks.contains(reference)
-
-						Button {
-							IntentDonations.bookmark(reference, added: !isBookmarked, catalog: catalog)
-
-							withAnimation(.easeInOut) {
-								if isBookmarked {
-									bookmarks.remove(reference)
-								} else {
-									bookmarks.insert(reference)
-								}
-							}
-						} label: {
-							Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
-								.contentTransition(.symbolEffect(.replace))
-						}
-						.buttonStyle(.glassProminent)
-						.tint(isBookmarked ? .accent : .clear)
-					}
+					LibraryDetailMenu(reference: CatalogReference(
+						id: philosopher.id,
+						name: philosopher.name,
+						category: .philosophers
+					))
 				}
 
 			} else {

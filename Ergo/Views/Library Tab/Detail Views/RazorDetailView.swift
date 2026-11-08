@@ -5,7 +5,6 @@
 //  Created by Adon Omeri on 2/11/2026.
 //
 
-import Defaults
 import SwiftUI
 
 struct RazorDetailView: View {
@@ -15,8 +14,6 @@ struct RazorDetailView: View {
 
 	@Environment(NavigationManager.self)
 	private var navigation
-
-	@Default(.bookmarks) var bookmarks
 
 	@State private var hasScrolled = false
 	@State private var isOpening = true
@@ -118,32 +115,11 @@ struct RazorDetailView: View {
 						Text("")
 					}
 
-					ToolbarItem(placement: .topBarTrailing) {
-						let reference = CatalogReference(
-							id: razor.id,
-							name: razor.name,
-							category: .razors
-						)
-
-						let isBookmarked = bookmarks.contains(reference)
-
-						Button {
-							IntentDonations.bookmark(reference, added: !isBookmarked, catalog: catalog)
-
-							withAnimation(.easeInOut) {
-								if isBookmarked {
-									bookmarks.remove(reference)
-								} else {
-									bookmarks.insert(reference)
-								}
-							}
-						} label: {
-							Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
-								.contentTransition(.symbolEffect(.replace))
-						}
-						.buttonStyle(.glassProminent)
-						.tint(isBookmarked ? .accent : .clear)
-					}
+					LibraryDetailMenu(reference: CatalogReference(
+						id: razor.id,
+						name: razor.name,
+						category: .razors
+					))
 				}
 
 			} else {

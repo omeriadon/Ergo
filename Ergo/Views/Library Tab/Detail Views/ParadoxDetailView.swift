@@ -5,7 +5,6 @@
 //  Created by Adon Omeri on 2/11/2026.
 //
 
-import Defaults
 import SwiftUI
 
 struct ParadoxDetailView: View {
@@ -15,8 +14,6 @@ struct ParadoxDetailView: View {
 
 	@Environment(NavigationManager.self)
 	private var navigation
-
-	@Default(.bookmarks) var bookmarks
 
 	@State private var hasScrolled = false
 	@State private var isOpening = true
@@ -131,32 +128,11 @@ struct ParadoxDetailView: View {
 						Text("")
 					}
 
-					ToolbarItem(placement: .topBarTrailing) {
-						let reference = CatalogReference(
-							id: paradox.id,
-							name: paradox.name,
-							category: .paradoxes
-						)
-
-						let isBookmarked = bookmarks.contains(reference)
-
-						Button {
-							IntentDonations.bookmark(reference, added: !isBookmarked, catalog: catalog)
-
-							withAnimation(.easeInOut) {
-								if isBookmarked {
-									bookmarks.remove(reference)
-								} else {
-									bookmarks.insert(reference)
-								}
-							}
-						} label: {
-							Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
-								.contentTransition(.symbolEffect(.replace))
-						}
-						.buttonStyle(.glassProminent)
-						.tint(isBookmarked ? .accent : .clear)
-					}
+					LibraryDetailMenu(reference: CatalogReference(
+						id: paradox.id,
+						name: paradox.name,
+						category: .paradoxes
+					))
 				}
 
 			} else {

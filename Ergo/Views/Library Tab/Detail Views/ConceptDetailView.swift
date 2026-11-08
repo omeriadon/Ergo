@@ -111,14 +111,11 @@ struct ConceptDetailView: View {
 				.scrollEdgeEffectStyle(.soft, for: .all)
 				.navigationTitle(concept.name.capitalized)
 				.toolbar {
-					ToolbarItem(placement: .topBarTrailing) {
-						let reference = CatalogReference(
-							id: concept.id,
-							name: concept.name,
-							category: .concepts
-						)
-						BookmarkToolbarButton(reference: reference)
-					}
+					LibraryDetailMenu(reference: CatalogReference(
+						id: concept.id,
+						name: concept.name,
+						category: .concepts
+					))
 				}
 			} else {
 				ContentUnavailableView("Concept Not Found", systemImage: "book.closed")

@@ -159,7 +159,7 @@ struct SourceBoxView: View, Equatable {
 }
 
 /// A rounded rectangle with its top right corner cut off, for the fold
-private struct FoldedSheet: InsettableShape {
+struct FoldedSheet: InsettableShape {
 	let corner: CGFloat
 	let fold: CGFloat
 	var inset: CGFloat = 0
@@ -185,7 +185,7 @@ private struct FoldedSheet: InsettableShape {
 }
 
 /// The corner that's been folded over
-private struct FoldFlap: Shape {
+struct FoldFlap: Shape {
 	let fold: CGFloat
 
 	func path(in rect: CGRect) -> Path {

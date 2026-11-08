@@ -47,7 +47,6 @@
         }, {
           "target": "Ergo WidgetsExtension",
           "inclusions": [
-            "Other/SharedDefaults.swift",
             "Catalog/CatalogIndex.swift",
             "Catalog/CatalogModels.swift",
             "Catalog/CatalogStore.swift",
@@ -61,6 +60,7 @@
             "Catalog/Models/Razor.swift",
             "Catalog/Models/Symbol.swift",
             "Navigation/Library Enums.swift",
+            "Other/SharedDefaults.swift",
           ],
         }, {
           "target": "ErgoSiriEvaluations",

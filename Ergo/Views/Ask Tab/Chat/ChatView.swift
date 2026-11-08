@@ -72,6 +72,10 @@ private struct AskConversationView: View {
 		store.conversation(conversationID) ?? AskConversation(id: conversationID)
 	}
 
+	private var attachments: [AskAttachment] {
+		store.attachments[conversationID] ?? []
+	}
+
 	private var run: AskStore.Run? {
 		store.runs[conversation.id]
 	}
@@ -91,14 +95,7 @@ private struct AskConversationView: View {
 					}
 				}
 				.safeAreaInset(edge: .bottom, spacing: 0) {
-					AskComposer(
-						text: $draft,
-						isFocused: $composing,
-						isRunning: run != nil,
-						sent: sent,
-						send: send,
-						stop: { store.stop(conversation.id) }
-					)
+					composer
 				}
 				.onChange(of: sent) {
 					// In a task so the end has moved to below what was just sent
@@ -121,6 +118,31 @@ private struct AskConversationView: View {
 		.animation(.smooth, value: run?.activity)
 		.animation(.smooth, value: run == nil)
 		.animation(.smooth, value: store.failures[conversation.id])
+	}
+
+	private var composer: some View {
+		VStack(spacing: 0) {
+			if !attachments.isEmpty {
+				AskAttachmentsRow(
+					attachments: attachments,
+					remove: { store.removeAttachment($0, from: conversationID) },
+					update: { store.updateAttachment($0, in: conversationID, text: $1) }
+				)
+				.contentMargins(.horizontal, 22, for: .scrollContent)
+				.transition(.blurReplace)
+			}
+
+			AskComposer(
+				text: $draft,
+				isFocused: $composing,
+				hasAttachments: !attachments.isEmpty,
+				isRunning: run != nil,
+				sent: sent,
+				send: send,
+				stop: { store.stop(conversation.id) }
+			)
+		}
+		.animation(reduceMotion ? nil : .smooth, value: attachments)
 	}
 
 	private var thread: some View {

@@ -26,12 +26,9 @@ struct BookmarkToolbarButton: View {
 				isBookmarked ? "Remove Bookmark" : "Add Bookmark",
 				systemImage: isBookmarked ? "bookmark.fill" : "bookmark"
 			)
-			.labelStyle(.iconOnly)
 			.contentTransition(.symbolEffect(.replace))
 		}
 		.accessibilityLabel(isBookmarked ? "Remove Bookmark" : "Add Bookmark")
 		.accessibilityIdentifier("bookmark.\(reference.category).\(reference.id)")
-		.buttonStyle(.glassProminent)
-		.tint(isBookmarked ? .accent : .clear)
 	}
 }

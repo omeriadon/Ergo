@@ -117,7 +117,7 @@ struct SharedItemSheet: View {
 				case .ask:
 					let page = try await PageReader.read(url)
 					guard !Task.isCancelled else { return }
-					askStore.startChat(with: Self.chatText(for: page, at: url))
+					askStore.startChat(attaching: .link(url, title: page.title, text: SharedText.cut(page.text, to: SharedItem.textLimit)))
 					navigation.selectedTab = .ask
 					navigation.dismissSheet()
 
@@ -139,12 +139,6 @@ struct SharedItemSheet: View {
 			guard !Task.isCancelled, !(error is CancellationError) else { return }
 			phase = .failed((error as? ServiceError)?.message ?? error.localizedDescription)
 		}
-	}
-
-	/// The model can't open links, so a chat gets what the page says
-	private static func chatText(for page: WebPageText, at url: URL) -> String {
-		let source = [page.title, url.absoluteString].compactMap(\.self).joined(separator: "\n")
-		return SharedText.cut("\(source)\n\n\(page.text)", to: SharedItem.textLimit)
 	}
 
 	/// A card still says something with only the link, so a page that won't load is no reason to stop

@@ -17,7 +17,7 @@ struct AskMessageView: View {
 	var body: some View {
 		switch message.role {
 			case .user:
-				AskUserBubble(text: message.text)
+				AskUserBubble(text: message.text, attachments: message.attachments)
 			case .assistant:
 				AskAnswerView(message: message, run: run)
 		}
@@ -26,8 +26,22 @@ struct AskMessageView: View {
 
 private struct AskUserBubble: View {
 	let text: String
+	let attachments: [AskAttachment]
 
 	var body: some View {
+		VStack(spacing: 8) {
+			if !attachments.isEmpty {
+				AskAttachmentsRow(attachments: attachments)
+					.defaultScrollAnchor(.trailing)
+			}
+
+			if !text.isEmpty {
+				bubble
+			}
+		}
+	}
+
+	private var bubble: some View {
 		HStack {
 			Spacer(minLength: 48)
 

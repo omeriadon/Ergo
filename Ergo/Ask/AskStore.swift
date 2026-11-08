@@ -59,6 +59,9 @@ final class AskStore {
 	/// Text from the share sheet, until the composer takes it. It isn't sent, so the person can say what to ask about it.
 	private(set) var waitingDraft: String?
 
+	/// What's going with each chat's next message. Not saved, like what's typed in the composer.
+	private(set) var attachments: [AskConversation.ID: [AskAttachment]] = [:]
+
 	init() {
 		conversations = Defaults[.askConversations]
 		let id = Defaults[.currentAskConversationID]
@@ -86,9 +89,20 @@ final class AskStore {
 		Defaults[.currentAskConversationID] = nil
 	}
 
-	func startChat(with text: String) {
+	/// A chat that's still empty takes it too, so a few things can be gathered up before asking
+	func startChat(attaching content: AskAttachment.Content) {
 		newConversation()
-		waitingDraft = text
+		guard attachments[current.id]?.contains(where: { $0.content == content }) != true else { return }
+		attachments[current.id, default: []].append(AskAttachment(content: content))
+	}
+
+	func removeAttachment(_ id: AskAttachment.ID, from conversation: AskConversation.ID) {
+		attachments[conversation]?.removeAll { $0.id == id }
+	}
+
+	func updateAttachment(_ id: AskAttachment.ID, in conversation: AskConversation.ID, text: String) {
+		guard let index = attachments[conversation]?.firstIndex(where: { $0.id == id }) else { return }
+		attachments[conversation]?[index].content = .text(text)
 	}
 
 	/// Leaves a question in the composer of the conversation that's open, to edit or send
@@ -105,6 +119,7 @@ final class AskStore {
 		stop(id)
 		conversations.removeAll { $0.id == id }
 		failures[id] = nil
+		attachments[id] = nil
 		if currentID == id {
 			draft = AskConversation()
 			currentID = nil
@@ -123,10 +138,12 @@ final class AskStore {
 
 	func send(_ text: String, account: TranslationAccount) {
 		let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
-		guard !text.isEmpty, runs[current.id] == nil else { return }
+		let attached = attachments[current.id] ?? []
+		guard !text.isEmpty || !attached.isEmpty, runs[current.id] == nil else { return }
 
 		var conversation = current
-		conversation.messages.append(AskMessage(role: .user, text: text))
+		conversation.messages.append(AskMessage(role: .user, text: text, attachments: attached))
+		attachments[conversation.id] = nil
 		write(conversation)
 		answer(conversation.id, account: account)
 	}
@@ -227,10 +244,11 @@ final class AskStore {
 	static func request(from messages: [AskMessage]) -> [AskRequestMessage] {
 		var kept: [AskRequestMessage] = []
 		var characters = 0
-		for message in messages.reversed() where !message.text.isEmpty {
-			characters += message.text.count
+		for message in messages.reversed() where !message.requestText.isEmpty {
+			let text = message.requestText
+			characters += text.count
 			guard characters <= AskRequest.characterLimit else { break }
-			kept.insert(AskRequestMessage(role: message.role, text: message.text), at: 0)
+			kept.insert(AskRequestMessage(role: message.role, text: text), at: 0)
 		}
 		if kept.first?.role == .assistant {
 			kept.removeFirst()

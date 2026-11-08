@@ -131,14 +131,11 @@ struct ArgumentDetailView: View {
 						Text("")
 					}
 
-					ToolbarItem(placement: .topBarTrailing) {
-						let reference = CatalogReference(
-							id: argument.id,
-							name: argument.name,
-							category: .arguments
-						)
-						BookmarkToolbarButton(reference: reference)
-					}
+					LibraryDetailMenu(reference: CatalogReference(
+						id: argument.id,
+						name: argument.name,
+						category: .arguments
+					))
 				}
 			} else {
 				ContentUnavailableView("Argument Not Found", systemImage: "text.bubble")

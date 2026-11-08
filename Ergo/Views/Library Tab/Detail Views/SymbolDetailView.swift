@@ -5,7 +5,6 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
-import Defaults
 import SwiftUI
 
 struct SymbolDetailView: View {
@@ -17,8 +16,6 @@ struct SymbolDetailView: View {
 	private var navigation
 
 	@State private var showAlternateGlyphs = false
-
-	@Default(.bookmarks) var bookmarks
 
 	@State private var hasScrolled = false
 	@State private var isOpening = true
@@ -128,32 +125,11 @@ struct SymbolDetailView: View {
 						Text("")
 					}
 
-					ToolbarItem(placement: .topBarTrailing) {
-						let reference = CatalogReference(
-							id: symbol.id,
-							name: symbol.name,
-							category: .symbols
-						)
-
-						let isBookmarked = bookmarks.contains(reference)
-
-						Button {
-							IntentDonations.bookmark(reference, added: !isBookmarked, catalog: catalog)
-
-							withAnimation(.easeInOut) {
-								if isBookmarked {
-									bookmarks.remove(reference)
-								} else {
-									bookmarks.insert(reference)
-								}
-							}
-						} label: {
-							Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
-								.contentTransition(.symbolEffect(.replace))
-						}
-						.buttonStyle(.glassProminent)
-						.tint(isBookmarked ? .accent : .clear)
-					}
+					LibraryDetailMenu(reference: CatalogReference(
+						id: symbol.id,
+						name: symbol.name,
+						category: .symbols
+					))
 				}
 
 			} else {

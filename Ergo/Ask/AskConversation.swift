@@ -24,11 +24,12 @@ struct AskConversation: Codable, Hashable, Identifiable, Defaults.Serializable {
 		if let name = name.trimmedNonEmpty {
 			return name
 		}
-		let line = messages.first { $0.role == .user }?.text
+		let question = messages.first { $0.role == .user }
+		let line = question?.text
 			.split(whereSeparator: \.isNewline)
 			.first
 			.map { $0.trimmingCharacters(in: .whitespaces) }
-		return line ?? "New Chat"
+		return line ?? question?.attachments.first?.title ?? "New Chat"
 	}
 }
 
@@ -36,6 +37,9 @@ struct AskMessage: Codable, Hashable, Identifiable {
 	var id = UUID()
 	var role: AskRequestMessage.Role
 	var text: String
+
+	/// What went along with a question
+	var attachments: [AskAttachment] = []
 
 	/// What it looked up for an answer, worded for showing above it
 	var tools: [String] = []
@@ -45,4 +49,11 @@ struct AskMessage: Codable, Hashable, Identifiable {
 
 	/// Buttons under an answer
 	var actions: [AskAction] = []
+
+	/// What the model gets: the question, then whatever went with it
+	var requestText: String {
+		([text] + attachments.map(\.requestText))
+			.filter { !$0.isEmpty }
+			.joined(separator: "\n\n")
+	}
 }

@@ -78,13 +78,14 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -destination 'generic/platform=i
 - Anything from the model is checked: an unknown entry is an error to the model, and a link or button this app can't run (`AskIntents.canRun`) isn't offered.
 - Answers stream token by token: Claude Code through `stream-json` partial messages, Codex logins through `codex app-server` (`CodexAppServerSession`), since `codex exec` only reports whole messages. Codex API keys stay on `exec`, because the app server doesn't read `CODEX_API_KEY`.
 - Answers are markdown with LaTeX. `MarkdownDocument` takes `$…$`, `$$…$$`, `\\(…\\)` and `\\[…\\]` out before parsing and `LaTeX` turns them into real characters, so they flow and copy like text. It doesn't typeset. Text blocks render in one `UITextView` (`AskSelectableText`), since SwiftUI's `Text` can't select across lines.
+- An `AskAttachment` (library entry, text or web link) goes with a message. Waiting ones are per conversation in `AskStore`, unsaved, and the model gets them as text after the question (`AskMessage.requestText`). A library entry goes as its id, for the model to read with `get_library_entry`.
 - The prompt is `Prompts/Resources/ask.md`. Findings have to cite the library, and pasted text is data, not instructions.
 
 ## Sharing into the app
 - The extension only asks what to do (add to chat, break down, add to board). It saves a `SharedItem` to `SharedItemInbox` in the App Group `group.com.adonis.Ergo`, then tries to open the app with `ergo://share`.
 - Apple doesn't support share extensions opening their app, so `ShareViewController.openErgo` goes through the responder chain and may stop working. The app checks the inbox whenever it becomes active, so a share is never lost: the extension then says to open Ergo by hand.
 - `PageReader` fetches links on the device. Nothing runs JavaScript, so pages built by scripts have little text.
-- Shared text goes in the composer unsent, since the CLI can't open links and the person still has a question to ask. Break Down starts on its own only when the text fits `EnglishValidator.characterLimit`. On a board, what's shared becomes a source.
+- Shared text and links are attached to a new chat unsent, since the person still has a question to ask. A link's page text is read on the way in, since the CLI can't open links. Break Down starts on its own only when the text fits `EnglishValidator.characterLimit`. On a board, what's shared becomes a source.
 
 ## Sync
 - Signed in with Apple or email, boards, bookmarks and the settings in `SyncedSetting` sync through the server (`Ergo/Sync/`, ErgoSync).
