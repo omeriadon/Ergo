@@ -59,7 +59,7 @@ extension CanvasBoardView {
 	}
 
 	func styleRegions() {
-		let accent = UIColor(Color.accentColor).resolvedColor(with: traitCollection)
+		let accent = UIColor(Color.accent).resolvedColor(with: traitCollection)
 		for layer in regionLayers.values {
 			layer.style(accent: accent)
 		}

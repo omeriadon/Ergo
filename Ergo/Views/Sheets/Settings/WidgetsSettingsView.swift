@@ -8,6 +8,7 @@
 import Defaults
 import ErgoCatalog
 import SwiftUI
+import WidgetKit
 
 struct WidgetsSettingsView: View {
 	@Default(.itemOfTheDayCategories) var selected
@@ -17,6 +18,9 @@ struct WidgetsSettingsView: View {
 			Section {
 				ForEach(ItemOfTheDay.categories, id: \.self) { category in
 					Toggle(Self.name(of: category), isOn: binding(for: category))
+						.onChange(of: binding(for: category).wrappedValue) {
+							WidgetCenter.shared.reloadTimelines(ofKind: "ItemOfTheDayWidget")
+						}
 				}
 			} header: {
 				Text("Item of the Day")

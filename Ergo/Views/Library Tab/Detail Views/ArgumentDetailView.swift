@@ -13,7 +13,7 @@ struct ArgumentDetailView: View {
 		ZStack {
 			DitherView(configuration: {
 				var configuration = detailViewConf
-				configuration.palette = [Color.teal.toSIMD3, Color.teal.toSIMD3]
+				configuration.palette = [LibraryContent.arguments.themeColor.toSIMD3, LibraryContent.arguments.themeColor.toSIMD3]
 				return configuration
 			}())
 				.ignoresSafeArea()

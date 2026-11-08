@@ -20,7 +20,7 @@ struct KeyPressStyle: ButtonStyle {
 			.background {
 				RoundedRectangle(cornerRadius: 19)
 					.fill(
-						Color.accentColor.opacity(
+						Color.accent.opacity(
 							configuration.isPressed ? 1 : 0
 						)
 					)

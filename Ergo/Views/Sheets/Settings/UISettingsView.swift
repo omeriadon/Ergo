@@ -41,6 +41,6 @@ struct UISettingsView: View {
 				}
 			}
 		}
-		.toolbarTitleVire("UI", "widget.small")
+		.toolbarTitleVire("UI", "app.background.dotted")
 	}
 }

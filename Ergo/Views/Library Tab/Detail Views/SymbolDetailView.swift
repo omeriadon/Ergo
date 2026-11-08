@@ -28,8 +28,8 @@ struct SymbolDetailView: View {
 			DitherView(configuration: {
 				var conf = detailViewConf
 				conf.palette = [
-					Color.orange.toSIMD3,
-					Color.orange.toSIMD3,
+					LibraryContent.symbols.themeColor.toSIMD3,
+					LibraryContent.symbols.themeColor.toSIMD3,
 				]
 				return conf
 			}())
@@ -152,7 +152,7 @@ struct SymbolDetailView: View {
 								.contentTransition(.symbolEffect(.replace))
 						}
 						.buttonStyle(.glassProminent)
-						.tint(isBookmarked ? .accentColor : .clear)
+						.tint(isBookmarked ? .accent : .clear)
 					}
 				}
 

@@ -34,7 +34,7 @@ private struct AskUserBubble: View {
 			Text(text)
 				.padding(.horizontal, 14)
 				.padding(.vertical, 10)
-				.glassEffect(.clear.tint(.accentColor).interactive(), in: RoundedRectangle(cornerRadius: 20))
+				.glassEffect(.clear.tint(.accent).interactive(), in: RoundedRectangle(cornerRadius: 20))
 				.contextMenu {
 					Button("Copy", systemImage: "doc.on.doc") {
 						UIPasteboard.general.string = text

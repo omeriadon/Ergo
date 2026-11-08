@@ -28,8 +28,8 @@ struct PhilosopherDetailView: View {
 			DitherView(configuration: {
 				var conf = detailViewConf
 				conf.palette = [
-					Color.purple.toSIMD3,
-					Color.purple.toSIMD3,
+					LibraryContent.philosophers.themeColor.toSIMD3,
+					LibraryContent.philosophers.themeColor.toSIMD3,
 				]
 				return conf
 			}())
@@ -162,7 +162,7 @@ struct PhilosopherDetailView: View {
 								.contentTransition(.symbolEffect(.replace))
 						}
 						.buttonStyle(.glassProminent)
-						.tint(isBookmarked ? .accentColor : .clear)
+						.tint(isBookmarked ? .accent : .clear)
 					}
 				}
 

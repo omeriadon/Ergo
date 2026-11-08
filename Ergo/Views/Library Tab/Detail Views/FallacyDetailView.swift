@@ -16,7 +16,7 @@ struct FallacyDetailView: View {
 		ZStack {
 			DitherView(configuration: {
 				var configuration = detailViewConf
-				configuration.palette = [Color.blue.toSIMD3, Color.blue.toSIMD3]
+				configuration.palette = [LibraryContent.fallacies.themeColor.toSIMD3, LibraryContent.fallacies.themeColor.toSIMD3]
 				return configuration
 			}())
 				.ignoresSafeArea()

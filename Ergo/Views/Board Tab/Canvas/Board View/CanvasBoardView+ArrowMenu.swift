@@ -59,7 +59,7 @@ extension CanvasBoardView {
 		let shape = CAShapeLayer()
 		shape.path = onScreen.copy(using: &toPreview)
 		shape.fillColor = nil
-		shape.strokeColor = UIColor(Color.accentColor).resolvedColor(with: traitCollection).cgColor
+		shape.strokeColor = UIColor(Color.accent).resolvedColor(with: traitCollection).cgColor
 		shape.lineWidth = 3.5
 		shape.lineCap = .round
 

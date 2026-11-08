@@ -126,7 +126,7 @@ struct BookmarksView: View {
 							Label("Remove Bookmark", systemImage: "bookmark.fill")
 						}
 						.buttonStyle(.automatic)
-						.tint(.accentColor)
+						.tint(.accent)
 					}
 					.transition(.opacity)
 				}

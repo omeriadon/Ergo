@@ -133,13 +133,13 @@ struct SourceBoxView: View, Equatable {
 		.dynamicTypeSize(...DynamicTypeSize.large)
 		.background {
 			BackdropBlur(radius: 4)
-				.overlay(Color.accentColor.opacity(0.1))
+				.overlay(Color.accent.opacity(0.1))
 				.clipShape(Self.shape)
 		}
 		.overlay { outline }
 		.overlay(alignment: .topTrailing) {
 			FoldFlap(fold: Self.shape.fold)
-				.fill(Color.accentColor.opacity(0.35))
+				.fill(Color.accent.opacity(0.35))
 				.frame(width: Self.shape.fold, height: Self.shape.fold)
 		}
 		.opacity(appearance == .unavailable ? 0.4 : 1)
@@ -151,9 +151,9 @@ struct SourceBoxView: View, Equatable {
 	private var outline: some View {
 		switch appearance {
 			case .selected, .connectSource:
-				Self.shape.stroke(Color.accentColor, lineWidth: 3)
+				Self.shape.stroke(Color.accent, lineWidth: 3)
 			case .normal, .unavailable:
-				Self.shape.stroke(Color.accentColor.opacity(0.5), lineWidth: 1)
+				Self.shape.stroke(Color.accent.opacity(0.5), lineWidth: 1)
 		}
 	}
 }

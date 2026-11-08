@@ -32,6 +32,6 @@ struct BookmarkToolbarButton: View {
 		.accessibilityLabel(isBookmarked ? "Remove Bookmark" : "Add Bookmark")
 		.accessibilityIdentifier("bookmark.\(reference.category).\(reference.id)")
 		.buttonStyle(.glassProminent)
-		.tint(isBookmarked ? .accentColor : .clear)
+		.tint(isBookmarked ? .accent : .clear)
 	}
 }

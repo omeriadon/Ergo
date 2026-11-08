@@ -26,8 +26,8 @@ struct BiasDetailView: View {
 			DitherView(configuration: {
 				var conf = detailViewConf
 				conf.palette = [
-					Color.red.toSIMD3,
-					Color.red.toSIMD3,
+					LibraryContent.biases.themeColor.toSIMD3,
+					LibraryContent.biases.themeColor.toSIMD3,
 				]
 				return conf
 			}())
@@ -165,7 +165,7 @@ struct BiasDetailView: View {
 								.contentTransition(.symbolEffect(.replace))
 						}
 						.buttonStyle(.glassProminent)
-						.tint(isBookmarked ? .accentColor : .clear)
+						.tint(isBookmarked ? .accent : .clear)
 					}
 				}
 

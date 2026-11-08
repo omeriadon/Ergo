@@ -26,7 +26,7 @@ struct SettingsView: View {
 				NavigationLink {
 					UISettingsView()
 				} label: {
-					Label("UI", systemImage: "widget.small")
+					Label("UI", systemImage: "app.background.dotted")
 				}
 
 				NavigationLink {

@@ -99,9 +99,9 @@ struct StatementBoxView: View, Equatable {
 		let shape = RoundedRectangle(cornerRadius: Self.corner)
 		switch appearance {
 			case .selected:
-				shape.strokeBorder(Color.accentColor, lineWidth: 3)
+				shape.strokeBorder(Color.accent, lineWidth: 3)
 			case .connectSource:
-				shape.strokeBorder(Color.accentColor, style: StrokeStyle(lineWidth: 3, dash: [7, 5]))
+				shape.strokeBorder(Color.accent, style: StrokeStyle(lineWidth: 3, dash: [7, 5]))
 			case .normal, .unavailable:
 				shape.strokeBorder(.primary.opacity(0.18), lineWidth: 1)
 		}

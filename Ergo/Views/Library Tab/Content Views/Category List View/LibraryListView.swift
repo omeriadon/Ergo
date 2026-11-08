@@ -244,7 +244,7 @@ struct LibraryListView<Item: LibraryListItem>: View {
 				)
 			}
 			.buttonStyle(.automatic)
-			.tint(.accentColor)
+			.tint(.accent)
 		}
 		.listedEntity(Item.Entity.self, id: item.id)
 		.transition(.opacity)

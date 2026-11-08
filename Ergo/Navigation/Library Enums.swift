@@ -7,7 +7,9 @@
 
 import AppIntents
 import Defaults
+import ErgoCatalog
 import Foundation
+import SwiftUI
 
 /// all the content middle views library can go to
 nonisolated enum LibraryContent: String, Hashable, CaseIterable, Codable, Sendable, Defaults.Serializable, AppEnum, LosslessStringConvertible {
@@ -51,6 +53,10 @@ nonisolated enum LibraryContent: String, Hashable, CaseIterable, Codable, Sendab
 
 	var title: String {
 		rawValue.capitalized
+	}
+
+	var themeColor: Color {
+		CategoryTheme.color(for: self)
 	}
 
 	static var typeDisplayRepresentation: TypeDisplayRepresentation {

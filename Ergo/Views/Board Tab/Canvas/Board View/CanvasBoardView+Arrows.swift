@@ -48,7 +48,7 @@ extension CanvasBoardView {
 	}
 
 	func styleArrows() {
-		let accent = UIColor(Color.accentColor).resolvedColor(with: traitCollection)
+		let accent = UIColor(Color.accent).resolvedColor(with: traitCollection)
 		let plain = UIColor.secondaryLabel.resolvedColor(with: traitCollection)
 		for (id, arrow) in arrows {
 			arrow.style(isSelected: id == selectedLink, accent: accent, plain: plain)

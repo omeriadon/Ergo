@@ -26,8 +26,8 @@ struct ParadoxDetailView: View {
 			DitherView(configuration: {
 				var conf = detailViewConf
 				conf.palette = [
-					Color.mint.toSIMD3,
-					Color.mint.toSIMD3,
+					LibraryContent.paradoxes.themeColor.toSIMD3,
+					LibraryContent.paradoxes.themeColor.toSIMD3,
 				]
 				return conf
 			}())
@@ -155,7 +155,7 @@ struct ParadoxDetailView: View {
 								.contentTransition(.symbolEffect(.replace))
 						}
 						.buttonStyle(.glassProminent)
-						.tint(isBookmarked ? .accentColor : .clear)
+						.tint(isBookmarked ? .accent : .clear)
 					}
 				}
 

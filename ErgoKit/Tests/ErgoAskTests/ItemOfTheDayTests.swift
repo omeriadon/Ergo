@@ -60,13 +60,19 @@ struct ItemOfTheDayTests {
 		let order = ItemOfTheDay.pinned
 		let gone = order[10]
 		let ids = LibraryCatalog.entryIDs.subtracting([gone])
-		let first = date(2026, 1, 1)
+		let first = date(2026, 11, 8)
 		func entry(_ day: Int, _ ids: Set<String>) -> String? {
 			ItemOfTheDay.entry(on: first.addingTimeInterval(Double(day) * 86400), among: ids, calendar: calendar)
 		}
 		#expect(entry(10, ids) == order[11])
 		#expect(entry(9, ids) == order[9])
 		#expect(entry(11, ids) == order[11])
+	}
+
+	@Test func theStartDayIsTheFirstEntry() {
+		#expect(ItemOfTheDay.entry(on: date(2026, 11, 8), calendar: calendar) == ItemOfTheDay.pinned.first)
+		#expect(ItemOfTheDay.entry(on: date(2026, 11, 9), calendar: calendar) == ItemOfTheDay.pinned[1])
+		#expect(ItemOfTheDay.entry(on: date(2026, 1, 1), calendar: calendar) == ItemOfTheDay.pinned.first)
 	}
 
 	@Test func theDayChangesAtMidnightOnTheCalendar() {

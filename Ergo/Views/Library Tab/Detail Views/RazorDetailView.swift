@@ -26,8 +26,8 @@ struct RazorDetailView: View {
 			DitherView(configuration: {
 				var conf = detailViewConf
 				conf.palette = [
-					Color.yellow.toSIMD3,
-					Color.yellow.toSIMD3,
+					LibraryContent.razors.themeColor.toSIMD3,
+					LibraryContent.razors.themeColor.toSIMD3,
 				]
 				return conf
 			}())
@@ -142,7 +142,7 @@ struct RazorDetailView: View {
 								.contentTransition(.symbolEffect(.replace))
 						}
 						.buttonStyle(.glassProminent)
-						.tint(isBookmarked ? .accentColor : .clear)
+						.tint(isBookmarked ? .accent : .clear)
 					}
 				}
 

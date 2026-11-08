@@ -75,13 +75,17 @@ public enum ItemOfTheDay {
 		return pinned.filter { isAllowed($0) && (includingMissing || existing.contains($0)) } + added
 	}
 
-	/// Days since 1 January 2026 on the calendar's own date, so everyone's day changes at their midnight. Never negative.
+	/// The first day of the list, whose item is the first of `pinned`. Never change it: every day would move.
+	/// Earlier dates show that first item too.
+	public static let startDate = DateComponents(year: 2026, month: 11, day: 8)
+
+	/// Days since `startDate` on the calendar's own date, so everyone's day changes at their midnight. Never negative.
 	static func dayNumber(of date: Date, calendar: Calendar) -> Int {
 		let parts = calendar.dateComponents([.year, .month, .day], from: date)
 		var utc = Calendar(identifier: .gregorian)
 		utc.timeZone = TimeZone(identifier: "UTC") ?? .gmt
 		let day = utc.date(from: parts) ?? date
-		let start = utc.date(from: DateComponents(year: 2026, month: 1, day: 1)) ?? day
+		let start = utc.date(from: startDate) ?? day
 		let days = utc.dateComponents([.day], from: start, to: day).day ?? 0
 		return max(days, 0)
 	}
