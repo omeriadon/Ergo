@@ -36,7 +36,7 @@ private struct BackdropBlurRepresentable: UIViewRepresentable {
 	}
 }
 
-private enum BackdropBlurFilter {
+enum BackdropBlurFilter {
 	private static let log = Logger(subsystem: "Ergo", category: "BackdropBlur")
 	private static let className = ["CA", "Filter"].joined()
 	private static let layerClassName = ["CA", "Backdrop", "Layer"].joined()

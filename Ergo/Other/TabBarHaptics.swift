@@ -24,7 +24,7 @@ private struct TabBarHaptics: UIViewControllerRepresentable {
 		override func viewDidAppear(_ animated: Bool) {
 			super.viewDidAppear(animated)
 
-			guard recognizer == nil, let tabBar = tabBarController?.tabBar ?? Self.tabBarController(in: view.window?.rootViewController)?.tabBar else {
+			guard recognizer == nil, let tabBar = hostingTabBarController()?.tabBar else {
 				return
 			}
 
@@ -56,24 +56,6 @@ private struct TabBarHaptics: UIViewControllerRepresentable {
 
 		func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool {
 			true
-		}
-
-		private static func tabBarController(in controller: UIViewController?) -> UITabBarController? {
-			guard let controller else {
-				return nil
-			}
-
-			if let tabBarController = controller as? UITabBarController {
-				return tabBarController
-			}
-
-			for child in controller.children {
-				if let found = tabBarController(in: child) {
-					return found
-				}
-			}
-
-			return tabBarController(in: controller.presentedViewController)
 		}
 	}
 }
