@@ -141,7 +141,7 @@ final class BoardAnalysisStore {
 
 	// MARK: - Request
 
-	private static func read(_ url: URL, of source: BoardSource) async -> (BoardSource, Result<String, Error>) {
+	private static func read(_ url: URL, of source: BoardSource) async -> (BoardSource, Result<String, any Error>) {
 		do {
 			return try await (source, .success(PageReader.read(url).text))
 		} catch {
@@ -155,7 +155,7 @@ final class BoardAnalysisStore {
 		var texts: [BoardSource.ID: String] = [:]
 		var skipped: [String] = []
 
-		await withTaskGroup(of: (BoardSource, Result<String, Error>).self) { group in
+		await withTaskGroup(of: (BoardSource, Result<String, any Error>).self) { group in
 			for source in board.sources {
 				switch source.content {
 					case let .text(text):

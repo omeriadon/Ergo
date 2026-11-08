@@ -112,7 +112,7 @@ final class TranslationAccount {
 	// MARK: - account
 
 	@ObservationIgnored
-	var creatingAccount: (server: URL, task: Task<String, Error>)?
+	var creatingAccount: (server: URL, task: Task<String, any Error>)?
 
 	/// Makes an account the first time, and once more if the server no longer knows this one
 	func withClient<Result>(_ work: (ErgoClient) async throws -> Result) async throws -> Result {

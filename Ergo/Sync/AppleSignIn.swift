@@ -32,7 +32,7 @@ struct AppleSignIn {
 	}
 
 	/// The identity token to send the server. Nil when the person cancelled, which isn't an error.
-	static func identityToken(from result: Result<ASAuthorization, Error>) throws -> String? {
+	static func identityToken(from result: Result<ASAuthorization, any Error>) throws -> String? {
 		switch result {
 			case let .success(authorization):
 				guard

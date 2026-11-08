@@ -76,7 +76,7 @@ private struct TabTransition: UIViewControllerRepresentable {
 }
 
 private final nonisolated class TabTransitionDelegate: NSObject, UITabBarControllerDelegate {
-	weak var forwardee: UITabBarControllerDelegate?
+	weak var forwardee: any UITabBarControllerDelegate?
 	var onReselect: () -> Void = {}
 
 	/// UIKit asks this for every tap on a tab, including the one that's already selected, which SwiftUI's `TabView` never reports.
@@ -88,7 +88,7 @@ private final nonisolated class TabTransitionDelegate: NSObject, UITabBarControl
 		return forwardee?.tabBarController?(tabBarController, shouldSelectTab: tab) ?? true
 	}
 
-	func tabBarController(_: UITabBarController, animationControllerForTransitionFrom _: UIViewController, to _: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+	func tabBarController(_: UITabBarController, animationControllerForTransitionFrom _: UIViewController, to _: UIViewController) -> any UIViewControllerAnimatedTransitioning? {
 		TabBlurAnimator()
 	}
 
@@ -107,11 +107,11 @@ private final class TabBlurAnimator: NSObject, UIViewControllerAnimatedTransitio
 	private static let radius: CGFloat = 16
 	private static let filterName = "tabTransitionBlur"
 
-	func transitionDuration(using _: UIViewControllerContextTransitioning?) -> TimeInterval {
+	func transitionDuration(using _: any UIViewControllerContextTransitioning?) -> TimeInterval {
 		Self.duration
 	}
 
-	func animateTransition(using context: UIViewControllerContextTransitioning) {
+	func animateTransition(using context: any UIViewControllerContextTransitioning) {
 		guard let from = context.view(forKey: .from), let to = context.view(forKey: .to) else {
 			context.completeTransition(false)
 			return

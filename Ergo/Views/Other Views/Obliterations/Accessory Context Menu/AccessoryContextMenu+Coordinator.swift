@@ -267,7 +267,7 @@ public extension AccessoryContextMenu {
 		public func contextMenuInteraction(
 			_: UIContextMenuInteraction,
 			willEndFor configuration: UIContextMenuConfiguration,
-			animator: UIContextMenuInteractionAnimating?
+			animator: any UIContextMenuInteractionAnimating?
 		) {
 			let key = ObjectIdentifier(configuration)
 			let endingEntry = accessoryEntries[key]

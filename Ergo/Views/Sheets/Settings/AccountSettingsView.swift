@@ -75,7 +75,7 @@ struct SignInRow: View {
 		.accessibilityIdentifier("account.signIn")
 	}
 
-	private func signIn(_ result: Result<ASAuthorization, Error>, nonce: String) {
+	private func signIn(_ result: Result<ASAuthorization, any Error>, nonce: String) {
 		Task {
 			do {
 				guard let token = try AppleSignIn.identityToken(from: result) else { return }

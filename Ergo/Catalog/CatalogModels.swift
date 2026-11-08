@@ -30,14 +30,14 @@ nonisolated struct CatalogLink: Codable, Sendable {
 		case note
 	}
 
-	init(from decoder: Decoder) throws {
+	init(from decoder: any Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		let targetID = try container.decode(String.self, forKey: .targetID)
 		target = try CatalogReference(id: targetID, from: decoder)
 		note = try container.decode(String.self, forKey: .note)
 	}
 
-	func encode(to encoder: Encoder) throws {
+	func encode(to encoder: any Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try container.encode(target.id, forKey: .targetID)
 		try container.encode(note, forKey: .note)
@@ -65,7 +65,7 @@ nonisolated struct CatalogReference: Hashable, Identifiable, Codable, Sendable, 
 		self.category = category
 	}
 
-	nonisolated init(id: String, from decoder: Decoder) throws {
+	nonisolated init(id: String, from decoder: any Decoder) throws {
 		guard let index = decoder.userInfo[.catalogIndex] as? CatalogIndex else {
 			throw CatalogIndexError.missingID(id)
 		}
@@ -73,7 +73,7 @@ nonisolated struct CatalogReference: Hashable, Identifiable, Codable, Sendable, 
 		self = try index.reference(for: id)
 	}
 
-	init(from decoder: Decoder) throws {
+	init(from decoder: any Decoder) throws {
 		if let id = try? decoder.singleValueContainer().decode(String.self) {
 			self = try CatalogReference(id: id, from: decoder)
 			return
@@ -91,7 +91,7 @@ nonisolated struct CatalogReference: Hashable, Identifiable, Codable, Sendable, 
 		category = try container.decode(LibraryContent.self, forKey: .category)
 	}
 
-	func encode(to encoder: Encoder) throws {
+	func encode(to encoder: any Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try container.encode(id, forKey: .id)
 		try container.encode(name, forKey: .name)

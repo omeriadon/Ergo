@@ -106,12 +106,12 @@ import SwiftUI
 		@MainActor
 		final class ProbeViewController: UIViewController {
 			var onAttachment: (() -> Void)?
-			var onWillAppear: ((UIViewControllerTransitionCoordinator?) -> Void)?
+			var onWillAppear: ((any UIViewControllerTransitionCoordinator?) -> Void)?
 			var onDidAppear: (() -> Void)?
-			var onWillDisappear: ((UIViewControllerTransitionCoordinator?) -> Void)?
+			var onWillDisappear: ((any UIViewControllerTransitionCoordinator?) -> Void)?
 			var canInstall = false
 
-			var activeTransition: UIViewControllerTransitionCoordinator? {
+			var activeTransition: any UIViewControllerTransitionCoordinator? {
 				transitionCoordinator ?? navigationController?.transitionCoordinator
 			}
 

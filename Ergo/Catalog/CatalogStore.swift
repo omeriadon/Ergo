@@ -24,7 +24,7 @@ final class CatalogStore {
 	private(set) var isLoaded = false
 
 	@ObservationIgnored
-	private var loadTask: Task<Void, Error>?
+	private var loadTask: Task<Void, any Error>?
 
 	func load() async throws {
 		guard !isLoaded else {

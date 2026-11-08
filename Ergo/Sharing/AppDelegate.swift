@@ -30,7 +30,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
 	}
 
 	/// Sync still works without pushes, it just finds out when the app next opens
-	func application(_: UIApplication, didFailToRegisterForRemoteNotificationsWithError _: Error) {}
+	func application(_: UIApplication, didFailToRegisterForRemoteNotificationsWithError _: any Error) {}
 
 	func application(
 		_: UIApplication,

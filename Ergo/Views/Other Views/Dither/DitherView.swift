@@ -301,23 +301,23 @@ private struct CoverageKey: Hashable {
 
 @MainActor
 private final class SharedMetalResources {
-	let device: MTLDevice
-	let queue: MTLCommandQueue
-	let library: MTLLibrary
-	let vertex: MTLFunction
-	let gradientTexture: MTLTexture
-	private var fieldPipeline: MTLRenderPipelineState?
-	private var cellPipeline: MTLRenderPipelineState?
-	private var fusedCellComputePipeline: MTLComputePipelineState?
-	private var referenceDitherPipeline: MTLRenderPipelineState?
-	private var optimizedDitherPipeline: MTLRenderPipelineState?
-	private var atlasDitherPipeline: MTLRenderPipelineState?
-	private var coverageComputePipeline: MTLComputePipelineState?
-	private var joinMaskComputePipeline: MTLComputePipelineState?
-	private var blurCompositePipeline: MTLRenderPipelineState?
-	private var cellBlurHorizontalPipeline: MTLComputePipelineState?
-	private var cellBlurCompositePipeline: MTLRenderPipelineState?
-	private var coverageTextures: [CoverageKey: MTLTexture] = [:]
+	let device: any MTLDevice
+	let queue: any MTLCommandQueue
+	let library: any MTLLibrary
+	let vertex: any MTLFunction
+	let gradientTexture: any MTLTexture
+	private var fieldPipeline: any MTLRenderPipelineState?
+	private var cellPipeline: any MTLRenderPipelineState?
+	private var fusedCellComputePipeline: any MTLComputePipelineState?
+	private var referenceDitherPipeline: any MTLRenderPipelineState?
+	private var optimizedDitherPipeline: any MTLRenderPipelineState?
+	private var atlasDitherPipeline: any MTLRenderPipelineState?
+	private var coverageComputePipeline: any MTLComputePipelineState?
+	private var joinMaskComputePipeline: any MTLComputePipelineState?
+	private var blurCompositePipeline: any MTLRenderPipelineState?
+	private var cellBlurHorizontalPipeline: any MTLComputePipelineState?
+	private var cellBlurCompositePipeline: any MTLRenderPipelineState?
+	private var coverageTextures: [CoverageKey: any MTLTexture] = [:]
 
 	init() throws {
 		guard let device = MTLCreateSystemDefaultDevice() else {
@@ -351,7 +351,7 @@ private final class SharedMetalResources {
 		self.vertex = vertex
 		gradientTexture = gradients
 
-		func makePipeline(fragment: MTLFunction, pixelFormat: MTLPixelFormat) throws -> MTLRenderPipelineState {
+		func makePipeline(fragment: any MTLFunction, pixelFormat: MTLPixelFormat) throws -> any MTLRenderPipelineState {
 			let descriptor = MTLRenderPipelineDescriptor()
 			descriptor.vertexFunction = vertex
 			descriptor.fragmentFunction = fragment
@@ -377,7 +377,7 @@ private final class SharedMetalResources {
 		}
 	}
 
-	private func renderPipeline(fragment name: String, pixelFormat: MTLPixelFormat) throws -> MTLRenderPipelineState {
+	private func renderPipeline(fragment name: String, pixelFormat: MTLPixelFormat) throws -> any MTLRenderPipelineState {
 		guard let function = library.makeFunction(name: name) else {
 			throw NSError(domain: "DitherMetal", code: 4, userInfo: [NSLocalizedDescriptionKey: "Missing Metal shader function: \(name)"])
 		}
@@ -392,7 +392,7 @@ private final class SharedMetalResources {
 		}
 	}
 
-	func fieldPipelineState() throws -> MTLRenderPipelineState {
+	func fieldPipelineState() throws -> any MTLRenderPipelineState {
 		if let fieldPipeline {
 			return fieldPipeline
 		}
@@ -401,7 +401,7 @@ private final class SharedMetalResources {
 		return pipeline
 	}
 
-	func cellPipelineState() throws -> MTLRenderPipelineState {
+	func cellPipelineState() throws -> any MTLRenderPipelineState {
 		if let cellPipeline {
 			return cellPipeline
 		}
@@ -410,7 +410,7 @@ private final class SharedMetalResources {
 		return pipeline
 	}
 
-	func fusedCellComputePipelineState() throws -> MTLComputePipelineState {
+	func fusedCellComputePipelineState() throws -> any MTLComputePipelineState {
 		if let fusedCellComputePipeline {
 			return fusedCellComputePipeline
 		}
@@ -422,7 +422,7 @@ private final class SharedMetalResources {
 		return pipeline
 	}
 
-	func ditherPipelineState(fused: Bool) throws -> MTLRenderPipelineState {
+	func ditherPipelineState(fused: Bool) throws -> any MTLRenderPipelineState {
 		if fused, let optimizedDitherPipeline {
 			return optimizedDitherPipeline
 		}
@@ -438,7 +438,7 @@ private final class SharedMetalResources {
 		return pipeline
 	}
 
-	func atlasDitherPipelineState() throws -> MTLRenderPipelineState {
+	func atlasDitherPipelineState() throws -> any MTLRenderPipelineState {
 		if let atlasDitherPipeline {
 			return atlasDitherPipeline
 		}
@@ -447,7 +447,7 @@ private final class SharedMetalResources {
 		return pipeline
 	}
 
-	func coverageComputePipelineState() throws -> MTLComputePipelineState {
+	func coverageComputePipelineState() throws -> any MTLComputePipelineState {
 		if let coverageComputePipeline {
 			return coverageComputePipeline
 		}
@@ -459,7 +459,7 @@ private final class SharedMetalResources {
 		return pipeline
 	}
 
-	func joinMaskComputePipelineState() throws -> MTLComputePipelineState {
+	func joinMaskComputePipelineState() throws -> any MTLComputePipelineState {
 		if let joinMaskComputePipeline {
 			return joinMaskComputePipeline
 		}
@@ -471,7 +471,7 @@ private final class SharedMetalResources {
 		return pipeline
 	}
 
-	func blurCompositePipelineState() throws -> MTLRenderPipelineState {
+	func blurCompositePipelineState() throws -> any MTLRenderPipelineState {
 		if let blurCompositePipeline {
 			return blurCompositePipeline
 		}
@@ -480,7 +480,7 @@ private final class SharedMetalResources {
 		return pipeline
 	}
 
-	func cellBlurHorizontalPipelineState() throws -> MTLComputePipelineState {
+	func cellBlurHorizontalPipelineState() throws -> any MTLComputePipelineState {
 		if let cellBlurHorizontalPipeline {
 			return cellBlurHorizontalPipeline
 		}
@@ -492,7 +492,7 @@ private final class SharedMetalResources {
 		return pipeline
 	}
 
-	func cellBlurCompositePipelineState() throws -> MTLRenderPipelineState {
+	func cellBlurCompositePipelineState() throws -> any MTLRenderPipelineState {
 		if let cellBlurCompositePipeline {
 			return cellBlurCompositePipeline
 		}
@@ -501,11 +501,11 @@ private final class SharedMetalResources {
 		return pipeline
 	}
 
-	func coverageTexture(for key: CoverageKey) -> MTLTexture? {
+	func coverageTexture(for key: CoverageKey) -> any MTLTexture? {
 		coverageTextures[key]
 	}
 
-	func publishCoverageTexture(_ texture: MTLTexture, for key: CoverageKey) {
+	func publishCoverageTexture(_ texture: any MTLTexture, for key: CoverageKey) {
 		if coverageTextures.count >= 8 {
 			coverageTextures.removeAll(keepingCapacity: true)
 		}
@@ -532,20 +532,20 @@ private final class DitherMetalRenderer {
 		let gaussianEncodeCount: Int
 	}
 
-	let device: MTLDevice
-	private let queue: MTLCommandQueue
+	let device: any MTLDevice
+	private let queue: any MTLCommandQueue
 	private let sharedResources: SharedMetalResources
-	private let gradientTexture: MTLTexture
-	private var fieldTexture: MTLTexture?
-	private var cellTexture: MTLTexture?
-	private var joinMaskTexture: MTLTexture?
+	private let gradientTexture: any MTLTexture
+	private var fieldTexture: any MTLTexture?
+	private var cellTexture: any MTLTexture?
+	private var joinMaskTexture: any MTLTexture?
 	private let finalPassDescriptor = MTLRenderPassDescriptor()
 	private let blurSourcePassDescriptor = MTLRenderPassDescriptor()
 	private var fieldSize = MTLSize(width: 1, height: 1, depth: 1)
 	private var time: Float = 0
 	private var reveal: Float = 0
 	private var animationTiming = DitherAnimationTiming()
-	private var paletteBuffer: MTLBuffer
+	private var paletteBuffer: any MTLBuffer
 	private var themePositions = [SIMD2<Float>](repeating: .zero, count: 8)
 	private var themeColors = [SIMD3<Float>](repeating: .zero, count: 8)
 	private var lastPalette: [SIMD3<Float>] = []
@@ -559,17 +559,17 @@ private final class DitherMetalRenderer {
 	private var cellBlurResources: CellBlurResources?
 
 	private struct TopBlurResources {
-		let source: MTLTexture
-		let levels: [MTLTexture]
+		let source: any MTLTexture
+		let levels: [any MTLTexture]
 		let kernels: [MPSImageGaussianBlur]
 		let scale: Float
 	}
 
 	private struct CellBlurResources {
-		let levels: [MTLTexture]
-		let horizontalWeights: [MTLBuffer]
-		let verticalWeights: [MTLBuffer]
-		let profile: MTLBuffer
+		let levels: [any MTLTexture]
+		let horizontalWeights: [any MTLBuffer]
+		let verticalWeights: [any MTLBuffer]
+		let profile: any MTLBuffer
 		let rowCount: Int
 		let scale: Float
 		let cell: Int
@@ -613,11 +613,11 @@ private final class DitherMetalRenderer {
 		self.paletteBuffer = paletteBuffer
 	}
 
-	func render(to drawable: CAMetalDrawable, size: CGSize, configuration: DitherConfiguration, advance: Bool) throws {
+	func render(to drawable: any CAMetalDrawable, size: CGSize, configuration: DitherConfiguration, advance: Bool) throws {
 		try render(to: drawable, size: size, configuration: configuration, inputs: .empty, advance: advance)
 	}
 
-	func render(to drawable: CAMetalDrawable, size: CGSize, configuration: DitherConfiguration, inputs: DitherRenderInputs, advance: Bool) throws {
+	func render(to drawable: any CAMetalDrawable, size: CGSize, configuration: DitherConfiguration, inputs: DitherRenderInputs, advance: Bool) throws {
 		let drawableWidth = drawable.texture.width
 		let drawableHeight = drawable.texture.height
 		let ratio = Float(drawableWidth) / max(Float(size.width), 1)
@@ -625,15 +625,15 @@ private final class DitherMetalRenderer {
 		try render(to: drawable.texture, width: drawableWidth, height: drawableHeight, cell: cell, configuration: configuration, inputs: inputs, advance: advance, drawable: drawable, waitUntilCompleted: false, scale: ratio)
 	}
 
-	func render(to target: MTLTexture, width: Int, height: Int, cell: Int, configuration: DitherConfiguration, advance: Bool = true, atTime: Float? = nil) throws {
+	func render(to target: any MTLTexture, width: Int, height: Int, cell: Int, configuration: DitherConfiguration, advance: Bool = true, atTime: Float? = nil) throws {
 		try render(to: target, width: width, height: height, cell: cell, configuration: configuration, inputs: .empty, advance: advance, atTime: atTime, drawable: nil, waitUntilCompleted: true, scale: blurScale)
 	}
 
-	func render(to target: MTLTexture, width: Int, height: Int, cell: Int, configuration: DitherConfiguration, inputs: DitherRenderInputs, advance: Bool = true, atTime: Float? = nil) throws {
+	func render(to target: any MTLTexture, width: Int, height: Int, cell: Int, configuration: DitherConfiguration, inputs: DitherRenderInputs, advance: Bool = true, atTime: Float? = nil) throws {
 		try render(to: target, width: width, height: height, cell: cell, configuration: configuration, inputs: inputs, advance: advance, atTime: atTime, drawable: nil, waitUntilCompleted: true, scale: blurScale)
 	}
 
-	func render(to target: MTLTexture, width: Int, height: Int, cell: Int, configuration: DitherConfiguration, scale: Float, advance: Bool = true, atTime: Float? = nil) throws {
+	func render(to target: any MTLTexture, width: Int, height: Int, cell: Int, configuration: DitherConfiguration, scale: Float, advance: Bool = true, atTime: Float? = nil) throws {
 		try render(to: target, width: width, height: height, cell: cell, configuration: configuration, inputs: .empty, advance: advance, atTime: atTime, drawable: nil, waitUntilCompleted: true, scale: scale)
 	}
 
@@ -666,7 +666,7 @@ private final class DitherMetalRenderer {
 		reveal = 0
 	}
 
-	private func render(to target: MTLTexture, width: Int, height: Int, cell: Int, configuration: DitherConfiguration, inputs: DitherRenderInputs, advance: Bool, atTime: Float? = nil, drawable: CAMetalDrawable?, waitUntilCompleted: Bool, scale: Float) throws {
+	private func render(to target: any MTLTexture, width: Int, height: Int, cell: Int, configuration: DitherConfiguration, inputs: DitherRenderInputs, advance: Bool, atTime: Float? = nil, drawable: any CAMetalDrawable?, waitUntilCompleted: Bool, scale: Float) throws {
 		let cpuStart = CACurrentMediaTime()
 		let delta = Float(animationTiming.advance(now: cpuStart, isAdvancing: advance))
 		if advance && !configuration.disableAnimation && atTime == nil {
@@ -794,7 +794,7 @@ private final class DitherMetalRenderer {
 			}
 			guard let replacement = paletteData.withUnsafeBytes({ bytes in
 				guard let baseAddress = bytes.baseAddress else {
-					return nil as MTLBuffer?
+					return nil as any MTLBuffer?
 				}
 				return unsafe device.makeBuffer(bytes: baseAddress, length: bytes.count, options: .storageModeShared)
 			}) else {
@@ -809,7 +809,7 @@ private final class DitherMetalRenderer {
 		var renderPassCount = 0
 		var computeDispatchCount = 0
 		var gaussianEncodeCount = 0
-		var fusedComputeEncoder: MTLComputeCommandEncoder?
+		var fusedComputeEncoder: any MTLComputeCommandEncoder?
 		defer {
 			fusedComputeEncoder?.endEncoding()
 		}
@@ -878,7 +878,7 @@ private final class DitherMetalRenderer {
 			cellEncoder.endEncoding()
 			renderPassCount += 1
 		}
-		var coverageTexture: MTLTexture?
+		var coverageTexture: any MTLTexture?
 		var newCoverageKey: CoverageKey?
 		if usesFusedFieldAndCellPass && usesCoverageAtlas && cell <= 128 && (dither.gap > 0 || dither.cornerRadius > 0) {
 			let key = CoverageKey(cell: cell, gap: dither.gap, radius: dither.cornerRadius)
@@ -1051,10 +1051,10 @@ private final class DitherMetalRenderer {
 	}
 
 	private func dispatch(
-		_ encoder: MTLComputeCommandEncoder,
+		_ encoder: any MTLComputeCommandEncoder,
 		width: Int,
 		height: Int,
-		pipeline: MTLComputePipelineState,
+		pipeline: any MTLComputePipelineState,
 		usesTwoDimensionalThreadgroups: Bool = false
 	) {
 		let threadgroupWidth = min(pipeline.threadExecutionWidth, width)
@@ -1082,14 +1082,14 @@ private final class DitherMetalRenderer {
 	}
 
 	private func encodeTopBlur(
-		commandBuffer: MTLCommandBuffer,
+		commandBuffer: any MTLCommandBuffer,
 		width: Int,
 		height: Int,
 		scale: Float,
 		dither: DitherUniforms,
-		coverageTexture: MTLTexture?,
-		joinMaskTexture: MTLTexture?,
-		paletteBuffer: MTLBuffer
+		coverageTexture: any MTLTexture?,
+		joinMaskTexture: any MTLTexture?,
+		paletteBuffer: any MTLBuffer
 	) throws {
 		let stripHeight = min(height, Self.topBlurStripPixels(scale: scale))
 		let maxSigma = Self.topBlurMaximumSigma * max(0.01, scale)
@@ -1107,7 +1107,7 @@ private final class DitherMetalRenderer {
 			// Crop destination height instead of blurring every level across the strip.
 			let sigmas = Self.topBlurGaussianSigmas
 			descriptor.pixelFormat = .rgba16Float
-			var levels: [MTLTexture] = []
+			var levels: [any MTLTexture] = []
 			for index in sigmas.indices {
 				let minimumSigma: Float = index == 0 ? 0 : sigmas[index - 1]
 				var contributingRows = stripHeight
@@ -1191,7 +1191,7 @@ private final class DitherMetalRenderer {
 	}
 
 	private func encodeCellBlur(
-		commandBuffer: MTLCommandBuffer,
+		commandBuffer: any MTLCommandBuffer,
 		width: Int,
 		height: Int,
 		cell: Int,
@@ -1209,9 +1209,9 @@ private final class DitherMetalRenderer {
 			|| cellBlurResources?.stripHeight != stripHeight
 			|| cellBlurResources?.rowCount != rowCount
 		if keyChanged {
-			var levels: [MTLTexture] = []
-			var horizontalWeights: [MTLBuffer] = []
-			var verticalWeights: [MTLBuffer] = []
+			var levels: [any MTLTexture] = []
+			var horizontalWeights: [any MTLBuffer] = []
+			var verticalWeights: [any MTLBuffer] = []
 			for level in sigmas.indices {
 				let descriptor = MTLTextureDescriptor.texture2DDescriptor(
 					pixelFormat: .rgba16Float,
@@ -1320,7 +1320,7 @@ private final class DitherMetalRenderer {
 		encoder.endEncoding()
 	}
 
-	private func encodeCellBlurComposite(encoder: MTLRenderCommandEncoder, width: Int, stripHeight: Int, cell: Int, dither: DitherUniforms) throws {
+	private func encodeCellBlurComposite(encoder: any MTLRenderCommandEncoder, width: Int, stripHeight: Int, cell: Int, dither: DitherUniforms) throws {
 		guard let resources = cellBlurResources else {
 			return
 		}
@@ -1418,7 +1418,7 @@ private final class DitherMetalRenderer {
 		return result
 	}
 
-	private func encodeTopBlurComposite(encoder: MTLRenderCommandEncoder, width: Int, stripHeight: Int, scale: Float) throws {
+	private func encodeTopBlurComposite(encoder: any MTLRenderCommandEncoder, width: Int, stripHeight: Int, scale: Float) throws {
 		guard let resources = topBlurResources else {
 			return
 		}
@@ -1648,7 +1648,7 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 		}()
 	#endif
 
-	override init(frame: CGRect, device: MTLDevice?) {
+	override init(frame: CGRect, device: any MTLDevice?) {
 		super.init(frame: frame, device: device)
 		colorPixelFormat = .bgra8Unorm
 		framebufferOnly = true
@@ -1919,7 +1919,7 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 		#endif
 	}
 
-	private func renderFallback(to drawable: CAMetalDrawable) {
+	private func renderFallback(to drawable: any CAMetalDrawable) {
 		guard let queue = device?.makeCommandQueue(),
 		      let buffer = queue.makeCommandBuffer()
 		else {

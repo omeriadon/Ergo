@@ -262,7 +262,7 @@ import SwiftUI
 			}
 
 			func waitForTransitionCompletion(
-				_ transitionCoordinator: UIViewControllerTransitionCoordinator,
+				_ transitionCoordinator: any UIViewControllerTransitionCoordinator,
 				presenter: UIViewController
 			) -> Bool {
 				didDeferForTransition = true

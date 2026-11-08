@@ -18,7 +18,7 @@ import SwiftUI
 			weak var navigationController: UINavigationController?
 			weak var installedTitleView: UIView?
 			weak var navigationItem: UINavigationItem?
-			var hostedContentView: (UIView & UIContentView)?
+			var hostedContentView: (any UIView & UIContentView)?
 			var previousTitleView: UIView?
 			var widthConstraint: NSLayoutConstraint?
 			var heightConstraint: NSLayoutConstraint?
@@ -52,7 +52,7 @@ import SwiftUI
 				configure(titleView: titleView, navigation: navigation)
 			}
 
-			func titleWillAppear(for probe: ProbeViewController, transition: UIViewControllerTransitionCoordinator?) {
+			func titleWillAppear(for probe: ProbeViewController, transition: any UIViewControllerTransitionCoordinator?) {
 				let isNew = installedTitleView == nil
 				apply(to: probe)
 				guard let titleView = installedTitleView else { return }
@@ -64,7 +64,7 @@ import SwiftUI
 
 			/// Driven by the transition coordinator, so an interactive swipe scrubs the fade and a
 			/// cancelled one reverses it. Without a transition the change is immediate.
-			func fadeTitle(to alpha: CGFloat, transition: UIViewControllerTransitionCoordinator?) {
+			func fadeTitle(to alpha: CGFloat, transition: any UIViewControllerTransitionCoordinator?) {
 				guard let titleView = installedTitleView else { return }
 				guard let transition else {
 					titleView.alpha = alpha
@@ -171,7 +171,7 @@ import SwiftUI
 				.margins(.all, 0)
 			}
 
-			func makeContentView() -> UIView & UIContentView {
+			func makeContentView() -> any UIView & UIContentView {
 				makeConfiguration().makeContentView()
 			}
 
