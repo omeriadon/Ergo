@@ -52,11 +52,14 @@ enum AskIntents {
 
 			case .openBookmarks:
 				navigation.selectedTab = .library
+				// A sheet left open would hide the page
+				navigation.dismissSheet()
 				navigation.libraryPath.append(.bookmarks)
 
 			case let .openTab(tab):
 				guard let tab = AppTab(rawValue: tab) else { return }
 				navigation.selectedTab = tab
+				navigation.dismissSheet()
 
 			case let .askFollowUp(text):
 				store.draftFollowUp(text)

@@ -15,6 +15,9 @@ struct CanvasBoxModel: Equatable {
 
 	/// In the model so a role changing redraws the box. A hosted box can't read it from the app's environment.
 	var isReadOnly = false
+
+	/// How many current annotations the analysis has on this box. Passed in for the same reason as `isReadOnly`.
+	var annotationCount = 0
 }
 
 /// What one source shows, compared the same way
@@ -22,6 +25,7 @@ struct CanvasSourceModel: Equatable {
 	let source: BoardSource
 	let appearance: BoxAppearance
 	var isReadOnly = false
+	var annotationCount = 0
 }
 
 /// A source and the cards in its region. Where they are is read from the views, so the shape follows a drag.

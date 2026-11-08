@@ -48,7 +48,13 @@ enum TranslationRun<Output: Hashable>: Hashable {
 		self = .running(progress, task)
 	}
 
-	/// Closing the socket makes the server stop too. A run that's over keeps what it ended with.
+	/// Hearing a run again from the start, after the connection dropped
+	mutating func restartProgress() {
+		guard case let .running(_, task) = self else { return }
+		self = .running(TranslationProgress(), task)
+	}
+
+	/// Cancelling tells the server to stop too, if it can be reached. A run that's over keeps what it ended with.
 	mutating func cancel() {
 		guard case let .running(_, task) = self else { return }
 		task.cancel()

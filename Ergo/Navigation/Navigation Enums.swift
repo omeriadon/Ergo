@@ -8,6 +8,7 @@
 import AppIntents
 import Defaults
 import ErgoShare
+import ErgoSync
 import SwiftUI
 
 /// Your four root tabs
@@ -44,7 +45,13 @@ enum AppSheet: Hashable, Identifiable, Codable, Defaults.Serializable {
 	case boards
 	case shared(SharedItem)
 	case breakDownSource(BoardSource.ID)
+
+	/// The breakdown that was running when the app was closed, found again from `Defaults[.pendingBreakDown]`
+	case resumeBreakDown
 	case boardPeople(Board.ID)
+
+	/// What a board's analysis found, all of it or just what's about one thing
+	case boardAnalysis(Board.ID, focus: BoardAnalysisTarget?)
 
 	/// The invite link's token, kept with the sheet like `shared`'s item, so a link opened before the app was killed still opens
 	case joinBoard(String)

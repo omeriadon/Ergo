@@ -31,6 +31,12 @@ struct SharingClientTests {
 		try await client.unregisterPushDevice()
 	}
 
+	@Test func analysisStartsWithTheRequestAndStopsWithoutOne() async throws {
+		let request = BoardAnalysisRequest(run: UUID(), provider: .claude, statements: [.init(id: UUID(), english: "It rained.")], links: [], sources: [])
+		try await client.startBoardAnalysis(board: Self.board, request)
+		try await client.stopBoardAnalysis(board: Self.board)
+	}
+
 	@Test func acceptingSendsTheTokenInTheBody() async throws {
 		let joined = try await client.acceptBoardInvite(token: "abc", name: "Sam")
 		#expect(joined == JoinedBoard(board: Self.board, role: .editor))
@@ -104,6 +110,10 @@ final class SharingStub: URLProtocol {
 			     ("DELETE", "/v1/boards/\(board)/members/\(member)"),
 			     ("DELETE", "/v1/boards/\(board)/share"),
 			     ("DELETE", "/v1/push/device"):
+				return (204, Data())
+			case ("POST", "/v1/boards/\(board)/analysis"):
+				return (try? ErgoProtocol.decoder.decode(BoardAnalysisRequest.self, from: body))?.problem == nil ? (202, Data()) : (400, Data())
+			case ("DELETE", "/v1/boards/\(board)/analysis"):
 				return (204, Data())
 			case ("POST", "/v1/boards/\(board)/members/\(member)"):
 				return (try? ErgoProtocol.decoder.decode(UpdateBoardMember.self, from: body)) == UpdateBoardMember(role: .viewer) ? (204, Data()) : (400, Data())

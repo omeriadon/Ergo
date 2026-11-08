@@ -82,3 +82,82 @@ private nonisolated func yearFields(_ year: Int) -> [CatalogSearchField] {
 	}
 	return fields
 }
+
+extension CatalogStore {
+	/// Everything in the library, as something to search
+	var searchEntries: [LibrarySearchEntry] {
+		let biasResults = biases.biases.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .biases,
+				searchFields: entry.searchFields
+			)
+		}
+		let conceptResults = concepts.concepts.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .concepts,
+				searchFields: entry.searchFields
+			)
+		}
+		let fallacyResults = fallacies.fallacies.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .fallacies,
+				searchFields: entry.searchFields
+			)
+		}
+		let symbolResults = logicSymbols.symbols.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .symbols,
+				searchFields: entry.searchFields
+			)
+		}
+		let paradoxResults = paradoxes.paradoxes.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .paradoxes,
+				searchFields: entry.searchFields
+			)
+		}
+		let philosopherResults = philosophers.philosophers.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .philosophers,
+				searchFields: entry.searchFields
+			)
+		}
+		let razorResults = razors.razors.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .razors,
+				searchFields: entry.searchFields
+			)
+		}
+		let argumentResults = arguments.arguments.map { entry in
+			LibrarySearchEntry(
+				id: entry.id,
+				name: entry.name,
+				category: .arguments,
+				searchFields: entry.searchFields
+			)
+		}
+		var entries = biasResults
+		entries += conceptResults
+		entries += fallacyResults
+		entries += symbolResults
+		entries += paradoxResults
+		entries += philosopherResults
+		entries += razorResults
+		entries += argumentResults
+		return entries
+	}
+}

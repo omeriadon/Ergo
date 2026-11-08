@@ -168,7 +168,7 @@ struct SyncRecordTests {
 		#expect(!SyncKind.setting.isValid(id: "translationServer"))
 		#expect(SyncKind.bookmark.isValid(id: "fallacy.ad-hominem"))
 		#expect(!SyncKind.bookmark.isValid(id: ""))
-		#expect(SyncedSetting.allCases.map(\.rawValue) == ["logicLetters", "ditherEnabled", "translationProvider", "hapticsEnabled"])
+		#expect(SyncedSetting.allCases.map(\.rawValue) == ["logicLetters", "ditherEnabled", "translationProvider", "hapticsEnabled", "itemOfTheDayCategories", "agentInstructions"])
 	}
 
 	/// An older app still decodes a kind added later, so one new kind can't break everyone's sync

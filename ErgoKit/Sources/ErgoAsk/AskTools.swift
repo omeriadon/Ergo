@@ -25,12 +25,12 @@ public struct AskTools: Sendable {
 
 	// MARK: - Definitions
 
-	private static let categoryProperty: JSONValue = .object([
+	static let categoryProperty: JSONValue = .object([
 		"type": .string("string"),
 		"enum": .array(LibraryCatalog.categories.map(JSONValue.string)),
 	])
 
-	private static func schema(_ properties: [String: JSONValue], required: [String]) -> JSONValue {
+	static func schema(_ properties: [String: JSONValue], required: [String]) -> JSONValue {
 		.object([
 			"type": .string("object"),
 			"properties": .object(properties),
@@ -39,7 +39,7 @@ public struct AskTools: Sendable {
 		])
 	}
 
-	private static func definition(_ name: String, _ description: String, _ schema: JSONValue) -> JSONValue {
+	static func definition(_ name: String, _ description: String, _ schema: JSONValue) -> JSONValue {
 		.object(["name": .string(name), "description": .string(description), "inputSchema": schema])
 	}
 

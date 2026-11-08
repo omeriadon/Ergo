@@ -39,9 +39,11 @@ struct StatementBoxView: View, Equatable {
 	let statement: Statement
 	let relations: BoxRelations
 	let appearance: BoxAppearance
+	var annotationCount = 0
 
 	static func == (left: Self, right: Self) -> Bool {
 		left.statement == right.statement && left.relations == right.relations && left.appearance == right.appearance
+			&& left.annotationCount == right.annotationCount
 	}
 
 	var body: some View {
@@ -88,6 +90,8 @@ struct StatementBoxView: View, Equatable {
 			}
 
 			Spacer(minLength: 0)
+
+			AnnotationBadge(count: annotationCount)
 		}
 		.frame(height: 22)
 	}
@@ -104,6 +108,24 @@ struct StatementBoxView: View, Equatable {
 				shape.strokeBorder(Color.accent, style: StrokeStyle(lineWidth: 3, dash: [7, 5]))
 			case .normal, .unavailable:
 				shape.strokeBorder(.primary.opacity(0.18), lineWidth: 1)
+		}
+	}
+}
+
+// MARK: - Annotations
+
+/// How many annotations the analysis has on a box. It sits in the footer's spare room, so the box keeps its size.
+struct AnnotationBadge: View {
+	let count: Int
+
+	var body: some View {
+		if count > 0 {
+			Label("\(count)", systemImage: "text.magnifyingglass")
+				.font(.caption2.weight(.semibold))
+				.foregroundStyle(.tint)
+				.padding(.horizontal, 7)
+				.padding(.vertical, 3)
+				.background(Color.accent.opacity(0.15), in: Capsule())
 		}
 	}
 }

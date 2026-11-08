@@ -157,7 +157,8 @@ public struct ErgoClient: Sendable {
 	// MARK: - Sockets
 
 	/// Sends `opening`, then yields each message up to and including the one `isLast` picks.
-	/// If the consumer goes away first, `closing` is sent before the socket closes, so the server stops too.
+	/// If the consumer is cancelled first, `closing` is sent before the socket closes, so the server stops too. If the
+	/// connection just ends, as when the app is closed, nothing is sent, and a run that outlives its socket carries on.
 	func messages<Message: Decodable & Sendable>(
 		at path: String,
 		opening: String? = nil,

@@ -107,7 +107,7 @@ struct AskToolServerTests {
 		details: #"{"id":"straw-man"}"#
 	)
 
-	var server: AskToolServer {
+	var server: AskToolServer<AskTools> {
 		AskToolServer(tools: AskTools(catalog: LibraryCatalog(entries: [entry])))
 	}
 

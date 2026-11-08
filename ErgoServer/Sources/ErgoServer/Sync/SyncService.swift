@@ -195,8 +195,8 @@ struct SyncService: Sendable {
 		return pruned
 	}
 
-	/// Statements, links and sources, the kinds that belong to a board
-	private static let childKinds = [SyncKind.statement.rawValue, SyncKind.link.rawValue, SyncKind.source.rawValue]
+	/// Statements, links, sources and the analysis annotations and statuses, the kinds that belong to a board
+	private static let childKinds = [SyncKind.statement, .link, .source, .annotation, .analysis].map(\.rawValue)
 
 	private func prune(_ account: Account, before cutoff: Date, on database: any Database) async throws -> Int {
 		let id = try account.requireID()

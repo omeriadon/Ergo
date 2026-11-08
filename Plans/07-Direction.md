@@ -11,7 +11,7 @@ Where the product is heading. The four tabs, scratchpads, a first Ask and sharin
 Adon's checklist, in the order he wrote it. It isn't a schedule.
 
 - Check sharing works well.
-- The Board fully analyses its cards, arrows and links, and potentially gains more on top.
+- The Board fully analyses its cards, arrows and links, and potentially gains more on top. Built, see [10-BoardAnalysis.md](10-BoardAnalysis.md); not yet checked on devices.
 - Ask gets better thinking, and maybe more interactivity.
 - Widgets for all kinds of things.
 - Teach the user the logic language.
@@ -23,7 +23,7 @@ Adon's checklist, in the order he wrote it. It isn't a schedule.
 - Analytics as we go: log events when a feature needs them, rather than as a project of its own.
 - Send the current board into a chat.
 - Chat modes. Give the model a plain text argument, then debate it, or be mentored on it.
-- Find the fallacies and other problems in a text or web page. See [Finding problems in a text](#finding-problems-in-a-text).
+- Find the fallacies and other problems in a text or web page. See [Finding problems in a text](#finding-problems-in-a-text). Annotating a board's sources is built; making a board from the annotations isn't.
 
 ## The tabs
 
@@ -31,7 +31,7 @@ Adon's checklist, in the order he wrote it. It isn't a schedule.
 
 | Tab | What it is | State today |
 |---|---|---|
-| **Board** | A workspace for pulling arguments out of what you find and analysing them | Built: a canvas of cards, arrows and sources, with Break Down. No analysis yet |
+| **Board** | A workspace for pulling arguments out of what you find and analysing them | Built: a canvas of cards, arrows and sources, with Break Down and an analysis that annotates them from the library |
 | **Logic** | Writing and converting formal logic | Built: saved scratchpads |
 | **Ask** | An AI chat with tools over the library and your work | Built, early: tools over the library only |
 | **Library** | The catalog | Exists, and is the most settled part of the app |

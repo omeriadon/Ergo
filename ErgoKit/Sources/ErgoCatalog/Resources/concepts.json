@@ -5352,6 +5352,37 @@
       ]
     },
     {
+      "id": "cogency",
+      "name": "Cogency",
+      "aliases": [
+        "cogent argument"
+      ],
+      "symbolName": null,
+      "summary": "An inductive argument is cogent when it is inductively strong and its premises are true.",
+      "body": "Cogency is for inductive arguments what soundness is for deductive ones. An inductive argument is cogent when its premises, if true, make the conclusion probable, and its premises actually are true.\n\nAn inductively strong argument with a false premise is not cogent, however likely its conclusion would be on that premise. Cogency also depends on the evidence available: a strong argument that ignores relevant evidence is not cogent, because adding that evidence could weaken it.",
+      "origin": null,
+      "keyFigures": [],
+      "examples": [
+        {
+          "text": "“Every randomly chosen sample of this brand's batteries lasted over ten hours; so the next battery will probably last over ten hours” is cogent if the samples were in fact random and the results were as stated.",
+          "note": "The inference is inductively strong and the premises are true."
+        }
+      ],
+      "commonMisreadings": [
+        "Cogency is not certainty, because even a cogent argument can have a false conclusion.",
+        "A strong inductive inference alone is not cogent; the premises must also be true."
+      ],
+      "criticisms": [],
+      "lookalikes": [],
+      "related": [
+        "inductive-strength",
+        "soundness-of-an-argument"
+      ],
+      "tags": [
+        "logic-and-reasoning"
+      ]
+    },
+    {
       "id": "cognitive-architecture",
       "name": "Cognitive architecture",
       "aliases": [],

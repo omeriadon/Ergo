@@ -108,7 +108,7 @@ Wording examples: "Expected a token from 'claude setup-token', found an API key"
    - **Descriptors:** `TranslateRequest.descriptors` are the board's six letter names (empty for a free slot), shared by every statement. The pipeline gives each claim whose descriptor matches an existing one (case-insensitively) that slot, and each new claim the next free slot, in order. Breakdown is told the existing descriptors and prefers them as labels. Formalize is told which letter each claim has (`letters`) and which letters the board already names (`descriptors`), and a formula that uses any other letter is a compiler error fed back for another try. More new claims than free slots is an error issue ("Expected at most 1 new claim, found 2, the board's other letters are taken"). With no descriptors every claim takes the next letter in order, exactly as before.
    - **Limits, both scopes:** `EnglishValidator` (1,500 characters and the rest) answers with an issue and no model call, the grammar must match, and descriptors are checked as above.
 5. **Cancel.**
-   - `.cancel` or the socket closing cancels the task. Cancellation must **terminate the CLI process**: use swift-subprocess's teardown (SIGTERM, then SIGKILL after 2 s).
+   - `.cancel` or the socket closing cancels the task. (Later: Ask and the `argument` scope are detached runs that only `.cancel` stops, so a force quit app finds its answer again. See `ErgoServer/README.md`.) Cancellation must **terminate the CLI process**: use swift-subprocess's teardown (SIGTERM, then SIGKILL after 2 s).
    - Test it with a fake CLI that sleeps.
 6. **Map failures:**
    - `ProviderFailure` maps to a `ServiceError` code.

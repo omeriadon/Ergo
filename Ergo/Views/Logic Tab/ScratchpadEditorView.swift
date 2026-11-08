@@ -118,53 +118,12 @@ struct ScratchpadEditorView: View {
 	}
 
 	private var englishBox: some View {
-		ScrollView {
-			Text(scratchpad.english.isEmpty ? "The logic reads here as English" : scratchpad.english)
-				.foregroundStyle(scratchpad.english.isEmpty ? .secondary : .primary)
-				.textSelection(.enabled)
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.padding(15)
-				.padding(.trailing, 36)
-				.accessibilityIdentifier("logic.english")
-		}
-		.frame(maxWidth: .infinity, maxHeight: .infinity)
-		.overlay(alignment: .topTrailing) {
-			Button("Copy English", systemImage: "doc.on.doc") {
-				UIPasteboard.general.string = scratchpad.english
-			}
-			.labelStyle(.iconOnly)
-			.disabled(scratchpad.english.isEmpty)
-			.padding(15)
-			.accessibilityIdentifier("logic.copyEnglish")
-		}
-		.glassEffect(
-			.regular,
-			in: RoundedRectangle(cornerRadius: 20)
-		)
+		ScratchpadEnglishBox(english: scratchpad.english)
 	}
 
-	/// In a safe area inset, so it sits on top of the keyboard. Holding one keeps moving.
+	/// In a safe area inset, so it sits on top of the keyboard
 	private var cursorKeys: some View {
-		HStack(spacing: 10) {
-			Button("Move left", systemImage: "arrow.left") {
-				cursor.move(by: -1)
-			}
-			.accessibilityIdentifier("logic.cursorLeft")
-
-			Button("Move right", systemImage: "arrow.right") {
-				cursor.move(by: 1)
-			}
-			.accessibilityIdentifier("logic.cursorRight")
-
-			Spacer(minLength: 0)
-		}
-		.labelStyle(.iconOnly)
-		.buttonStyle(.glass)
-		.buttonBorderShape(.circle)
-		.controlSize(.large)
-		.buttonRepeatBehavior(.enabled)
-		.padding(.horizontal, 15)
-		.padding(.bottom, 8)
+		LogicCursorKeys(cursor: cursor)
 	}
 
 	@ContentBuilder
@@ -222,5 +181,64 @@ struct ScratchpadEditorView: View {
 		if scratchpad.english != english {
 			scratchpadBinding.wrappedValue.english = english
 		}
+	}
+}
+
+/// The English reading of the logic, which can only be copied
+struct ScratchpadEnglishBox: View {
+	let english: String
+
+	var body: some View {
+		ScrollView {
+			Text(english.isEmpty ? "The logic reads here as English" : english)
+				.foregroundStyle(english.isEmpty ? .secondary : .primary)
+				.textSelection(.enabled)
+				.frame(maxWidth: .infinity, alignment: .leading)
+				.padding(15)
+				.padding(.trailing, 36)
+				.accessibilityIdentifier("logic.english")
+		}
+		.frame(maxWidth: .infinity, maxHeight: .infinity)
+		.overlay(alignment: .topTrailing) {
+			Button("Copy English", systemImage: "doc.on.doc") {
+				UIPasteboard.general.string = english
+			}
+			.labelStyle(.iconOnly)
+			.disabled(english.isEmpty)
+			.padding(15)
+			.accessibilityIdentifier("logic.copyEnglish")
+		}
+		.glassEffect(
+			.regular,
+			in: RoundedRectangle(cornerRadius: 20)
+		)
+	}
+}
+
+/// Holding one keeps moving
+struct LogicCursorKeys: View {
+	let cursor: LogicEditorCursor
+
+	var body: some View {
+		HStack(spacing: 10) {
+			Button("Move left", systemImage: "arrow.left") {
+				cursor.move(by: -1)
+			}
+			.accessibilityIdentifier("logic.cursorLeft")
+
+			Button("Move right", systemImage: "arrow.right") {
+				cursor.move(by: 1)
+			}
+			.accessibilityIdentifier("logic.cursorRight")
+
+			Spacer(minLength: 0)
+		}
+		.labelStyle(.iconOnly)
+		.buttonStyle(.glass)
+		.buttonBorderShape(.circle)
+		.controlSize(.large)
+		.buttonRepeatBehavior(.enabled)
+		.padding(.horizontal, 15)
+		.padding(.bottom, 8)
 	}
 }

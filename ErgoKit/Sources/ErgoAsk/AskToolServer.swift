@@ -9,14 +9,16 @@ import ErgoProtocol
 import ErgoSync
 import Foundation
 
-/// The little of MCP the CLIs need to reach `AskTools`, over plain JSON-RPC: one message in, at most one out.
+/// The little of MCP the CLIs need to reach a run's tools, over plain JSON-RPC: one message in, at most one out.
 /// Both Claude Code and Codex speak this to a URL, so tool calls reach the server the same way for either.
-public struct AskToolServer: Sendable {
-	static let fallbackVersion = "2025-06-18"
+public struct AskToolServer<Tools: AskToolSet>: Sendable {
+	static var fallbackVersion: String {
+		"2025-06-18"
+	}
 
-	public let tools: AskTools
+	public let tools: Tools
 
-	public init(tools: AskTools) {
+	public init(tools: Tools) {
 		self.tools = tools
 	}
 
@@ -28,7 +30,7 @@ public struct AskToolServer: Sendable {
 
 	/// Empty when there's nothing to say back, which is the answer to a notification. `events` hears what the app should
 	/// know as tools run.
-	public func respond(to body: Data, events: @Sendable (AskServerMessage) async -> Void) async -> Data {
+	public func respond(to body: Data, events: @Sendable (Tools.Event) async -> Void) async -> Data {
 		guard let message = try? JSONDecoder().decode(Message.self, from: body) else {
 			return Self.failure(id: .null, code: -32700, "Expected a JSON-RPC message")
 		}
@@ -58,7 +60,7 @@ public struct AskToolServer: Sendable {
 				return Self.result(id: id, .object([:]))
 
 			case "tools/list":
-				return Self.result(id: id, .object(["tools": .array(AskTools.definitions)]))
+				return Self.result(id: id, .object(["tools": .array(tools.definitions)]))
 
 			case "tools/call":
 				guard case let .string(name)? = params["name"] else {
@@ -75,19 +77,17 @@ public struct AskToolServer: Sendable {
 		}
 	}
 
-	private func call(_ name: String, arguments: [String: JSONValue], id: JSONValue, events: @Sendable (AskServerMessage) async -> Void) async -> Data {
-		if let activity = tools.activity(name, arguments: arguments) {
-			await events(.tool(activity))
+	private func call(_ name: String, arguments: [String: JSONValue], id: JSONValue, events: @Sendable (Tools.Event) async -> Void) async -> Data {
+		if let running = tools.event(running: name, arguments: arguments) {
+			await events(running)
 		}
 
 		do {
-			switch try tools.call(name, arguments: arguments) {
-				case let .text(text):
-					return Self.toolResult(id: id, text, isError: false)
-				case let .action(action, text):
-					await events(.action(action))
-					return Self.toolResult(id: id, text, isError: false)
+			let reply = try tools.reply(to: name, arguments: arguments)
+			if let event = reply.event {
+				await events(event)
 			}
+			return Self.toolResult(id: id, reply.text, isError: false)
 		} catch {
 			// Reported as a result, not a protocol error, so the model reads it and can put it right
 			return Self.toolResult(id: id, error.message, isError: true)

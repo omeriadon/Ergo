@@ -12,9 +12,9 @@ import Foundation
 // the server when the board's tombstone is pruned, the replica the same way.
 
 public extension SyncRecord {
-	/// The board a statement, link or source belongs to. Nil for other kinds, or before its `board` field is set.
+	/// The board a statement, link, source, annotation or analysis belongs to. Nil for other kinds, or before its `board` field is set.
 	var owningBoard: String? {
-		guard kind == .statement || kind == .link || kind == .source, case let .string(board)? = fields[SyncFieldName.board]?.value else {
+		guard kind == .statement || kind == .link || kind == .source || kind == .annotation || kind == .analysis, case let .string(board)? = fields[SyncFieldName.board]?.value else {
 			return nil
 		}
 		return board
@@ -33,7 +33,7 @@ public extension SyncRecord {
 }
 
 public extension SyncReplica {
-	/// Whether the app must ignore this record: a statement, link or source whose board is deleted or missing, or a link
+	/// Whether the app must ignore this record: a statement, link, source, annotation or analysis whose board is deleted or missing, or a link
 	/// whose premise or conclusion statement is deleted or missing. False for every other kind.
 	///
 	/// Records arrive in the order they changed, so a board can be missing only because it hasn't arrived yet.
@@ -46,7 +46,7 @@ public extension SyncReplica {
 		}
 
 		switch record.kind {
-			case .statement, .source:
+			case .statement, .source, .annotation, .analysis:
 				return record.owningBoard.map { missing(.board, $0) } ?? true
 			case .link:
 				guard let board = record.owningBoard, let ends = record.joined else { return true }

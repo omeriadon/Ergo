@@ -50,7 +50,7 @@ struct SettingsView: View {
 						LabeledContent {
 							Text(translationValue)
 						} label: {
-							Label("Logic Translation", systemImage: "translate")
+							Label("AI", systemImage: "sparkles")
 						}
 					}
 					.accessibilityIdentifier("settings.translation")

@@ -364,6 +364,44 @@ struct TranslateSocketTests {
 		}
 	}
 
+	@Test func aBreakdownCarriesOnWhenItsSocketCloses() async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+		var config = ServerConfig.testing(scratch)
+		config.claudePath = try FakeCLI.claude(in: scratch, ["gate": FakeCLI.sleeping(in: scratch)])
+
+		try await withLiveServer(config) { app, server in
+			let (client, account) = try await signIn(app, server)
+			var asked = request()
+			asked.scope = .argument
+
+			var url = try #require(URLComponents(url: server.appending(path: ErgoProtocol.Path.translate), resolvingAgainstBaseURL: false))
+			url.scheme = "ws"
+			var socketRequest = try URLRequest(url: #require(url.url))
+			socketRequest.setValue(String(ErgoProtocol.version), forHTTPHeaderField: ErgoProtocol.versionHeader)
+			socketRequest.setValue("Bearer \(account.token)", forHTTPHeaderField: "Authorization")
+
+			// An app that is force quit: the connection just ends, and no `cancel` is sent
+			let socket = URLSession.shared.webSocketTask(with: socketRequest)
+			socket.resume()
+			let opening = try ErgoProtocol.encoder.encode(TranslateClientMessage.translate(asked))
+			try await socket.send(.string(String(decoding: opening, as: UTF8.self)))
+			#expect(try await eventually { pid("pid", in: scratch) != nil })
+			let cli = try #require(pid("pid", in: scratch))
+			socket.cancel(with: .goingAway, reason: nil)
+
+			try await Task.sleep(for: .seconds(1))
+			#expect(isRunning(cli))
+
+			// The app comes back and sends the same request, which joins the run. Cancelling that is what stops it.
+			let again = Task { try await breakdownMessages(client, asked) }
+			try await Task.sleep(for: .milliseconds(500))
+			#expect(isRunning(cli))
+			again.cancel()
+			#expect(try await eventually { !isRunning(cli) })
+		}
+	}
+
 	// MARK: - Refusing
 
 	@Test(arguments: [Provider.claude, .codex])

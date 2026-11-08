@@ -40,6 +40,8 @@ func configure(
 	}
 	let sender = push ?? PushSender.live(config: config, client: { [weak app] in app?.client }, logger: app.logger)
 	app.ergo = try ErgoServices(config: config, verifier: verifier, apple: apple, push: sender)
+	app.lifecycle.use(app.ergo.analyses.jobs)
+	app.lifecycle.use(DetachedRunsShutdown(app.ergo.detached))
 	app.passwords.use(.bcrypt(cost: config.passwordCost))
 
 	if let postgres = config.postgres {

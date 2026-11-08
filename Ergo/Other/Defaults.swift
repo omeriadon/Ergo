@@ -35,6 +35,9 @@ extension Defaults.Keys {
 	static let hapticsEnabled = Key<Bool>("hapticsEnabled", default: true)
 
 	static let translationProvider = Key<Provider>("translationProvider", default: .claude)
+
+	/// What the person tells the agent about how to answer, like how concise to be. Sent with every Ask and board analysis.
+	static let agentInstructions = Key<String>("agentInstructions", default: "")
 }
 
 // MARK: - This device only
@@ -42,10 +45,14 @@ extension Defaults.Keys {
 extension Defaults.Keys {
 	static let selectedTab = Key<AppTab>("selectedTab", default: .board)
 
-	/// Conversations stay on the device for now. The server only ever sees the one being answered.
+	/// Conversations stay on the device for now. The server only ever sees the one being answered, and keeps that answer for
+	/// an hour after it ends, in memory, in case the app was closed before it arrived.
 	static let askConversations = Key<[AskConversation]>("askConversations", default: [])
 
 	static let currentAskConversationID = Key<AskConversation.ID?>("currentAskConversationID", default: nil)
+
+	/// The breakdown the server is working on, so closing the app doesn't lose it. Names a run on this device's account.
+	static let pendingBreakDown = Key<PendingBreakDown?>("pendingBreakDown", default: nil)
 
 	static let libraryPath = Key<[LibraryRoute]>("libraryPath", default: [])
 

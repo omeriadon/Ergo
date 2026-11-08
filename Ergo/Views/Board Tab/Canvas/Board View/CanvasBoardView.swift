@@ -7,6 +7,7 @@
 
 import Defaults
 import ErgoLogic
+import ErgoSync
 import SwiftUI
 import UIKit
 
@@ -56,6 +57,9 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 	var cells: [Statement.ID: CanvasBoxCell] = [:]
 	var arrows: [Link.ID: CanvasArrow] = [:]
 	var links: [Link] = []
+
+	/// What the analysis made of each arrow, for how its line is drawn
+	var strengths: [Link.ID: BoardArrowStrength] = [:]
 	var sourceCells: [BoardSource.ID: CanvasSourceCell] = [:]
 	var regions: [CanvasRegionModel] = []
 	var regionLayers: [BoardSource.ID: CanvasRegionLayer] = [:]
@@ -184,6 +188,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 	func update(
 		boxes: [CanvasBoxModel],
 		links: [Link],
+		strengths: [Link.ID: BoardArrowStrength],
 		sources: [CanvasSourceModel],
 		regions: [CanvasRegionModel],
 		selectedStatement: Statement.ID?,
@@ -230,6 +235,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 		}
 
 		self.links = links
+		self.strengths = strengths
 		self.regions = regions
 		self.selectedStatement = selectedStatement
 		self.selectedLink = selectedLink

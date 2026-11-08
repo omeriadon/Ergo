@@ -42,6 +42,9 @@ struct StageModels: Codable, Sendable, Hashable {
 	/// the library first, so it gets a stronger model than the stages' small jobs.
 	static let ask = "ask"
 
+	/// Board analysis runs like Ask, with `ask`'s models, but has instructions of its own
+	static let analyse = "analyse"
+
 	static let defaults = StageModels(
 		claude: Dictionary(uniqueKeysWithValues: stages.map { ($0, Choice(model: "claude-haiku-5-5", effort: "medium")) })
 			.merging([ask: Choice(model: "claude-sonnet-5-5", effort: "medium")]) { _, new in new },

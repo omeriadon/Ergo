@@ -83,6 +83,9 @@ func routes(_ app: Application) throws {
 	synced.delete(boardMember, use: BoardSharingController.removeMember)
 	synced.delete(ErgoProtocol.Path.boardShare(":board").pathComponents, use: BoardSharingController.stopSharing)
 	synced.post(ErgoProtocol.Path.inviteAccept.pathComponents, use: BoardSharingController.accept)
+	let boardAnalysis = ErgoProtocol.Path.boardAnalysis(":board").pathComponents
+	synced.on(.POST, boardAnalysis, body: .collect(maxSize: "2mb"), use: BoardAnalysisController.start)
+	synced.delete(boardAnalysis, use: BoardAnalysisController.stop)
 	synced.put(ErgoProtocol.Path.pushDevice.pathComponents, use: PushController.register)
 	synced.delete(ErgoProtocol.Path.pushDevice.pathComponents, use: PushController.unregister)
 }

@@ -6,12 +6,17 @@
 //
 
 import ErgoProtocol
+import Fluent
 import Foundation
+import Logging
 import NIOCore
 import Vapor
 
 /// `WS v1/ask`: waits for one request, sends the answer as it's written and what its tools do, then `.finished`, and closes.
-/// Sending `.cancel` or closing the socket cancels the work, which stops the CLI.
+///
+/// The answer is a detached run (`DetachedRuns`), so it carries on if the socket closes, which is how a force quit app
+/// finds it when it comes back: it sends the same request again, and the run's id says it's the same one. Only
+/// `.cancel` stops the CLI.
 struct AskSocket {
 	let request: Request
 	let socket: WebSocket
@@ -58,12 +63,13 @@ struct AskSocket {
 			} catch {}
 		}
 
-		// Only this loop touches `work`, and it lasts until the socket closes
-		var work: Task<Void, Never>?
+		// Only this loop touches these, and they last until the socket closes
+		var run: UUID?
+		var forwarding: Task<Void, Never>?
 		for await message in incoming {
 			switch message {
 				case .waitedTooLong:
-					if work == nil {
+					if run == nil {
 						await finish(.failed(ServiceError(
 							code: .timedOut,
 							message: "Expected an ask request within \(config.requestWait.spelledOut)"
@@ -72,21 +78,27 @@ struct AskSocket {
 
 				case let .text(text):
 					switch try? ErgoProtocol.decoder.decode(AskClientMessage.self, from: Data(text.utf8)) {
-						case let .ask(ask)? where work == nil:
+						case let .ask(ask)? where run == nil:
 							timer.cancel()
-							work = Task {
-								await answer(ask, account: account)
+							do {
+								let stream = try start(ask, account: account)
+								run = ask.id
+								forwarding = Task {
+									await forward(stream)
+								}
+							} catch {
+								await finish(.failed(error as? ServiceError ?? .internalFailure))
 							}
 						case .ask?:
 							// The protocol has one request per socket, so a second one changes nothing
 							break
 						case .cancel?:
-							if let work {
-								work.cancel()
+							if let run {
+								request.ergo.detached.cancel(run: run, account: account)
 							} else {
 								await close()
 							}
-						case nil where work == nil:
+						case nil where run == nil:
 							await finish(.failed(ServiceError(code: .invalidRequest, message: "Expected an ask request")))
 						case nil:
 							break
@@ -95,26 +107,56 @@ struct AskSocket {
 		}
 
 		timer.cancel()
-		work?.cancel()
-		await work?.value
+		// Only this connection stops listening. The run carries on without it.
+		forwarding?.cancel()
 	}
 
-	private func answer(_ ask: AskRequest, account: UUID) async {
-		let port = request.application.http.server.shared.localAddress?.port ?? request.application.http.server.configuration.port
-		let reply: AskServerMessage
-		do {
-			try await request.ergo.ask.ask(ask, port: port, account: account, database: request.db, logger: request.logger) { message in
-				await send(message)
+	/// Starts the answer, or joins it when the account already has a run with this id. It outlives this request, so it
+	/// uses the application's database and logger, never the request's.
+	private func start(_ ask: AskRequest, account: UUID) throws -> AsyncStream<String> {
+		let application = request.application
+		let port = application.http.server.shared.localAddress?.port ?? application.http.server.configuration.port
+		let service = request.ergo.ask
+		let database = application.db
+		let logger = application.logger
+
+		return try request.ergo.detached.start(run: ask.id, account: account) { emit in
+			await Self.answer(ask, account: account, port: port, service: service, database: database, logger: logger, emit: emit)
+		}
+	}
+
+	private static func answer(
+		_ ask: AskRequest,
+		account: UUID,
+		port: Int,
+		service: AskService,
+		database: any Database,
+		logger: Logger,
+		emit: @escaping DetachedRuns.Emit
+	) async {
+		let say: @Sendable (AskServerMessage) -> Void = { message in
+			if let data = try? ErgoProtocol.encoder.encode(message) {
+				emit(String(decoding: data, as: UTF8.self))
 			}
-			reply = .finished
+		}
+
+		do {
+			try await service.ask(ask, port: port, account: account, database: database, logger: logger) { message in
+				say(message)
+			}
+			say(.finished)
 		} catch {
 			// Whoever cancelled has stopped listening
-			guard !Task.isCancelled, !(error is CancellationError) else {
-				return await close()
-			}
-			reply = .failed(error as? ServiceError ?? .internalFailure)
+			guard !Task.isCancelled, !(error is CancellationError) else { return }
+			say(.failed(error as? ServiceError ?? .internalFailure))
 		}
-		await send(reply)
+	}
+
+	/// Sends what the run says to this socket, and closes it when the run is over
+	private func forward(_ stream: AsyncStream<String>) async {
+		for await text in stream {
+			try? await socket.send(text)
+		}
 		await close()
 	}
 

@@ -20,6 +20,7 @@ struct ErgoApp: App {
 	@State private var boardStore: BoardStore
 	@State private var scratchpadStore: ScratchpadStore
 	@State private var askStore = AskStore()
+	@State private var analysisStore: BoardAnalysisStore
 	@State private var translationAccount: TranslationAccount
 	@State private var sync: SyncController
 
@@ -32,13 +33,15 @@ struct ErgoApp: App {
 		let boardStore = BoardStore()
 		let scratchpadStore = ScratchpadStore()
 		let translationAccount = TranslationAccount()
+		let analysisStore = BoardAnalysisStore()
 
 		_navigation = State(initialValue: navigation)
 		_catalog = State(initialValue: catalog)
 		_boardStore = State(initialValue: boardStore)
 		_scratchpadStore = State(initialValue: scratchpadStore)
 		_translationAccount = State(initialValue: translationAccount)
-		let sync = SyncController(account: translationAccount, boardStore: boardStore, scratchpadStore: scratchpadStore, catalog: catalog)
+		_analysisStore = State(initialValue: analysisStore)
+		let sync = SyncController(account: translationAccount, boardStore: boardStore, scratchpadStore: scratchpadStore, catalog: catalog, analysis: analysisStore)
 		_sync = State(initialValue: sync)
 
 		AskIntents.prepare()
@@ -64,6 +67,7 @@ struct ErgoApp: App {
 				.environment(boardStore)
 				.environment(scratchpadStore)
 				.environment(askStore)
+				.environment(analysisStore)
 				.environment(translationAccount)
 				.environment(sync)
 				.task {
@@ -85,6 +89,9 @@ struct ErgoApp: App {
 				}
 				.task {
 					navigation.startup()
+					// Answers and breakdowns the server carried on with while the app was closed
+					askStore.resumeInterrupted(account: translationAccount)
+					navigation.resumeBreakDown()
 					receiveShared()
 
 					do {
@@ -104,6 +111,7 @@ struct ErgoApp: App {
 			} else {
 				// The extension can't always open the app, so whatever it left is picked up on the way back in
 				receiveShared()
+				askStore.resumeInterrupted(account: translationAccount)
 			}
 			sync.scenePhaseChanged(phase)
 		}

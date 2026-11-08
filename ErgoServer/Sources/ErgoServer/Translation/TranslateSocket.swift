@@ -13,6 +13,9 @@ import Vapor
 
 /// `WS v1/translate`: waits for one request, sends each pipeline event as it happens, then the translation, and closes.
 /// Sending `.cancel` or closing the socket cancels the work, which stops the CLI.
+///
+/// Except for an argument (Break Down), which is a detached run (`DetachedRuns`): it carries on if the socket closes, so
+/// a force quit app finds the breakdown when it comes back by sending the same request again. Only `.cancel` stops it.
 struct TranslateSocket {
 	let request: Request
 	let socket: WebSocket
@@ -59,12 +62,14 @@ struct TranslateSocket {
 			} catch {}
 		}
 
-		// Only this loop touches `work`, and it lasts until the socket closes
+		// Only this loop touches these, and they last until the socket closes
 		var work: Task<Void, Never>?
+		var run: UUID?
+		var forwarding: Task<Void, Never>?
 		for await message in incoming {
 			switch message {
 				case .waitedTooLong:
-					if work == nil {
+					if work == nil, run == nil {
 						await finish(.failed(ServiceError(
 							code: .timedOut,
 							message: "Expected a translate request within \(config.requestWait.spelledOut)"
@@ -73,21 +78,37 @@ struct TranslateSocket {
 
 				case let .text(text):
 					switch try? ErgoProtocol.decoder.decode(TranslateClientMessage.self, from: Data(text.utf8)) {
-						case let .translate(translate)? where work == nil:
+						case let .translate(translate)? where work == nil && run == nil:
 							timer.cancel()
-							work = Task {
-								await self.translate(translate, account: account)
+							switch translate.scope {
+								case .statement:
+									work = Task {
+										await self.translate(translate, account: account)
+									}
+								case .argument:
+									do {
+										let stream = try startBreakDown(translate, account: account)
+										run = translate.id
+										forwarding = Task {
+											await forward(stream)
+										}
+									} catch {
+										// Coded like a breakdown's own failure
+										await finish(.failed(error as? ServiceError ?? .internalFailure))
+									}
 							}
 						case .translate?:
 							// The protocol has one request per socket, so a second one changes nothing
 							break
 						case .cancel?:
-							if let work {
+							if let run {
+								request.ergo.detached.cancel(run: run, account: account)
+							} else if let work {
 								work.cancel()
 							} else {
 								await close()
 							}
-						case nil where work == nil:
+						case nil where work == nil && run == nil:
 							await finish(.failed(ServiceError(code: .invalidRequest, message: "Expected a translate request")))
 						case nil:
 							break
@@ -98,20 +119,51 @@ struct TranslateSocket {
 		timer.cancel()
 		work?.cancel()
 		await work?.value
+		// Only this connection stops listening. A breakdown carries on without it.
+		forwarding?.cancel()
 	}
 
-	/// The scope picks which message type answers: a statement ends with a `Translation`, an argument with its breakdown
+	/// Starts the breakdown, or joins it when the account already has a run with this id. It outlives this request, so it
+	/// uses the application's database and logger, never the request's.
+	private func startBreakDown(_ translate: TranslateRequest, account: UUID) throws -> AsyncStream<String> {
+		let application = request.application
+		let service = request.ergo.translations
+		let database = application.db
+		let logger = application.logger
+
+		return try request.ergo.detached.start(run: translate.id, account: account) { emit in
+			let say: @Sendable (BreakDownServerMessage) -> Void = { message in
+				if let data = try? ErgoProtocol.encoder.encode(message) {
+					emit(String(decoding: data, as: UTF8.self))
+				}
+			}
+
+			do {
+				let breakdown = try await service.breakDown(translate, account: account, database: database, logger: logger) { event in
+					say(.event(event))
+				}
+				say(.finished(breakdown))
+			} catch {
+				// Whoever cancelled has stopped listening
+				guard !Task.isCancelled, !(error is CancellationError) else { return }
+				say(.failed(error as? ServiceError ?? .internalFailure))
+			}
+		}
+	}
+
+	/// Sends what the run says to this socket, and closes it when the run is over
+	private func forward(_ stream: AsyncStream<String>) async {
+		for await text in stream {
+			try? await socket.send(text)
+		}
+		await close()
+	}
+
+	/// A statement, which ends with a `Translation`. Only Evals asks for one, and it stops when the socket closes.
 	private func translate(_ translate: TranslateRequest, account: UUID) async {
 		let service = request.ergo.translations
-		switch translate.scope {
-			case .statement:
-				await answer(TranslateServerMessage.finished, failed: TranslateServerMessage.failed, event: TranslateServerMessage.event) { events in
-					try await service.translate(translate, account: account, database: request.db, logger: request.logger, events: events)
-				}
-			case .argument:
-				await answer(BreakDownServerMessage.finished, failed: BreakDownServerMessage.failed, event: BreakDownServerMessage.event) { events in
-					try await service.breakDown(translate, account: account, database: request.db, logger: request.logger, events: events)
-				}
+		await answer(TranslateServerMessage.finished, failed: TranslateServerMessage.failed, event: TranslateServerMessage.event) { events in
+			try await service.translate(translate, account: account, database: request.db, logger: request.logger, events: events)
 		}
 	}
 

@@ -19,6 +19,19 @@ struct AskConversation: Codable, Hashable, Identifiable, Defaults.Serializable {
 	var name = ""
 	var messages: [AskMessage] = []
 
+	/// An answer the server is writing. It carries on if the app is closed, so this is kept to pick it up again.
+	var pending: PendingAnswer?
+
+	/// Which run on the server is writing an answer, and where the answer goes
+	struct PendingAnswer: Codable, Hashable {
+		/// The run's name on the server. Asking again with it hears the same answer.
+		var run: UUID
+
+		/// The message it writes into, which doesn't exist until something arrives for it
+		var answer: AskMessage.ID
+		var started: Date
+	}
+
 	/// Its name, else the first thing asked
 	var title: String {
 		if let name = name.trimmedNonEmpty {

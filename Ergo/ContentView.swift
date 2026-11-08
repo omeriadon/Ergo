@@ -168,8 +168,14 @@ struct ContentView: View {
 				case let .breakDownSource(id):
 					SourceBreakDownSheet(id: id)
 
+				case .resumeBreakDown:
+					ResumedBreakDownSheet()
+
 				case let .boardPeople(board):
 					BoardPeopleSheet(board: board)
+
+				case let .boardAnalysis(board, focus):
+					BoardAnalysisSheet(board: board, focus: focus)
 
 				case let .joinBoard(token):
 					JoinBoardSheet(token: token)

@@ -7,6 +7,7 @@ Ergo's design docs. Most of them are plans that have since been built, kept for 
 | [07-Direction.md](07-Direction.md) | Where the product is heading, and the checklist of what's next | Current |
 | [HANDOFF.md](HANDOFF.md) | What a new agent needs beyond `CLAUDE.md` | Current |
 | [09-Sharing.md](09-Sharing.md) | Sharing boards by link, and pushes | Built and deployed, not yet checked on devices |
+| [10-BoardAnalysis.md](10-BoardAnalysis.md) | A server-side agent that annotates a board with library entries | Built, not yet checked on devices |
 | [00-Translation.md](00-Translation.md) | The original plan: the server, ErgoKit and translation | Built, historical |
 | [01-ErgoKit.md](01-ErgoKit.md) · [02-Server.md](02-Server.md) · [03-App.md](03-App.md) · [04-Evals.md](04-Evals.md) | The phases of that plan | Built, historical |
 | [05-Sync.md](05-Sync.md) | Sync | Built, historical |

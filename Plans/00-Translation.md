@@ -39,7 +39,7 @@ App ──WS /v1/translate──▶ Vapor ──▶ TranslationPipeline (ErgoTra
 1. The app validates the English locally (`EnglishValidator`), then opens a WebSocket and sends `translate`.
 2. The server looks up the user's connection for the chosen provider, decrypts it, and runs `TranslationPipeline` with a `ProviderBackend`.
 3. Every pipeline step emits a `TranslationEvent`. The server forwards each one straight away, which is the streaming.
-4. The server finishes with `finished(Translation)` or `failed(ServiceError)`. Closing the socket or sending `cancel` kills the running CLI process.
+4. The server finishes with `finished(Translation)` or `failed(ServiceError)`. Closing the socket or sending `cancel` kills the running CLI process. (Break Down, scope `argument`, is the exception: it is a detached run that survives its socket, and only `cancel` stops it. See `ErgoServer/README.md`.)
 5. The app re-parses the returned entries before applying them. It never trusts the server blindly.
 
 ## Phases

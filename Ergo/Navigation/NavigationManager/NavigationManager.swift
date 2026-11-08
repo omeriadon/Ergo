@@ -6,6 +6,7 @@
 //
 
 import Defaults
+import ErgoShare
 import SwiftUI
 
 @MainActor
@@ -84,6 +85,22 @@ final class NavigationManager {
 
 	func presentSheet(_ sheet: AppSheet) {
 		presentedSheet = sheet
+	}
+
+	// MARK: - resumeBreakDown
+
+	/// Opens the breakdown that was running when the app was closed. A restored sheet that is breaking down something
+	/// picks it up itself, so it's left alone.
+	func resumeBreakDown() {
+		guard Defaults[.pendingBreakDown] != nil else { return }
+		switch presentedSheet {
+			case .breakDownSource?:
+				return
+			case let .shared(item)? where item.action == .breakDown:
+				return
+			default:
+				presentSheet(.resumeBreakDown)
+		}
 	}
 
 	// MARK: - dismissSheet

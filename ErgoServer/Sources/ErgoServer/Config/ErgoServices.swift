@@ -7,6 +7,7 @@
 
 import ErgoAsk
 import ErgoCatalog
+import ErgoProtocol
 import Foundation
 import Vapor
 
@@ -25,7 +26,11 @@ struct ErgoServices: Sendable {
 	let dummyPasswordHash: String
 	let translations: TranslationService
 	let ask: AskService
-	let askTools: AskToolServer
+	let askTools: AskToolServer<AskTools>
+	let analyses: BoardAnalysisService
+
+	/// Asks and breakdowns, which carry on when the app that started them is closed. See `DetachedRuns`.
+	let detached = DetachedRuns()
 	let verifier: ConnectionVerifier
 	let apple: AppleTokenVerifier
 	let syncLimits: SyncLimits
@@ -55,8 +60,11 @@ struct ErgoServices: Sendable {
 		dummyPasswordHash = try Bcrypt.hash(UUID().uuidString, cost: config.passwordCost)
 		let translations = TranslationService(vault: vault, config: config, runner: runner)
 		self.translations = translations
-		ask = AskService(translations: translations)
-		askTools = try AskToolServer(tools: AskTools(catalog: LibraryCatalog.load()))
+		let catalog = try LibraryCatalog.load()
+		let askTools = AskToolServer(tools: AskTools(catalog: catalog))
+		self.askTools = askTools
+		let ask = AskService(translations: translations, tools: askTools)
+		self.ask = ask
 		self.verifier = verifier ?? .live(config: config, runner: runner)
 		self.apple = apple ?? .live(applicationIdentifier: config.appleApplicationID)
 		syncLimits = SyncLimits(requestsPerMinute: config.syncsPerMinute)
@@ -68,6 +76,7 @@ struct ErgoServices: Sendable {
 		self.sharing = sharing
 		invitePreviewLimiter = CreateAccountLimiter(limit: config.invitePreviewsPerMinute, window: 60)
 		sync = SyncService(vault: vault, live: live, sharing: sharing, recordsPerAccount: config.recordsPerAccount)
+		analyses = BoardAnalysisService(translations: translations, runs: ask.runs, sharing: sharing, catalog: catalog)
 	}
 }
 

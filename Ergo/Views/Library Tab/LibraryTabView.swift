@@ -36,79 +36,7 @@ struct LibraryTabView: View {
 	private var libraryEntries: [LibrarySearchEntry] {
 		let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !query.isEmpty else { return [] }
-		let biasResults = catalog.biases.biases.map { entry in
-			LibrarySearchEntry(
-				id: entry.id,
-				name: entry.name,
-				category: .biases,
-				searchFields: entry.searchFields
-			)
-		}
-		let conceptResults = catalog.concepts.concepts.map { entry in
-			LibrarySearchEntry(
-				id: entry.id,
-				name: entry.name,
-				category: .concepts,
-				searchFields: entry.searchFields
-			)
-		}
-		let fallacyResults = catalog.fallacies.fallacies.map { entry in
-			LibrarySearchEntry(
-				id: entry.id,
-				name: entry.name,
-				category: .fallacies,
-				searchFields: entry.searchFields
-			)
-		}
-		let symbolResults = catalog.logicSymbols.symbols.map { entry in
-			LibrarySearchEntry(
-				id: entry.id,
-				name: entry.name,
-				category: .symbols,
-				searchFields: entry.searchFields
-			)
-		}
-		let paradoxResults = catalog.paradoxes.paradoxes.map { entry in
-			LibrarySearchEntry(
-				id: entry.id,
-				name: entry.name,
-				category: .paradoxes,
-				searchFields: entry.searchFields
-			)
-		}
-		let philosopherResults = catalog.philosophers.philosophers.map { entry in
-			LibrarySearchEntry(
-				id: entry.id,
-				name: entry.name,
-				category: .philosophers,
-				searchFields: entry.searchFields
-			)
-		}
-		let razorResults = catalog.razors.razors.map { entry in
-			LibrarySearchEntry(
-				id: entry.id,
-				name: entry.name,
-				category: .razors,
-				searchFields: entry.searchFields
-			)
-		}
-		let argumentResults = catalog.arguments.arguments.map { entry in
-			LibrarySearchEntry(
-				id: entry.id,
-				name: entry.name,
-				category: .arguments,
-				searchFields: entry.searchFields
-			)
-		}
-		var entries = biasResults
-		entries += conceptResults
-		entries += fallacyResults
-		entries += symbolResults
-		entries += paradoxResults
-		entries += philosopherResults
-		entries += razorResults
-		entries += argumentResults
-		return entries
+		return catalog.searchEntries
 	}
 
 	var scrollView: some View {
@@ -117,19 +45,11 @@ struct LibraryTabView: View {
 		return ScrollView {
 			if searchPresented {
 				if searchTerm.isEmpty {
-					VStack(spacing: 20) {
-						Image("Ergo")
-							.resizable()
-							.aspectRatio(contentMode: .fit)
-							.foregroundStyle(.accent.gradient)
-							.frame(width: 50, height: 50)
-						Text("Search anything")
-							.font(.title3)
-					}
-					.padding(.top, 90)
-					.listRowBackground(Color.clear)
-					.frame(maxWidth: .infinity, alignment: .center)
-					.transition(.opacity)
+					LibrarySearchPrompt()
+						.padding(.top, 90)
+						.listRowBackground(Color.clear)
+						.frame(maxWidth: .infinity, alignment: .center)
+						.transition(.opacity)
 				} else if results.isEmpty, searchTerm.count > 2 {
 					ContentUnavailableView.search(text: searchTerm)
 						.tint(.accent)
@@ -159,34 +79,8 @@ struct LibraryTabView: View {
 		let results = searchPresented ? searchResults : []
 
 		return ForEach(results) { result in
-			NavigationLink(
-				value: LibraryRoute.detail(category: result.category, id: result.id)
-			) {
-				HStack {
-					Label {
-						Text(result.name)
-					} icon: {
-						Image(systemName: result.category.symbol)
-							.foregroundStyle(.accent)
-					}
-					.font(.title3)
-					.frame(maxWidth: .infinity, alignment: .leading)
-					.labelIconToTitleSpacing(10)
-
-					Spacer()
-
-					Image(systemName: "chevron.right")
-						.foregroundStyle(.tertiary)
-						.imageScale(.large)
-				}
-				.contentShape(Rectangle())
-			}
-			.accessibilityIdentifier("library.search.\(result.category).\(result.id)")
-			.padding(.horizontal, 14)
-			.padding(.vertical, 13)
-			.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
-			.contentShape(RoundedRectangle(cornerRadius: 18))
-			.transition(.opacity)
+			LibrarySearchResultRow(result: result)
+				.transition(.opacity)
 		}
 	}
 

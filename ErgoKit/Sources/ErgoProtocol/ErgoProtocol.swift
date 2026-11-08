@@ -76,6 +76,12 @@ public enum ErgoProtocol {
 
 		/// WebSocket of `SyncLiveMessage`
 		public static let syncLive = "v1/sync/live"
+
+		/// POST `BoardAnalysisRequest` → 202, signed in. The run carries on without the request, and its results arrive as
+		/// `annotation` and `analysis` sync records. DELETE → 204 stops it, keeping what's been written.
+		public static func boardAnalysis(_ board: String) -> String {
+			"v1/boards/\(board)/analysis"
+		}
 	}
 
 	// MARK: - Coding

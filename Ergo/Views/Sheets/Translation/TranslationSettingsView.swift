@@ -18,6 +18,7 @@ struct TranslationSettingsView: View {
 	@Default(.serverEnvironment) var serverEnvironment
 	@Default(.translationServer) var translationServer
 	@Default(.translationProvider) var translationProvider
+	@Default(.agentInstructions) var instructions
 
 	@State private var disconnecting: Provider?
 
@@ -40,7 +41,17 @@ struct TranslationSettingsView: View {
 				}
 				.accessibilityIdentifier("translation.provider")
 			} footer: {
-				Text("Your own Claude or ChatGPT account does the translating. Works with Claude Pro or Max, ChatGPT Plus or Pro, or an API key for either.")
+				Text("Your own Claude or ChatGPT account answers your questions and analyses your boards. Works with Claude Pro or Max, ChatGPT Plus or Pro, or an API key for either.")
+			}
+
+			Section {
+				NavigationLink {
+					AgentInstructionsView()
+				} label: {
+					LabeledContent("Instructions", value: instructions.isEmpty ? "None" : instructions)
+						.lineLimit(1)
+				}
+				.accessibilityIdentifier("translation.instructions")
 			}
 
 			Section {
@@ -74,7 +85,7 @@ struct TranslationSettingsView: View {
 			}
 			.disabled(server == nil)
 		}
-		.toolbarTitleVire("Logic Translation", "translate")
+		.toolbarTitleVire("AI", "sparkles")
 		.confirmationDialog(
 			disconnecting.map { "Disconnect \($0.name)?" } ?? "",
 			isPresented: Binding(

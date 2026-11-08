@@ -11,6 +11,10 @@ import SwiftUI
 
 /// Every conversation, and which one the Ask tab is showing. Answers are kept here and not on a view, so one carries on
 /// while you're on another tab or another conversation, and only the stop button ends it.
+///
+/// An answer is written by the server, not by this app: closing or force quitting the app doesn't stop it. The question
+/// and the run it started are saved first, and `resumeInterrupted` asks for the same run again when the app is back, which
+/// hears the answer from the start.
 @MainActor
 @Observable
 final class AskStore {
@@ -171,34 +175,70 @@ final class AskStore {
 		answer(conversation.id, account: account)
 	}
 
-	/// Keeps what's been written so far. Closing the socket makes the server stop too.
+	/// Keeps what's been written so far. The server is told to stop too, if it can be reached.
 	func stop(_ id: AskConversation.ID) {
 		runs[id]?.task.cancel()
 		end(id)
 		save()
 	}
 
-	/// Notes how long the answer took, for the line above it
+	/// Notes how long the answer took, for the line above it, and that nothing's being written any more
 	private func end(_ id: AskConversation.ID) {
-		guard let run = runs.removeValue(forKey: id),
-		      var conversation = conversation(id),
-		      let index = conversation.messages.firstIndex(where: { $0.id == run.answerID })
-		else { return }
-		conversation.messages[index].seconds = Int(Date.now.timeIntervalSince(run.started).rounded())
+		guard let run = runs.removeValue(forKey: id), var conversation = conversation(id) else { return }
+		conversation.pending = nil
+		if let index = conversation.messages.firstIndex(where: { $0.id == run.answerID }) {
+			conversation.messages[index].seconds = Int(Date.now.timeIntervalSince(run.started).rounded())
+		}
 		write(conversation)
 	}
 
-	private func answer(_ id: AskConversation.ID, account: TranslationAccount) {
+	/// How many times a dropped connection is tried again before the answer is given up on
+	private static let reconnectAttempts = 5
+
+	/// Asks again for every answer that was being written when the app was closed. Nothing happens for one that's already running.
+	func resumeInterrupted(account: TranslationAccount) {
+		for conversation in conversations where runs[conversation.id] == nil {
+			guard let pending = conversation.pending else { continue }
+			answer(conversation.id, account: account, resuming: pending)
+		}
+	}
+
+	/// `resuming` is the answer that was being written, when this is picking it up again
+	private func answer(_ id: AskConversation.ID, account: TranslationAccount, resuming: AskConversation.PendingAnswer? = nil) {
 		failures[id] = nil
-		let messages = Self.request(from: conversation(id)?.messages ?? [])
-		// One message for the whole answer, added to as it arrives
-		let answerID = UUID()
+		let pending = resuming ?? AskConversation.PendingAnswer(run: UUID(), answer: UUID(), started: .now)
+		// Whatever of the answer there is already isn't part of the question
+		let messages = Self.request(from: (conversation(id)?.messages ?? []).filter { $0.id != pending.answer })
+
+		if resuming == nil, var conversation = conversation(id) {
+			conversation.pending = pending
+			write(conversation)
+		}
+		// The question and the run are saved now and not when the answer ends, since the app may be closed before that
+		save()
 
 		let task = Task {
+			var replaying = resuming != nil
+			var attempts = 0
 			do {
-				try await account.ask(messages: messages) { event in
-					guard !Task.isCancelled else { return }
-					apply(event, to: answerID, in: id)
+				while true {
+					do {
+						try await account.ask(id: pending.run, messages: messages) { event in
+							guard !Task.isCancelled else { return }
+							if replaying {
+								// The server says it all again from the start
+								replaying = false
+								discardAnswer(pending.answer, in: id)
+							}
+							apply(event, to: pending.answer, in: id)
+						}
+						break
+					} catch let lost as TranslationAccount.ConnectionLost {
+						attempts += 1
+						guard attempts <= Self.reconnectAttempts else { throw lost.underlying }
+						try await Task.sleep(for: .seconds(min(attempts * 2, 10)))
+						replaying = true
+					}
 				}
 				guard !Task.isCancelled else { return }
 				end(id)
@@ -211,7 +251,13 @@ final class AskStore {
 				save()
 			}
 		}
-		runs[id] = Run(task: task, answerID: answerID, started: .now)
+		runs[id] = Run(task: task, answerID: pending.answer, started: pending.started)
+	}
+
+	private func discardAnswer(_ answerID: AskMessage.ID, in id: AskConversation.ID) {
+		guard var conversation = conversation(id) else { return }
+		conversation.messages.removeAll { $0.id == answerID }
+		write(conversation)
 	}
 
 	private func apply(_ event: AskServerMessage, to answerID: AskMessage.ID, in id: AskConversation.ID) {

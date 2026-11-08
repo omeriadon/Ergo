@@ -52,7 +52,8 @@ struct CanvasBox: View {
 		StatementBoxView(
 			statement: statement,
 			relations: relations,
-			appearance: appearance
+			appearance: appearance,
+			annotationCount: model.annotationCount
 		)
 		.equatable()
 		.onTapGesture(perform: actions.select)
@@ -92,6 +93,9 @@ struct CanvasBox: View {
 		}
 		if parts.isEmpty {
 			parts.append("Not connected")
+		}
+		if model.annotationCount > 0 {
+			parts.append(model.annotationCount == 1 ? "1 annotation" : "\(model.annotationCount) annotations")
 		}
 		if appearance == .connectSource {
 			parts.append("Connecting from this statement")

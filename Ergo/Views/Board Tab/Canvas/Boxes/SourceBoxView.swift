@@ -33,12 +33,12 @@ struct CanvasSourceBox: View {
 	}
 
 	var body: some View {
-		SourceBoxView(source: source, appearance: model.appearance)
+		SourceBoxView(source: source, appearance: model.appearance, annotationCount: model.annotationCount)
 			.equatable()
 			.onTapGesture(perform: actions.select)
 			.simultaneousGesture(TapGesture(count: 2).onEnded(actions.open))
 			.contextMenu { menu }
-			.modifier(SourceSpeech(source: source, isSelected: model.appearance == .selected))
+			.modifier(SourceSpeech(source: source, isSelected: model.appearance == .selected, annotationCount: model.annotationCount))
 			.modifier(SourceAccessibilityActions(isLink: source.link != nil, isReadOnly: model.isReadOnly, actions: actions))
 			.modifier(BoxMovesModifier(nudge: actions.nudge, isReadOnly: model.isReadOnly))
 	}
@@ -66,12 +66,19 @@ struct CanvasSourceBox: View {
 private struct SourceSpeech: ViewModifier {
 	let source: BoardSource
 	let isSelected: Bool
+	let annotationCount: Int
+
+	private var value: String {
+		let kind = source.link == nil ? "Text" : "Web link"
+		guard annotationCount > 0 else { return kind }
+		return "\(kind). \(annotationCount == 1 ? "1 annotation" : "\(annotationCount) annotations")"
+	}
 
 	func body(content: Content) -> some View {
 		content
 			.accessibilityElement(children: .ignore)
 			.accessibilityLabel(source.title)
-			.accessibilityValue(source.link == nil ? "Text" : "Web link")
+			.accessibilityValue(value)
 			.accessibilityHint("Double tap to select")
 			.accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
 			.accessibilityIdentifier("board.source.\(source.id.uuidString)")
@@ -105,6 +112,7 @@ struct SourceBoxView: View, Equatable {
 
 	let source: BoardSource
 	let appearance: BoxAppearance
+	var annotationCount = 0
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 5) {
@@ -137,6 +145,10 @@ struct SourceBoxView: View, Equatable {
 				.clipShape(Self.shape)
 		}
 		.overlay { outline }
+		.overlay(alignment: .bottomTrailing) {
+			AnnotationBadge(count: annotationCount)
+				.padding(8)
+		}
 		.overlay(alignment: .topTrailing) {
 			FoldFlap(fold: Self.shape.fold)
 				.fill(Color.accent.opacity(0.35))

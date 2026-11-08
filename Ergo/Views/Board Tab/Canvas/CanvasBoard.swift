@@ -6,6 +6,7 @@
 //
 
 import ErgoLogic
+import ErgoSync
 import SwiftUI
 
 /// The board's boxes and arrows, with pan and zoom. `CanvasBoardView` does the moving in UIKit, and each box is
@@ -13,6 +14,7 @@ import SwiftUI
 struct CanvasBoard: UIViewRepresentable {
 	let boxes: [CanvasBoxModel]
 	let links: [Link]
+	let strengths: [Link.ID: BoardArrowStrength]
 	let sources: [CanvasSourceModel]
 	let regions: [CanvasRegionModel]
 	let selectedStatement: Statement.ID?
@@ -64,6 +66,7 @@ struct CanvasBoard: UIViewRepresentable {
 			view.update(
 				boxes: boxes,
 				links: links,
+				strengths: strengths,
 				sources: sources,
 				regions: regions,
 				selectedStatement: selectedStatement,

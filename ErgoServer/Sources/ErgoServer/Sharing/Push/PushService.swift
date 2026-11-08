@@ -24,6 +24,9 @@ struct PushEvent: Sendable, Hashable {
 	/// Edits are throttled, everything else always alerts
 	var isEdit = false
 
+	/// Only syncs the device, with no alert
+	var isSilent = false
+
 	/// What a push says when the owner's device sent no title
 	static let untitled = "a board"
 
@@ -57,7 +60,7 @@ struct PushService: Sendable {
 		for event in events {
 			for account in event.recipients {
 				guard let devices = reachable[account], !devices.isEmpty else { continue }
-				var alert: PushMessage.Alert? = event.alert
+				var alert: PushMessage.Alert? = event.isSilent ? nil : event.alert
 				if event.isEdit {
 					switch throttle.decide(board: event.board, account: account) {
 						case .alert:

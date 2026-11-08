@@ -11,33 +11,50 @@ import Foundation
 import Logging
 import Synchronization
 
+/// What differs between the runs that talk to Ergo's tools: Ask's answers, and a board analysis
+struct AskRunSettings: Sendable {
+	/// The instructions' name in `Resources`. The model is always `StageModels.ask`'s.
+	let instructions: String
+
+	/// What Claude Code may call, without the `mcp__ergo__` prefix
+	let toolNames: [String]
+
+	/// A CLI can stop to call tools several times, so it gets longer than one stage's single answer
+	let timeout: Duration
+
+	/// How many rounds of tool calls Claude Code may make
+	let maxTurns: Int
+
+	static let ask = AskRunSettings(instructions: StageModels.ask, toolNames: AskTools.names, timeout: .seconds(300), maxTurns: ClaudeCodeAskCommand.maxTurns)
+
+	/// A whole board: reading the library, then a report for every card, arrow and source
+	static let analysis = AskRunSettings(instructions: StageModels.analyse, toolNames: BoardAnalysisTools.names, timeout: .seconds(600), maxTurns: 400)
+}
+
 /// One CLI call for Ask: free text as it's written, with Ergo's tools as the only ones it has
 extension ProviderBackend {
-	/// A CLI can stop to call tools several times, so it gets longer than one stage's single answer
-	private static let askTimeout = Duration.seconds(300)
-
 	/// `tools` is the URL this run's tools answer at. `text` hears more of the answer as it's written.
-	func ask(prompt: String, tools: String, text: @escaping @Sendable (String) async -> Void) async throws {
+	func ask(prompt: String, tools: String, settings: AskRunSettings = .ask, text: @escaping @Sendable (String) async -> Void) async throws {
 		try await RunDirectory.with(in: config.runsDirectory) { run in
 			switch credential.provider {
 				case .claude:
-					try await claudeAsk(prompt: prompt, tools: tools, in: run, text: text)
+					try await claudeAsk(prompt: prompt, tools: tools, settings: settings, in: run, text: text)
 				case .codex:
-					try await codexAsk(prompt: prompt, tools: tools, in: run, text: text)
+					try await codexAsk(prompt: prompt, tools: tools, settings: settings, in: run, text: text)
 			}
 		}
 	}
 
 	// MARK: - Claude Code
 
-	private func claudeAsk(prompt: String, tools: String, in run: RunDirectory, text: @escaping @Sendable (String) async -> Void) async throws {
+	private func claudeAsk(prompt: String, tools: String, settings: AskRunSettings, in run: RunDirectory, text: @escaping @Sendable (String) async -> Void) async throws {
 		guard let executable = config.claudePath else {
 			throw ProviderFailure.unavailable("Claude Code isn't installed on the Ergo server")
 		}
 
 		let instructions = run.work.appending(path: "instructions.md")
 		let toolConfig = run.work.appending(path: "tools.json")
-		try run.write(StagePrompts.instructions(for: StageModels.ask), to: instructions)
+		try run.write(StagePrompts.instructions(for: settings.instructions), to: instructions)
 		try run.write(ClaudeCodeAskCommand.toolConfig(url: tools), to: toolConfig)
 
 		let command = ClaudeCodeAskCommand(
@@ -46,11 +63,13 @@ extension ProviderBackend {
 			instructions: instructions,
 			toolConfig: toolConfig,
 			credential: credential,
-			run: run
+			run: run,
+			toolNames: settings.toolNames,
+			maxTurns: settings.maxTurns
 		)
 
 		let stream = AskStreamBox(ClaudeAskStream())
-		try await streamAsk(command.command(prompt: prompt), in: run) { line in
+		try await streamAsk(command.command(prompt: prompt), settings: settings, in: run) { line in
 			if let more = stream.withLock({ $0.feed(line) }) {
 				await text(more)
 			}
@@ -66,7 +85,7 @@ extension ProviderBackend {
 
 	// MARK: - Codex
 
-	private func codexAsk(prompt: String, tools: String, in run: RunDirectory, text: @escaping @Sendable (String) async -> Void) async throws {
+	private func codexAsk(prompt: String, tools: String, settings: AskRunSettings, in run: RunDirectory, text: @escaping @Sendable (String) async -> Void) async throws {
 		guard let executable = config.codexPath else {
 			throw ProviderFailure.unavailable("Codex isn't installed on the Ergo server")
 		}
@@ -75,7 +94,7 @@ extension ProviderBackend {
 		let command = try CodexCommand(
 			executable: executable,
 			choice: models.choice(for: .codex, stage: StageModels.ask),
-			instructions: StagePrompts.instructions(for: StageModels.ask),
+			instructions: StagePrompts.instructions(for: settings.instructions),
 			credential: ProviderCredential(provider: credential.provider, kind: credential.kind, secret: secret),
 			run: run,
 			tools: tools
@@ -84,13 +103,13 @@ extension ProviderBackend {
 		// A login streams tokens through the app server. An API key can only use `exec`, which gives whole messages.
 		guard credential.kind == .apiKey else {
 			try run.write(secret.value, to: command.authFile)
-			return try await codexAppServerAsk(command, prompt: prompt, secret: secret, in: run, text: text)
+			return try await codexAppServerAsk(command, prompt: prompt, secret: secret, settings: settings, in: run, text: text)
 		}
 
 		let stream = AskStreamBox(CodexAskStream())
 		let outcome: Result<Void, any Error>
 		do {
-			try await streamAsk(command.command(prompt: prompt), in: run) { line in
+			try await streamAsk(command.command(prompt: prompt), settings: settings, in: run) { line in
 				if let more = stream.withLock({ $0.feed(line) }) {
 					await text(more)
 				}
@@ -115,6 +134,7 @@ extension ProviderBackend {
 		_ command: CodexCommand,
 		prompt: String,
 		secret: Secret,
+		settings: AskRunSettings,
 		in run: RunDirectory,
 		text: @escaping @Sendable (String) async -> Void
 	) async throws {
@@ -125,8 +145,8 @@ extension ProviderBackend {
 
 		let outcome: Result<Void, any Error>
 		do {
-			try await translatingFailures {
-				_ = try await runner.converse(command.appServerCommand, in: run, timeout: Self.askTimeout, opening: start.opening) { line in
+			try await translatingFailures(settings) {
+				_ = try await runner.converse(command.appServerCommand, in: run, timeout: settings.timeout, opening: start.opening) { line in
 					var reply = ProcessRunner.Reply()
 					for output in session.withLock({ $0.feed(line) }) {
 						switch output {
@@ -164,18 +184,18 @@ extension ProviderBackend {
 
 	// MARK: - Running
 
-	private func streamAsk(_ command: ProcessRunner.Command, in run: RunDirectory, lines: @escaping @Sendable (String) async -> Void) async throws {
-		try await translatingFailures {
-			_ = try await runner.stream(command, in: run, timeout: Self.askTimeout, lines: lines)
+	private func streamAsk(_ command: ProcessRunner.Command, settings: AskRunSettings, in run: RunDirectory, lines: @escaping @Sendable (String) async -> Void) async throws {
+		try await translatingFailures(settings) {
+			_ = try await runner.stream(command, in: run, timeout: settings.timeout, lines: lines)
 		}
 	}
 
-	private func translatingFailures(_ work: () async throws -> Void) async throws {
+	private func translatingFailures(_ settings: AskRunSettings, _ work: () async throws -> Void) async throws {
 		do {
 			try await work()
 		} catch is ProcessRunner.TimedOut {
 			logger.warning("CLI timed out", metadata: ["stage": "\(StageModels.ask)", "provider": "\(credential.provider)"])
-			throw ProviderFailure.timedOut("Expected an answer from \(credential.provider.displayName) within \(Self.askTimeout.spelledOut)")
+			throw ProviderFailure.timedOut("Expected an answer from \(credential.provider.displayName) within \(settings.timeout.spelledOut)")
 		} catch let error as CancellationError {
 			throw error
 		} catch let failure as ProviderFailure {

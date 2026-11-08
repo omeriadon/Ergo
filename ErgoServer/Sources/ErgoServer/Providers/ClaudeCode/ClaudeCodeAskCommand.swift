@@ -18,6 +18,12 @@ struct ClaudeCodeAskCommand {
 	let credential: ProviderCredential
 	let run: RunDirectory
 
+	/// What it may call, without the prefix
+	var toolNames = AskTools.names
+
+	/// How many rounds of tool calls it may make
+	var maxTurns = Self.maxTurns
+
 	/// A few rounds of looking things up, then the answer
 	static let maxTurns = 12
 
@@ -43,11 +49,11 @@ struct ClaudeCodeAskCommand {
 			"--tools", "",
 			"--mcp-config", toolConfig.path,
 			"--strict-mcp-config",
-			"--allowedTools", AskTools.names.map { "mcp__ergo__\($0)" }.joined(separator: ","),
+			"--allowedTools", toolNames.map { "mcp__ergo__\($0)" }.joined(separator: ","),
 			"--system-prompt-file", instructions.path,
 			"--setting-sources", "",
 			"--no-session-persistence",
-			"--max-turns", "\(Self.maxTurns)",
+			"--max-turns", "\(maxTurns)",
 		]
 		return arguments
 	}

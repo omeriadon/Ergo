@@ -111,13 +111,15 @@ final class TranslationService: Sendable {
 	}
 
 	/// Opens the user's connection, runs `work` with it, one at a time per account, and turns whatever goes wrong into
-	/// a `ServiceError`. `summary` is what's worth logging about the result, never its text.
+	/// a `ServiceError`. `summary` is what's worth logging about the result, never its text. `exclusive` is false for a
+	/// Claude Code login, which has nothing to spend, when the call shouldn't make everything else wait.
 	func withBackend<Result: Sendable>(
 		provider: Provider,
 		scope: String,
 		account: UUID,
 		database: any Database,
 		logger: Logger,
+		exclusive isExclusive: Bool = true,
 		_ work: (ProviderBackend) async throws -> Result,
 		summary: (Result) -> Logger.Metadata
 	) async throws -> Result {
@@ -136,7 +138,7 @@ final class TranslationService: Sendable {
 			throw ServiceError(code: .notConnected, message: "Couldn't read the saved \(provider.displayName) connection, connect it again")
 		}
 
-		return try await exclusive(for: account) {
+		func run() async throws -> Result {
 			let backend = ProviderBackend(credential: credential, config: config, runner: runner, logger: logger) { [vault] refreshed in
 				do {
 					try await Credential.reseal(id, with: vault.seal(refreshed, account: account, provider: credential.provider), on: database)
@@ -171,5 +173,10 @@ final class TranslationService: Sendable {
 				throw ServiceError.internalFailure
 			}
 		}
+
+		guard isExclusive else {
+			return try await run()
+		}
+		return try await exclusive(for: account, run)
 	}
 }

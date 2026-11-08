@@ -26,6 +26,7 @@ enum CanvasBarMode: Equatable {
 /// What's selected on a board this person can only view
 enum CanvasBarViewOnlySelection: Equatable {
 	case nothing
+	case link
 	case statement
 	case source(isLink: Bool)
 }
@@ -39,12 +40,18 @@ struct CanvasBarActions {
 	var breakDown: () -> Void
 	var delete: () -> Void
 	var cancelPick: () -> Void
+
+	/// Opens the analysis sheet for the selection
+	var showAnnotations: () -> Void
 }
 
 /// The glass bar above the tab bar
 struct CanvasBar: View {
 	let mode: CanvasBarMode
 	let actions: CanvasBarActions
+
+	/// Whether the analysis has anything current on the selection
+	var hasAnnotations = false
 
 	@Environment(\.accessibilityReduceMotion)
 	private var reduceMotion
@@ -62,6 +69,7 @@ struct CanvasBar: View {
 
 					case .statement:
 						barButton("Edit", symbol: "square.and.pencil", id: "edit", action: actions.edit)
+						annotationsButton
 						barButton("Delete", symbol: "trash", id: "delete", role: .destructive, action: actions.delete)
 
 					case let .source(isLink):
@@ -70,10 +78,12 @@ struct CanvasBar: View {
 						} else {
 							barButton("Edit", symbol: "square.and.pencil", id: "editSource", action: actions.openSource)
 						}
+						annotationsButton
 						barButton("Break Down", symbol: "arrow.triangle.branch", id: "breakDownSource", action: actions.breakDown)
 						barButton("Delete", symbol: "trash", id: "deleteSource", role: .destructive, action: actions.delete)
 
 					case .link:
+						annotationsButton
 						barButton("Delete Arrow", symbol: "trash", id: "deleteLink", role: .destructive, action: actions.delete)
 
 					case let .picking(prompt):
@@ -92,6 +102,14 @@ struct CanvasBar: View {
 			}
 		}
 		.animation(reduceMotion ? nil : .smooth, value: mode)
+		.animation(reduceMotion ? nil : .smooth, value: hasAnnotations)
+	}
+
+	@ViewBuilder
+	private var annotationsButton: some View {
+		if hasAnnotations {
+			barButton("Annotations", symbol: "text.magnifyingglass", id: "annotations", action: actions.showAnnotations)
+		}
 	}
 
 	@ViewBuilder
@@ -105,13 +123,14 @@ struct CanvasBar: View {
 			.accessibilityIdentifier("board.bar.viewOnly")
 
 		switch selection {
-			case .nothing:
+			case .nothing, .link:
 				EmptyView()
 			case .statement:
 				barButton("Open", symbol: "doc.text", id: "open", action: actions.edit)
 			case let .source(isLink):
 				barButton("Open", symbol: isLink ? "safari" : "doc.text", id: "openSource", action: actions.openSource)
 		}
+		annotationsButton
 	}
 
 	/// The glass goes around the menu rather than coming from `.buttonStyle(.glass)`. A menu with that style only gets its

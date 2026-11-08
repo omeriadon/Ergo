@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 6/11/2026.
 //
 
+import ErgoAsk
 import ErgoProtocol
 import Fluent
 import Foundation
@@ -15,9 +16,11 @@ import Logging
 final class AskService: Sendable {
 	let translations: TranslationService
 	let runs = AskRuns()
+	let tools: AskToolServer<AskTools>
 
-	init(translations: TranslationService) {
+	init(translations: TranslationService, tools: AskToolServer<AskTools>) {
 		self.translations = translations
+		self.tools = tools
 	}
 
 	/// Throws a `ServiceError`, or `CancellationError` once the CLI's been stopped. `port` is this server's own, which is
@@ -33,10 +36,13 @@ final class AskService: Sendable {
 		if let problem = request.problem {
 			throw ServiceError(code: .invalidRequest, message: problem)
 		}
-		let prompt = try StagePrompts.askMessage(for: request.messages)
+		let prompt = try StagePrompts.askMessage(for: request.messages, instructions: request.instructions)
 
 		try await translations.withBackend(provider: request.provider, scope: StageModels.ask, account: account, database: database, logger: logger) { backend in
-			let token = runs.register(send)
+			let tools = tools
+			let token = runs.register { body in
+				await tools.respond(to: body, events: send)
+			}
 			defer { runs.remove(token) }
 
 			try await backend.ask(prompt: prompt, tools: "http://127.0.0.1:\(port)/\(ErgoProtocol.Path.askTools)/\(token)") { text in
