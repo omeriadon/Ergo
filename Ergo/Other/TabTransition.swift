@@ -122,27 +122,36 @@ private final class TabBlurAnimator: NSObject, UIViewControllerAnimatedTransitio
 			to.frame = context.finalFrame(for: controller)
 		}
 
+		// UIKit won't take another tab tap until this transition completes, so it completes now. The old tab lives on as a snapshot that fades out over the new one, so the animation still plays while taps go through.
+		let outgoing = from.snapshotView(afterScreenUpdates: false)
+		outgoing?.frame = from.frame
+
 		context.containerView.addSubview(to)
 		to.alpha = 0
+
+		if let outgoing {
+			context.containerView.addSubview(outgoing)
+		}
 
 		let blurs = unsafe !UIAccessibility.isReduceMotionEnabled
 		if blurs {
 			Self.blur(to, from: Self.radius, to: 0)
-			Self.blur(from, from: 0, to: Self.radius)
+			if let outgoing {
+				Self.blur(outgoing, from: 0, to: Self.radius)
+			}
 		}
 
+		context.completeTransition(true)
+
 		UIView.animate(withDuration: Self.duration, delay: 0, options: .curveEaseInOut) {
-			from.alpha = 0
-			from.transform = CGAffineTransform(scaleX: Self.scale, y: Self.scale)
+			outgoing?.alpha = 0
+			outgoing?.transform = CGAffineTransform(scaleX: Self.scale, y: Self.scale)
 			to.alpha = 1
 		} completion: { _ in
-			from.alpha = 1
-			from.transform = .identity
+			outgoing?.removeFromSuperview()
 			if blurs {
-				Self.unblur(from)
 				Self.unblur(to)
 			}
-			context.completeTransition(!context.transitionWasCancelled)
 		}
 	}
 

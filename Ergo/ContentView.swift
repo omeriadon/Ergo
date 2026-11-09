@@ -122,6 +122,7 @@ private struct AppTabs: View {
 				}
 			} label: {
 				Label("Board", systemImage: "flowchart")
+					.labelStyle(.iconOnly)
 			}
 
 			Tab(value: .logic) {
@@ -136,6 +137,7 @@ private struct AppTabs: View {
 				}
 			} label: {
 				Label("Logic", systemImage: "function")
+					.labelStyle(.iconOnly)
 			}
 
 			Tab(value: .ask) {
@@ -144,6 +146,7 @@ private struct AppTabs: View {
 				}
 			} label: {
 				Label("Ask", systemImage: "bubble.left.and.text.bubble.right")
+					.labelStyle(.iconOnly)
 			}
 
 			Tab(value: .library, role: .prominent) {
@@ -186,6 +189,7 @@ private struct AppTabs: View {
 				}
 			} label: {
 				Label("Library", systemImage: "books.vertical")
+					.labelStyle(.iconOnly)
 			}
 		}
 		.tabViewStyle(.tabBarOnly)
