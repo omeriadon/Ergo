@@ -48,4 +48,8 @@ jobs:
       - name: Deploy on Dokploy
         env:
           DOKPLOY_DEPLOY_URL: ${{ secrets.DOKPLOY_DEPLOY_URL }}
-        run: curl --fail --silent --show-error -X POST "$DOKPLOY_DEPLOY_URL"
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$DOKPLOY_DEPLOY_URL" \
+            -H "Content-Type: application/json" \
+            -H "X-GitHub-Event: push" \
+            -d "{\"ref\":\"refs/heads/main\",\"head_commit\":{\"id\":\"$GITHUB_SHA\"},\"repository\":{\"full_name\":\"omeriadon/ErgoServerDeploy\"}}"
