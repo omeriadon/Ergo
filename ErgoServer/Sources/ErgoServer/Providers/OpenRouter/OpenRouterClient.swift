@@ -110,8 +110,10 @@ struct OpenRouterClient: Sendable {
 				return .unavailable("The Ergo server is out of OpenRouter credit")
 			case 429:
 				return .usageLimit("OpenRouter is limiting the Ergo server, try again in a moment")
-			case 400, 404:
-				return .unavailable("OpenRouter couldn't run this model with what Ergo asked of it")
+			case 400:
+				return .unavailable("The model couldn't take this request, try again or shorten the text")
+			case 404:
+				return .unavailable("The model isn't available for this request right now")
 			default:
 				return .unavailable("OpenRouter failed on its side")
 		}
