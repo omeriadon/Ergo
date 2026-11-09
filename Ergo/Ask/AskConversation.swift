@@ -17,6 +17,9 @@ nonisolated struct AskConversation: Codable, Hashable, Identifiable, Defaults.Se
 
 	/// Given by the person. Empty means it's titled from the first question.
 	var name = ""
+
+	/// Named by the server once its first answer is done. A name the person gives wins over it.
+	var suggestedTitle: String?
 	var messages: [AskMessage] = []
 
 	/// An answer the server is writing. It carries on if the app is closed, so this is kept to pick it up again.
@@ -36,6 +39,9 @@ nonisolated struct AskConversation: Codable, Hashable, Identifiable, Defaults.Se
 	var title: String {
 		if let name = name.trimmedNonEmpty {
 			return name
+		}
+		if let suggestedTitle = suggestedTitle?.trimmedNonEmpty {
+			return suggestedTitle
 		}
 		let question = messages.first { $0.role == .user }
 		let line = question?.text

@@ -71,6 +71,7 @@ struct AskIntentTests {
 			.text("Hi"),
 			.tool(AskToolActivity(tool: "search_library", summary: "Searching")),
 			.action(AskAction(title: "Open", intent: .openBookmarks)),
+			.title("Straw man in the minimum wage debate"),
 			.finished,
 			.failed(ServiceError(code: .busy, message: "Busy")),
 		]

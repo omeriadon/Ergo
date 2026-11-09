@@ -293,6 +293,10 @@ final class AskStore {
 					}
 				}
 
+			case let .title(title):
+				conversation.suggestedTitle = title
+				write(conversation)
+
 			case .finished, .failed, .unknown:
 				break
 		}

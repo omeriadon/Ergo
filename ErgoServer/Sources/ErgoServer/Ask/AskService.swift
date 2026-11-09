@@ -63,13 +63,13 @@ final class AskService: Sendable {
 		// Only a chat's first reply is named, since that's when it has no name yet. It's sent before `.finished`, so
 		// the app has it by the time the answer ends.
 		let reply = answer.withLock { $0 }
-		if request.messages.count == 1, let question = request.messages.last?.text, !reply.isEmpty, let title = await title(question: question, answer: reply, provider: request.provider, account: account, database: database, logger: logger) {
+		if request.messages.count == 1, let question = request.messages.last?.text, !reply.isEmpty, let title = await chatName(question: question, answer: reply, provider: request.provider, account: account, database: database, logger: logger) {
 			await send(.title(title))
 		}
 	}
 
 	/// Names the chat from its first question and answer. A name is optional, so a failure only means there isn't one.
-	private func title(
+	private func chatName(
 		question: String,
 		answer: String,
 		provider: Provider,
