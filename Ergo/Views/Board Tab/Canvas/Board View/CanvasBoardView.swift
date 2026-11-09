@@ -62,6 +62,9 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 	var strengths: [Link.ID: BoardArrowStrength] = [:]
 	var sourceCells: [BoardSource.ID: CanvasSourceCell] = [:]
 	var regions: [CanvasRegionModel] = []
+	/// The boxes and sources the outlines and arrows were last drawn for, so an update that changes neither can skip redrawing them
+	var laidOutBoxes: [CanvasBoxModel] = []
+	var laidOutSources: [CanvasSourceModel] = []
 	var regionLayers: [BoardSource.ID: CanvasRegionLayer] = [:]
 	var selectedStatement: Statement.ID?
 	var selectedLink: Link.ID?
@@ -234,13 +237,24 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 			content.bringSubviewToFront(cell)
 		}
 
+		// Outlines and arrows only depend on where things are and how they connect, so they're redrawn when one of those changes.
+		// Dragging redraws its own region as it moves, and the model follows when it lets go.
+		let layoutChanged = boxes != laidOutBoxes || sources != laidOutSources
+			|| links != self.links || strengths != self.strengths || regions != self.regions
+			|| selectedStatement != self.selectedStatement || selectedLink != self.selectedLink
 		self.links = links
 		self.strengths = strengths
 		self.regions = regions
 		self.selectedStatement = selectedStatement
 		self.selectedLink = selectedLink
-		updateRegions(animation: animated ? 0.5 : nil)
-		updateArrows(animation: animated ? 0.5 : nil)
+		if layoutChanged {
+			laidOutBoxes = boxes
+			laidOutSources = sources
+			updateRegions(animation: animated ? 0.5 : nil)
+			updateArrows(animation: animated ? 0.5 : nil)
+		} else {
+			styleRegions()
+		}
 		updateHandles()
 	}
 

@@ -9,14 +9,20 @@ import Defaults
 import SwiftUI
 
 /// One entry in a category's list, linking to its page, with a bookmark on a swipe or in its menu
-struct LibraryListRow<Item: LibraryListItem>: View {
+struct LibraryListRow<Item: LibraryListItem>: View, Equatable {
 	let item: Item
+
+	/// Passed in by the list, which reads the bookmarks once. Reading `@Default` here would decode the whole set for every row.
+	let isBookmarked: Bool
 
 	@Environment(CatalogStore.self) private var catalog
 
 	@Environment(NavigationManager.self) private var navigation
 
-	@Default(.bookmarks) private var bookmarks
+	/// What the row shows, so the list can skip re-rendering a row when none of it changed
+	static func == (lhs: Self, rhs: Self) -> Bool {
+		lhs.item.id == rhs.item.id && lhs.item.name == rhs.item.name && lhs.isBookmarked == rhs.isBookmarked
+	}
 
 	var body: some View {
 		let target = CatalogReference(
@@ -24,8 +30,6 @@ struct LibraryListRow<Item: LibraryListItem>: View {
 			name: item.name,
 			category: Item.category
 		)
-
-		let isBookmarked = bookmarks.contains(target)
 
 		return NavigationLink(
 			value: LibraryRoute.detail(
@@ -85,9 +89,9 @@ struct LibraryListRow<Item: LibraryListItem>: View {
 
 		withAnimation(.easeInOut) {
 			if isBookmarked {
-				bookmarks.remove(target)
+				Defaults[.bookmarks].remove(target)
 			} else {
-				bookmarks.insert(target)
+				Defaults[.bookmarks].insert(target)
 			}
 		}
 	}

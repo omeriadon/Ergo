@@ -31,36 +31,8 @@ struct RelatedSection: View {
 					ForEach(Array(list.enumerated()), id: \.element.id) { index, philosopher in
 						NavigationLink(value: philosopher.route) {
 							HStack {
-								ZStack {
-									PhilosopherThumbnail(id: philosopher.id)
-
-									Color.white.opacity(0)
-										.contentShape(Circle())
-										.background {
-											LiquidLens(
-												isLifted: true,
-												animated: true,
-												configuration: .init(
-													style: 1,
-													warpsContentBelow: true,
-													restingBackgroundColor: .white.withAlphaComponent(0),
-													liftedDisplacement: 0
-												),
-												configure: { handle in
-													guard let flex = handle.value(for: .flexInteraction) as? NSObject else {
-														return
-													}
-
-													handle.setValue(
-														0,
-														forKeyPath: "preferredFlexSources",
-														on: flex
-													)
-												}
-											)
-										}
-								}
-								.frame(width: 40, height: 40)
+								PhilosopherThumbnail(id: philosopher.id)
+									.frame(width: 40, height: 40)
 
 								Text(philosopher.name)
 

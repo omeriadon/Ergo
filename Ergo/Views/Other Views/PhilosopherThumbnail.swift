@@ -30,8 +30,7 @@ struct PhilosopherThumbnail: View {
 		.clipShape(Circle())
 		.accessibilityHidden(true)
 		.task(id: taskID) {
-			preparedImage = nil
-
+			// The store caches what it prepares, so a row that scrolls back into view doesn't decode the image again
 			guard let image = await PhilosopherThumbnailStore.shared.image(
 				for: id,
 				displayScale: displayScale
@@ -42,9 +41,6 @@ struct PhilosopherThumbnail: View {
 			preparedImage = image
 		}
 		.onChange(of: id) {
-			preparedImage = nil
-		}
-		.onDisappear {
 			preparedImage = nil
 		}
 	}

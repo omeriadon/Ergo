@@ -23,36 +23,8 @@ extension Philosopher: LibraryListItem {
 	@MainActor
 	var row: some View {
 		HStack {
-			ZStack {
-				PhilosopherThumbnail(id: id)
-
-				Color.white.opacity(0)
-					.contentShape(Circle())
-					.background {
-						LiquidLens(
-							isLifted: true,
-							animated: true,
-							configuration: .init(
-								style: 1,
-								warpsContentBelow: true,
-								restingBackgroundColor: .white.withAlphaComponent(0),
-								liftedDisplacement: 0
-							),
-							configure: { handle in
-								guard let flex = handle.value(for: .flexInteraction) as? NSObject else {
-									return
-								}
-
-								handle.setValue(
-									0,
-									forKeyPath: "preferredFlexSources",
-									on: flex
-								)
-							}
-						)
-					}
-			}
-			.frame(width: 40, height: 40)
+			PhilosopherThumbnail(id: id)
+				.frame(width: 40, height: 40)
 
 			Text(name)
 		}

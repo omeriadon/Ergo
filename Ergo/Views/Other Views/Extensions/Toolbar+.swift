@@ -87,7 +87,7 @@ private struct ToolbarTitleViewModifier: ViewModifier {
 }
 
 extension View {
-	/// A two-line title that fades in under the navigation bar once the page has scrolled.
+	/// A title that fades in under the navigation bar once the page has scrolled.
 	func libraryDetailTitle(_ name: String, category: String, hasScrolled: Bool) -> some View {
 		modifier(LibraryDetailTitleModifier(name: name, category: category, hasScrolled: hasScrolled))
 	}
@@ -102,13 +102,12 @@ private struct LibraryDetailTitleModifier: ViewModifier {
 	@State private var nameHeight: CGFloat = 0
 	@State private var lineHeight: CGFloat = 0
 
-	/// Room for a two-line name plus the category line.
-	@ScaledMetric(relativeTo: .body) private var height = 64
+	/// Three lines of text (a two-line name and the category). Fixed, so the bar never changes height once the page is shown.
+	@ScaledMetric(relativeTo: .body) private var height: CGFloat = 66
 
-	private var titleHeight: CGFloat {
-		guard nameHeight > 0, lineHeight > 0 else { return height }
-
-		return height * (nameHeight > lineHeight * 1.5 ? 1 : 0.65)
+	/// Until the name has been measured, it's laid out as if it were two lines.
+	private var isOneLine: Bool {
+		nameHeight > 0 && lineHeight > 0 && nameHeight <= lineHeight * 1.5
 	}
 
 	func body(content: Content) -> some View {
@@ -118,36 +117,56 @@ private struct LibraryDetailTitleModifier: ViewModifier {
 			} action: {
 				containerWidth = $0
 			}
-			.richNavigationTitle(height: titleHeight, width: containerWidth * 0.7) {
+			.richNavigationTitle(height: height, width: containerWidth * 0.7) {
 				VStack {
-					Text(name)
-						.lineLimit(2)
-						.multilineTextAlignment(.center)
-						.opacity(hasScrolled ? 1 : 0)
-						.onGeometryChange(for: CGFloat.self) {
-							$0.size.height
-						} action: {
-							nameHeight = $0
-						}
-						.background {
-							// Single-line reference using the same font.
-							Text("Ag")
-								.fixedSize()
-								.hidden()
-								.onGeometryChange(for: CGFloat.self) {
-									$0.size.height
-								} action: {
-									lineHeight = $0
-								}
-						}
+					if isOneLine {
+						Spacer(minLength: 0)
+							.frame(height: 5)
 
-					Text(hasScrolled ? category : "")
-						.textCase(.uppercase)
-						.font(.caption2)
-						.foregroundStyle(.secondary)
+						titleLines
+
+						Spacer(minLength: 0)
+					} else {
+						Spacer(minLength: 0)
+
+						titleLines
+
+						Spacer(minLength: 0)
+						Spacer(minLength: 0)
+					}
 				}
 				.contentTransition(.numericText())
 				.animation(.easeInOut(duration: 0.2), value: hasScrolled)
 			}
+	}
+
+	private var titleLines: some View {
+		VStack {
+			Text(name)
+				.lineLimit(2)
+				.multilineTextAlignment(.center)
+				.opacity(hasScrolled ? 1 : 0)
+				.onGeometryChange(for: CGFloat.self) {
+					$0.size.height
+				} action: {
+					nameHeight = $0
+				}
+				.background {
+					// Single-line reference using the same font.
+					Text("Ag")
+						.fixedSize()
+						.hidden()
+						.onGeometryChange(for: CGFloat.self) {
+							$0.size.height
+						} action: {
+							lineHeight = $0
+						}
+				}
+
+			Text(hasScrolled ? category : "")
+				.textCase(.uppercase)
+				.font(.caption2)
+				.foregroundStyle(.secondary)
+		}
 	}
 }

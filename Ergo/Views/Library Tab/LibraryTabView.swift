@@ -116,7 +116,10 @@ struct LibraryTabView: View {
 			.task(id: "\(searchPresented)-\(searchTerm.trimmingCharacters(in: .whitespacesAndNewlines))-\(catalog.isLoaded)") {
 				let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
 				guard searchPresented, !query.isEmpty, catalog.isLoaded else {
-					searchResults = []
+					// Only clear what's there, since every appearance of the tab runs this task
+					if !searchResults.isEmpty {
+						searchResults = []
+					}
 					return
 				}
 				do {

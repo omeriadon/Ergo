@@ -88,7 +88,7 @@ private final nonisolated class TabTransitionDelegate: NSObject, UITabBarControl
 		return forwardee?.tabBarController?(tabBarController, shouldSelectTab: tab) ?? true
 	}
 
-	func tabBarController(_: UITabBarController, animationControllerForTransitionFrom _: UIViewController, to _: UIViewController) -> any UIViewControllerAnimatedTransitioning? {
+	func tabBarController(_: UITabBarController, animationControllerForTransitionFrom _: UIViewController, to _: UIViewController) -> (any UIViewControllerAnimatedTransitioning)? {
 		TabBlurAnimator()
 	}
 
@@ -103,8 +103,9 @@ private final nonisolated class TabTransitionDelegate: NSObject, UITabBarControl
 
 /// Blurs with the same private filter as `BackdropBlur`, on the tabs' own layers. The tab bar isn't in the transition's container, so it stays sharp.
 private final class TabBlurAnimator: NSObject, UIViewControllerAnimatedTransitioning {
-	private static let duration: TimeInterval = 0.25
+	private static let duration: TimeInterval = 0.2
 	private static let radius: CGFloat = 16
+	private static let scale: CGFloat = 0.95
 	private static let filterName = "tabTransitionBlur"
 
 	func transitionDuration(using _: any UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -132,11 +133,15 @@ private final class TabBlurAnimator: NSObject, UIViewControllerAnimatedTransitio
 
 		UIView.animate(withDuration: Self.duration, delay: 0, options: .curveEaseInOut) {
 			from.alpha = 0
+			from.transform = CGAffineTransform(scaleX: Self.scale, y: Self.scale)
 			to.alpha = 1
 		} completion: { _ in
 			from.alpha = 1
-			Self.unblur(from)
-			Self.unblur(to)
+			from.transform = .identity
+			if blurs {
+				Self.unblur(from)
+				Self.unblur(to)
+			}
 			context.completeTransition(!context.transitionWasCancelled)
 		}
 	}

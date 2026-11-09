@@ -29,10 +29,7 @@ struct BoardTabView: View {
 				.background(
 					GeometryReader { geometry in
 						Color.clear
-							.onAppear {
-								topInset = geometry.safeAreaInsets.top
-							}
-							.onChange(of: geometry.safeAreaInsets.top) { _, newValue in
+							.onChange(of: geometry.safeAreaInsets.top, initial: true) { _, newValue in
 								topInset = newValue
 							}
 					}

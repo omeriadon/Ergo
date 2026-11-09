@@ -11,6 +11,62 @@ struct ContentView: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
+	var body: some View {
+		@Bindable var router = navigation
+
+		// The tabs read the selected tab themselves, so changing tabs doesn't re-run this body
+		AppTabs()
+			.sheet(item: $router.presentedSheet) { sheet in
+				switch sheet {
+					case .scanner:
+						Text("sheet here!")
+
+					case .paste:
+						Text("sheet here!")
+
+					case .result:
+						Text("sheet here!")
+
+					case .settings:
+						SettingsView()
+
+					case .logicLetters:
+						LogicLettersSheet()
+
+					case .boards:
+						BoardsSheet()
+
+					case let .shared(item):
+						SharedItemSheet(item: item)
+
+					case let .breakDownSource(id):
+						SourceBreakDownSheet(id: id)
+
+					case .resumeBreakDown:
+						ResumedBreakDownSheet()
+
+					case let .boardPeople(board):
+						BoardPeopleSheet(board: board)
+
+					case let .boardAnalysis(board, focus):
+						BoardAnalysisSheet(board: board, focus: focus)
+
+					case let .joinBoard(token):
+						JoinBoardSheet(token: token)
+
+					case let .addToChat(content):
+						AddToChatSheet(content: content)
+				}
+			}
+			.fontDesign(.rounded)
+	}
+}
+
+/// The tab bar and its tabs. Selecting a tab only changes this view, not `ContentView`.
+private struct AppTabs: View {
+	@Environment(NavigationManager.self)
+	private var navigation
+
 	@Environment(CatalogStore.self) private var catalog
 
 	/// SwiftUI only calls the setter for the user's own taps; intents change `NavigationManager` directly. That keeps intent-driven navigation out of the donations.
@@ -59,8 +115,6 @@ struct ContentView: View {
 	}
 
 	var body: some View {
-		@Bindable var router = navigation
-
 		TabView(selection: tabSelection) {
 			Tab(value: .board) {
 				NavigationStack {
@@ -142,49 +196,6 @@ struct ContentView: View {
 				navigation.presentSheet(.boards)
 			}
 		}
-		.sheet(item: $router.presentedSheet) { sheet in
-			switch sheet {
-				case .scanner:
-					Text("sheet here!")
-
-				case .paste:
-					Text("sheet here!")
-
-				case .result:
-					Text("sheet here!")
-
-				case .settings:
-					SettingsView()
-
-				case .logicLetters:
-					LogicLettersSheet()
-
-				case .boards:
-					BoardsSheet()
-
-				case let .shared(item):
-					SharedItemSheet(item: item)
-
-				case let .breakDownSource(id):
-					SourceBreakDownSheet(id: id)
-
-				case .resumeBreakDown:
-					ResumedBreakDownSheet()
-
-				case let .boardPeople(board):
-					BoardPeopleSheet(board: board)
-
-				case let .boardAnalysis(board, focus):
-					BoardAnalysisSheet(board: board, focus: focus)
-
-				case let .joinBoard(token):
-					JoinBoardSheet(token: token)
-
-				case let .addToChat(content):
-					AddToChatSheet(content: content)
-			}
-		}
-		.fontDesign(.rounded)
 	}
 }
 
