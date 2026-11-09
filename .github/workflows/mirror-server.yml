@@ -1,0 +1,47 @@
+name: Mirror server repository
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "ErgoServer/**"
+      - "ErgoKit/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout server directories
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            ErgoServer
+            ErgoKit
+
+      - name: Push deployment mirror
+        env:
+          MIRROR_TOKEN: ${{ secrets.SERVER_MIRROR_TOKEN }}
+        run: |
+          mkdir "$RUNNER_TEMP/mirror"
+          cp -a ErgoServer ErgoKit "$RUNNER_TEMP/mirror/"
+
+          cd "$RUNNER_TEMP/mirror"
+
+          git init -b main
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add .
+          git commit -m "Mirror source $GITHUB_SHA"
+
+          git remote add origin \
+            "https://x-access-token:${MIRROR_TOKEN}@github.com/omeriadon/ErgoServerDeploy.git"
+
+          git push --force origin main
+
