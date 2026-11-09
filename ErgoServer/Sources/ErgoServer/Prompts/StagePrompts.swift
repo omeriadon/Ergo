@@ -15,7 +15,7 @@ enum StagePrompts {
 		let stage: String
 
 		var description: String {
-			"Missing instrucftions for the '\(stage)' stage"
+			"Missing instructions for the '\(stage)' stage"
 		}
 	}
 
