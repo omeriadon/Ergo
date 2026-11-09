@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 9/11/2026.
 //
 
+import ErgoProtocol
 import Foundation
 
 /// Reads OpenRouter's server-sent events a line at a time and builds the completion they add up to. Comment lines

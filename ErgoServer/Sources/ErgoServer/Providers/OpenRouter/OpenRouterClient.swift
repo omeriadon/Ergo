@@ -6,6 +6,7 @@
 //
 
 import AsyncHTTPClient
+import ErgoProtocol
 import Foundation
 import Logging
 import Vapor

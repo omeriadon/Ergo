@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 9/11/2026.
 //
 
+import ErgoProtocol
 import ErgoTranslation
 import Foundation
 import Logging

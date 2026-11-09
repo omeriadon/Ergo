@@ -45,3 +45,7 @@ jobs:
 
           git push --force origin main
 
+      - name: Deploy on Dokploy
+        env:
+          DOKPLOY_DEPLOY_URL: ${{ secrets.DOKPLOY_DEPLOY_URL }}
+        run: curl --fail --silent --show-error -X POST "$DOKPLOY_DEPLOY_URL"
