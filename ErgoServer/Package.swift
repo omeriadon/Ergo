@@ -46,7 +46,10 @@ let package = Package(
 			],
 			swiftSettings: [
 				.unsafeFlags(
-					["-no-whole-module-optimization"], .when(configuration: .release)
+					[
+						"-no-whole-module-optimization",
+					],
+					.when(configuration: .release)
 				),
 			]
 		),
