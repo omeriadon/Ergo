@@ -204,7 +204,7 @@ extension Provider {
 			case .codex:
 				"ChatGPT"
 			case .openrouter:
-				"OpenRouter"
+				"Ergo's model"
 		}
 	}
 }

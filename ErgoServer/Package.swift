@@ -43,6 +43,7 @@ let package = Package(
 				.process("Prompts/Breakdown"),
 				.process("Prompts/Formalize"),
 				.process("Prompts/Verify"),
+				.process("Prompts/Title"),
 			],
 			swiftSettings: [
 				.unsafeFlags(

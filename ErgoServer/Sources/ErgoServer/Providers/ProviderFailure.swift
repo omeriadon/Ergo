@@ -30,12 +30,12 @@ enum ProviderFailure: Error, Hashable {
 }
 
 extension Provider {
-	/// What the user knows it as
+	/// What the user knows it as. The server's own model is Ergo's, so its vendor never shows.
 	var displayName: String {
 		switch self {
 			case .claude: "Claude"
 			case .codex: "ChatGPT"
-			case .openrouter: "OpenRouter"
+			case .openrouter: "Ergo's model"
 		}
 	}
 
@@ -44,7 +44,7 @@ extension Provider {
 		switch self {
 			case .claude: "Claude Code"
 			case .codex: "Codex"
-			case .openrouter: "OpenRouter"
+			case .openrouter: "Ergo's model"
 		}
 	}
 }

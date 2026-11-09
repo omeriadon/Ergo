@@ -120,6 +120,8 @@ public enum AskServerMessage: Sendable, Hashable {
 	case text(String)
 	case tool(AskToolActivity)
 	case action(AskAction)
+	/// A short name for the chat, written once its first answer is done
+	case title(String)
 	case finished
 	case failed(ServiceError)
 	case unknown
@@ -139,6 +141,8 @@ extension AskServerMessage: Codable {
 				self = try .tool(container.decode(AskToolActivity.self, forKey: .tool))
 			case "action":
 				self = try .action(container.decode(AskAction.self, forKey: .action))
+			case "title":
+				self = try .title(container.decode(String.self, forKey: .text))
 			case "finished":
 				self = .finished
 			case "failed":
@@ -160,6 +164,9 @@ extension AskServerMessage: Codable {
 			case let .action(action):
 				try container.encode("action", forKey: .type)
 				try container.encode(action, forKey: .action)
+			case let .title(title):
+				try container.encode("title", forKey: .type)
+				try container.encode(title, forKey: .text)
 			case .finished:
 				try container.encode("finished", forKey: .type)
 			case let .failed(error):

@@ -65,7 +65,7 @@ struct OpenRouterStream {
 		guard payload != "[DONE]", let chunk = try? JSONDecoder().decode(Chunk.self, from: Data(payload.utf8)) else { return nil }
 
 		if chunk.error != nil {
-			throw .unavailable("OpenRouter's model stopped partway through its answer")
+			throw .unavailable("\(Provider.openrouter.displayName) stopped partway through its answer")
 		}
 		if let usage = chunk.usage {
 			completion.usage = usage

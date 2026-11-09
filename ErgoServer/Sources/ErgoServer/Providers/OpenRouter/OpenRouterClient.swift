@@ -75,7 +75,7 @@ struct OpenRouterClient: Sendable {
 			}
 			return stream.completion
 		} catch let error as HTTPClientError where error == .deadlineExceeded || error == .readTimeout {
-			throw ProviderFailure.timedOut("Expected an answer from OpenRouter within \(timeout.spelledOut)")
+			throw ProviderFailure.timedOut("Expected an answer from \(Provider.openrouter.displayName) within \(timeout.spelledOut)")
 		} catch let error as HTTPClientError where error == .cancelled {
 			throw CancellationError()
 		} catch let error as ProviderFailure {
@@ -84,7 +84,7 @@ struct OpenRouterClient: Sendable {
 			throw error
 		} catch {
 			logger.error("Couldn't reach OpenRouter", metadata: ["error": "\(String(describing: type(of: error)))"])
-			throw ProviderFailure.unavailable("Couldn't reach OpenRouter from the Ergo server")
+			throw ProviderFailure.unavailable("Couldn't reach \(Provider.openrouter.displayName) from the Ergo server")
 		}
 	}
 
@@ -105,17 +105,17 @@ struct OpenRouterClient: Sendable {
 
 		switch status {
 			case 401, 403:
-				return .unavailable("OpenRouter refused the Ergo server's key")
+				return .unavailable("\(Provider.openrouter.displayName) isn't available right now")
 			case 402:
-				return .unavailable("The Ergo server is out of OpenRouter credit")
+				return .unavailable("The Ergo server is out of credit")
 			case 429:
-				return .usageLimit("OpenRouter is limiting the Ergo server, try again in a moment")
+				return .usageLimit("\(Provider.openrouter.displayName) is busy, try again in a moment")
 			case 400:
 				return .unavailable("The model couldn't take this request, try again or shorten the text")
 			case 404:
 				return .unavailable("The model isn't available for this request right now")
 			default:
-				return .unavailable("OpenRouter failed on its side")
+				return .unavailable("\(Provider.openrouter.displayName) failed on its side")
 		}
 	}
 }

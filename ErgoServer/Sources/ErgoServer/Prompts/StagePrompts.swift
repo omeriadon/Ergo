@@ -19,7 +19,7 @@ enum StagePrompts {
 		}
 	}
 
-	private static let names = StageModels.stages + [StageModels.ask, StageModels.analyse]
+	private static let names = StageModels.stages + [StageModels.ask, StageModels.analyse, StageModels.title]
 
 	private static let all: [String: String] = Dictionary(uniqueKeysWithValues: names.compactMap { stage in
 		Bundle.module.url(forResource: stage, withExtension: "md")

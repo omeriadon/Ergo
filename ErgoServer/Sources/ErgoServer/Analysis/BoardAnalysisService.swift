@@ -53,7 +53,12 @@ struct BoardAnalysisService: Sendable {
 		if let problem = request.problem {
 			throw ServiceError(code: .invalidRequest, message: problem)
 		}
-		guard try await Credential.find(request.provider, for: account, on: database) != nil else {
+		// The server's own model has no stored credential, so it's checked against the server's config instead
+		if request.provider.isServerManaged {
+			guard translations.config.openRouter != nil else {
+				throw ServiceError(code: .notConnected, message: "\(request.provider.displayName) isn't set up on the Ergo server")
+			}
+		} else if try await Credential.find(request.provider, for: account, on: database) == nil {
 			throw ServiceError(code: .notConnected, message: "\(request.provider.displayName) isn't connected")
 		}
 		let prompt = try StagePrompts.analysisMessage(for: request)

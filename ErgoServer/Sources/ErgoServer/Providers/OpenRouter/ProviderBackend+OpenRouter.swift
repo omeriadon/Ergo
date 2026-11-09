@@ -15,7 +15,7 @@ import Logging
 extension ProviderBackend {
 	private func openRouterClient() throws -> (client: OpenRouterClient, model: String) {
 		guard let openRouter = config.openRouter else {
-			throw ProviderFailure.unavailable("OpenRouter isn't set up on the Ergo server")
+			throw ProviderFailure.unavailable("\(Provider.openrouter.displayName) isn't set up on the Ergo server")
 		}
 		return (OpenRouterClient(key: openRouter.key, logger: logger), openRouter.model)
 	}
@@ -76,7 +76,7 @@ extension ProviderBackend {
 		for _ in 0 ..< settings.maxTurns {
 			let remaining = ContinuousClock.now.duration(to: deadline)
 			guard remaining > .zero else {
-				throw ProviderFailure.timedOut("Expected an answer from OpenRouter within \(settings.timeout.spelledOut)")
+				throw ProviderFailure.timedOut("Expected an answer from \(Provider.openrouter.displayName) within \(settings.timeout.spelledOut)")
 			}
 
 			let body = try JSONSerialization.data(withJSONObject: [
@@ -93,10 +93,10 @@ extension ProviderBackend {
 
 			guard !completion.toolCalls.isEmpty else {
 				guard completion.finishReason != "length" else {
-					throw ProviderFailure.unavailable("OpenRouter's answer was cut off")
+					throw ProviderFailure.unavailable("The answer from \(Provider.openrouter.displayName) was cut off")
 				}
 				guard !completion.text.isEmpty else {
-					throw ProviderFailure.unavailable("OpenRouter didn't answer")
+					throw ProviderFailure.unavailable("\(Provider.openrouter.displayName) didn't answer")
 				}
 				return
 			}
@@ -116,7 +116,7 @@ extension ProviderBackend {
 				])
 			}
 		}
-		throw ProviderFailure.unavailable("OpenRouter's model kept calling tools without answering")
+		throw ProviderFailure.unavailable("\(Provider.openrouter.displayName) kept calling tools without answering")
 	}
 
 	/// What the run's tools are, from the same `tools/list` a CLI would ask, in OpenAI's shape

@@ -47,10 +47,13 @@ struct StageModels: Codable, Sendable, Hashable {
 	/// Board analysis runs like Ask, with `ask`'s models, but has instructions of its own
 	static let analyse = "analyse"
 
+	/// Names a new chat once its first answer is done. It's a small job like the stages', so it gets their model.
+	static let title = TitleStage.name
+
 	static let defaults = StageModels(
 		claude: Dictionary(uniqueKeysWithValues: stages.map { ($0, Choice(model: "claude-haiku-5-5", effort: "medium")) })
-			.merging([ask: Choice(model: "claude-sonnet-5-5", effort: "medium")]) { _, new in new },
-		codex: Dictionary(uniqueKeysWithValues: (stages + [ask]).map { ($0, Choice(model: "gpt-6-luna", effort: "medium")) }),
+			.merging([ask: Choice(model: "claude-sonnet-5-5", effort: "medium"), title: Choice(model: "claude-haiku-5-5", effort: "medium")]) { _, new in new },
+		codex: Dictionary(uniqueKeysWithValues: (stages + [ask, title]).map { ($0, Choice(model: "gpt-6-luna", effort: "medium")) }),
 		attempts: 3,
 		verifies: true
 	)
@@ -96,7 +99,7 @@ struct StageModels: Codable, Sendable, Hashable {
 	private func applying(_ overrides: Overrides) throws -> StageModels {
 		var models = self
 		for (stage, _) in (overrides.claude ?? [:]).merging(overrides.codex ?? [:], uniquingKeysWith: { first, _ in first }) {
-			guard Self.stages.contains(stage) || stage == Self.ask else {
+			guard Self.stages.contains(stage) || stage == Self.ask || stage == Self.title else {
 				throw ServerConfig.Problem(description: "ERGO_MODELS_FILE: Unknown stage '\(stage)', expected one of \(Self.stages.map { "'\($0)'" }.joined(separator: ", "))")
 			}
 		}
