@@ -157,6 +157,17 @@ Users only choose the provider. By default every stage (gate, breakdown, formali
 
 A cell replaces the default cell whole, and leaving out `model` or `effort` leaves out the flag.
 
+### OpenRouter
+
+OpenRouter is the one provider that isn't a user's own login. The server calls it directly, with its own key and model, for every stage, Ask and board analysis, and streams the answer like the CLIs do. Both variables are read at launch:
+
+| Variable | |
+|---|---|
+| `ERGO_OPENROUTER_API_KEY` | The server's OpenRouter key. Leaving it out removes OpenRouter from the app. |
+| `ERGO_OPENROUTER_MODEL` | The model id, like `anthropic/claude-sonnet-4.5`. Required with the key. |
+
+It must support tool calls and structured outputs, since requests set `provider.require_parameters`. Every account can use it, so it spends the server's credit: nothing is stored per user, and `ERGO_MODEL_EFFORT` and `ERGO_MODELS_FILE` don't apply to it. It shows in `GET v1/connections` as always connected, and `PUT` or `DELETE` on it are refused.
+
 ## Deploying
 
 The Dockerfile builds from the repository root, since the server needs `../ErgoKit`:

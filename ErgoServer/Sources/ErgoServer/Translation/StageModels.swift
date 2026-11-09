@@ -28,10 +28,12 @@ struct StageModels: Codable, Sendable, Hashable {
 		TranslationPolicy(attempts: attempts, verifies: verifies)
 	}
 
+	/// OpenRouter has one model for every stage, `ServerConfig.openRouter`'s, so it has no cells here
 	func choice(for provider: Provider, stage: String) -> Choice {
-		let choices = switch provider {
+		let choices: [String: Choice] = switch provider {
 			case .claude: claude
 			case .codex: codex
+			case .openrouter: [:]
 		}
 		return choices[stage] ?? Choice()
 	}

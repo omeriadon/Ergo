@@ -40,12 +40,13 @@ final class AskService: Sendable {
 
 		try await translations.withBackend(provider: request.provider, scope: StageModels.ask, account: account, database: database, logger: logger) { backend in
 			let tools = tools
-			let token = runs.register { body in
+			let responder: AskRuns.Responder = { body in
 				await tools.respond(to: body, events: send)
 			}
+			let token = runs.register(responder)
 			defer { runs.remove(token) }
 
-			try await backend.ask(prompt: prompt, tools: "http://127.0.0.1:\(port)/\(ErgoProtocol.Path.askTools)/\(token)") { text in
+			try await backend.ask(prompt: prompt, tools: "http://127.0.0.1:\(port)/\(ErgoProtocol.Path.askTools)/\(token)", responder: responder) { text in
 				await send(.text(text))
 			}
 		} summary: { _ in

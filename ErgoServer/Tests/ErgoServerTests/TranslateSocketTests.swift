@@ -52,7 +52,7 @@ struct TranslateSocketTests {
 					kind: .subscription,
 					account: account.id
 				)
-			case nil:
+			case .openrouter?, nil:
 				break
 		}
 		return (ErgoClient(server: server, token: account.token), account)

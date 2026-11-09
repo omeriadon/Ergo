@@ -27,6 +27,11 @@ struct TranslationSettingsView: View {
 		ServerEnvironment.effective(serverEnvironment, macAddress: translationServer)
 	}
 
+	/// The server's own providers only when it has them, and always the one already chosen
+	private var models: [Provider] {
+		Provider.allCases.filter { !$0.isServerManaged || account.connections[$0] != nil || $0 == translationProvider }
+	}
+
 	var body: some View {
 		Form {
 			#if DEBUG
@@ -35,7 +40,7 @@ struct TranslationSettingsView: View {
 
 			Section {
 				Picker("Model", selection: $translationProvider) {
-					ForEach(Provider.allCases, id: \.self) { provider in
+					ForEach(models, id: \.self) { provider in
 						Text(provider.name)
 					}
 				}
@@ -55,13 +60,15 @@ struct TranslationSettingsView: View {
 			}
 
 			Section {
-				ForEach(Provider.allCases, id: \.self) { provider in
+				ForEach(Provider.allCases.filter { !$0.isServerManaged }, id: \.self) { provider in
 					NavigationLink {
 						switch provider {
 							case .claude:
 								ConnectClaudeView()
 							case .codex:
 								ConnectChatGPTView()
+							case .openrouter:
+								EmptyView()
 						}
 					} label: {
 						ConnectionRow(provider: provider, status: account.connections[provider])

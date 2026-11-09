@@ -33,14 +33,17 @@ struct AskRunSettings: Sendable {
 
 /// One CLI call for Ask: free text as it's written, with Ergo's tools as the only ones it has
 extension ProviderBackend {
-	/// `tools` is the URL this run's tools answer at. `text` hears more of the answer as it's written.
-	func ask(prompt: String, tools: String, settings: AskRunSettings = .ask, text: @escaping @Sendable (String) async -> Void) async throws {
+	/// `tools` is the URL this run's tools answer at, for a CLI, and `responder` is the same tools for a provider with no CLI.
+	/// `text` hears more of the answer as it's written.
+	func ask(prompt: String, tools: String, responder: @escaping AskRuns.Responder, settings: AskRunSettings = .ask, text: @escaping @Sendable (String) async -> Void) async throws {
 		try await RunDirectory.with(in: config.runsDirectory) { run in
 			switch credential.provider {
 				case .claude:
 					try await claudeAsk(prompt: prompt, tools: tools, settings: settings, in: run, text: text)
 				case .codex:
 					try await codexAsk(prompt: prompt, tools: tools, settings: settings, in: run, text: text)
+				case .openrouter:
+					try await openRouterAsk(prompt: prompt, settings: settings, responder: responder, text: text)
 			}
 		}
 	}

@@ -27,6 +27,15 @@ struct ServerConfig: Sendable {
 	var claudePath: String?
 	var codexPath: String?
 
+	struct OpenRouter: Sendable {
+		/// The server's own key, which pays for every OpenRouter call
+		var key: Secret
+		var model: String
+	}
+
+	/// Nil when the server has no OpenRouter key, which leaves that provider out
+	var openRouter: OpenRouter?
+
 	struct CLIInstall: Sendable {
 		var directory: URL
 		var npmPath: String
@@ -190,6 +199,7 @@ struct ServerConfig: Sendable {
 			}
 		}
 
+		try loadOpenRouter(from: environment, into: &config)
 		try loadSharing(from: environment, into: &config)
 
 		if config.claudePath == nil {
@@ -200,6 +210,19 @@ struct ServerConfig: Sendable {
 		}
 
 		return config
+	}
+
+	private static func loadOpenRouter(from environment: [String: String], into config: inout ServerConfig) throws {
+		let key = environment["ERGO_OPENROUTER_API_KEY"]?.trimmingCharacters(in: .whitespacesAndNewlines)
+		let model = environment["ERGO_OPENROUTER_MODEL"]?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+		guard let key, !key.isEmpty else {
+			return
+		}
+		guard let model, !model.isEmpty else {
+			throw Problem(description: "ERGO_OPENROUTER_MODEL: Expected a model id like 'anthropic/claude-sonnet-4.5' to go with ERGO_OPENROUTER_API_KEY")
+		}
+		config.openRouter = OpenRouter(key: Secret(key), model: model)
 	}
 
 	/// After `ERGO_APPLE_APP_ID`, which is the default APNs topic

@@ -46,6 +46,8 @@ services:
       # Empty keeps the defaults in StageModels. Set, each applies to every stage.
       ERGO_CLAUDE_MODEL: ${ERGO_CLAUDE_MODEL:-}
       ERGO_CODEX_MODEL: ${ERGO_CODEX_MODEL:-}
+      ERGO_OPENROUTER_API_KEY: ${ERGO_OPENROUTER_API_KEY:-}
+      ERGO_OPENROUTER_MODEL: ${ERGO_OPENROUTER_MODEL:-}
       ERGO_MODEL_EFFORT: ${ERGO_MODEL_EFFORT:-}
       # Only for a proxy on this machine or Docker network, and never when the port is reachable without it
       ERGO_TRUST_PROXY: ${ERGO_TRUST_PROXY:-1}

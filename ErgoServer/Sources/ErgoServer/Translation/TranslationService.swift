@@ -123,23 +123,35 @@ final class TranslationService: Sendable {
 		_ work: (ProviderBackend) async throws -> Result,
 		summary: (Result) -> Logger.Metadata
 	) async throws -> Result {
-		guard let stored = try await Credential.find(provider, for: account, on: database), let id = stored.id else {
-			throw ServiceError(code: .notConnected, message: "\(provider.displayName) isn't connected")
-		}
+		// A server-managed provider uses the server's own key, so there's no row to find, mark or reseal
+		let id: UUID?
 		let credential: ProviderCredential
-		do {
-			credential = try ProviderCredential(
-				provider: stored.provider,
-				kind: stored.kind,
-				secret: vault.open(stored.sealed, account: account, provider: stored.provider)
-			)
-		} catch {
-			logger.error("Couldn't unseal a credential", metadata: ["provider": "\(provider)"])
-			throw ServiceError(code: .notConnected, message: "Couldn't read the saved \(provider.displayName) connection, connect it again")
+		if provider.isServerManaged {
+			guard let openRouter = config.openRouter else {
+				throw ServiceError(code: .notConnected, message: "\(provider.displayName) isn't set up on the Ergo server")
+			}
+			id = nil
+			credential = ProviderCredential(provider: provider, kind: .apiKey, secret: openRouter.key)
+		} else {
+			guard let stored = try await Credential.find(provider, for: account, on: database), let storedID = stored.id else {
+				throw ServiceError(code: .notConnected, message: "\(provider.displayName) isn't connected")
+			}
+			id = storedID
+			do {
+				credential = try ProviderCredential(
+					provider: stored.provider,
+					kind: stored.kind,
+					secret: vault.open(stored.sealed, account: account, provider: stored.provider)
+				)
+			} catch {
+				logger.error("Couldn't unseal a credential", metadata: ["provider": "\(provider)"])
+				throw ServiceError(code: .notConnected, message: "Couldn't read the saved \(provider.displayName) connection, connect it again")
+			}
 		}
 
 		func run() async throws -> Result {
 			let backend = ProviderBackend(credential: credential, config: config, runner: runner, logger: logger) { [vault] refreshed in
+				guard let id else { return }
 				do {
 					try await Credential.reseal(id, with: vault.seal(refreshed, account: account, provider: credential.provider), on: database)
 				} catch {
@@ -150,7 +162,9 @@ final class TranslationService: Sendable {
 			let start = ContinuousClock.now
 			do {
 				let result = try await work(backend)
-				try? await Credential.markWorking(id, on: database)
+				if let id {
+					try? await Credential.markWorking(id, on: database)
+				}
 				var metadata: Logger.Metadata = [
 					"provider": "\(credential.provider)",
 					"scope": "\(scope)",
@@ -160,7 +174,7 @@ final class TranslationService: Sendable {
 				logger.info("Translated", metadata: metadata)
 				return result
 			} catch let failure as ProviderFailure {
-				if case let .credentialRejected(problem) = failure {
+				if let id, case let .credentialRejected(problem) = failure {
 					try? await Credential.mark(id, problem: problem, on: database)
 				}
 				logger.warning("Translation failed", metadata: ["provider": "\(credential.provider)", "code": "\(failure.serviceError.code)"])

@@ -186,12 +186,13 @@ struct BoardAnalysisService: Sendable {
 
 		private func analyse(_ heard: Heard) async throws {
 			let tools = AskToolServer(tools: BoardAnalysisTools(request: request, catalog: service.catalog))
-			let token = service.runs.register { [self] body in
+			let responder: AskRuns.Responder = { [self] body in
 				await tools.respond(to: body) { event in
 					guard case let .report(report) = event else { return }
 					await save(report, heard: heard)
 				}
 			}
+			let token = service.runs.register(responder)
 			defer { service.runs.remove(token) }
 
 			let url = "http://127.0.0.1:\(port)/\(ErgoProtocol.Path.askTools)/\(token)"
@@ -205,7 +206,7 @@ struct BoardAnalysisService: Sendable {
 					logger: logger,
 					exclusive: request.provider == .codex
 				) { backend in
-					try await backend.ask(prompt: prompt, tools: url, settings: .analysis) { text in
+					try await backend.ask(prompt: prompt, tools: url, responder: responder, settings: .analysis) { text in
 						heard.add(text: text)
 					}
 				} summary: { _ in

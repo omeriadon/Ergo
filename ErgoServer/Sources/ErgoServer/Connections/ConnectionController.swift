@@ -16,13 +16,19 @@ enum ConnectionController {
 		let credentials = try await Credential.query(on: request.db)
 			.filter(\.$account.$id == request.accountID)
 			.all()
-		let statuses = credentials.map(\.status).sorted { $0.provider.rawValue < $1.provider.rawValue }
-		return try Response.json(statuses)
+		var statuses = credentials.map(\.status)
+
+		// The server's own key is always working as far as this account is concerned, so it's listed as connected
+		if request.ergo.config.openRouter != nil {
+			statuses.append(ConnectionStatus(provider: .openrouter, kind: .apiKey, verified: nil, problem: nil))
+		}
+		return try Response.json(statuses.sorted { $0.provider.rawValue < $1.provider.rawValue })
 	}
 
 	/// Only stored once a real call with it worked, so a typo never replaces a working connection
 	static func connect(_ request: Request) async throws -> Response {
 		let provider = try provider(of: request)
+		try requireUserManaged(provider)
 		let upload = try request.decode(ConnectionUpload.self)
 		let secret = upload.secret.trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -40,6 +46,7 @@ enum ConnectionController {
 
 	static func disconnect(_ request: Request) async throws -> Response {
 		let provider = try provider(of: request)
+		try requireUserManaged(provider)
 		try await Credential.query(on: request.db)
 			.filter(\.$account.$id == request.accountID)
 			.filter(\.$provider == provider)
@@ -98,6 +105,13 @@ enum ConnectionController {
 		return provider
 	}
 
+	/// The server's own providers have nothing to upload or forget
+	static func requireUserManaged(_ provider: Provider) throws {
+		guard !provider.isServerManaged else {
+			throw ServiceError(code: .invalidRequest, message: "Expected a provider you connect yourself, \(provider.displayName) is set up on the Ergo server")
+		}
+	}
+
 	/// Catches the usual mix-ups before spending a call on them. Nil when it looks right.
 	static func problem(with secret: String, kind: CredentialKind, for provider: Provider) -> String? {
 		let looksLikeJSON = secret.hasPrefix("{")
@@ -109,6 +123,9 @@ enum ConnectionController {
 		}
 
 		switch (provider, kind) {
+			case (.openrouter, _):
+				return "Expected a provider you connect yourself, \(provider.displayName) is set up on the Ergo server"
+
 			case (.claude, .subscription):
 				if secret.hasPrefix("sk-ant-oat") {
 					return nil

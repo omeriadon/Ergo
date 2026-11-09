@@ -203,6 +203,8 @@ extension Provider {
 				"Claude"
 			case .codex:
 				"ChatGPT"
+			case .openrouter:
+				"OpenRouter"
 		}
 	}
 }

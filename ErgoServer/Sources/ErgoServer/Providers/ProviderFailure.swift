@@ -35,6 +35,7 @@ extension Provider {
 		switch self {
 			case .claude: "Claude"
 			case .codex: "ChatGPT"
+			case .openrouter: "OpenRouter"
 		}
 	}
 
@@ -43,6 +44,7 @@ extension Provider {
 		switch self {
 			case .claude: "Claude Code"
 			case .codex: "Codex"
+			case .openrouter: "OpenRouter"
 		}
 	}
 }

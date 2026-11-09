@@ -22,7 +22,7 @@ struct CanvasDropLens: View {
 				style: 2,
 				warpsContentBelow: true,
 				restingBackgroundColor: .white.withAlphaComponent(0),
-				liftedDisplacement: 30
+				liftedDisplacement: 15
 			)
 		)
 	}

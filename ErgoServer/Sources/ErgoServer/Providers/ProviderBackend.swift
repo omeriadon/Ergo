@@ -64,6 +64,8 @@ struct ProviderBackend: TranslationBackend {
 					try await claude(stage, prompt: prompt, in: run)
 				case .codex:
 					try await codex(stage, prompt: prompt, in: run)
+				case .openrouter:
+					try await openRouter(stage, prompt: prompt)
 			}
 		}
 	}
