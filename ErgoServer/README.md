@@ -264,7 +264,7 @@ The log says only the event type and whether an account matched. Never the `sub`
 
 ## Board analysis
 
-`POST v1/boards/<board>/analysis` starts an agent that goes through a whole board and annotates it with what's relevant in the library. It follows `Plans/10-BoardAnalysis.md`. The instructions are `Prompts/Resources/analyse.md`, and the model is `ask`'s, from the models file.
+`POST v1/boards/<board>/analysis` starts an agent that goes through a whole board and annotates it with what's relevant in the library. It follows `Plans/10-BoardAnalysis.md`. The instructions are `Prompts/BoardAnalysis/analyse.md`, and the model is `ask`'s, from the models file.
 
 - **Starting:** the body is at most 2 MB. `problem` is `invalidRequest`, and so is a board that isn't a live record of the account ("Expected a synced board, sync and try again") or a shared one the caller can only view. A run already going on the board, or three on the account, is `busy`. It answers `202` once the `analysis` record says `running`.
 - **The job outlives the request.** `BoardAnalysisJobs` owns the tasks, one per board and three per account, and cancels them on shutdown. It uses the application's database and logger, never the request's. In memory, so a restart loses a run, and the `running` record is shown as interrupted once it's older than `BoardAnalysisStatus.staleAfter`.

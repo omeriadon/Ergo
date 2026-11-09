@@ -8,7 +8,7 @@
 import ErgoProtocol
 import Foundation
 
-/// What each stage's model is told. The instructions live in `Resources/<stage>.md`, the input travels as JSON,
+/// What each stage's model is told. The instructions live in `Prompts/<Feature>/<stage>.md`, the input travels as JSON,
 /// so the user's English only ever reaches a model as a JSON string inside data, never in an instruction.
 enum StagePrompts {
 	struct Missing: Error, CustomStringConvertible {

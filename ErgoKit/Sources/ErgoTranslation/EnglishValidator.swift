@@ -12,7 +12,7 @@ import Foundation
 
 /// Turns away text that obviously isn't English sentences, before spending a model call on it
 public enum EnglishValidator {
-	public static let characterLimit = 1500
+	public static let characterLimit = 50_000
 
 	public static func problem(with english: String) -> String? {
 		let text = english.trimmingCharacters(in: .whitespacesAndNewlines)

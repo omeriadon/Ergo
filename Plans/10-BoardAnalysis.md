@@ -17,7 +17,7 @@ Analysing a board starts an agent on the server that goes through everything on 
 
 1. The app pushes pending sync changes, reads the text of any link sources on the device (`PageReader`, since the CLI can't open links), and `POST`s a `BoardAnalysisRequest` to `v1/boards/<id>/analysis`.
 2. The server checks it, writes an `analysis` record saying the run is `running`, starts a job that isn't tied to the request, and answers `202`.
-3. The job runs the CLI with `Prompts/Resources/analyse.md` and a tool set made for this run: the library's read tools plus the reporting tools.
+3. The job runs the CLI with `Prompts/BoardAnalysis/analyse.md` and a tool set made for this run: the library's read tools plus the reporting tools.
 4. Each report is **checked in code**. A rejected one goes back to the model as a tool error, for it to put right. An accepted one is written straight away as an `annotation` record, so a run that dies keeps what it had.
 5. Live sync tells connected devices after each write. At the end, the `analysis` record says how it went and holds the discussion, and a silent push syncs the devices that aren't connected.
 

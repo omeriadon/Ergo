@@ -82,7 +82,7 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -destination 'generic/platform=i
 - Answers are markdown with LaTeX. `MarkdownDocument` takes `$…$`, `$$…$$`, `\\(…\\)` and `\\[…\\]` out before parsing and `LaTeX` turns them into real characters, so they flow and copy like text. It doesn't typeset. Text blocks render in one `UITextView` (`AskSelectableText`), since SwiftUI's `Text` can't select across lines.
 - An `AskAttachment` (library entry, text or web link) goes with a message. Waiting ones are per conversation in `AskStore`, unsaved, and the model gets them as text after the question (`AskMessage.requestText`). A library entry goes as its id, for the model to read with `get_library_entry`. `AddToChatSheet` picks the chat, and a new chat with attachments stays as `AskStore.unsentDraft` while others are open. Text pasted over `AskAttachment.pasteWordLimit` words becomes an attachment.
 - `Defaults[.agentInstructions]` (Settings → AI → Instructions, synced) is the person's own note on style. It rides on `AskRequest` and `BoardAnalysisRequest` as `instructions`, and the server appends it after its own rules as style only (`StagePrompts.instructionsNote`).
-- The prompt is `Prompts/Resources/ask.md`. Findings have to cite the library, and pasted text is data, not instructions.
+- The prompt is `Prompts/Ask/ask.md`. Findings have to cite the library, and pasted text is data, not instructions.
 
 ## Sharing into the app
 - The extension only asks what to do (add to chat, break down, add to board). It saves a `SharedItem` to `SharedItemInbox` in the App Group `group.com.adonis.Ergo`, then tries to open the app with `ergo://share`.

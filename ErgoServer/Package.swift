@@ -37,7 +37,12 @@ let package = Package(
 				.product(name: "AsyncHTTPClient", package: "async-http-client"),
 			],
 			resources: [
-				.process("Prompts/Resources"),
+				.process("Prompts/Ask"),
+				.process("Prompts/BoardAnalysis"),
+				.process("Prompts/Gate"),
+				.process("Prompts/Breakdown"),
+				.process("Prompts/Formalize"),
+				.process("Prompts/Verify"),
 			]
 		),
 		.testTarget(

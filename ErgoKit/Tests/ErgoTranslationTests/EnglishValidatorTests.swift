@@ -14,7 +14,7 @@ struct EnglishValidatorTests {
 		#expect(EnglishValidator.problem(with: "  ") != nil)
 		#expect(EnglishValidator.problem(with: "→∧¬ ∨∨ ()") != nil)
 		#expect(EnglishValidator.problem(with: "hello") != nil)
-		#expect(EnglishValidator.problem(with: String(repeating: "word ", count: 400)) != nil)
+		#expect(EnglishValidator.problem(with: String(repeating: "word ", count: EnglishValidator.characterLimit / 5 + 1)) != nil)
 	}
 
 	@Test func acceptsSentences() {

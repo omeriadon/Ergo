@@ -153,7 +153,7 @@ Done in `ErgoKit/ErgoSync`, `ErgoProtocol`, `ErgoTranslation`, `ErgoClient`, `Er
 - `ArgumentBreakdown` (ErgoTranslation): `kind` (`argument` or `statements`, or `neither` with an error issue), `premises`, `conclusion` (empty when none), `claims`, `descriptors` (six, the board's own plus the new claims in free slots) and `issues`.
 - **Descriptors are assigned in code, not by the model.** After breakdown the pipeline matches each claim's descriptor to an existing one (case-insensitive) to keep its slot, and gives new claims the free slots in order; more new claims than free slots is an error issue. Breakdown is told the existing descriptors and asked to reuse them as labels; formalize is told each claim's letter and the letters the board already names, and a formula using any other letter is a compile error sent back for a retry. With no descriptors the behaviour is exactly what it was.
 - Stage names are untouched. `TranslationPipeline` gained `descriptors` and `breakDown(_:events:)`; its `events` parameters are now `@escaping`, which is source compatible.
-- Input limits for both scopes: `EnglishValidator` (1,500 characters) answers with an issue and no model call, descriptors are at most six of at most 32 characters (`.invalidRequest`), and the grammar must match.
+- Input limits for both scopes: `EnglishValidator` (50,000 characters) answers with an issue and no model call, descriptors are at most six of at most 32 characters (`.invalidRequest`), and the grammar must match.
 
 **Evals:** the runner sends `scope: .statement` and, per case, an optional `descriptors` (absent in the whole corpus). Corpus validation checks the descriptors' count and length.
 

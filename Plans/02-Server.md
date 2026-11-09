@@ -34,7 +34,7 @@ ErgoServer/
       ClaudeCode/  ClaudeCodeCommand.swift (arguments + env), ClaudeCodeResult.swift (decode result JSON)
       Codex/       CodexCommand.swift, CodexEvents.swift (JSONL), CodexAuthFile.swift
     Processes/     ProcessRunner.swift, RunDirectory.swift
-    Prompts/       StagePrompts.swift, Resources/gate.md, breakdown.md, formalize.md, verify.md
+    Prompts/       StagePrompts.swift, then one folder per prompt: Ask/, BoardAnalysis/, Gate/, Breakdown/, Formalize/, Verify/ (each holds `<stage>.md`)
     Migrations/    CreateAccount.swift, CreateCredential.swift
   Tests/ErgoServerTests/
     Fixtures/      (copied from Plans/Fixtures, plus fakes)
@@ -106,7 +106,7 @@ Wording examples: "Expected a token from 'claude setup-token', found an API key"
    - **`argument`:** `breakDown`, only the gate and breakdown stages, for pasted English that becomes several statements and links. Ends with `BreakDownServerMessage.finished(ArgumentBreakdown)`: the premises, the conclusion (empty when none is drawn), the claims, the board's descriptors with the new claims added, and `issues` (an error when the English isn't an argument or claim). Events are the same as the first three steps of a statement.
    - The two scopes answer with different message types so `TranslateServerMessage` stays exhaustive for apps that never break anything down. `.event` and `.failed` code identically in both, so a failure before the scope is known reaches either. `ErgoClient.translate` always sends `statement`; `ErgoClient.breakDown` always sends `argument`.
    - **Descriptors:** `TranslateRequest.descriptors` are the board's six letter names (empty for a free slot), shared by every statement. The pipeline gives each claim whose descriptor matches an existing one (case-insensitively) that slot, and each new claim the next free slot, in order. Breakdown is told the existing descriptors and prefers them as labels. Formalize is told which letter each claim has (`letters`) and which letters the board already names (`descriptors`), and a formula that uses any other letter is a compiler error fed back for another try. More new claims than free slots is an error issue ("Expected at most 1 new claim, found 2, the board's other letters are taken"). With no descriptors every claim takes the next letter in order, exactly as before.
-   - **Limits, both scopes:** `EnglishValidator` (1,500 characters and the rest) answers with an issue and no model call, the grammar must match, and descriptors are checked as above.
+   - **Limits, both scopes:** `EnglishValidator` (50,000 characters and the rest) answers with an issue and no model call, the grammar must match, and descriptors are checked as above.
 5. **Cancel.**
    - `.cancel` or the socket closing cancels the task. (Later: Ask and the `argument` scope are detached runs that only `.cancel` stops, so a force quit app finds its answer again. See `ErgoServer/README.md`.) Cancellation must **terminate the CLI process**: use swift-subprocess's teardown (SIGTERM, then SIGKILL after 2 s).
    - Test it with a fake CLI that sleeps.
@@ -122,7 +122,7 @@ Wording examples: "Expected a token from 'claude setup-token', found an API key"
 `run(stage, input)`:
 1. Make a `RunDirectory`: a fresh `0700` directory with `home/` and `work/` inside. It's always removed afterwards, success or failure.
 2. Build the prompt:
-   - The system/instructions are `StagePrompts.instructions(for: Stage.name)`, the matching `Resources/<name>.md` loaded with `Bundle.module`.
+   - The system/instructions are `StagePrompts.instructions(for: Stage.name)`, the matching `Prompts/<Feature>/<name>.md` loaded with `Bundle.module`.
    - The user message is `Input` as pretty JSON inside a fenced block, with one line saying the answer must match the schema.
 3. Run the provider command (below) through `ProcessRunner`, with the prompt on **stdin**. Never put user text in argv.
 4. Decode `Stage.Output` from the structured output. The pipeline only retries compile and verify problems, so malformed output is handled here: retry the same call **once**, then fail with `.providerUnavailable`.

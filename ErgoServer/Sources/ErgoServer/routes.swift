@@ -51,7 +51,7 @@ func routes(_ app: Application) throws {
 		await CodexDeviceLogin(request: request, socket: socket).run()
 	}
 	// Not the async upgrade, which starts on another thread and could miss the request
-	signedIn.webSocket(ErgoProtocol.Path.translate.pathComponents, maxFrameSize: .init(integerLiteral: 1 << 16)) { request, socket in
+	signedIn.webSocket(ErgoProtocol.Path.translate.pathComponents, maxFrameSize: .init(integerLiteral: 1 << 18)) { request, socket in
 		let translate = TranslateSocket(request: request, socket: socket)
 		Task {
 			await translate.run()

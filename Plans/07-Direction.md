@@ -73,7 +73,7 @@ Adon's idea: paste text or a web page, and the model finds the fallacies and oth
 - One analysis returns findings, each with a library entry and an exact quote, as in AI grounding below. Annotations are those quotes highlighted in the text, so every finding can be checked against its words.
 - Most of a real article isn't premises or a conclusion, so the text keeps everything a board would leave out.
 - It isn't a separate mode. A board's source is already a block of text or a link, so annotating a source is the Board's analysis. A board can then be made from it, with each card keeping the findings whose quotes fall in its claim.
-- Size matters. Break Down stops at 1,500 characters, while a page can be much longer, so long texts need to be analysed in parts.
+- Size matters. Break Down stops at 50,000 characters, while a page can be much longer, so long texts need to be analysed in parts.
 
 ## AI grounding
 
