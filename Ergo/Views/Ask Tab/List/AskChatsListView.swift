@@ -25,52 +25,57 @@ struct AskChatsListView: View {
 
 	@State private var renaming: Renaming<AskConversation.ID>?
 
+	@State private var attachmentsOf: AskConversation?
+
+	/// The list has been pulled down past its top
+	@State private var revealsArchived = false
+
+	@State private var isShowingArchived = false
+
+	/// Hidden until it's pulled into view, unless there'd be nothing else to see
+	private var showsArchivedRow: Bool {
+		!store.archivedConversations.isEmpty && (revealsArchived || store.listedConversations.isEmpty)
+	}
+
+	private var chats: some View {
+		List {
+			if showsArchivedRow {
+				ArchivedRow(count: store.archivedConversations.count) {
+					isShowingArchived = true
+				}
+			}
+
+			ForEach(store.listedConversations) { conversation in
+				AskChatRow(
+					conversation: conversation,
+					rename: { renaming = Renaming(id: conversation.id, name: conversation.name) },
+					open: { store.open(conversation.id) },
+					showAttachments: { attachmentsOf = conversation }
+				)
+			}
+		}
+		.revealsArchived($revealsArchived, hasArchived: !store.archivedConversations.isEmpty)
+	}
+
 	var body: some View {
 		NavigationStack {
-			List {
-				ForEach(store.sortedConversations) { conversation in
-					Button {
-						store.open(conversation.id)
-					} label: {
-						AskHistoryRow(conversation: conversation, isAnswering: store.runs[conversation.id] != nil)
-					}
-					.buttonStyle(.plain)
-					.swipeActions {
-						Button("Delete", systemImage: "trash", role: .destructive) {
-							store.delete(conversation.id)
-						}
-					}
-					.swipeActions(edge: .leading) {
-						renameButton(for: conversation)
-					}
-					.contextMenu {
-						renameButton(for: conversation)
+			chats
+				.renameAlert("Rename Chat", renaming: $renaming) { id, name in
+					store.rename(id, to: name)
+				}
+				.sheet(item: $attachmentsOf) { AskAttachmentsSheet(conversation: $0) }
+				.sheet(isPresented: $isShowingArchived) { AskArchivedChatsSheet() }
+				.navigationDestination(isPresented: isChatOpen) {
+					AskThreadView()
+				}
+				.overlay {
+					if store.conversations.isEmpty {
+						ContentUnavailableView("No Chats", systemImage: "clock.arrow.circlepath")
 					}
 				}
-			}
-			.renameAlert("Rename Chat", renaming: $renaming) { id, name in
-				store.rename(id, to: name)
-			}
-			.navigationDestination(isPresented: isChatOpen) {
-				AskThreadView()
-			}
-			.overlay {
-				if store.conversations.isEmpty {
-					ContentUnavailableView("No Chats", systemImage: "clock.arrow.circlepath")
-				}
-			}
-			.toolbarTitleVire("Ask", "bubble.left.and.text.bubble.right")
+				.toolbarTitleVire("Ask", "bubble.left.and.text.bubble.right")
 		}
 		.presentationDetents([.medium, .large])
-	}
-}
-
-private extension AskChatsListView {
-	func renameButton(for conversation: AskConversation) -> some View {
-		Button("Rename", systemImage: "pencil") {
-			renaming = Renaming(id: conversation.id, name: conversation.name)
-		}
-		.tint(.orange)
 	}
 }
 
@@ -91,6 +96,13 @@ struct AskHistoryRow: View {
 			}
 
 			Spacer(minLength: 0)
+
+			if conversation.isPinned == true {
+				Image(systemName: "pin.fill")
+					.font(.caption)
+					.foregroundStyle(.secondary)
+					.accessibilityLabel("Pinned")
+			}
 
 			if isAnswering {
 				ProgressView()

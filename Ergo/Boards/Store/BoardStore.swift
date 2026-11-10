@@ -28,6 +28,29 @@ final class BoardStore {
 		boards.sorted { $0.modified > $1.modified }
 	}
 
+	/// What the list shows: pinned first, then newest first
+	var listedBoards: [Board] {
+		let listed = sortedBoards.filter { !archivedIDs.contains($0.id) }
+		return listed.filter { pinnedIDs.contains($0.id) } + listed.filter { !pinnedIDs.contains($0.id) }
+	}
+
+	var archivedBoards: [Board] {
+		sortedBoards.filter { archivedIDs.contains($0.id) }
+	}
+
+	/// Kept apart from the board, since other people on a shared one have their own
+	var pinnedIDs: Set<Board.ID> {
+		didSet {
+			Defaults[.pinnedBoards] = pinnedIDs
+		}
+	}
+
+	var archivedIDs: Set<Board.ID> {
+		didSet {
+			Defaults[.archivedBoards] = archivedIDs
+		}
+	}
+
 	// MARK: - current
 
 	var currentID: Board.ID? {
@@ -74,6 +97,8 @@ final class BoardStore {
 	init() {
 		boards = Defaults[.boards]
 		currentID = Defaults[.currentBoardID]
+		pinnedIDs = Defaults[.pinnedBoards]
+		archivedIDs = Defaults[.archivedBoards]
 	}
 
 	// MARK: - sharing
@@ -108,10 +133,35 @@ final class BoardStore {
 	func delete(_ ids: Set<Board.ID>) {
 		boards.removeAll { ids.contains($0.id) }
 		deletedIDs.formUnion(ids)
+		pinnedIDs.subtract(ids)
+		archivedIDs.subtract(ids)
 		if let currentID, ids.contains(currentID) {
 			newBoard()
 		}
 		save()
+	}
+
+	// MARK: - pin and archive
+
+	func setPinned(_ isPinned: Bool, _ id: Board.ID) {
+		if isPinned {
+			pinnedIDs.insert(id)
+		} else {
+			pinnedIDs.remove(id)
+		}
+	}
+
+	/// Never a tombstone, which on a shared board would be leaving it. Archiving the open board starts a new one, as deleting it does.
+	func setArchived(_ isArchived: Bool, _ id: Board.ID) {
+		guard isArchived else {
+			archivedIDs.remove(id)
+			return
+		}
+		archivedIDs.insert(id)
+		pinnedIDs.remove(id)
+		if id == currentID {
+			newBoard()
+		}
 	}
 
 	// MARK: - rename
@@ -189,6 +239,8 @@ final class BoardStore {
 			}
 		}
 		boards.removeAll { deleted.contains($0.id) }
+		pinnedIDs.subtract(deleted)
+		archivedIDs.subtract(deleted)
 
 		// Deleted on another device, so it goes the same way as deleting it here
 		if let currentID, deleted.contains(currentID) {

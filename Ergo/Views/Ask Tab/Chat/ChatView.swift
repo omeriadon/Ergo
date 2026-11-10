@@ -20,6 +20,10 @@ struct AskThreadView: View {
 	/// Set while the search bar is open
 	@State private var find: FindState?
 
+	@State private var attachmentsOf: AskConversation?
+
+	@State private var isConfirmingDelete = false
+
 	var body: some View {
 		let id = store.current.id
 		ZStack {
@@ -56,7 +60,25 @@ struct AskThreadView: View {
 				}
 				.disabled(store.current.messages.isEmpty)
 				.accessibilityIdentifier("ask.search")
+
+				// A chat with nothing in it isn't saved yet
+				if !store.current.messages.isEmpty {
+					AskChatActions(
+						conversation: store.current,
+						showAttachments: { attachmentsOf = store.current },
+						delete: { isConfirmingDelete = true }
+					)
+				}
 			}
+		}
+		.sheet(item: $attachmentsOf) { AskAttachmentsSheet(conversation: $0) }
+		.confirmationDialog("Delete this chat?", isPresented: $isConfirmingDelete, titleVisibility: .visible) {
+			Button("Delete", role: .destructive) {
+				store.delete(id)
+			}
+			.accessibilityIdentifier("ask.delete.confirm")
+		} message: {
+			Text("This can't be undone")
 		}
 	}
 }

@@ -70,6 +70,10 @@ extension Defaults.Keys {
 
 	static let currentBoardID = Key<UUID?>("currentBoardID", default: nil)
 
+	/// This device only. On the board's own records they'd go to everyone it's shared with.
+	static let pinnedBoards = Key<Set<UUID>>("pinnedBoards", default: [])
+	static let archivedBoards = Key<Set<UUID>>("archivedBoards", default: [])
+
 	static let currentScratchpadID = Key<UUID?>("currentScratchpadID", default: nil)
 
 	static let logicPath = Key<[LogicRoute]>("logicPath", default: [])

@@ -74,6 +74,9 @@ struct CanvasView: View {
 	/// Set while the search bar is open
 	@State var find: FindState?
 
+	/// The board waiting on the person to say it should go
+	@State var removing: Board?
+
 	var board: Board {
 		boardStore.current
 	}
@@ -105,6 +108,7 @@ struct CanvasView: View {
 		.toolbarVisibility(find == nil ? .automatic : .hidden, for: .navigationBar)
 		.background { editorPresenter }
 		.sheet(item: $sourceSheet, content: sourceSheet(for:))
+		.boardRemovalDialog($removing)
 		.modifier(lifecycle)
 	}
 
@@ -152,7 +156,8 @@ struct CanvasView: View {
 			sendToChat: { navigation.presentSheet(.addToChat(.text(board.chatText))) },
 			undo: { undoManager?.undo() },
 			redo: { undoManager?.redo() },
-			arrange: arrange
+			arrange: arrange,
+			remove: { removing = board }
 		)
 	}
 

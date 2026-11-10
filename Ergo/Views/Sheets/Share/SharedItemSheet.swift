@@ -181,7 +181,7 @@ private struct AddToBoardSheet: View {
 
 	/// A board this person can only view can't take a source
 	private var choices: [Board] {
-		boardStore.sortedBoards.filter { boardStore.canEdit($0.id) }
+		boardStore.listedBoards.filter { boardStore.canEdit($0.id) }
 	}
 
 	var body: some View {

@@ -39,6 +39,16 @@ final class AskStore {
 		conversations.sorted { $0.modified > $1.modified }
 	}
 
+	/// What the list shows: pinned first, then newest first
+	var listedConversations: [AskConversation] {
+		let listed = sortedConversations.filter { $0.isArchived != true }
+		return listed.filter { $0.isPinned == true } + listed.filter { $0.isPinned != true }
+	}
+
+	var archivedConversations: [AskConversation] {
+		sortedConversations.filter { $0.isArchived == true }
+	}
+
 	private(set) var currentID: AskConversation.ID? {
 		didSet {
 			Defaults[.currentAskConversationID] = currentID
@@ -102,8 +112,8 @@ final class AskStore {
 	/// Makes the board's chat the current one, without opening it on the Ask tab: the newest chat about the board, or an
 	/// empty one. It's an ordinary chat, so it's in the Ask tab's list once something's been asked.
 	func openBoardChat(_ board: Board.ID) {
-		guard current.board != board else { return }
-		if let existing = sortedConversations.first(where: { $0.board == board }) {
+		guard current.board != board || current.isArchived == true else { return }
+		if let existing = sortedConversations.first(where: { $0.board == board && $0.isArchived != true }) {
 			currentID = existing.id
 			return
 		}
@@ -206,6 +216,26 @@ final class AskStore {
 		if currentID == id {
 			draft = AskConversation()
 			currentID = nil
+			closeChat()
+		}
+		save()
+	}
+
+	func setPinned(_ isPinned: Bool, _ id: AskConversation.ID) {
+		guard let index = conversations.firstIndex(where: { $0.id == id }) else { return }
+		conversations[index].isPinned = isPinned ? true : nil
+		save()
+	}
+
+	/// Archiving the open chat goes back to the list. An answer that's being written carries on.
+	func setArchived(_ isArchived: Bool, _ id: AskConversation.ID) {
+		guard let index = conversations.firstIndex(where: { $0.id == id }) else { return }
+		conversations[index].isArchived = isArchived ? true : nil
+		if isArchived {
+			conversations[index].isPinned = nil
+			if currentID == id {
+				closeChat()
+			}
 		}
 		save()
 	}
@@ -229,6 +259,7 @@ final class AskStore {
 		guard !text.isEmpty || !attached.isEmpty, runs[id] == nil, var conversation = conversation(id) else { return }
 
 		conversation.messages.append(AskMessage(role: .user, text: text, attachments: attached))
+		conversation.isArchived = nil
 		attachments[conversation.id] = nil
 		write(conversation)
 		answer(conversation.id, account: account)

@@ -36,6 +36,12 @@ nonisolated struct AskConversation: Codable, Hashable, Identifiable, Defaults.Se
 	/// The changes the model has already made to the board, so hearing an answer again doesn't make them twice
 	var appliedEdits: [UUID]?
 
+	/// Kept at the top of the list
+	var isPinned: Bool?
+
+	/// Out of the list and in Archived, until it's brought back or written in again
+	var isArchived: Bool?
+
 	/// Which run on the server is writing an answer, and where the answer goes
 	struct PendingAnswer: Codable, Hashable {
 		/// The run's name on the server. Asking again with it hears the same answer.
@@ -60,6 +66,15 @@ nonisolated struct AskConversation: Codable, Hashable, Identifiable, Defaults.Se
 			.first
 			.map { $0.trimmingCharacters(in: .whitespaces) }
 		return line ?? question?.attachments.first?.title ?? "New Chat"
+	}
+
+	/// Everything that's gone with a question, each thing once
+	var sentAttachments: [AskAttachment] {
+		var all: [AskAttachment] = []
+		for attachment in messages.flatMap(\.attachments) where !all.contains(where: { $0.content == attachment.content }) {
+			all.append(attachment)
+		}
+		return all
 	}
 }
 

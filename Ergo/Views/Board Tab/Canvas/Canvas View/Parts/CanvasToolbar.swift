@@ -28,6 +28,7 @@ struct CanvasToolbar: ToolbarContent {
 	let undo: () -> Void
 	let redo: () -> Void
 	let arrange: () -> Void
+	let remove: () -> Void
 
 	var body: some ToolbarContent {
 		ToolbarItemGroup(placement: .topBarTrailing) {
@@ -58,7 +59,8 @@ struct CanvasToolbar: ToolbarContent {
 				sendToChat: sendToChat,
 				undo: undo,
 				redo: redo,
-				arrange: arrange
+				arrange: arrange,
+				remove: remove
 			)
 		}
 	}
@@ -94,6 +96,7 @@ private struct CanvasMenuContent: View {
 	let undo: () -> Void
 	let redo: () -> Void
 	let arrange: () -> Void
+	let remove: () -> Void
 
 	var body: some View {
 		Section {
@@ -129,6 +132,11 @@ private struct CanvasMenuContent: View {
 			Section {
 				BoardPeopleButton(board: board)
 			}
+		}
+
+		// A board with nothing on it isn't in the list yet
+		if !board.isEmpty {
+			BoardActions(board: board, remove: remove)
 		}
 	}
 }

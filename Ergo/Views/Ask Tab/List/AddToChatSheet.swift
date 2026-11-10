@@ -29,9 +29,9 @@ struct AddToChatSheet: View {
 					.accessibilityIdentifier("addToChat.new")
 				}
 
-				if !store.conversations.isEmpty {
+				if !store.listedConversations.isEmpty {
 					Section("Chats") {
-						ForEach(store.sortedConversations) { conversation in
+						ForEach(store.listedConversations) { conversation in
 							Button {
 								store.attach(content, to: conversation.id)
 								store.open(conversation.id)

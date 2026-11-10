@@ -11,6 +11,77 @@ struct AskAttachmentsRow: View {
 	var remove: ((AskAttachment.ID) -> Void)?
 	var update: ((AskAttachment.ID, String) -> Void)?
 
+	var body: some View {
+		AskAttachmentOpener(update: update, remove: remove) { open in
+			ScrollView(.horizontal) {
+				HStack(spacing: 8) {
+					ForEach(attachments) { attachment in
+						AskAttachmentTile(
+							attachment: attachment,
+							open: { open(attachment) },
+							remove: remove.map { remove in { remove(attachment.id) } }
+						)
+						.transition(.blurReplace)
+					}
+				}
+			}
+			.scrollIndicators(.hidden)
+			.scrollClipDisabled()
+		}
+	}
+}
+
+/// Everything a chat has been given, three to a row. Each opens as it does above the composer.
+struct AskAttachmentsSheet: View {
+	private static let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3)
+
+	let conversation: AskConversation
+
+	/// For a sheet underneath this one, which would stay on top of the library too
+	var leaving: () -> Void = {}
+
+	@Environment(\.dismiss)
+	private var dismiss
+
+	var body: some View {
+		NavigationStack {
+			AskAttachmentOpener(leaving: { dismiss(); leaving() }) { open in
+				ScrollView {
+					LazyVGrid(columns: Self.columns, spacing: 12) {
+						ForEach(conversation.sentAttachments) { attachment in
+							AskAttachmentTile(attachment: attachment, side: nil, open: { open(attachment) }, remove: nil)
+						}
+					}
+					.padding()
+				}
+			}
+			.navigationTitle("Attachments")
+			.toolbarTitleDisplayMode(.inline)
+			.toolbar {
+				ToolbarItem(placement: .topBarLeading) {
+					Button(role: .close) {
+						dismiss()
+					}
+					.accessibilityIdentifier("ask.attachments.close")
+				}
+			}
+		}
+		.presentationDetents([.medium, .large])
+	}
+}
+
+// MARK: - Opening
+
+/// Opens what's tapped: a library entry on its tab, a link in the browser, and text in a sheet
+private struct AskAttachmentOpener<Content: View>: View {
+	var update: ((AskAttachment.ID, String) -> Void)?
+	var remove: ((AskAttachment.ID) -> Void)?
+
+	/// A sheet showing the tiles would otherwise stay on top of the library
+	var leaving: () -> Void = {}
+
+	@ViewBuilder let content: (@escaping (AskAttachment) -> Void) -> Content
+
 	@Environment(NavigationManager.self)
 	private var navigation
 
@@ -21,28 +92,16 @@ struct AskAttachmentsRow: View {
 	@State private var opened: AskAttachment?
 
 	var body: some View {
-		ScrollView(.horizontal) {
-			HStack(spacing: 8) {
-				ForEach(attachments) { attachment in
-					AskAttachmentTile(
-						attachment: attachment,
-						open: { open(attachment) },
-						remove: remove.map { remove in { remove(attachment.id) } }
-					)
-					.transition(.blurReplace)
-				}
+		content(open)
+			.sheet(item: $opened) { attachment in
+				AskAttachmentTextSheet(attachment: attachment, update: update, remove: remove)
 			}
-		}
-		.scrollIndicators(.hidden)
-		.scrollClipDisabled()
-		.sheet(item: $opened) { attachment in
-			AskAttachmentTextSheet(attachment: attachment, update: update, remove: remove)
-		}
 	}
 
 	private func open(_ attachment: AskAttachment) {
 		switch attachment.content {
 			case let .library(reference):
+				leaving()
 				navigation.openLibraryEntry(category: reference.category, id: reference.id)
 			case .text:
 				opened = attachment
@@ -56,9 +115,11 @@ struct AskAttachmentsRow: View {
 
 private struct AskAttachmentTile: View {
 	private static let shape = FoldedSheet(corner: 12, fold: 14)
-	private static let side: CGFloat = 76
 
 	let attachment: AskAttachment
+
+	/// Nil takes the width it's given, as a square
+	var side: CGFloat? = 76
 	let open: () -> Void
 	let remove: (() -> Void)?
 
@@ -76,7 +137,8 @@ private struct AskAttachmentTile: View {
 	var body: some View {
 		Button(action: open) {
 			content
-				.frame(width: Self.side, height: Self.side)
+				.frame(width: side, height: side)
+				.aspectRatio(1, contentMode: .fit)
 				// A fixed size, like a box on the canvas, so the type can't grow out of it
 				.dynamicTypeSize(...DynamicTypeSize.large)
 				.background(tint.opacity(0.12), in: Self.shape)
