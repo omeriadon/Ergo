@@ -6,6 +6,8 @@
 //
 
 import ErgoLogic
+import ErgoProtocol
+import ErgoSync
 import SwiftUI
 
 /// What a box knows about its neighbours, for its badge and for VoiceOver. Titles, not ids, since they're only ever read.
@@ -40,10 +42,12 @@ struct StatementBoxView: View, Equatable {
 	let relations: BoxRelations
 	let appearance: BoxAppearance
 	var annotationCount = 0
+	var support: BoardConclusionSupport?
+	var comment: BoardAnalysisComment?
 
 	static func == (left: Self, right: Self) -> Bool {
 		left.statement == right.statement && left.relations == right.relations && left.appearance == right.appearance
-			&& left.annotationCount == right.annotationCount
+			&& left.annotationCount == right.annotationCount && left.support == right.support && left.comment == right.comment
 	}
 
 	var body: some View {
@@ -65,9 +69,11 @@ struct StatementBoxView: View, Equatable {
 		.dynamicTypeSize(...DynamicTypeSize.large)
 		.background {
 			BackdropBlur(radius: 4)
+				.overlay(support?.tint.opacity(0.12) ?? .clear)
 				.clipShape(RoundedRectangle(cornerRadius: Self.corner))
 		}
 		.overlay { outline }
+		.overlay(alignment: .topLeading) { CanvasCommentOverlay(comment: comment) }
 		.opacity(appearance == .unavailable ? 0.4 : 1)
 		.contentShape(RoundedRectangle(cornerRadius: Self.corner))
 		.contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: Self.corner))
@@ -89,6 +95,12 @@ struct StatementBoxView: View, Equatable {
 					.foregroundStyle(.secondary)
 			}
 
+			if let support {
+				Image(systemName: support.symbol)
+					.font(.caption.weight(.semibold))
+					.foregroundStyle(support.tint)
+			}
+
 			Spacer(minLength: 0)
 
 			AnnotationBadge(count: annotationCount)
@@ -107,7 +119,11 @@ struct StatementBoxView: View, Equatable {
 			case .connectSource:
 				shape.strokeBorder(Color.accent, style: StrokeStyle(lineWidth: 3, dash: [7, 5]))
 			case .normal, .unavailable:
-				shape.strokeBorder(.primary.opacity(0.18), lineWidth: 1)
+				if let support {
+					shape.strokeBorder(support.tint, lineWidth: 2)
+				} else {
+					shape.strokeBorder(.primary.opacity(0.18), lineWidth: 1)
+				}
 		}
 	}
 }

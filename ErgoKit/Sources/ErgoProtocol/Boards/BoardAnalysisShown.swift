@@ -145,6 +145,68 @@ public struct BoardAnalysisShown: Sendable, Hashable {
 	}
 }
 
+// MARK: - On the canvas
+
+/// The short version of a finding, for the comment box beside what it's about
+public struct BoardAnalysisComment: Sendable, Hashable {
+	/// The entry it cites
+	public let title: String
+
+	/// The annotation's first sentence, as plain text
+	public let text: String
+
+	public init(_ annotation: BoardAnnotation) {
+		title = annotation.citation.name
+		text = Self.firstSentence(ofMarkdown: annotation.markdown)
+	}
+
+	private static let characterLimit = 160
+	private static let abbreviations = ["e.g", "i.e", "cf", "vs", "etc"]
+
+	/// Reports open with their point, so the first sentence is what a comment box has room for
+	public static func firstSentence(ofMarkdown markdown: String) -> String {
+		let plain = markdown
+			.replacing(#/\[([^\]]*)\]\([^)]*\)/#) { String($0.1) }
+			.replacing(#/[*_`$]/#, with: "")
+		let paragraph = plain.components(separatedBy: "\n\n")
+			.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+			.first { !$0.isEmpty } ?? ""
+		let line = paragraph.split(whereSeparator: \.isNewline).joined(separator: " ")
+		let sentence = firstSentence(of: line)
+		return sentence.count > characterLimit ? sentence.prefix(characterLimit - 1) + "…" : sentence
+	}
+
+	private static func firstSentence(of line: String) -> String {
+		for index in line.indices where ".?!".contains(line[index]) {
+			let next = line.index(after: index)
+			guard next < line.endIndex, line[next].isWhitespace else { continue }
+			let lastWord = line[..<index].split(separator: " ").last.map { $0.lowercased() } ?? ""
+			if line[index] == ".", abbreviations.contains(lastWord) {
+				continue
+			}
+			return String(line[...index])
+		}
+		return line
+	}
+}
+
+public extension BoardAnalysisShown {
+	/// One comment for each thing that has something to say. Reports come most important first, so it's the first finding,
+	/// or failing that, why a conclusion isn't well supported.
+	var comments: [UUID: BoardAnalysisComment] {
+		var comments: [UUID: BoardAnalysisComment] = [:]
+		for annotation in current where annotation.assessment == nil && comments[annotation.target.id] == nil {
+			comments[annotation.target.id] = BoardAnalysisComment(annotation)
+		}
+		for annotation in current where comments[annotation.target.id] == nil {
+			if case let .conclusion(support)? = annotation.assessment, support != .wellSupported {
+				comments[annotation.target.id] = BoardAnalysisComment(annotation)
+			}
+		}
+		return comments
+	}
+}
+
 // MARK: - Reports
 
 public extension BoardAnalysisStatus {

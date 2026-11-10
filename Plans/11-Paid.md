@@ -1,41 +1,79 @@
-# 11 · Paid
+# 11 · Paid and usage
 
-What's free and what's paid. Nothing here is built or priced. **Proposed** means it's on the table but not agreed. Monetisation comes after users, so this doc is a record of the thinking, not a schedule.
+What's free, what's paid, and how AI use is limited. None of it is built, and nothing is priced. Monetisation comes after users, so the price waits for TestFlight. What the AI should do is in [12-Identity.md](12-Identity.md).
 
-**Decided:** the Scratchpad is free. Its logic checker, English reading and saved scratchpads stay free, because they're the reason someone tries the app.
-
-**Decided:** the Library is what sets Ask apart from a general chatbot, so it stays free and is never gated.
+**Decided** means Adon has settled it. **Proposed** means it's on the table but not agreed.
 
 ## Free
 
-- All four tabs, with the Library and widgets.
+**Decided:**
+- All four tabs, the Library and widgets. The Library is what sets Ask apart from a general chatbot, and is never gated.
 - Scratchpads: the logic checker, `LogicEnglish` readings and saved scratchpads.
-- Ask on the person's own Claude or Codex account.
-- Break Down on a short block of text (up to `EnglishValidator.characterLimit`).
+- Ask and the board's AI, on Ergo's model within the daily limit, or on the person's own login or API key.
+- One deep research a week.
+- Break Down up to `EnglishValidator.characterLimit` (1,500 characters).
 
-## Paid, in order
+**Proposed:** free users get OpenRouter's free models. See [what free models can carry](#what-free-models-can-carry).
 
-Each one is a separate reason to pay. The first is the most valuable, but it's also the one that changes the cost model, so it comes last to build.
+## Paid
 
-1. **Shared boards.** Sharing a board as an editor or viewer, through the sharing already in [09-Sharing.md](09-Sharing.md). Teachers and teams are the clearest buyers, since one payment covers a class or a group. Built, but not yet checked on devices, so this waits for that.
-2. **The logic course.** A guided course on the logic language and its fallacies, built on the Logic tab. It's the Scratchpad made into a lesson, with the free checker staying free. Direction's "Teach the user the logic language" is the starting point.
-3. **A better model in Ask.** Better answers from a model the person doesn't pay for directly. **Proposed, with a catch:** today Ask runs on each person's own account, so Ergo pays nothing for AI. A paid model means Ergo pays for the model, so the price has to cover usage. Settle the budget before this is built.
+**Decided**, in the order they'd be built. The better model has a running cost, so it's last.
 
-## Open
+1. **Shared boards**, through [09-Sharing.md](09-Sharing.md).
+2. **The logic course**, built on the Logic tab, with the checker staying free.
+3. **A better model.** A stronger model id for paying accounts. The server reads one id today, so this needs one per tier.
 
-- **Board analysis.** Free for now. Whether it's free, or limited by runs, depends on what it costs once a better model exists.
-- **Long text into Break Down.** See below. It's free up to the current limit, and the tier for longer text isn't decided.
+**Proposed:** viewing a shared board stays free and only editors are paid, since every invite shows Ergo to someone new.
+
+**Proposed:** text longer than the Break Down limit is paid. See below.
+
+## Own logins and API keys
+
+**Decided:**
+- Claude and Codex logins stay for now. Adon knows the Claude login is doubtful under Anthropic's terms, and ChatGPT has its own sign-in.
+- Add a way to use an API key.
+- Neither counts against the limit, since they cost Ergo nothing.
+
+## The daily limit
+
+**Decided:**
+- Counted in real cost per day, and shown as one bar in Settings → AI.
+- A free model is counted at a paid model's price, so the bar means the same whatever is running.
+- Whatever is running always finishes. The next request says when the bar resets, and offers paid.
+- Every chat mode and Quick AI use the same bar. It doesn't matter which mode a message was in.
+- One deep research a week, counted apart from the bar, since one run would use all of it.
+
+**Proposed:** count at GPT-5.6 Luna's price ($0.20 in, $1.20 out per million tokens) and allow $0.03 a day, which is about 10 chat messages. Once Ergo pays for a cheap model, that's at worst about $0.90 per user per month.
+
+### One free allowance per device
+
+**Decided:** making new accounts doesn't give more free AI.
+
+Apple's DeviceCheck only stores two bits per device, so it can't hold a count. The bits mark that a device has claimed a free allowance, the server remembers which account claimed it, and any other account on that device gets no allowance on Ergo's model. Its own login or an API key still works. A phone can move its allowance to a different account once a month, which covers one that's shared or sold. DeviceCheck keeps the month its bits were last set, so that's all the server needs.
+
+### What it costs
+
+Estimates from the size of the prompts and library entries, with no caching, at November 2026 prices.
+
+| | Claude Sonnet 5.5 | GPT-5.6 Luna | DeepSeek V4 Flash | Free model |
+|---|---|---|---|---|
+| Chat message with one library lookup (about 3 model calls) | ~$0.026 | ~$0.003 | ~$0.001 | 3 requests |
+| Analysis of a document as built today (about 60 calls) | ~$3 | ~$0.30 | ~$0.14 | 60+ requests |
+
+### What free models can carry
+
+OpenRouter allows 1,000 free requests a day once $10 of credits has been bought, 50 a day before that, and 20 a minute. More keys or accounts don't raise it, so that's for all of Ergo: about 330 chat messages, or 16 of today's analyses, a day. It's enough for TestFlight and not for a launch.
+
+Some free providers may train on what they're sent. Check each model before saying anything about privacy.
 
 ## Long text into Break Down
 
-Break Down stops at 1,500 characters, and most real articles are longer. A pad would let someone paste more text and send it in parts, so one board comes out of a longer piece.
+**Proposed:** a pad takes text of any length and shows how many parts it will become.
+- Parts split at paragraph breaks, each under the limit.
+- Each part is its own server run, so one failing doesn't lose the others, and the cards from every part go onto one board with repeats merged.
 
-**Proposed:**
-- The pad takes text of any length and shows how many parts it will become.
-- Parts split at paragraph breaks, so no claim is cut in half, each under the limit.
-- Each part is broken down in its own run, and the cards from every part go onto one board. Duplicate claims that repeat across parts are merged.
-- Each run is its own server run, so a part that fails doesn't lose the others. This follows the rule for anything that talks to the server and takes a while: a run the server owns, found again by id.
+## Open
 
-**Open:**
-- Whether the pad belongs to the free tier or the paid one. It's the most useful part of the paid tier to people who read a lot, but it also takes the most AI calls.
-- How many parts are allowed before it asks first.
+- The price and its shape.
+- How many parts the pad allows before it asks first.
+- Which paid model, and what limit paying accounts get. At Sonnet's price a $5 subscription covers about 160 chat messages after Apple's cut.

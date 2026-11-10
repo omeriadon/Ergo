@@ -63,7 +63,7 @@ extension CanvasView {
 			cancelPick: { pick = nil },
 			showAnnotations: {
 				if let target = selectionTarget {
-					navigation.presentSheet(.boardAnalysis(board.id, focus: target))
+					showAnalysis(of: target)
 				}
 			}
 		)
@@ -74,6 +74,10 @@ extension CanvasView {
 	/// What's still true of the board now, worked out each time
 	var shownAnalysis: BoardAnalysisShown {
 		analysis.shown(on: board)
+	}
+
+	func showAnalysis(of target: BoardAnalysisTarget) {
+		navigation.presentSheet(.boardAnalysis(board.id, focus: target))
 	}
 
 	var selectionTarget: BoardAnalysisTarget? {

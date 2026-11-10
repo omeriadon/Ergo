@@ -35,6 +35,11 @@ struct ArrowCurve {
 		control = CanvasGeometry.controlPoint(for: segment)
 	}
 
+	/// Halfway along the curve
+	var middle: CGPoint {
+		CanvasGeometry.point(on: segment, control: control, at: 0.5).point
+	}
+
 	func distance(from point: CanvasPoint) -> Double {
 		CanvasGeometry.distance(from: point, toCurve: segment, control: control)
 	}

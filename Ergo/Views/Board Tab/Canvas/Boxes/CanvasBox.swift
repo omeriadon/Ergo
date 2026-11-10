@@ -6,6 +6,7 @@
 //
 
 import ErgoLogic
+import ErgoProtocol
 import SwiftUI
 
 /// What a box can do, handed in by the canvas so the box doesn't know about the board or selection
@@ -19,6 +20,9 @@ struct BoxActions {
 
 	/// The next box tapped loses its arrow to or from this one
 	var removeLink: () -> Void
+
+	/// What the analysis found on this box
+	var showAnalysis: () -> Void
 
 	/// Whole grid steps, right and down are positive
 	var nudge: (_ columns: Int, _ rows: Int) -> Void
@@ -46,6 +50,11 @@ struct CanvasBox: View {
 			.modifier(BoxActionsModifier(actions: actions, isReadOnly: model.isReadOnly))
 			.modifier(BoxSpeech(text: spokenText, summary: spokenSummary, appearance: appearance, id: statement.id))
 			.modifier(BoxMovesModifier(nudge: actions.nudge, isReadOnly: model.isReadOnly))
+			.accessibilityActions {
+				if model.annotationCount > 0 {
+					Button("Show Analysis", action: actions.showAnalysis)
+				}
+			}
 	}
 
 	private var box: some View {
@@ -53,7 +62,9 @@ struct CanvasBox: View {
 			statement: statement,
 			relations: relations,
 			appearance: appearance,
-			annotationCount: model.annotationCount
+			annotationCount: model.annotationCount,
+			support: model.support,
+			comment: model.comment
 		)
 		.equatable()
 		.onTapGesture(perform: actions.select)
@@ -63,6 +74,9 @@ struct CanvasBox: View {
 
 	@ViewBuilder
 	private var menu: some View {
+		if model.annotationCount > 0 {
+			Button("Show Analysis", systemImage: "text.magnifyingglass", action: actions.showAnalysis)
+		}
 		if model.isReadOnly {
 			Button("Open", systemImage: "doc.text", action: actions.edit)
 		} else {
@@ -93,6 +107,12 @@ struct CanvasBox: View {
 		}
 		if parts.isEmpty {
 			parts.append("Not connected")
+		}
+		if let support = model.support {
+			parts.append(support.label)
+		}
+		if let comment = model.comment {
+			parts.append("\(comment.title): \(comment.text)")
 		}
 		if model.annotationCount > 0 {
 			parts.append(model.annotationCount == 1 ? "1 annotation" : "\(model.annotationCount) annotations")

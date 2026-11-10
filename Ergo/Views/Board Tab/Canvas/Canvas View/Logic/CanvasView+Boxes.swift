@@ -89,6 +89,7 @@ extension CanvasView {
 			delete: { delete(id) },
 			connect: { pickToConnect(id, asConclusion: $0) },
 			removeLink: { pickToUnlink(id) },
+			showAnalysis: { showAnalysis(of: .statement(id)) },
 			nudge: { nudge(id, columns: $0, rows: $1) }
 		)
 	}
@@ -101,6 +102,7 @@ extension CanvasView {
 			edit: { sourceSheet = .edit(id) },
 			breakDown: { navigation.presentSheet(.breakDownSource(id)) },
 			delete: { deleteSource(id) },
+			showAnalysis: { showAnalysis(of: .source(id)) },
 			nudge: { nudgeSource(id, columns: $0, rows: $1) }
 		)
 	}

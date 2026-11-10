@@ -6,6 +6,7 @@
 //
 
 import ErgoLogic
+import ErgoProtocol
 import SwiftUI
 
 /// What a source can do, handed in by the canvas
@@ -17,6 +18,9 @@ struct SourceActions {
 	var edit: () -> Void
 	var breakDown: () -> Void
 	var delete: () -> Void
+
+	/// What the analysis found on this source
+	var showAnalysis: () -> Void
 
 	/// Whole grid steps, right and down are positive
 	var nudge: (_ columns: Int, _ rows: Int) -> Void
@@ -33,7 +37,7 @@ struct CanvasSourceBox: View {
 	}
 
 	var body: some View {
-		SourceBoxView(source: source, appearance: model.appearance, annotationCount: model.annotationCount)
+		SourceBoxView(source: source, appearance: model.appearance, annotationCount: model.annotationCount, comment: model.comment)
 			.equatable()
 			.onTapGesture(perform: actions.select)
 			.simultaneousGesture(TapGesture(count: 2).onEnded(actions.open))
@@ -41,10 +45,18 @@ struct CanvasSourceBox: View {
 			.modifier(SourceSpeech(source: source, isSelected: model.appearance == .selected, annotationCount: model.annotationCount))
 			.modifier(SourceAccessibilityActions(isLink: source.link != nil, isReadOnly: model.isReadOnly, actions: actions))
 			.modifier(BoxMovesModifier(nudge: actions.nudge, isReadOnly: model.isReadOnly))
+			.accessibilityActions {
+				if model.annotationCount > 0 {
+					Button("Show Analysis", action: actions.showAnalysis)
+				}
+			}
 	}
 
 	@ViewBuilder
 	private var menu: some View {
+		if model.annotationCount > 0 {
+			Button("Show Analysis", systemImage: "text.magnifyingglass", action: actions.showAnalysis)
+		}
 		if let link = source.link {
 			Button("Open in Browser", systemImage: "safari", action: actions.open)
 			Button("Copy Link", systemImage: "link") {
@@ -113,6 +125,7 @@ struct SourceBoxView: View, Equatable {
 	let source: BoardSource
 	let appearance: BoxAppearance
 	var annotationCount = 0
+	var comment: BoardAnalysisComment?
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 5) {
@@ -154,6 +167,7 @@ struct SourceBoxView: View, Equatable {
 				.fill(Color.accent.opacity(0.35))
 				.frame(width: Self.shape.fold, height: Self.shape.fold)
 		}
+		.overlay(alignment: .topLeading) { CanvasCommentOverlay(comment: comment) }
 		.opacity(appearance == .unavailable ? 0.4 : 1)
 		.contentShape(Self.shape)
 		.contentShape(.contextMenuPreview, Self.shape)

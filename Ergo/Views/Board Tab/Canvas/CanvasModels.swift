@@ -6,6 +6,8 @@
 //
 
 import ErgoLogic
+import ErgoProtocol
+import ErgoSync
 
 /// What one box shows. Compared before its SwiftUI is touched, so a box only redraws when this changes.
 struct CanvasBoxModel: Equatable {
@@ -18,6 +20,12 @@ struct CanvasBoxModel: Equatable {
 
 	/// How many current annotations the analysis has on this box. Passed in for the same reason as `isReadOnly`.
 	var annotationCount = 0
+
+	/// How well the analysis found this conclusion supported
+	var support: BoardConclusionSupport?
+
+	/// The finding shown beside the box
+	var comment: BoardAnalysisComment?
 }
 
 /// What one source shows, compared the same way
@@ -26,6 +34,7 @@ struct CanvasSourceModel: Equatable {
 	let appearance: BoxAppearance
 	var isReadOnly = false
 	var annotationCount = 0
+	var comment: BoardAnalysisComment?
 }
 
 /// A source and the cards in its region. Where they are is read from the views, so the shape follows a drag.

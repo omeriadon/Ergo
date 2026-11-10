@@ -6,6 +6,7 @@
 //
 
 import ErgoLogic
+import ErgoSync
 import SwiftUI
 import UIKit
 
@@ -15,13 +16,15 @@ extension CanvasBoardView {
 	func addCell(for model: CanvasBoxModel, isNew: Bool) {
 		let cell = CanvasBoxCell(model: model, isNew: isNew, content: boxContent)
 		content.addSubview(cell)
+		let id = model.statement.id
+		cell.openComment = { [weak self] in self?.showAnalysis(.statement(id)) }
 
 		let drag = UIPanGestureRecognizer(target: self, action: #selector(boxPanned))
 		drag.maximumNumberOfTouches = 1
 		drag.delegate = self
 		cell.addGestureRecognizer(drag)
 
-		cells[model.statement.id] = cell
+		cells[id] = cell
 	}
 
 	func remove(_ cell: UIView, animated: Bool) {
@@ -88,13 +91,15 @@ extension CanvasBoardView {
 	func addSourceCell(for model: CanvasSourceModel, isNew: Bool) {
 		let cell = CanvasSourceCell(model: model, isNew: isNew, content: sourceContent)
 		content.addSubview(cell)
+		let id = model.source.id
+		cell.openComment = { [weak self] in self?.showAnalysis(.source(id)) }
 
 		let drag = UIPanGestureRecognizer(target: self, action: #selector(sourcePanned))
 		drag.maximumNumberOfTouches = 1
 		drag.delegate = self
 		cell.addGestureRecognizer(drag)
 
-		sourceCells[model.source.id] = cell
+		sourceCells[id] = cell
 	}
 
 	/// The source brings its region along: its cards follow the finger with it, and their arrows and the shape follow them

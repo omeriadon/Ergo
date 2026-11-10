@@ -87,7 +87,7 @@ enum StagePrompts {
 		\(json)
 		```
 
-		Go through all of it. Search and read the library first, and only say what the entries you read this run say. Your own knowledge isn't a source here.
+		Work out where this argument's weight rests and where it breaks, then report what matters most. Your reasoning is your own, but anything you name comes from an entry you read this run.
 		\(instructionsNote(request.instructions))
 		"""
 	}

@@ -134,7 +134,8 @@ struct AnalysisAnnotationView: View {
 					.font(.caption.weight(.semibold))
 					.padding(.horizontal, 8)
 					.padding(.vertical, 4)
-					.background(Color.accent.opacity(0.15), in: Capsule())
+					.foregroundStyle(assessment.tint)
+					.background(assessment.tint.opacity(0.15), in: Capsule())
 			}
 		}
 	}
@@ -145,6 +146,13 @@ extension BoardAnnotation.Assessment {
 		switch self {
 			case let .arrow(strength): strength.label
 			case let .conclusion(support): support.label
+		}
+	}
+
+	var tint: Color {
+		switch self {
+			case let .arrow(strength): strength.tint
+			case let .conclusion(support): support.tint
 		}
 	}
 }

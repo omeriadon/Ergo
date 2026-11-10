@@ -152,13 +152,17 @@ struct CanvasView: View {
 		let isReadOnly = isReadOnly
 		let shown = shownAnalysis
 		let counts = shown.counts
+		let supports = shown.supports
+		let comments = shown.comments
 		let boxes = board.statements.map { statement in
 			CanvasBoxModel(
 				statement: statement,
 				relations: relations[statement.id] ?? BoxRelations(),
 				appearance: appearance(of: statement.id, connectable: connectable),
 				isReadOnly: isReadOnly,
-				annotationCount: counts[statement.id] ?? 0
+				annotationCount: counts[statement.id] ?? 0,
+				support: supports[statement.id],
+				comment: comments[statement.id]
 			)
 		}
 
@@ -166,7 +170,8 @@ struct CanvasView: View {
 			boxes: boxes,
 			links: board.links,
 			strengths: shown.strengths,
-			sources: sources(counts: counts),
+			notedLinks: Set(board.links.map(\.id).filter { comments[$0] != nil }),
+			sources: sources(counts: counts, comments: comments),
 			regions: regions,
 			// While picking, a box is tapped rather than dragged from, so its handles stay away
 			selectedStatement: activePick == nil ? selectedStatement : nil,
@@ -184,13 +189,14 @@ struct CanvasView: View {
 			connectEnded: connectEnded,
 			deleteLink: deleteLink,
 			sourceDragStarted: sourceDragStarted,
-			sourceMoved: sourceMoved
+			sourceMoved: sourceMoved,
+			showAnalysis: showAnalysis(of:)
 		)
 		.ignoresSafeArea()
 	}
 
 	/// Dimmed while drawing an arrow, since one can't end on a source
-	func sources(counts: [UUID: Int]) -> [CanvasSourceModel] {
+	func sources(counts: [UUID: Int], comments: [UUID: BoardAnalysisComment]) -> [CanvasSourceModel] {
 		let isReadOnly = isReadOnly
 		return board.sources.map { source in
 			let appearance: BoxAppearance = if linkSource != nil {
@@ -198,7 +204,7 @@ struct CanvasView: View {
 			} else {
 				activeSelection == .source(source.id) ? .selected : .normal
 			}
-			return CanvasSourceModel(source: source, appearance: appearance, isReadOnly: isReadOnly, annotationCount: counts[source.id] ?? 0)
+			return CanvasSourceModel(source: source, appearance: appearance, isReadOnly: isReadOnly, annotationCount: counts[source.id] ?? 0, comment: comments[source.id])
 		}
 	}
 

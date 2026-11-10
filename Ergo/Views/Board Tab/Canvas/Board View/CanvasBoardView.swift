@@ -42,6 +42,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 	var deleteLink: (Link.ID) -> Void = { _ in }
 	var sourceDragStarted: (BoardSource.ID) -> Void = { _ in }
 	var sourceMoved: (BoardSource.ID, CanvasPoint) -> Void = { _, _ in }
+	var showAnalysis: (BoardAnalysisTarget) -> Void = { _ in }
 
 	var boxContent: (CanvasBoxModel, _ isNew: Bool) -> AnyView = { _, _ in AnyView(EmptyView()) }
 	var sourceContent: (CanvasSourceModel, _ isNew: Bool) -> AnyView = { _, _ in AnyView(EmptyView()) }
@@ -60,6 +61,12 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 
 	/// What the analysis made of each arrow, for how its line is drawn
 	var strengths: [Link.ID: BoardArrowStrength] = [:]
+
+	/// The arrows the analysis wrote something about, beyond how strong they are
+	var notedLinks: Set<Link.ID> = []
+
+	/// The labels on arrows with something to say
+	var arrowNotes: [Link.ID: CanvasArrowNote] = [:]
 	var sourceCells: [BoardSource.ID: CanvasSourceCell] = [:]
 	var regions: [CanvasRegionModel] = []
 	/// The boxes and sources the outlines and arrows were last drawn for, so an update that changes neither can skip redrawing them
@@ -192,6 +199,7 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 		boxes: [CanvasBoxModel],
 		links: [Link],
 		strengths: [Link.ID: BoardArrowStrength],
+		notedLinks: Set<Link.ID>,
 		sources: [CanvasSourceModel],
 		regions: [CanvasRegionModel],
 		selectedStatement: Statement.ID?,
@@ -240,10 +248,11 @@ final class CanvasBoardView: UIView, UIGestureRecognizerDelegate, UIContextMenuI
 		// Outlines and arrows only depend on where things are and how they connect, so they're redrawn when one of those changes.
 		// Dragging redraws its own region as it moves, and the model follows when it lets go.
 		let layoutChanged = boxes != laidOutBoxes || sources != laidOutSources
-			|| links != self.links || strengths != self.strengths || regions != self.regions
+			|| links != self.links || strengths != self.strengths || notedLinks != self.notedLinks || regions != self.regions
 			|| selectedStatement != self.selectedStatement || selectedLink != self.selectedLink
 		self.links = links
 		self.strengths = strengths
+		self.notedLinks = notedLinks
 		self.regions = regions
 		self.selectedStatement = selectedStatement
 		self.selectedLink = selectedLink

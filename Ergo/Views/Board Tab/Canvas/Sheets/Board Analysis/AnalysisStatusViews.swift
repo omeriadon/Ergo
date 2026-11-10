@@ -114,6 +114,29 @@ struct AnalysisStatusView: View {
 	}
 }
 
+/// What the colours on the board mean
+struct AnalysisKeyView: View {
+	var body: some View {
+		HStack(spacing: 14) {
+			item("Holds up", .green)
+			item("Partly", .orange)
+			item("Doesn't follow", .red)
+		}
+		.font(.caption)
+		.foregroundStyle(.secondary)
+		.accessibilityIdentifier("analysis.key")
+	}
+
+	private func item(_ title: LocalizedStringKey, _ tint: Color) -> some View {
+		HStack(spacing: 5) {
+			Circle()
+				.fill(tint)
+				.frame(width: 8, height: 8)
+			Text(title)
+		}
+	}
+}
+
 struct AnalysisDiscussionView: View {
 	let board: Board.ID
 

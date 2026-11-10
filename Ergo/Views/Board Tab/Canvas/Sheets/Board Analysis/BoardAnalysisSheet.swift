@@ -111,6 +111,10 @@ struct AnalysisContent: View {
 					AnalysisDiscussionView(board: board.id)
 				}
 
+				if focus == nil, !outline.isEmpty {
+					AnalysisKeyView()
+				}
+
 				if outline.isEmpty {
 					AnalysisEmptyView(board: board.id, hasStale: shown.hasStale)
 				}

@@ -10,6 +10,7 @@ import ErgoProtocol
 import ErgoShare
 import ErgoSync
 import Foundation
+import SwiftUI
 
 /// What the server's board analyses have written, read from the sync replica. Nothing here is saved: the replica already
 /// is, and `refresh` reads it again on launch and after every sync, the way `BoardStore.shares` is.
@@ -230,6 +231,17 @@ extension BoardAnalysisShown {
 		}
 		return strengths
 	}
+
+	/// What each conclusion's assessment says, for how its box is drawn
+	var supports: [UUID: BoardConclusionSupport] {
+		var supports: [UUID: BoardConclusionSupport] = [:]
+		for annotation in current {
+			if case let .conclusion(support)? = annotation.assessment {
+				supports[annotation.target.id] = support
+			}
+		}
+		return supports
+	}
 }
 
 extension BoardArrowStrength {
@@ -241,6 +253,14 @@ extension BoardArrowStrength {
 			case .none: "No support"
 		}
 	}
+
+	var tint: Color {
+		switch self {
+			case .conclusive, .strong: .green
+			case .weak: .orange
+			case .none: .red
+		}
+	}
 }
 
 extension BoardConclusionSupport {
@@ -249,6 +269,23 @@ extension BoardConclusionSupport {
 			case .wellSupported: "Well supported"
 			case .partlySupported: "Partly supported"
 			case .unsupported: "Unsupported"
+		}
+	}
+
+	var tint: Color {
+		switch self {
+			case .wellSupported: .green
+			case .partlySupported: .orange
+			case .unsupported: .red
+		}
+	}
+
+	/// So what the colour says doesn't depend on seeing colour
+	var symbol: String {
+		switch self {
+			case .wellSupported: "checkmark.circle.fill"
+			case .partlySupported: "exclamationmark.triangle.fill"
+			case .unsupported: "xmark.octagon.fill"
 		}
 	}
 }

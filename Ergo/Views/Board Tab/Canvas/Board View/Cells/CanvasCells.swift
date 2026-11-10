@@ -27,6 +27,10 @@ final class CanvasBoxCell: UIView {
 	private(set) var model: CanvasBoxModel
 	private let isNew: Bool
 	private let hosted: UIHostingController<AnyView>
+	private let commentTarget = UIControl(frame: CanvasCommentLayout.frame)
+
+	/// Its comment box was tapped
+	var openComment: () -> Void = {}
 
 	/// Picked up by a finger
 	var isLifted = false {
@@ -46,6 +50,10 @@ final class CanvasBoxCell: UIView {
 		hosted.view.frame = bounds
 		addSubview(hosted.view)
 
+		commentTarget.isHidden = model.comment == nil
+		commentTarget.addAction(UIAction { [weak self] _ in self?.openComment() }, for: .touchUpInside)
+		addSubview(commentTarget)
+
 		layer.shadowColor = UIColor.black.cgColor
 		layer.shadowOpacity = 0
 		layer.shadowRadius = 12
@@ -58,9 +66,18 @@ final class CanvasBoxCell: UIView {
 		fatalError("Use init(model:isNew:content:)")
 	}
 
+	/// A comment hangs outside the box, so UIKit wouldn't look there on its own
+	override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+		if !commentTarget.isHidden, commentTarget.frame.contains(point) {
+			return commentTarget
+		}
+		return super.hitTest(point, with: event)
+	}
+
 	func show(_ new: CanvasBoxModel, content: (CanvasBoxModel, _ isNew: Bool) -> AnyView) {
 		guard new != model else { return }
 		model = new
+		commentTarget.isHidden = new.comment == nil
 		hosted.rootView = content(new, isNew)
 	}
 }
@@ -72,6 +89,10 @@ final class CanvasSourceCell: UIView {
 	private(set) var model: CanvasSourceModel
 	private let isNew: Bool
 	private let hosted: UIHostingController<AnyView>
+	private let commentTarget = UIControl(frame: CanvasCommentLayout.frame)
+
+	/// Its comment box was tapped
+	var openComment: () -> Void = {}
 
 	/// Picked up by a finger
 	var isLifted = false {
@@ -90,6 +111,10 @@ final class CanvasSourceCell: UIView {
 		hosted.view.frame = bounds
 		addSubview(hosted.view)
 
+		commentTarget.isHidden = model.comment == nil
+		commentTarget.addAction(UIAction { [weak self] _ in self?.openComment() }, for: .touchUpInside)
+		addSubview(commentTarget)
+
 		layer.shadowColor = UIColor.black.cgColor
 		layer.shadowOpacity = 0
 		layer.shadowRadius = 12
@@ -102,9 +127,18 @@ final class CanvasSourceCell: UIView {
 		fatalError("Use init(model:isNew:content:)")
 	}
 
+	/// A comment hangs outside the box, so UIKit wouldn't look there on its own
+	override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+		if !commentTarget.isHidden, commentTarget.frame.contains(point) {
+			return commentTarget
+		}
+		return super.hitTest(point, with: event)
+	}
+
 	func show(_ new: CanvasSourceModel, content: (CanvasSourceModel, _ isNew: Bool) -> AnyView) {
 		guard new != model else { return }
 		model = new
+		commentTarget.isHidden = new.comment == nil
 		hosted.rootView = content(new, isNew)
 	}
 }

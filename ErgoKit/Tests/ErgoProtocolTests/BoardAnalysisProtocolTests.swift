@@ -261,3 +261,24 @@ struct BoardAnalysisShownTests {
 		#expect(finished.shown(at: started.addingTimeInterval(86400)) == .finished)
 	}
 }
+
+struct BoardAnalysisCommentTests {
+	@Test func aCommentIsTheFirstSentenceInPlainText() {
+		let markdown = "This looks like a [**straw man**](ergo://library/fallacies/straw-man). It answers a weaker claim."
+		#expect(BoardAnalysisComment.firstSentence(ofMarkdown: markdown) == "This looks like a straw man.")
+	}
+
+	@Test func anAbbreviationDoesntEndTheSentence() {
+		#expect(BoardAnalysisComment.firstSentence(ofMarkdown: "Some cases, e.g. this one, fail. Others don't.") == "Some cases, e.g. this one, fail.")
+	}
+
+	@Test func onlyTheFirstParagraphCounts() {
+		#expect(BoardAnalysisComment.firstSentence(ofMarkdown: "\n\nNo full stop here\n\nA second paragraph.") == "No full stop here")
+	}
+
+	@Test func aLongSentenceIsCut() {
+		let comment = BoardAnalysisComment.firstSentence(ofMarkdown: String(repeating: "word ", count: 100))
+		#expect(comment.count == 160)
+		#expect(comment.hasSuffix("…"))
+	}
+}

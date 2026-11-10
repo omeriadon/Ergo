@@ -15,6 +15,7 @@ struct CanvasBoard: UIViewRepresentable {
 	let boxes: [CanvasBoxModel]
 	let links: [Link]
 	let strengths: [Link.ID: BoardArrowStrength]
+	let notedLinks: Set<Link.ID>
 	let sources: [CanvasSourceModel]
 	let regions: [CanvasRegionModel]
 	let selectedStatement: Statement.ID?
@@ -37,6 +38,7 @@ struct CanvasBoard: UIViewRepresentable {
 	let deleteLink: (Link.ID) -> Void
 	let sourceDragStarted: (BoardSource.ID) -> Void
 	let sourceMoved: (BoardSource.ID, CanvasPoint) -> Void
+	let showAnalysis: (BoardAnalysisTarget) -> Void
 
 	func makeUIView(context _: Context) -> CanvasBoardView {
 		let view = CanvasBoardView()
@@ -55,6 +57,7 @@ struct CanvasBoard: UIViewRepresentable {
 		view.deleteLink = deleteLink
 		view.sourceDragStarted = sourceDragStarted
 		view.sourceMoved = sourceMoved
+		view.showAnalysis = showAnalysis
 		view.boxContent = boxContent
 		view.sourceContent = sourceContent
 		view.handleContent = handleContent
@@ -67,6 +70,7 @@ struct CanvasBoard: UIViewRepresentable {
 				boxes: boxes,
 				links: links,
 				strengths: strengths,
+				notedLinks: notedLinks,
 				sources: sources,
 				regions: regions,
 				selectedStatement: selectedStatement,

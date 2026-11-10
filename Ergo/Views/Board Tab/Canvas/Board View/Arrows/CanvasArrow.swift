@@ -51,11 +51,11 @@ final class CanvasArrow {
 	}
 
 	/// `strength` is what the analysis made of the arrow: conclusive and strong are solid, conclusive thicker, weak is
-	/// dashed and none is dotted. Nil, with no analysis, is as it always was.
-	func style(isSelected: Bool, accent: UIColor, plain: UIColor, strength: BoardArrowStrength? = nil) {
+	/// dashed and none is dotted, each in `strengthColor`. Nil, with no analysis, is as it always was.
+	func style(isSelected: Bool, accent: UIColor, plain: UIColor, strength: BoardArrowStrength? = nil, strengthColor: UIColor? = nil) {
 		CATransaction.begin()
 		CATransaction.setDisableActions(true)
-		line.strokeColor = (isSelected ? accent : plain).cgColor
+		line.strokeColor = (isSelected ? accent : strengthColor ?? plain).cgColor
 		line.lineWidth = (isSelected ? 3.5 : 2.5) + (strength == .conclusive ? 1.5 : 0)
 		switch strength {
 			case .weak?:
