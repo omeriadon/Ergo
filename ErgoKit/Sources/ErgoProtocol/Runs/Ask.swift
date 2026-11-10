@@ -22,11 +22,19 @@ public struct AskRequest: Codable, Sendable, Hashable {
 	/// What the person asked of the agent, like how concise to be. See `AgentInstructions`.
 	public let instructions: String?
 
-	public init(id: UUID, provider: Provider, messages: [AskRequestMessage], instructions: String? = nil) {
+	/// Nil is `.normal`, and an older app says nothing
+	public let mode: AskMode?
+
+	/// The board this chat is about, as it is now
+	public let board: AskBoard?
+
+	public init(id: UUID, provider: Provider, messages: [AskRequestMessage], instructions: String? = nil, mode: AskMode = .normal, board: AskBoard? = nil) {
 		self.id = id
 		self.provider = provider
 		self.messages = messages
 		self.instructions = AgentInstructions.normalized(instructions)
+		self.mode = mode == .normal ? nil : mode
+		self.board = board
 	}
 
 	/// What's wrong with it, worded like a compiler diagnostic. Nil when it can be answered.
@@ -34,7 +42,7 @@ public struct AskRequest: Codable, Sendable, Hashable {
 		guard messages.last?.role == .user else {
 			return "Expected the last message to be the user's"
 		}
-		let characters = messages.reduce(0) { $0 + $1.text.count }
+		let characters = messages.reduce(board?.characters ?? 0) { $0 + $1.text.count }
 		guard characters <= Self.characterLimit else {
 			return "Expected a conversation of at most \(Self.characterLimit) characters, found \(characters)"
 		}
@@ -122,6 +130,10 @@ public enum AskServerMessage: Sendable, Hashable {
 	case action(AskAction)
 	/// A short name for the chat, written once its first answer is done
 	case title(String)
+	/// The model asks to change the chat's mode, for the person to accept or turn down
+	case modeRequest(AskModeRequest)
+	/// A change to the board the chat is about, for the device to make
+	case boardEdit(AskBoardEdit)
 	case finished
 	case failed(ServiceError)
 	case unknown
@@ -129,7 +141,7 @@ public enum AskServerMessage: Sendable, Hashable {
 
 extension AskServerMessage: Codable {
 	private enum Key: String, CodingKey {
-		case type, text, tool, action, error
+		case type, text, tool, action, error, mode, edit
 	}
 
 	public init(from decoder: any Decoder) throws {
@@ -143,6 +155,10 @@ extension AskServerMessage: Codable {
 				self = try .action(container.decode(AskAction.self, forKey: .action))
 			case "title":
 				self = try .title(container.decode(String.self, forKey: .text))
+			case "modeRequest":
+				self = try .modeRequest(container.decode(AskModeRequest.self, forKey: .mode))
+			case "boardEdit":
+				self = try .boardEdit(container.decode(AskBoardEdit.self, forKey: .edit))
 			case "finished":
 				self = .finished
 			case "failed":
@@ -167,6 +183,12 @@ extension AskServerMessage: Codable {
 			case let .title(title):
 				try container.encode("title", forKey: .type)
 				try container.encode(title, forKey: .text)
+			case let .modeRequest(request):
+				try container.encode("modeRequest", forKey: .type)
+				try container.encode(request, forKey: .mode)
+			case let .boardEdit(edit):
+				try container.encode("boardEdit", forKey: .type)
+				try container.encode(edit, forKey: .edit)
 			case .finished:
 				try container.encode("finished", forKey: .type)
 			case let .failed(error):

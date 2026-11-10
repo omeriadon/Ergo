@@ -18,7 +18,7 @@ extension ProviderBackend {
 		guard let openRouter = config.openRouter else {
 			throw ProviderFailure.unavailable("\(Provider.openrouter.displayName) isn't set up on the Ergo server")
 		}
-		return (OpenRouterClient(key: openRouter.key, logger: logger), openRouter.model)
+		return (OpenRouterClient(key: openRouter.key, logger: logger), meter?.model ?? openRouter.model)
 	}
 
 	// MARK: - Stages
@@ -45,7 +45,7 @@ extension ProviderBackend {
 
 		let start = ContinuousClock.now
 		let completion = try await client.complete(body, timeout: runner.timeout) { _ in }
-		log(Stage.name, completion, since: start)
+		log(Stage.name, completion, since: start, sent: body.count)
 
 		return try? JSONDecoder().decode(Stage.Output.self, from: Data(Self.unfenced(completion.text).utf8))
 	}
@@ -66,7 +66,8 @@ extension ProviderBackend {
 	func openRouterAsk(prompt: String, settings: AskRunSettings, responder: @escaping AskRuns.Responder, text: @escaping @Sendable (String) async -> Void) async throws {
 		let (client, model) = try openRouterClient()
 		let tools = try await openRouterTools(settings, responder: responder)
-		let instructions = try StagePrompts.instructions(for: settings.instructions)
+		let searchesWeb = settings.searchesWeb && config.webSearch
+		let instructions = try settings.text(webSearch: searchesWeb)
 
 		var messages: [[String: Any]] = [
 			["role": "system", "content": instructions],
@@ -74,23 +75,28 @@ extension ProviderBackend {
 		]
 		let deadline = ContinuousClock.now + settings.timeout
 
-		for _ in 0 ..< settings.maxTurns {
+		for turn in 0 ..< settings.maxTurns {
 			let remaining = ContinuousClock.now.duration(to: deadline)
 			guard remaining > .zero else {
 				throw ProviderFailure.timedOut("Expected an answer from \(Provider.openrouter.displayName) within \(settings.timeout.spelledOut)")
 			}
 
-			let body = try JSONSerialization.data(withJSONObject: [
+			var payload: [String: Any] = [
 				"model": model,
 				"stream": true,
 				"messages": messages,
 				"tools": tools,
 				"provider": ["require_parameters": true],
-			] as [String: Any])
+			]
+			// Once, at the start: each search costs money, and the results stay in the messages
+			if searchesWeb, turn == 0 {
+				payload["plugins"] = [["id": "web", "max_results": 3] as [String: Any]]
+			}
+			let body = try JSONSerialization.data(withJSONObject: payload)
 
 			let start = ContinuousClock.now
 			let completion = try await client.complete(body, timeout: remaining, text: text)
-			log(StageModels.ask, completion, since: start)
+			log(StageModels.ask, completion, since: start, sent: body.count)
 
 			guard !completion.toolCalls.isEmpty else {
 				guard completion.finishReason != "length" else {
@@ -168,8 +174,13 @@ extension ProviderBackend {
 
 	// MARK: - Logging
 
-	/// Never the text, which is the user's conversation
-	private func log(_ stage: String, _ completion: OpenRouterClient.Completion, since start: ContinuousClock.Instant) {
+	/// Never the text, which is the user's conversation. `sent` is the request's size, for counting a call that came
+	/// back without saying what it used, at about four characters a token.
+	private func log(_ stage: String, _ completion: OpenRouterClient.Completion, since start: ContinuousClock.Instant, sent: Int) {
+		meter?.add(
+			input: completion.usage?.promptTokens ?? sent / 4,
+			output: completion.usage?.completionTokens ?? completion.text.count / 4
+		)
 		var metadata: Logger.Metadata = [
 			"stage": "\(stage)",
 			"provider": "\(credential.provider)",

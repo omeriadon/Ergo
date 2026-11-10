@@ -42,6 +42,12 @@ func routes(_ app: Application) throws {
 	signedIn.post(ErgoProtocol.Path.logIn.pathComponents, use: EmailController.logIn)
 	signedIn.post(ErgoProtocol.Path.password.pathComponents, use: EmailController.changePassword)
 
+	// An anonymous account uses the server's own model too, so these don't wait for a sign-in
+	signedIn.get(ErgoProtocol.Path.usage.pathComponents, use: UsageController.status)
+	// A transaction carries Apple's certificates, more than Vapor's default
+	signedIn.on(.POST, ErgoProtocol.Path.plan.pathComponents, body: .collect(maxSize: "64kb"), use: UsageController.plan)
+	signedIn.on(.POST, ErgoProtocol.Path.deviceClaim.pathComponents, body: .collect(maxSize: "64kb"), use: UsageController.claim)
+
 	signedIn.get(ErgoProtocol.Path.connections.pathComponents, use: ConnectionController.list)
 	// An auth.json is a few kilobytes, more than Vapor's default
 	signedIn.on(.PUT, connection, body: .collect(maxSize: "64kb"), use: ConnectionController.connect)

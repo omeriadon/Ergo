@@ -36,24 +36,28 @@ struct AskThreadView: View {
 		.toolbar {
 			if !store.current.messages.isEmpty {
 				ToolbarItem(placement: .topBarTrailing) {
-					Button("New Chat", systemImage: "square.and.pencil") {
-						store.newConversation()
-					}
-					.accessibilityIdentifier("ask.newChat")
+					AskNewChatButton()
 				}
 			}
 		}
 	}
 }
 
-private struct AskConversationView: View {
+/// A chat with its composer. The Ask tab shows it, and so does a board's Quick AI, so it only ever talks about its own conversation.
+struct AskConversationView: View {
 	let conversationID: AskConversation.ID
+
+	/// The tab it's on, so only the one on screen takes a follow-up left for the composer
+	var tab: AppTab = .ask
 
 	@Environment(AskStore.self)
 	private var store
 
 	@Environment(TranslationAccount.self)
 	private var account
+
+	@Environment(NavigationManager.self)
+	private var navigation
 
 	@Environment(\.accessibilityReduceMotion)
 	private var reduceMotion
@@ -93,7 +97,7 @@ private struct AskConversationView: View {
 			thread
 				.overlay {
 					if conversation.messages.isEmpty {
-						AskEmptyView { draft = $0; composing = true }
+						AskEmptyView(mode: conversation.mode ?? .normal, isAboutBoard: conversation.board != nil) { draft = $0; composing = true }
 					}
 				}
 				.safeAreaBar(edge: .bottom, spacing: 0) {
@@ -109,7 +113,7 @@ private struct AskConversationView: View {
 				}
 		}
 		.onChange(of: store.waitingDraft, initial: true) {
-			if let waiting = store.takeWaitingDraft() {
+			if navigation.selectedTab == tab, let waiting = store.takeWaitingDraft() {
 				draft = draft.isEmpty ? waiting : "\(draft) \(waiting)"
 				composing = true
 			}
@@ -125,6 +129,12 @@ private struct AskConversationView: View {
 
 	private var composer: some View {
 		VStack(spacing: 0) {
+			if let mode = conversation.mode, mode != .normal {
+				AskModeCapsule(mode: mode) { store.setMode($0, for: conversationID) }
+					.padding(.top, 6)
+					.transition(.blurReplace)
+			}
+
 			if !attachments.isEmpty {
 				AskAttachmentsRow(
 					attachments: attachments,
@@ -146,13 +156,14 @@ private struct AskConversationView: View {
 			)
 		}
 		.animation(reduceMotion ? nil : .smooth, value: attachments)
+		.animation(reduceMotion ? nil : .smooth, value: conversation.mode)
 	}
 
 	private var thread: some View {
 		ScrollView {
 			LazyVStack(alignment: .leading, spacing: 20) {
 				ForEach(conversation.messages) { message in
-					AskMessageView(message: message, run: message.id == run?.answerID ? run : nil)
+					AskMessageView(conversationID: conversationID, message: message, run: message.id == run?.answerID ? run : nil)
 						.transition(transition(for: message))
 				}
 
@@ -164,7 +175,7 @@ private struct AskConversationView: View {
 
 				if let failure = store.failures[conversation.id] {
 					AskFailureRow(message: failure.message, code: failure.code) {
-						store.retry(account: account)
+						store.retry(conversationID, account: account)
 					}
 				}
 
@@ -200,7 +211,7 @@ private struct AskConversationView: View {
 	private func send() {
 		sent += 1
 		withAnimation(reduceMotion ? nil : .spring(duration: 0.45, bounce: 0.25)) {
-			store.send(draft, account: account)
+			store.send(draft, in: conversationID, account: account)
 			draft = ""
 		}
 	}

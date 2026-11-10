@@ -25,7 +25,7 @@ private struct AddToChatButton: View {
 
 	var body: some View {
 		Button("Add to Chat", systemImage: "bubble.left.and.text.bubble.right") {
-			navigation.presentSheet(.addToChat(.library(reference)))
+			navigation.presentSheet(.addEntryToChat(.library(reference)))
 		}
 		.accessibilityIdentifier("addToChat.\(reference.category).\(reference.id)")
 	}

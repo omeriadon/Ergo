@@ -27,6 +27,13 @@ extension BoardAnalysisTools {
 			return value
 		}
 
+		/// Empty is the same as left out
+		func optionalString(_ key: String) -> String? {
+			guard case let .string(value)? = values[key] else { return nil }
+			let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+			return trimmed.isEmpty ? nil : trimmed
+		}
+
 		func id(_ key: String) throws(AskTools.Failure) -> UUID {
 			let text = try string(key)
 			guard let id = UUID(uuidString: text) else {
@@ -68,7 +75,15 @@ extension BoardAnalysisTools {
 		}
 
 		try reserve("annotate/\(kind)/\(id)/\(citation.category)/\(citation.id)", duplicate: "That \(kind) already has an annotation citing \(citation.name)")
-		let report = BoardAnalysisReport(target: target, citation: citation, quote: quote, markdown: markdown, assessment: nil)
+		let report = BoardAnalysisReport(
+			target: target,
+			citation: citation,
+			quote: quote,
+			markdown: markdown,
+			assessment: nil,
+			objection: arguments.optionalString("objection"),
+			isKey: arguments.optionalString("importance") == "key"
+		)
 		return AskToolReply(text: "Added the annotation", event: .report(report))
 	}
 

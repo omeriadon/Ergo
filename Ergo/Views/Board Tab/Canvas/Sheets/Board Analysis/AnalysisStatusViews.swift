@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 8/11/2026.
 //
 
+import Defaults
 import ErgoProtocol
 import ErgoSync
 import SwiftUI
@@ -20,6 +21,11 @@ struct AnalysisStatusView: View {
 
 	@Environment(BoardStore.self)
 	private var boardStore
+
+	@Environment(TranslationAccount.self)
+	private var account
+
+	@Default(.translationProvider) private var translationProvider
 
 	private var isRunning: Bool {
 		analysis.isRunning(board.id)
@@ -63,9 +69,21 @@ struct AnalysisStatusView: View {
 			// Only someone who can edit starts or stops a run
 			if boardStore.canEdit(board.id) {
 				button
+				allowance
 			}
 		}
 		.frame(maxWidth: .infinity, alignment: .leading)
+	}
+
+	/// Only what Ergo's model runs on is counted
+	@ViewBuilder
+	private var allowance: some View {
+		if translationProvider.isServerManaged, let usage = account.usage {
+			Text(usage.deepResearchLeft == 1 ? "1 run left this week" : "\(usage.deepResearchLeft) runs left this week")
+				.font(.footnote)
+				.foregroundStyle(.secondary)
+				.accessibilityIdentifier("analysis.allowance")
+		}
 	}
 
 	private var headline: String {
@@ -105,7 +123,7 @@ struct AnalysisStatusView: View {
 				.accessibilityIdentifier("analysis.stop")
 			}
 		} else {
-			Button(status == nil ? "Analyse" : "Run Again", systemImage: "arrow.clockwise") {
+			Button(status == nil ? "Deep Research" : "Run Again", systemImage: "arrow.clockwise") {
 				analysis.start(board: board)
 			}
 			.buttonStyle(.glass)

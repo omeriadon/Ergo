@@ -16,6 +16,9 @@ struct AskRunSettings: Sendable {
 	/// The instructions' name in `Resources`. The model is always `StageModels.ask`'s.
 	let instructions: String
 
+	/// More instructions added after those, by name: a chat's mode, or that it's about a board
+	var additions: [String] = []
+
 	/// What Claude Code may call, without the `mcp__ergo__` prefix
 	let toolNames: [String]
 
@@ -25,10 +28,38 @@ struct AskRunSettings: Sendable {
 	/// How many rounds of tool calls Claude Code may make
 	let maxTurns: Int
 
+	/// Whether the server's own model may search the web, when the server allows it at all
+	var searchesWeb = false
+
 	static let ask = AskRunSettings(instructions: StageModels.ask, toolNames: AskTools.names, timeout: .seconds(300), maxTurns: ClaudeCodeAskCommand.maxTurns)
 
+	/// A chat in a mode, or about a board, which then has the board's tools
+	static func ask(mode: AskMode, board: AskBoard?) -> AskRunSettings {
+		var additions: [String] = []
+		if board != nil {
+			additions.append(StagePrompts.board)
+		}
+		if mode != .normal {
+			additions.append(mode.rawValue)
+		}
+		return AskRunSettings(
+			instructions: StageModels.ask,
+			additions: additions,
+			toolNames: board.map { BoardChatTools.names(canEdit: $0.canEdit) } ?? AskTools.names,
+			timeout: .seconds(300),
+			maxTurns: ClaudeCodeAskCommand.maxTurns
+		)
+	}
+
 	/// A whole board: reading the library, then a report for every card, arrow and source
-	static let analysis = AskRunSettings(instructions: StageModels.analyse, toolNames: BoardAnalysisTools.names, timeout: .seconds(600), maxTurns: 400)
+	static let analysis = AskRunSettings(instructions: StageModels.analyse, toolNames: BoardAnalysisTools.names, timeout: .seconds(600), maxTurns: 400, searchesWeb: true)
+
+	/// Everything the model is told, in order
+	func text(webSearch: Bool = false) throws -> String {
+		try ([instructions] + additions + (webSearch ? [StagePrompts.web] : []))
+			.map { try StagePrompts.instructions(for: $0) }
+			.joined(separator: "\n\n")
+	}
 }
 
 /// One CLI call for Ask: free text as it's written, with Ergo's tools as the only ones it has
@@ -57,7 +88,7 @@ extension ProviderBackend {
 
 		let instructions = run.work.appending(path: "instructions.md")
 		let toolConfig = run.work.appending(path: "tools.json")
-		try run.write(StagePrompts.instructions(for: settings.instructions), to: instructions)
+		try run.write(settings.text(), to: instructions)
 		try run.write(ClaudeCodeAskCommand.toolConfig(url: tools), to: toolConfig)
 
 		let command = ClaudeCodeAskCommand(
@@ -97,7 +128,7 @@ extension ProviderBackend {
 		let command = try CodexCommand(
 			executable: executable,
 			choice: models.choice(for: .codex, stage: StageModels.ask),
-			instructions: StagePrompts.instructions(for: settings.instructions),
+			instructions: settings.text(),
 			credential: ProviderCredential(provider: credential.provider, kind: credential.kind, secret: secret),
 			run: run,
 			tools: tools

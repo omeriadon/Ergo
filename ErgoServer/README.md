@@ -166,7 +166,25 @@ OpenRouter is the one provider that isn't a user's own login. The server calls i
 | `ERGO_OPENROUTER_API_KEY` | The server's OpenRouter key. Leaving it out removes OpenRouter from the app. |
 | `ERGO_OPENROUTER_MODEL` | The model id, like `anthropic/claude-sonnet-4.5`. Required with the key. |
 
-It must support tool calls and structured outputs, since requests set `provider.require_parameters`. Every account can use it, so it spends the server's credit: nothing is stored per user, and `ERGO_MODEL_EFFORT` and `ERGO_MODELS_FILE` don't apply to it. It shows in `GET v1/connections` as always connected, and `PUT` or `DELETE` on it are refused.
+It must support tool calls and structured outputs, since requests set `provider.require_parameters`. Every account can use it, so it spends the server's credit, within the allowances below. `ERGO_MODEL_EFFORT` and `ERGO_MODELS_FILE` don't apply to it. It shows in `GET v1/connections` as always connected, and `PUT` or `DELETE` on it are refused.
+
+### Allowances and the paid plan
+
+What an account spends on the server's own model is counted at one reference price, so a free model counts the same as a paid one. A run on someone's own Claude or ChatGPT login is never counted. Days and weeks are UTC.
+
+| Variable | Default | |
+|---|---|---|
+| `ERGO_OPENROUTER_PLUS_MODEL` | `ERGO_OPENROUTER_MODEL` | The model paying accounts get |
+| `ERGO_FREE_DAILY_USD` / `ERGO_PLUS_DAILY_USD` | 0.03 / 1 | The day's allowance, in dollars at the reference price |
+| `ERGO_USAGE_PRICE_INPUT` / `ERGO_USAGE_PRICE_OUTPUT` | 0.2 / 1.2 | The reference price, dollars per million tokens |
+| `ERGO_FREE_DEEP_PER_WEEK` / `ERGO_PLUS_DEEP_PER_WEEK` | 1 / 30 | Deep research runs a week. A run that fails with nothing written is given back. |
+| `ERGO_ENFORCE_PLANS` | off | On, the free plan is held back from what's paid only. Turn it on once the App Store products exist. |
+| `ERGO_WEB_SEARCH` | off | Deep research on the server's model sees a few web results, once at the start of a run, and cites what it uses. Costs extra for each run. |
+| `ERGO_APPLE_ROOT_CERT_FILE` | none | Apple Root CA G3, as PEM. Without it a purchase can't be verified, and `POST v1/account/plan` is refused. |
+| `ERGO_DEVICECHECK_KEY` or `ERGO_DEVICECHECK_KEY_FILE` | none | A `.p8` with DeviceCheck enabled. Without it every account gets the free allowance, so one person with many accounts gets many. |
+| `ERGO_DEVICECHECK_KEY_ID` / `ERGO_DEVICECHECK_TEAM_ID` | required with a key | |
+
+A phone's free allowance can move to a different account at most once a calendar month. `GET v1/usage` says what's left, and `POST v1/account/device-claim` claims it.
 
 ## Deploying
 

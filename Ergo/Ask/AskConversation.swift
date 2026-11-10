@@ -25,6 +25,17 @@ nonisolated struct AskConversation: Codable, Hashable, Identifiable, Defaults.Se
 	/// An answer the server is writing. It carries on if the app is closed, so this is kept to pick it up again.
 	var pending: PendingAnswer?
 
+	// Everything below is optional so chats saved before it existed still read
+
+	/// Nil is the normal mode
+	var mode: AskMode?
+
+	/// The board this chat is about. The model sees it with every question, and can change it.
+	var board: Board.ID?
+
+	/// The changes the model has already made to the board, so hearing an answer again doesn't make them twice
+	var appliedEdits: [UUID]?
+
 	/// Which run on the server is writing an answer, and where the answer goes
 	struct PendingAnswer: Codable, Hashable {
 		/// The run's name on the server. Asking again with it hears the same answer.
@@ -68,6 +79,18 @@ nonisolated struct AskMessage: Codable, Hashable, Identifiable, Sendable {
 
 	/// Buttons under an answer
 	var actions: [AskAction] = []
+
+	/// The model asking to change the chat's mode
+	var modeRequest: AskModeRequest?
+
+	/// Whether the person took it up, nil until they've said
+	var modeAccepted: Bool?
+
+	/// What the answer changed on the board, a line for each
+	var edits: [String]?
+
+	/// The changes were taken back
+	var editsUndone: Bool?
 
 	/// What the model gets: the question, then whatever went with it
 	var requestText: String {

@@ -59,6 +59,15 @@ final class BoardAnalysisStore {
 		if written != self.written {
 			self.written = written
 		}
+		endFinishedActivities()
+	}
+
+	/// A run started just now has no status yet, so it's left alone until it does
+	private func endFinishedActivities() {
+		DeepResearchActivity.end { board in
+			guard !starting.contains(board), let status = status(of: board), status != .running else { return nil }
+			return status == .finished ? .finished : .stopped
+		}
 	}
 
 	/// Another account's results must not outlive its sign-in
@@ -68,6 +77,7 @@ final class BoardAnalysisStore {
 		}
 		tasks = [:]
 		starting = []
+		DeepResearchActivity.endAll()
 		messages = [:]
 		statuses = [:]
 		written = [:]
@@ -80,6 +90,15 @@ final class BoardAnalysisStore {
 	/// Starting, or the server says it's going
 	func isRunning(_ board: Board.ID) -> Bool {
 		starting.contains(board) || status(of: board) == .running
+	}
+
+	/// Every board with a run going, newest first. One that's only starting has no status yet, so it counts as newest.
+	func running(at now: Date) -> [Board.ID] {
+		let started = statuses.values
+			.filter { !starting.contains($0.board) && $0.shown(at: now) == .running }
+			.sorted { $0.started > $1.started }
+			.map(\.board)
+		return starting.sorted { $0.uuidString < $1.uuidString } + started
 	}
 
 	func shown(on board: Board) -> BoardAnalysisShown {
@@ -124,6 +143,10 @@ final class BoardAnalysisStore {
 		}
 
 		try await account.startAnalysis(board: BoardRecord.id(board.id), reading.request)
+		DeepResearchActivity.start(board: board.id, title: board.title, staleAfter: BoardAnalysisStatus.staleAfter)
+		// So there's something to say when it's done and the app is closed
+		sync.askToNotify()
+		await account.refreshUsage()
 		// So the running status is here before the button goes back to idle
 		try? await sync.syncAndWait()
 	}

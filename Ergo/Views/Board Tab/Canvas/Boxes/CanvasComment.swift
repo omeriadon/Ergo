@@ -25,12 +25,24 @@ nonisolated enum CanvasCommentLayout {
 struct CanvasCommentOverlay: View {
 	let comment: BoardAnalysisComment?
 
+	/// The findings that matter most stand out from the rest
+	private var tint: Color {
+		comment?.isKey == true ? .orange : .yellow
+	}
+
 	var body: some View {
 		if let comment {
 			VStack(alignment: .leading, spacing: 2) {
-				Text(comment.title)
-					.font(.caption2.weight(.bold))
-					.lineLimit(1)
+				HStack(spacing: 3) {
+					if comment.isKey {
+						Image(systemName: "star.fill")
+							.foregroundStyle(.orange)
+							.accessibilityLabel("Key finding")
+					}
+					Text(comment.title)
+						.lineLimit(1)
+				}
+				.font(.caption2.weight(.bold))
 				Text(comment.text)
 					.font(.caption2)
 					.lineLimit(3)
@@ -39,11 +51,11 @@ struct CanvasCommentOverlay: View {
 			.padding(.horizontal, 8)
 			.padding(.vertical, 5)
 			.frame(width: CanvasCommentLayout.size.width, height: CanvasCommentLayout.size.height, alignment: .topLeading)
-			.background(Color.yellow.opacity(0.22), in: RoundedRectangle(cornerRadius: 10))
+			.background(tint.opacity(0.22), in: RoundedRectangle(cornerRadius: 10))
 			.background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 10))
 			.overlay {
 				RoundedRectangle(cornerRadius: 10)
-					.strokeBorder(.yellow.opacity(0.6), lineWidth: 1)
+					.strokeBorder(tint.opacity(comment.isKey ? 0.9 : 0.6), lineWidth: comment.isKey ? 1.5 : 1)
 			}
 			.offset(x: CanvasCommentLayout.origin.x, y: CanvasCommentLayout.origin.y)
 			.allowsHitTesting(false)

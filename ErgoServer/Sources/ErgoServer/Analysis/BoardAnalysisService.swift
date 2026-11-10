@@ -58,6 +58,7 @@ struct BoardAnalysisService: Sendable {
 			guard translations.config.openRouter != nil else {
 				throw ServiceError(code: .notConnected, message: "\(request.provider.displayName) isn't set up on the Ergo server")
 			}
+			try await translations.usage.requireDeepResearch(for: account, on: database)
 		} else if try await Credential.find(request.provider, for: account, on: database) == nil {
 			throw ServiceError(code: .notConnected, message: "\(request.provider.displayName) isn't connected")
 		}
@@ -79,6 +80,10 @@ struct BoardAnalysisService: Sendable {
 		} catch {
 			jobs.release(board: key, run: request.run)
 			throw error
+		}
+
+		if request.provider.isServerManaged {
+			await translations.usage.recordDeepResearch(for: account, on: database, logger: logger)
 		}
 
 		let job = Job(service: self, request: request, board: boardID, account: account, started: started, prompt: prompt, port: port, database: jobDatabase, logger: jobLogger)
@@ -183,6 +188,11 @@ struct BoardAnalysisService: Sendable {
 				problem = ServiceError.internalFailure.message
 			}
 
+			// A run that failed before it found anything isn't one of the week's
+			if state == .failed, heard.reports == 0, request.provider.isServerManaged, !service.jobs.isShuttingDown {
+				await service.translations.usage.recordDeepResearch(-1, for: account, on: database, logger: logger)
+			}
+
 			// The board went away, or so is the database
 			guard !heard.isGone, !service.jobs.isShuttingDown else { return }
 			await finish(state, error: problem, discussion: heard.discussion)
@@ -209,7 +219,8 @@ struct BoardAnalysisService: Sendable {
 					account: account,
 					database: database,
 					logger: logger,
-					exclusive: request.provider == .codex
+					exclusive: request.provider == .codex,
+					counts: false
 				) { backend in
 					try await backend.ask(prompt: prompt, tools: url, responder: responder, settings: .analysis) { text in
 						heard.add(text: text)
@@ -265,7 +276,17 @@ struct BoardAnalysisService: Sendable {
 						}
 						try await ledger.writeServerOwned(.analysis, id: key, fields: status.fields, board: key, requester: account, on: database)
 						let everyone = try await ledger.audience(of: key, requester: account, on: database)
-						ledger.syncSilently(everyone, board: key)
+						// Whoever started it hears how it ended, since it takes minutes and they've likely left the app
+						switch state {
+							case .finished:
+								ledger.syncSilently(everyone.filter { $0 != account }, board: key)
+								ledger.alert([account], board: key, heading: "Deep research finished", body: "Open the board to see what it found")
+							case .failed:
+								ledger.syncSilently(everyone.filter { $0 != account }, board: key)
+								ledger.alert([account], board: key, heading: "Deep research failed", body: "Open the board to try again")
+							case .running, .cancelled:
+								ledger.syncSilently(everyone, board: key)
+						}
 					}
 				} catch is BoardGone {
 					return

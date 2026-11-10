@@ -41,18 +41,29 @@ final class AskService: Sendable {
 		if let problem = request.problem {
 			throw ServiceError(code: .invalidRequest, message: problem)
 		}
-		let prompt = try StagePrompts.askMessage(for: request.messages, instructions: request.instructions)
+		let mode = request.mode ?? .normal
+		let prompt = try StagePrompts.askMessage(for: request.messages, instructions: request.instructions, mode: mode, board: request.board)
+		let settings = AskRunSettings.ask(mode: mode, board: request.board)
 		let answer = Mutex<String>("")
 
 		try await translations.withBackend(provider: request.provider, scope: StageModels.ask, account: account, database: database, logger: logger) { backend in
 			let tools = tools
-			let responder: AskRuns.Responder = { body in
-				await tools.respond(to: body, events: send)
+			let responder: AskRuns.Responder
+			if let board = request.board {
+				// Made for this run, since it follows the board as the model changes it
+				let boardTools = AskToolServer(tools: BoardChatTools(board: board, catalog: tools.tools.catalog))
+				responder = { body in
+					await boardTools.respond(to: body, events: send)
+				}
+			} else {
+				responder = { body in
+					await tools.respond(to: body, events: send)
+				}
 			}
 			let token = runs.register(responder)
 			defer { runs.remove(token) }
 
-			try await backend.ask(prompt: prompt, tools: "http://127.0.0.1:\(port)/\(ErgoProtocol.Path.askTools)/\(token)", responder: responder) { text in
+			try await backend.ask(prompt: prompt, tools: "http://127.0.0.1:\(port)/\(ErgoProtocol.Path.askTools)/\(token)", responder: responder, settings: settings) { text in
 				answer.withLock { $0 += text }
 				await send(.text(text))
 			}

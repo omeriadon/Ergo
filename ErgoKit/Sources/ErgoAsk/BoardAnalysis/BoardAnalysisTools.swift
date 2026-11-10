@@ -19,13 +19,17 @@ public struct BoardAnalysisReport: Sendable, Hashable {
 	public let quote: String?
 	public let markdown: String
 	public let assessment: BoardAnnotation.Assessment?
+	public let objection: String?
+	public let isKey: Bool
 
-	public init(target: BoardAnalysisTarget, citation: LibraryCitation, quote: String?, markdown: String, assessment: BoardAnnotation.Assessment?) {
+	public init(target: BoardAnalysisTarget, citation: LibraryCitation, quote: String?, markdown: String, assessment: BoardAnnotation.Assessment?, objection: String? = nil, isKey: Bool = false) {
 		self.target = target
 		self.citation = citation
 		self.quote = quote
 		self.markdown = markdown
 		self.assessment = assessment
+		self.objection = objection
+		self.isKey = isKey
 	}
 
 	/// The annotation to save, with what it was judged on: a conclusion or arrow's conclusion and all its premises, so an
@@ -45,7 +49,7 @@ public struct BoardAnalysisReport: Sendable, Hashable {
 			default:
 				break
 		}
-		return BoardAnnotation(id: id, board: board, run: request.run, target: target, citation: citation, quote: quote, markdown: markdown, assessment: assessment, basis: basis)
+		return BoardAnnotation(id: id, board: board, run: request.run, target: target, citation: citation, quote: quote, markdown: markdown, assessment: assessment, objection: objection, isKey: isKey, basis: basis)
 	}
 
 	static func basis(of conclusion: UUID, in request: BoardAnalysisRequest) -> [UUID: String] {
@@ -130,7 +134,7 @@ public final class BoardAnalysisTools: AskToolSet, @unchecked Sendable {
 
 	func text(_ outcome: AskTools.Outcome) -> String {
 		switch outcome {
-			case let .text(text), let .action(_, text):
+			case let .text(text), let .action(_, text), let .modeRequest(_, text):
 				text
 		}
 	}

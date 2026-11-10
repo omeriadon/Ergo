@@ -66,6 +66,12 @@ final class AskStore {
 	/// What's going with each chat's next message. Not saved, like what's typed in the composer.
 	private(set) var attachments: [AskConversation.ID: [AskAttachment]] = [:]
 
+	/// A chat about a board reads it and changes it through here
+	@ObservationIgnored weak var boardStore: BoardStore?
+
+	/// Each board as it was before an answer first changed it, for taking the changes back. Not saved.
+	@ObservationIgnored private var boardsBefore: [AskMessage.ID: Board] = [:]
+
 	init() {
 		conversations = Defaults[.askConversations]
 		let id = Defaults[.currentAskConversationID]
@@ -80,14 +86,75 @@ final class AskStore {
 	}
 
 	/// Opens an empty chat. One that's already empty and open is left as it is, with whatever's been typed in it.
-	func newConversation() {
+	func newConversation(mode: AskMode = .normal) {
 		if !current.messages.isEmpty {
 			if unsentDraft == nil {
 				draft = AskConversation()
 			}
 			currentID = nil
 		}
+		// An empty chat left over from a board isn't that board's any more
+		draft.board = nil
+		draft.mode = mode == .normal ? nil : mode
 		isChatOpen = true
+	}
+
+	/// Makes the board's chat the current one, without opening it on the Ask tab: the newest chat about the board, or an
+	/// empty one. It's an ordinary chat, so it's in the Ask tab's list once something's been asked.
+	func openBoardChat(_ board: Board.ID) {
+		guard current.board != board else { return }
+		if let existing = sortedConversations.first(where: { $0.board == board }) {
+			currentID = existing.id
+			return
+		}
+		startBoardDraft(board)
+	}
+
+	/// An empty chat about the board, leaving the ones before it in the list. One that's already empty is left as it is.
+	func newBoardChat(_ board: Board.ID) {
+		guard current.board != board || !current.messages.isEmpty else { return }
+		startBoardDraft(board)
+	}
+
+	/// There's only one unsaved chat, so what was waiting in it moves along, where it can still be seen and removed
+	private func startBoardDraft(_ board: Board.ID) {
+		var fresh = AskConversation()
+		fresh.board = board
+		if let unsent = unsentDraft {
+			attachments[fresh.id] = attachments.removeValue(forKey: unsent.id)
+		}
+		draft = fresh
+		currentID = nil
+	}
+
+	/// A mode the person picks themselves. An empty chat keeps it until something's asked.
+	func setMode(_ mode: AskMode, for id: AskConversation.ID) {
+		let stored = mode == .normal ? nil : mode
+		if draft.id == id, !conversations.contains(where: { $0.id == id }) {
+			draft.mode = stored
+		} else if var conversation = conversation(id), conversation.mode != stored {
+			conversation.mode = stored
+			write(conversation)
+			save()
+		}
+	}
+
+	/// The answer to the model asking to change mode. Taking it up tells the model to begin.
+	func answerModeRequest(_ accepted: Bool, on message: AskMessage.ID, in id: AskConversation.ID, account: TranslationAccount) {
+		guard var conversation = conversation(id), let index = conversation.messages.firstIndex(where: { $0.id == message }),
+		      let request = conversation.messages[index].modeRequest, conversation.messages[index].modeAccepted == nil
+		else { return }
+
+		conversation.messages[index].modeAccepted = accepted
+		if accepted {
+			conversation.mode = request.mode == .normal ? nil : request.mode
+		}
+		write(conversation)
+		save()
+
+		if accepted, request.mode != .normal {
+			send(request.mode == .debate ? "Let's debate." : "Go ahead.", in: id, account: account)
+		}
 	}
 
 	func open(_ id: AskConversation.ID) {
@@ -153,11 +220,14 @@ final class AskStore {
 	// MARK: - asking
 
 	func send(_ text: String, account: TranslationAccount) {
-		let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
-		let attached = attachments[current.id] ?? []
-		guard !text.isEmpty || !attached.isEmpty, runs[current.id] == nil else { return }
+		send(text, in: current.id, account: account)
+	}
 
-		var conversation = current
+	func send(_ text: String, in id: AskConversation.ID, account: TranslationAccount) {
+		let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+		let attached = attachments[id] ?? []
+		guard !text.isEmpty || !attached.isEmpty, runs[id] == nil, var conversation = conversation(id) else { return }
+
 		conversation.messages.append(AskMessage(role: .user, text: text, attachments: attached))
 		attachments[conversation.id] = nil
 		write(conversation)
@@ -165,8 +235,8 @@ final class AskStore {
 	}
 
 	/// Asks the last question again after a failure, without whatever part of an answer it got to
-	func retry(account: TranslationAccount) {
-		var conversation = current
+	func retry(_ id: AskConversation.ID, account: TranslationAccount) {
+		guard var conversation = conversation(id) else { return }
 		if conversation.messages.last?.role == .assistant {
 			conversation.messages.removeLast()
 			write(conversation)
@@ -209,6 +279,8 @@ final class AskStore {
 		let pending = resuming ?? AskConversation.PendingAnswer(run: UUID(), answer: UUID(), started: .now)
 		// Whatever of the answer there is already isn't part of the question
 		let messages = Self.request(from: (conversation(id)?.messages ?? []).filter { $0.id != pending.answer })
+		let mode = conversation(id)?.mode ?? .normal
+		let board = conversation(id)?.board.flatMap { boardStore?.askBoard($0) }
 
 		if resuming == nil, var conversation = conversation(id) {
 			conversation.pending = pending
@@ -223,7 +295,7 @@ final class AskStore {
 			do {
 				while true {
 					do {
-						try await account.ask(id: pending.run, messages: messages) { event in
+						try await account.ask(id: pending.run, messages: messages, mode: mode, board: board) { event in
 							guard !Task.isCancelled else { return }
 							if replaying {
 								// The server says it all again from the start
@@ -297,9 +369,67 @@ final class AskStore {
 				conversation.suggestedTitle = title
 				write(conversation)
 
+			case let .modeRequest(request):
+				updateAnswer { answer in
+					answer.modeRequest = request
+					answer.modeAccepted = nil
+				}
+
+			case let .boardEdit(edit):
+				// An answer heard again from the start says its changes again, and they're only made once
+				let isNew = conversation.appliedEdits?.contains(edit.id) != true
+				var line = Self.description(of: edit.change, on: conversation.board.flatMap { boardStore?.board($0) })
+				if isNew, let board = conversation.board, let boardStore {
+					if boardsBefore[answerID] == nil {
+						boardsBefore[answerID] = boardStore.board(board)
+					}
+					if !boardStore.apply(edit.change, to: board) {
+						line = "Couldn't change the board"
+					}
+					conversation.appliedEdits = (conversation.appliedEdits ?? []) + [edit.id]
+				}
+				updateAnswer { answer in
+					answer.edits = (answer.edits ?? []) + [line]
+				}
+
 			case .finished, .failed, .unknown:
 				break
 		}
+	}
+
+	/// What a change did, in a line, worked out before it's made so a deleted card can still be named
+	private static func description(of change: AskBoardEdit.Change, on board: Board?) -> String {
+		func words(_ id: UUID) -> String {
+			board?.statement(id)?.englishLine.map { "“\($0)”" } ?? "a card"
+		}
+		switch change {
+			case let .addCard(_, english, _):
+				return "Added “\(english)”"
+			case let .editCard(id, english):
+				return "Changed \(words(id)) to “\(english)”"
+			case let .deleteCard(id):
+				return "Deleted \(words(id))"
+			case let .connect(premise, conclusion):
+				return "Made \(words(premise)) a premise of \(words(conclusion))"
+			case let .disconnect(premise, conclusion):
+				return "Removed the arrow from \(words(premise)) to \(words(conclusion))"
+		}
+	}
+
+	/// Whether an answer's changes to the board can still be taken back
+	func canUndoEdits(of message: AskMessage.ID) -> Bool {
+		boardsBefore[message] != nil
+	}
+
+	/// Puts the board back to how it was before the answer changed it
+	func undoEdits(of message: AskMessage.ID, in id: AskConversation.ID) {
+		guard let before = boardsBefore.removeValue(forKey: message), var conversation = conversation(id),
+		      let index = conversation.messages.firstIndex(where: { $0.id == message })
+		else { return }
+		boardStore?.restore(before)
+		conversation.messages[index].editsUndone = true
+		write(conversation)
+		save()
 	}
 
 	/// The newest messages that fit, since the server turns away what's longer. A cut can't start on an answer.

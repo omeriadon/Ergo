@@ -47,6 +47,7 @@
         }, {
           "target": "Ergo WidgetsExtension",
           "inclusions": [
+            "Boards/DeepResearchAttributes.swift",
             "Catalog/CatalogIndex.swift",
             "Catalog/CatalogModels.swift",
             "Catalog/CatalogStore.swift",
@@ -221,7 +222,7 @@
         "SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY": "YES",
         "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
         "SWIFT_VERSION": "6.0",
-        "TARGETED_DEVICE_FAMILY": "1",
+        "TARGETED_DEVICE_FAMILY": "1,2",
       },
     }, {
       "name": "Ergo WidgetsExtension",

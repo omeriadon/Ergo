@@ -8,8 +8,8 @@ Ergo's design docs. Most of them are plans that have since been built, kept for 
 | [HANDOFF.md](HANDOFF.md) | What a new agent needs beyond `CLAUDE.md` | Current |
 | [09-Sharing.md](09-Sharing.md) | Sharing boards by link, and pushes | Built and deployed, not yet checked on devices |
 | [10-BoardAnalysis.md](10-BoardAnalysis.md) | A server-side agent that annotates a board with library entries | Built, not yet checked on devices |
-| [11-Paid.md](11-Paid.md) | What's free and paid, daily AI limits, and long text into Break Down | Current, not built or priced |
-| [12-Identity.md](12-Identity.md) | What Ergo is, who it's for first, and how the board's AI should work | Current, not built |
+| [11-Paid.md](11-Paid.md) | What's free and paid, daily AI limits, and long text into Break Down | Current. Built, not priced, and off until the App Store products exist |
+| [12-Identity.md](12-Identity.md) | What Ergo is, who it's for first, and how the board's AI should work | Current, built |
 | [00-Translation.md](00-Translation.md) | The original plan: the server, ErgoKit and translation | Built, historical |
 | [01-ErgoKit.md](01-ErgoKit.md) · [02-Server.md](02-Server.md) · [03-App.md](03-App.md) · [04-Evals.md](04-Evals.md) | The phases of that plan | Built, historical |
 | [05-Sync.md](05-Sync.md) | Sync | Built, historical |

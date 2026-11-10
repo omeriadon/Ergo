@@ -19,12 +19,14 @@ final class TranslationService: Sendable {
 	let vault: CredentialVault
 	let config: ServerConfig
 	let runner: ProcessRunner
+	let usage: UsageService
 	private let running = Mutex<Set<UUID>>([])
 
-	init(vault: CredentialVault, config: ServerConfig, runner: ProcessRunner) {
+	init(vault: CredentialVault, config: ServerConfig, runner: ProcessRunner, usage: UsageService? = nil) {
 		self.vault = vault
 		self.config = config
 		self.runner = runner
+		self.usage = usage ?? UsageService(config: config)
 	}
 
 	// MARK: - Single flight
@@ -113,6 +115,9 @@ final class TranslationService: Sendable {
 	/// Opens the user's connection, runs `work` with it, one at a time per account, and turns whatever goes wrong into
 	/// a `ServiceError`. `summary` is what's worth logging about the result, never its text. `exclusive` is false for a
 	/// Claude Code login, which has nothing to spend, when the call shouldn't make everything else wait.
+	///
+	/// The server's own model is refused once the account's allowance for today is used, and what the call uses is counted
+	/// against it. `counts` is false for a deep research run, which is counted by the week instead.
 	func withBackend<Result: Sendable>(
 		provider: Provider,
 		scope: String,
@@ -120,19 +125,28 @@ final class TranslationService: Sendable {
 		database: any Database,
 		logger: Logger,
 		exclusive isExclusive: Bool = true,
+		counts: Bool = true,
 		_ work: (ProviderBackend) async throws -> Result,
 		summary: (Result) -> Logger.Metadata
 	) async throws -> Result {
 		// A server-managed provider uses the server's own key, so there's no row to find, mark or reseal
 		let id: UUID?
 		let credential: ProviderCredential
+		let meter: UsageMeter?
 		if provider.isServerManaged {
 			guard let openRouter = config.openRouter else {
 				throw ServiceError(code: .notConnected, message: "\(provider.displayName) isn't set up on the Ergo server")
 			}
 			id = nil
 			credential = ProviderCredential(provider: provider, kind: .apiKey, secret: openRouter.key)
+			let plan: AccountPlan = if counts {
+				try await usage.requireAllowance(for: account, on: database)
+			} else {
+				try await usage.plan(of: account, on: database).plan
+			}
+			meter = UsageMeter(model: plan == .plus ? openRouter.plusModel : nil)
 		} else {
+			meter = nil
 			guard let stored = try await Credential.find(provider, for: account, on: database), let storedID = stored.id else {
 				throw ServiceError(code: .notConnected, message: "\(provider.displayName) isn't connected")
 			}
@@ -150,7 +164,7 @@ final class TranslationService: Sendable {
 		}
 
 		func run() async throws -> Result {
-			let backend = ProviderBackend(credential: credential, config: config, runner: runner, logger: logger) { [vault] refreshed in
+			let backend = ProviderBackend(credential: credential, config: config, runner: runner, logger: logger, meter: meter) { [vault] refreshed in
 				guard let id else { return }
 				do {
 					try await Credential.reseal(id, with: vault.seal(refreshed, account: account, provider: credential.provider), on: database)
@@ -159,9 +173,23 @@ final class TranslationService: Sendable {
 				}
 			}
 
+			// Whatever the call used counts, however it ended
+			func settle() async {
+				if counts, let meter {
+					await usage.record(meter, for: account, on: database, logger: logger)
+				}
+			}
+
 			let start = ContinuousClock.now
 			do {
-				let result = try await work(backend)
+				let result: Result
+				do {
+					result = try await work(backend)
+				} catch {
+					await settle()
+					throw error
+				}
+				await settle()
 				if let id {
 					try? await Credential.markWorking(id, on: database)
 				}

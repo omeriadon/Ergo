@@ -60,6 +60,12 @@ extension Defaults.Keys {
 
 	static let presentedSheet = Key<AppSheet?>("presentedSheet", default: nil)
 
+	static let boardSheet = Key<BoardSheet?>("boardSheet", default: nil)
+
+	static let logicSheet = Key<LogicSheet?>("logicSheet", default: nil)
+
+	static let librarySheet = Key<LibrarySheet?>("librarySheet", default: nil)
+
 	static let libraryGeneralSearchText = Key<String>("libraryGeneralSearchText", default: "")
 
 	static let currentBoardID = Key<UUID?>("currentBoardID", default: nil)
@@ -80,6 +86,9 @@ extension Defaults.Keys {
 		"lastIndexedVersion",
 		default: ""
 	)
+
+	/// The course lessons finished on this device. Not synced, since it's only a tick beside each one.
+	static let logicCourseFinished = Key<Set<String>>("logicCourseFinished", default: [])
 
 	/// Set while this device is signed in, with Apple or an email, which sync needs. This device only.
 	static let signedInAccount = Key<SignedInAccount?>("signedInAccount", default: nil)

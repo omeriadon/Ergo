@@ -78,8 +78,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
 	/// A board that's gone (someone was removed, or it was deleted) just opens the tab.
 	private static func open(_ board: UUID?) async {
 		guard let navigation, let boardStore else { return }
-		navigation.selectedTab = .board
-		navigation.dismissSheet()
+		navigation.reveal(.board)
 
 		guard let board else { return }
 		if !boardStore.boards.contains(where: { $0.id == board }) {

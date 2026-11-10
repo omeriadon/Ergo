@@ -1,5 +1,7 @@
 # 12 · Identity and the board's AI
 
+Built, apart from the tagline. Web search is only on deep research on Ergo's model, as a few results the server fetches once at the start of a run, so the model can't choose to search and a person's own Claude or ChatGPT login doesn't get it.
+
 What Ergo is, who it's for first, and how its AI should work. Nothing here is built yet.
 
 **Decided** means Adon has settled it. **Proposed** means it's on the table but not agreed.
@@ -49,7 +51,7 @@ It still never rules on whether a premise is true. **Open:** whether web search 
 - **Quick AI.** A normal chat shown next to the canvas, and it can have its own row in the Ask list. A toolbar button opens it in a sheet with full and half detents, in the same view as chat. You start by talking to it. It sees the board in a form it can reason about, and it can edit the board. It runs at Ask's speed.
 - **Deep research.** An item in the ⋯ menu that takes minutes, with a Live Activity, and tells you when it's done.
 
-**Proposed**, to make deep research faster and cheaper:
+To make deep research faster and cheaper, the prompt now tells the model to batch its searches, reads and reports. That hasn't been measured. Not done:
 - One tool call reports many findings, rather than one each.
 - Give it the names of the library's entries up front, so it searches less.
 - A first pass decides what matters, then the parts run at the same time.
@@ -66,7 +68,4 @@ It still never rules on whether a premise is true. **Open:** whether web search 
 
 ## Open
 
-- What Quick AI's edits look like, and how they're undone.
-- The citation syntax for web results.
-- Where the fallacy finder lives: on a board's sources, or its own way in.
 - The Logic tab's place, and whether the course makes it worth keeping up front.

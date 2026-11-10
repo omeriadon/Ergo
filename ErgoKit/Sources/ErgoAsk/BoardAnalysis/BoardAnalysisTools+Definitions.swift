@@ -43,6 +43,8 @@ extension BoardAnalysisTools {
 						"target_id": Self.property("The id of that statement, link or source"),
 						"quote": Self.property("Words copied exactly from the target's text, at least \(Self.quoteMinimum) characters. For a link, from either of its two statements."),
 						"markdown": Self.markdown,
+						"importance": Self.property("key for the two or three findings that matter most on the whole board, otherwise leave it out", values: ["key", "normal"]),
+						"objection": Self.property("The strongest objection to this claim, written as one claim someone could put on the board. Leave it out unless there is a real one."),
 					].merging(Self.citation) { $1 },
 					required: ["target_kind", "target_id", "category", "id", "quote", "markdown"]
 				)

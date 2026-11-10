@@ -53,8 +53,7 @@ extension NavigationManager {
 		_ category: LibraryContent,
 		filters: [LibraryFilter]? = nil
 	) {
-		selectedTab = .library
-		presentedSheet = nil
+		reveal(.library)
 
 		// Pushes on top of wherever the user is, so going back returns there
 		if libraryPath.last?.listCategory != category {

@@ -24,13 +24,18 @@ struct ProviderBackend: TranslationBackend {
 	/// The secret as the last call left it
 	let latest: LatestSecret
 
+	/// Counts what the server's own model uses, and says which model the account's plan gets. Nil for anyone's own login.
+	let meter: UsageMeter?
+
 	init(
 		credential: ProviderCredential,
 		config: ServerConfig,
 		runner: ProcessRunner,
 		logger: Logger,
+		meter: UsageMeter? = nil,
 		refreshed: @escaping @Sendable (Secret) async -> Void = { _ in }
 	) {
+		self.meter = meter
 		self.credential = credential
 		models = config.models
 		self.runner = runner

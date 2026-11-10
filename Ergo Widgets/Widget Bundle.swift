@@ -12,5 +12,6 @@ import WidgetKit
 struct Ergo_WidgetsBundle: WidgetBundle {
 	var body: some Widget {
 		ItemOfTheDayWidget()
+		DeepResearchLiveActivity()
 	}
 }

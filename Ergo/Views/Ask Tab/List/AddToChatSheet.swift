@@ -83,7 +83,8 @@ struct AddToChatSheet: View {
 	}
 
 	private func finish() {
-		navigation.selectedTab = .ask
+		// In this order, since closing it means closing what's on the tab it was opened from
 		navigation.dismissSheet()
+		navigation.selectedTab = .ask
 	}
 }

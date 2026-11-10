@@ -53,6 +53,9 @@ final class TranslationAccount {
 	/// Why the last refresh or disconnect failed
 	var problem: String?
 
+	/// How much of Ergo's model this account has left, and what it's paid for. Nil until the server's been asked.
+	var usage: UsageStatus?
+
 	/// Whether `provider` has a connection on the current server. Nil until that's known, since asking costs a request.
 	func isConnected(_ provider: Provider) -> Bool? {
 		guard let server else { return nil }

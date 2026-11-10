@@ -115,6 +115,12 @@ public struct BoardAnnotation: Codable, Sendable, Hashable, Identifiable {
 	public let markdown: String
 	public let assessment: Assessment?
 
+	/// The strongest objection to it, as one claim, which can be added to the board as a card
+	public let objection: String?
+
+	/// One of the few findings that matter most on this board
+	public let isKey: Bool
+
 	/// Statement id -> English, for an assessment: what it was judged on, so an edit can make it stale.
 	/// On a source's annotation, the source's id -> its title, which is how a link source is known to be unchanged.
 	public let basis: [UUID: String]
@@ -128,6 +134,8 @@ public struct BoardAnnotation: Codable, Sendable, Hashable, Identifiable {
 		quote: String?,
 		markdown: String,
 		assessment: Assessment?,
+		objection: String? = nil,
+		isKey: Bool = false,
 		basis: [UUID: String]
 	) {
 		self.id = id
@@ -138,11 +146,13 @@ public struct BoardAnnotation: Codable, Sendable, Hashable, Identifiable {
 		self.quote = quote
 		self.markdown = markdown
 		self.assessment = assessment
+		self.objection = objection
+		self.isKey = isKey
 		self.basis = basis
 	}
 
 	private enum Key: String, CodingKey {
-		case id, board, run, target, citation, quote, markdown, assessment, basis
+		case id, board, run, target, citation, quote, markdown, assessment, objection, isKey, basis
 	}
 
 	/// The basis is an object keyed by uppercase id, since a dictionary with `UUID` keys would encode as a flat array
@@ -165,6 +175,8 @@ public struct BoardAnnotation: Codable, Sendable, Hashable, Identifiable {
 			quote: container.decodeIfPresent(String.self, forKey: .quote),
 			markdown: container.decode(String.self, forKey: .markdown),
 			assessment: container.decodeIfPresent(Assessment.self, forKey: .assessment),
+			objection: container.decodeIfPresent(String.self, forKey: .objection),
+			isKey: container.decodeIfPresent(Bool.self, forKey: .isKey) ?? false,
 			basis: decoded
 		)
 	}
@@ -179,6 +191,10 @@ public struct BoardAnnotation: Codable, Sendable, Hashable, Identifiable {
 		try container.encodeIfPresent(quote, forKey: .quote)
 		try container.encode(markdown, forKey: .markdown)
 		try container.encodeIfPresent(assessment, forKey: .assessment)
+		try container.encodeIfPresent(objection, forKey: .objection)
+		if isKey {
+			try container.encode(isKey, forKey: .isKey)
+		}
 		try container.encode(Dictionary(uniqueKeysWithValues: basis.map { ($0.key.uuidString, $0.value) }), forKey: .basis)
 	}
 }

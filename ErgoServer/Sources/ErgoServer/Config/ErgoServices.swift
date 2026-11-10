@@ -25,6 +25,7 @@ struct ErgoServices: Sendable {
 	/// What an unknown email's password is checked against, so it takes as long as a known one's
 	let dummyPasswordHash: String
 	let translations: TranslationService
+	let usage: UsageService
 	let ask: AskService
 	let askTools: AskToolServer<AskTools>
 	let analyses: BoardAnalysisService
@@ -58,7 +59,9 @@ struct ErgoServices: Sendable {
 		appleNotificationLimiter = CreateAccountLimiter(limit: config.appleNotificationsPerMinute, window: 60)
 		appleNotifications = SeenNotifications()
 		dummyPasswordHash = try Bcrypt.hash(UUID().uuidString, cost: config.passwordCost)
-		let translations = TranslationService(vault: vault, config: config, runner: runner)
+		let usage = UsageService(config: config)
+		self.usage = usage
+		let translations = TranslationService(vault: vault, config: config, runner: runner, usage: usage)
 		self.translations = translations
 		let catalog = try LibraryCatalog.load()
 		let askTools = AskToolServer(tools: AskTools(catalog: catalog))

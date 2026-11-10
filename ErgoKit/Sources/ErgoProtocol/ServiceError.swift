@@ -27,6 +27,12 @@ public struct ServiceError: Error, Codable, Sendable, Hashable {
 		/// The provider's rate or plan limit
 		case usageLimit
 
+		/// Today's allowance on Ergo's model has been used
+		case allowanceUsed
+
+		/// Only on the paid plan
+		case planRequired
+
 		/// CLI missing, crashed, network, provider outage
 		case providerUnavailable
 

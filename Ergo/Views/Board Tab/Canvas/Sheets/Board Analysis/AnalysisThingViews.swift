@@ -113,6 +113,10 @@ struct AnalysisAnnotationView: View {
 			}
 
 			AskMarkdownView(text: annotation.markdown)
+
+			if let objection = annotation.objection {
+				AnalysisObjectionView(annotation: annotation, objection: objection)
+			}
 		}
 		.frame(maxWidth: .infinity, alignment: .leading)
 		.accessibilityIdentifier("analysis.annotation.\(annotation.id.uuidString)")
@@ -137,7 +141,64 @@ struct AnalysisAnnotationView: View {
 					.foregroundStyle(assessment.tint)
 					.background(assessment.tint.opacity(0.15), in: Capsule())
 			}
+
+			if annotation.isKey {
+				Label("Key", systemImage: "star.fill")
+					.font(.caption.weight(.semibold))
+					.foregroundStyle(.orange)
+					.accessibilityLabel("One of the findings that matter most")
+			}
 		}
+	}
+}
+
+/// The strongest objection the analysis found, which the person can put on the board as a card of its own
+struct AnalysisObjectionView: View {
+	let annotation: BoardAnnotation
+	let objection: String
+
+	@Environment(BoardStore.self)
+	private var boardStore
+
+	/// Worked out from the board, so it's still right after the sheet closes or the card goes
+	private var isOnBoard: Bool {
+		boardStore.board(annotation.board)?.statements.contains { $0.english == objection } == true
+	}
+
+	/// Beside the card it's about, or the premise of the arrow it's about
+	private var near: Statement.ID? {
+		switch annotation.target {
+			case let .statement(id): id
+			case let .link(id): boardStore.board(annotation.board)?.links.first { $0.id == id }?.premise
+			case .source: nil
+		}
+	}
+
+	var body: some View {
+		VStack(alignment: .leading, spacing: 8) {
+			Label("Objection", systemImage: "exclamationmark.bubble")
+				.font(.caption.weight(.semibold))
+				.foregroundStyle(.secondary)
+
+			Text(objection)
+				.font(.callout)
+				.textSelection(.enabled)
+
+			if isOnBoard {
+				Label("On the board", systemImage: "checkmark")
+					.font(.caption)
+					.foregroundStyle(.secondary)
+			} else if boardStore.canEdit(annotation.board) {
+				Button("Add to Board", systemImage: "plus") {
+					boardStore.apply(.addCard(id: UUID(), english: objection, near: near), to: annotation.board)
+				}
+				.buttonStyle(.glass)
+				.accessibilityIdentifier("analysis.addObjection.\(annotation.id.uuidString)")
+			}
+		}
+		.padding(12)
+		.frame(maxWidth: .infinity, alignment: .leading)
+		.background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 12))
 	}
 }
 

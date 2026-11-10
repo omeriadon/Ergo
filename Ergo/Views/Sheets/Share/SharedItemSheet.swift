@@ -233,7 +233,6 @@ private struct AddToBoardSheet: View {
 			boardStore.newBoard()
 		}
 		boardStore.addSource(content)
-		navigation.selectedTab = .board
-		navigation.dismissSheet()
+		navigation.reveal(.board)
 	}
 }

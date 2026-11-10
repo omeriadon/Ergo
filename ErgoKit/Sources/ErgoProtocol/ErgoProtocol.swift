@@ -71,6 +71,15 @@ public enum ErgoProtocol {
 		/// POST of one MCP JSON-RPC message, from the CLI answering an ask. `<token>` is the run's, there's no other auth.
 		public static let askTools = "v1/ask/tools"
 
+		/// GET → `UsageStatus`
+		public static let usage = "v1/usage"
+
+		/// POST `PlanUpload` → `UsageStatus`
+		public static let plan = "v1/account/plan"
+
+		/// POST `DeviceClaimUpload` → `UsageStatus`
+		public static let deviceClaim = "v1/account/device-claim"
+
 		/// POST `SyncRequest` → `SyncResponse`
 		public static let sync = "v1/sync"
 

@@ -43,7 +43,7 @@ public struct AskTools: Sendable {
 		.object(["name": .string(name), "description": .string(description), "inputSchema": schema])
 	}
 
-	public static let names = ["search_library", "get_library_entry", "list_library", "suggest_action"]
+	public static let names = ["search_library", "get_library_entry", "list_library", "suggest_action", "request_change_mode"]
 
 	public static let definitions: [JSONValue] = [
 		definition(
@@ -76,6 +76,17 @@ public struct AskTools: Sendable {
 				required: ["title", "action"]
 			)
 		),
+		definition(
+			"request_change_mode",
+			"Asks the person to switch this chat's mode. debate argues the other side of something with them. scout goes through a text and finds its fallacies and other problems. normal goes back to answering questions. They accept or turn it down, so say in one line what you're asking and then stop.",
+			schema(
+				[
+					"mode": .object(["type": .string("string"), "enum": .array(AskMode.allCases.map { .string($0.rawValue) })]),
+					"reason": .object(["type": .string("string"), "description": .string("What it's for, at most eight words, like 'Argue about free will'")]),
+				],
+				required: ["mode", "reason"]
+			)
+		),
 	]
 
 	// MARK: - Calling
@@ -86,6 +97,9 @@ public struct AskTools: Sendable {
 
 		/// For the model, and a button for the app
 		case action(AskAction, text: String)
+
+		/// For the model, and a question for the person
+		case modeRequest(AskModeRequest, text: String)
 	}
 
 	/// Failures are worded for the model to put right
@@ -118,6 +132,13 @@ public struct AskTools: Sendable {
 			case "suggest_action":
 				let action = try action(title: required("title"), kind: required("action"), text: string("text"), category: string("category"), id: string("id"), tab: string("tab"))
 				return .action(action, text: "Added the button '\(action.title)'")
+
+			case "request_change_mode":
+				let name = try required("mode")
+				guard let mode = AskMode.allCases.first(where: { $0.rawValue == name }) else {
+					throw Failure(message: "Expected 'mode' to be one of \(AskMode.allCases.map(\.rawValue).joined(separator: ", ")), found '\(name)'")
+				}
+				return try .modeRequest(AskModeRequest(mode: mode, reason: required("reason")), text: "Asked the person. Stop here and wait for them.")
 
 			default:
 				throw Failure(message: "No tool is called '\(name)'")

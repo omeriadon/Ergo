@@ -88,8 +88,7 @@ struct JoinBoardSheet: View {
 	/// Throws so the form can say what went wrong and stay up
 	private func join(name: String) async throws {
 		try await sync.join(token: token, name: name)
-		navigation.selectedTab = .board
-		navigation.dismissSheet()
+		navigation.reveal(.board)
 		sync.askToNotify()
 	}
 }

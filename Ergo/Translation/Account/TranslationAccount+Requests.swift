@@ -67,9 +67,11 @@ extension TranslationAccount {
 	///
 	/// `id` names the run on the server, which carries on if this app is closed. Calling again with the same `id` hears it
 	/// from the start, and starts it again if the server no longer has it. A dropped connection is `ConnectionLost`.
-	func ask(id: UUID, messages: [AskRequestMessage], events: (AskServerMessage) -> Void) async throws {
+	///
+	/// `board` is the board the chat is about, as it is now, which gives the model tools to change it.
+	func ask(id: UUID, messages: [AskRequestMessage], mode: AskMode = .normal, board: AskBoard? = nil, events: (AskServerMessage) -> Void) async throws {
 		let (server, token) = try credentials()
-		let request = AskRequest(id: id, provider: Defaults[.translationProvider], messages: messages)
+		let request = AskRequest(id: id, provider: Defaults[.translationProvider], messages: messages, instructions: Defaults[.agentInstructions], mode: mode, board: board)
 
 		try await signedOutOnUnauthorized(of: server) {
 			var failure: ServiceError?

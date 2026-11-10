@@ -27,6 +27,15 @@ struct BreakDownStatusView: View {
 
 	/// How long the text is, when that's over the limit
 	let overLimit: Int?
+
+	/// How many parts it would go in, when it's over the limit and that's possible
+	let parts: Int?
+
+	/// Which part is being worked on
+	let partProgress: String?
+
+	/// Set when going in parts is on a plan this account doesn't have
+	let seePlus: (() -> Void)?
 	let keepFirst: () -> Void
 
 	let canBreakDown: Bool
@@ -36,6 +45,13 @@ struct BreakDownStatusView: View {
 	var body: some View {
 		VStack(alignment: .leading, spacing: 10) {
 			if let progress {
+				if let partProgress {
+					Text(partProgress)
+						.font(.subheadline.weight(.semibold))
+						.foregroundStyle(.secondary)
+						.contentTransition(.numericText())
+						.accessibilityIdentifier("board.breakDown.part")
+				}
 				ProgressRow(progress: progress)
 			}
 
@@ -53,11 +69,18 @@ struct BreakDownStatusView: View {
 				MessageRow(
 					symbol: "exclamationmark.triangle.fill",
 					color: .orange,
-					title: "Expected at most \(EnglishValidator.characterLimit) characters, found \(overLimit). Cut it down to the part that matters."
+					title: limitMessage(overLimit)
 				) {
-					Button("Keep the Start", action: keepFirst)
-						.buttonStyle(.glass)
-						.accessibilityIdentifier("board.breakDown.keepStart")
+					HStack(spacing: 8) {
+						if let seePlus {
+							Button("See Ergo Plus", action: seePlus)
+								.buttonStyle(.glass)
+								.accessibilityIdentifier("board.breakDown.plus")
+						}
+						Button("Keep the Start", action: keepFirst)
+							.buttonStyle(.glass)
+							.accessibilityIdentifier("board.breakDown.keepStart")
+					}
 				}
 			}
 
@@ -70,7 +93,7 @@ struct BreakDownStatusView: View {
 					Button {
 						breakDown()
 					} label: {
-						Label("Break Down", systemImage: "arrow.triangle.branch")
+						Label(buttonTitle, systemImage: "arrow.triangle.branch")
 					}
 					.buttonStyle(.glassProminent)
 					.disabled(!canBreakDown)
@@ -90,6 +113,22 @@ struct BreakDownStatusView: View {
 		.fixedSize(horizontal: false, vertical: true)
 		.accessibilityElement(children: .contain)
 		.accessibilityIdentifier("board.breakDown.status")
+	}
+
+	private var buttonTitle: String {
+		guard let parts, seePlus == nil else { return "Break Down" }
+		return "Break Down in \(parts) Parts"
+	}
+
+	private func limitMessage(_ found: Int) -> String {
+		let limit = "Expected at most \(EnglishValidator.characterLimit) characters, found \(found)."
+		guard let parts else {
+			return "\(limit) Cut it down to the part that matters."
+		}
+		if seePlus != nil {
+			return "\(limit) Ergo Plus breaks longer texts down in parts."
+		}
+		return "Too long to break down at once, so it goes in \(parts) parts, each with its own region on the board."
 	}
 }
 
@@ -156,6 +195,29 @@ struct BreakdownResultView: View {
 		return Text("Expected at most \(limit) statements, found \(found). \(application.skipped) won't be added, starting from the last premise.")
 			.foregroundStyle(.orange)
 			.accessibilityIdentifier("board.breakDown.limit")
+	}
+}
+
+/// What each part of a long text came to
+struct BreakdownPartsView: View {
+	let parts: [PendingBreakDown.Parts.Finished]
+
+	var body: some View {
+		List {
+			ForEach(Array(parts.enumerated()), id: \.offset) { index, part in
+				Section("Part \(index + 1)") {
+					ForEach(Array(part.breakdown.premises.enumerated()), id: \.offset) { _, premise in
+						Text(premise)
+					}
+					if !part.breakdown.conclusion.isEmpty {
+						Text(part.breakdown.conclusion)
+							.fontWeight(.semibold)
+							.accessibilityLabel("Conclusion: \(part.breakdown.conclusion)")
+					}
+				}
+			}
+		}
+		.accessibilityIdentifier("board.breakDown.parts")
 	}
 }
 

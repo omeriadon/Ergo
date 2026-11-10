@@ -152,11 +152,15 @@ public struct BoardAnalysisComment: Sendable, Hashable {
 	/// The entry it cites
 	public let title: String
 
+	/// One of the few findings that matter most
+	public let isKey: Bool
+
 	/// The annotation's first sentence, as plain text
 	public let text: String
 
 	public init(_ annotation: BoardAnnotation) {
 		title = annotation.citation.name
+		isKey = annotation.isKey
 		text = Self.firstSentence(ofMarkdown: annotation.markdown)
 	}
 
@@ -191,12 +195,14 @@ public struct BoardAnalysisComment: Sendable, Hashable {
 }
 
 public extension BoardAnalysisShown {
-	/// One comment for each thing that has something to say. Reports come most important first, so it's the first finding,
-	/// or failing that, why a conclusion isn't well supported.
+	/// One comment for each thing that has something to say: a key finding, else the first, since reports come most
+	/// important first, or failing that, why a conclusion isn't well supported.
 	var comments: [UUID: BoardAnalysisComment] {
 		var comments: [UUID: BoardAnalysisComment] = [:]
-		for annotation in current where annotation.assessment == nil && comments[annotation.target.id] == nil {
-			comments[annotation.target.id] = BoardAnalysisComment(annotation)
+		for annotation in current where annotation.assessment == nil && comments[annotation.target.id]?.isKey != true {
+			if annotation.isKey || comments[annotation.target.id] == nil {
+				comments[annotation.target.id] = BoardAnalysisComment(annotation)
+			}
 		}
 		for annotation in current where comments[annotation.target.id] == nil {
 			if case let .conclusion(support)? = annotation.assessment, support != .wellSupported {

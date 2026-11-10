@@ -57,6 +57,8 @@ enum AccountController {
 		let effects = try await ledger.finish(on: database)
 
 		try await PushDeviceRow.query(on: database).filter(\.$account.$id == account).delete()
+		try await UsagePeriodRow.query(on: database).filter(\.$account.$id == account).delete()
+		try await AccountPlanRow.query(on: database).filter(\.$account.$id == account).delete()
 		try await SyncRecordRow.query(on: database).filter(\.$account.$id == account).delete()
 		try await AccountToken.query(on: database).filter(\.$account.$id == account).delete()
 		try await Credential.query(on: database).filter(\.$account.$id == account).delete()

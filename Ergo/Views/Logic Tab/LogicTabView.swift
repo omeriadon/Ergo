@@ -27,23 +27,35 @@ struct LogicTabView: View {
 
 	var body: some View {
 		List {
-			ForEach(scratchpadStore.sortedScratchpads) { scratchpad in
+			Section {
 				Button {
-					open(scratchpad.id)
+					navigation.logicPath = [.course]
 				} label: {
-					ScratchpadRow(scratchpad: scratchpad, letters: letters)
+					LogicCourseRow()
 				}
 				.buttonStyle(.plain)
-				.swipeActions {
-					Button("Delete", systemImage: "trash", role: .destructive) {
-						scratchpadStore.delete([scratchpad.id])
+				.accessibilityIdentifier("logic.course")
+			}
+
+			Section {
+				ForEach(scratchpadStore.sortedScratchpads) { scratchpad in
+					Button {
+						open(scratchpad.id)
+					} label: {
+						ScratchpadRow(scratchpad: scratchpad, letters: letters)
 					}
-				}
-				.swipeActions(edge: .leading) {
-					renameButton(for: scratchpad)
-				}
-				.contextMenu {
-					renameButton(for: scratchpad)
+					.buttonStyle(.plain)
+					.swipeActions {
+						Button("Delete", systemImage: "trash", role: .destructive) {
+							scratchpadStore.delete([scratchpad.id])
+						}
+					}
+					.swipeActions(edge: .leading) {
+						renameButton(for: scratchpad)
+					}
+					.contextMenu {
+						renameButton(for: scratchpad)
+					}
 				}
 			}
 		}

@@ -44,9 +44,56 @@ final class NavigationManager {
 
 	// MARK: - presentedSheet
 
+	/// A sheet that doesn't belong to one tab. It's over whichever tab is showing.
 	var presentedSheet: AppSheet? {
 		didSet {
 			Defaults[.presentedSheet] = presentedSheet
+		}
+	}
+
+	// MARK: - Each tab's sheet
+
+	// Each tab keeps its own, and it only shows while that tab does. Leaving a tab takes its sheet away, and coming back
+	// brings it back.
+
+	var boardSheet: BoardSheet? {
+		didSet {
+			Defaults[.boardSheet] = boardSheet
+		}
+	}
+
+	var logicSheet: LogicSheet? {
+		didSet {
+			Defaults[.logicSheet] = logicSheet
+		}
+	}
+
+	var librarySheet: LibrarySheet? {
+		didSet {
+			Defaults[.librarySheet] = librarySheet
+		}
+	}
+
+	// MARK: - visibleSheet
+
+	/// One presenter shows all of them, so going from one to another is SwiftUI swapping a sheet, which it does reliably.
+	/// Separate presenters would need one to finish going away before the next could appear.
+	var visibleSheet: VisibleSheet? {
+		get {
+			if let presentedSheet {
+				return .app(presentedSheet)
+			}
+			return switch selectedTab {
+				case .board: boardSheet.map(VisibleSheet.board)
+				case .logic: logicSheet.map(VisibleSheet.logic)
+				case .library: librarySheet.map(VisibleSheet.library)
+				case .ask: nil
+			}
+		}
+		set {
+			if newValue == nil {
+				dismissSheet()
+			}
 		}
 	}
 
@@ -87,34 +134,83 @@ final class NavigationManager {
 		presentedSheet = sheet
 	}
 
+	func presentSheet(_ sheet: BoardSheet) {
+		selectedTab = .board
+		boardSheet = sheet
+	}
+
+	func presentSheet(_ sheet: LogicSheet) {
+		selectedTab = .logic
+		logicSheet = sheet
+	}
+
+	func presentSheet(_ sheet: LibrarySheet) {
+		selectedTab = .library
+		librarySheet = sheet
+	}
+
 	// MARK: - resumeBreakDown
 
 	/// Opens the breakdown that was running when the app was closed. A restored sheet that is breaking down something
 	/// picks it up itself, so it's left alone.
 	func resumeBreakDown() {
 		guard Defaults[.pendingBreakDown] != nil else { return }
-		switch presentedSheet {
-			case .breakDownSource?:
-				return
-			case let .shared(item)? where item.action == .breakDown:
-				return
-			default:
-				presentSheet(.resumeBreakDown)
+		if case let .shared(item)? = presentedSheet, item.action == .breakDown {
+			return
 		}
+		if case .breakDownSource? = boardSheet {
+			selectedTab = .board
+			return
+		}
+		presentSheet(.resumeBreakDown)
 	}
 
 	// MARK: - dismissSheet
 
+	/// Closes the sheet on screen
 	func dismissSheet() {
+		if presentedSheet != nil {
+			presentedSheet = nil
+			return
+		}
+		switch selectedTab {
+			case .board: boardSheet = nil
+			case .logic: logicSheet = nil
+			case .library: librarySheet = nil
+			case .ask: break
+		}
+	}
+
+	// MARK: - reveal
+
+	/// Goes to a tab with nothing over it. Other tabs keep their sheets for when they're next opened.
+	func reveal(_ tab: AppTab) {
+		selectedTab = tab
 		presentedSheet = nil
+		switch tab {
+			case .board: boardSheet = nil
+			case .logic: logicSheet = nil
+			case .library: librarySheet = nil
+			case .ask: break
+		}
+	}
+
+	// MARK: - openAnalysis
+
+	/// Opens a board's analysis from anywhere, with that board behind it. A board that's gone just opens the tab.
+	func openAnalysis(of board: Board.ID, in store: BoardStore) {
+		reveal(.board)
+
+		guard store.boards.contains(where: { $0.id == board }) else { return }
+		store.open(board)
+		presentSheet(.boardAnalysis(board, focus: nil))
 	}
 
 	// MARK: - openLibraryEntry
 
 	func openLibraryEntry(category: LibraryContent, id: String) {
-		selectedTab = .library
 		// A sheet left open would hide the page, so the link would look like it did nothing
-		presentedSheet = nil
+		reveal(.library)
 
 		let route = LibraryRoute.detail(category: category, id: id)
 		if libraryPath.last != route {
@@ -139,6 +235,9 @@ final class NavigationManager {
 
 	func startup() {
 		presentedSheet = Defaults[.presentedSheet]
+		boardSheet = Defaults[.boardSheet]
+		logicSheet = Defaults[.logicSheet]
+		librarySheet = Defaults[.librarySheet]
 		selectedTab = Defaults[.selectedTab]
 		libraryPath = Defaults[.libraryPath]
 		logicPath = Defaults[.logicPath]

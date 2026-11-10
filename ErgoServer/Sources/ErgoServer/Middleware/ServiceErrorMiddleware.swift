@@ -63,6 +63,8 @@ extension ServiceError {
 			case .notConnected: .conflict
 			case .credentialRejected: .unprocessableEntity
 			case .usageLimit: .tooManyRequests
+			case .allowanceUsed: .tooManyRequests
+			case .planRequired: .paymentRequired
 			case .providerUnavailable: .badGateway
 			case .busy: .conflict
 			case .timedOut: .gatewayTimeout

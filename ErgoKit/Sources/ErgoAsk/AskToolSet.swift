@@ -44,6 +44,8 @@ extension AskTools: AskToolSet {
 				AskToolReply(text: text)
 			case let .action(action, text):
 				AskToolReply(text: text, event: .action(action))
+			case let .modeRequest(request, text):
+				AskToolReply(text: text, event: .modeRequest(request))
 		}
 	}
 

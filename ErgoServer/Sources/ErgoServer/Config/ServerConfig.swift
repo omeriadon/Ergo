@@ -31,7 +31,43 @@ struct ServerConfig: Sendable {
 		/// The server's own key, which pays for every OpenRouter call
 		var key: Secret
 		var model: String
+
+		/// What paying accounts get. Nil gives everyone `model`.
+		var plusModel: String?
 	}
+
+	/// How much of the server's own model an account may use. See `UsageService`.
+	struct Usage: Sendable {
+		/// A day's allowance in millionths of a dollar, at `price`
+		var freeDailyMicros = 30000
+		var plusDailyMicros = 1_000_000
+
+		/// What every call is counted at, whatever the model really costs, so a free model still uses the allowance up
+		var price = UsagePrice(input: 0.2, output: 1.2)
+		var freeDeepPerWeek = 1
+		var plusDeepPerWeek = 30
+
+		/// Off until the App Store products exist, so nothing is held back for being on the free plan
+		var enforcesPlans = false
+	}
+
+	var usage = Usage()
+
+	struct DeviceCheck: Sendable {
+		/// PEM, a key from the developer portal with DeviceCheck turned on
+		var key: String
+		var keyID: String
+		var teamID: String
+	}
+
+	/// Nil gives every account a free allowance, with nothing to stop someone making more accounts
+	var deviceCheck: DeviceCheck?
+
+	/// Apple Root CA G3 in PEM, which App Store purchases are checked against. Nil refuses every purchase.
+	var appleRootCertificate: String?
+
+	/// Whether a deep research run on the server's own model may search the web, which OpenRouter charges for by the search
+	var webSearch = false
 
 	/// Nil when the server has no OpenRouter key, which leaves that provider out
 	var openRouter: OpenRouter?
@@ -200,6 +236,7 @@ struct ServerConfig: Sendable {
 		}
 
 		try loadOpenRouter(from: environment, into: &config)
+		try loadUsage(from: environment, into: &config)
 		try loadSharing(from: environment, into: &config)
 
 		if config.claudePath == nil {
@@ -222,7 +259,87 @@ struct ServerConfig: Sendable {
 		guard let model, !model.isEmpty else {
 			throw Problem(description: "ERGO_OPENROUTER_MODEL: Expected a model id like 'anthropic/claude-sonnet-4.5' to go with ERGO_OPENROUTER_API_KEY")
 		}
-		config.openRouter = OpenRouter(key: Secret(key), model: model)
+		let plusModel = environment["ERGO_OPENROUTER_PLUS_MODEL"]?.trimmingCharacters(in: .whitespacesAndNewlines)
+		config.openRouter = OpenRouter(key: Secret(key), model: model, plusModel: plusModel.flatMap { $0.isEmpty ? nil : $0 })
+	}
+
+	private static func flag(_ name: String, in environment: [String: String]) throws -> Bool? {
+		guard let value = environment[name] else { return nil }
+		switch value.lowercased() {
+			case "1", "true":
+				return true
+			case "0", "false", "":
+				return false
+			default:
+				throw Problem(description: "\(name): Expected 1, true, 0 or false, found '\(value)'")
+		}
+	}
+
+	/// The allowances on the server's own model, and what checks purchases and devices
+	private static func loadUsage(from environment: [String: String], into config: inout ServerConfig) throws {
+		func dollars(_ name: String) throws -> Double? {
+			guard let value = environment[name], !value.isEmpty else { return nil }
+			guard let amount = Double(value), amount >= 0 else {
+				throw Problem(description: "\(name): Expected an amount in dollars like 0.03, found '\(value)'")
+			}
+			return amount
+		}
+		func count(_ name: String) throws -> Int? {
+			guard let value = environment[name], !value.isEmpty else { return nil }
+			guard let count = Int(value), count >= 0 else {
+				throw Problem(description: "\(name): Expected a whole number, found '\(value)'")
+			}
+			return count
+		}
+
+		if let amount = try dollars("ERGO_FREE_DAILY_USD") {
+			config.usage.freeDailyMicros = Int(amount * 1_000_000)
+		}
+		if let amount = try dollars("ERGO_PLUS_DAILY_USD") {
+			config.usage.plusDailyMicros = Int(amount * 1_000_000)
+		}
+		config.usage.price = try UsagePrice(
+			input: dollars("ERGO_USAGE_PRICE_INPUT") ?? config.usage.price.input,
+			output: dollars("ERGO_USAGE_PRICE_OUTPUT") ?? config.usage.price.output
+		)
+		config.usage.freeDeepPerWeek = try count("ERGO_FREE_DEEP_PER_WEEK") ?? config.usage.freeDeepPerWeek
+		config.usage.plusDeepPerWeek = try count("ERGO_PLUS_DEEP_PER_WEEK") ?? config.usage.plusDeepPerWeek
+		config.usage.enforcesPlans = try flag("ERGO_ENFORCE_PLANS", in: environment) ?? false
+		config.webSearch = try flag("ERGO_WEB_SEARCH", in: environment) ?? false
+
+		if let file = environment["ERGO_APPLE_ROOT_CERT_FILE"], !file.isEmpty {
+			guard let pem = try? String(contentsOf: URL(filePath: file), encoding: .utf8), pem.contains("BEGIN CERTIFICATE") else {
+				throw Problem(description: "ERGO_APPLE_ROOT_CERT_FILE: Expected Apple Root CA G3 in PEM at '\(file)'")
+			}
+			config.appleRootCertificate = pem
+		}
+		if config.usage.enforcesPlans, config.appleRootCertificate == nil {
+			throw Problem(description: "ERGO_ENFORCE_PLANS: Expected ERGO_APPLE_ROOT_CERT_FILE to go with it, or nobody could pay")
+		}
+
+		var pem = environment["ERGO_DEVICECHECK_KEY"].flatMap { $0.isEmpty ? nil : $0 }
+		if pem == nil, let file = environment["ERGO_DEVICECHECK_KEY_FILE"], !file.isEmpty {
+			do {
+				pem = try String(contentsOf: URL(filePath: file), encoding: .utf8)
+			} catch {
+				throw Problem(description: "ERGO_DEVICECHECK_KEY_FILE: Couldn't read '\(file)'")
+			}
+		}
+		guard let pem else { return }
+
+		// Environment files often can't hold a newline. The error never quotes the key.
+		let key = pem.replacingOccurrences(of: "\\n", with: "\n")
+		guard (try? P256.Signing.PrivateKey(pemRepresentation: key)) != nil else {
+			throw Problem(description: "ERGO_DEVICECHECK_KEY: Expected a P-256 private key in PEM, the .p8 file Apple gives you")
+		}
+		guard let keyID = environment["ERGO_DEVICECHECK_KEY_ID"], !keyID.isEmpty else {
+			throw Problem(description: "ERGO_DEVICECHECK_KEY_ID: Expected the key's id to go with ERGO_DEVICECHECK_KEY")
+		}
+		config.deviceCheck = DeviceCheck(
+			key: key,
+			keyID: keyID,
+			teamID: environment["ERGO_DEVICECHECK_TEAM_ID"].flatMap { $0.isEmpty ? nil : $0 } ?? "P6PV2R9443"
+		)
 	}
 
 	/// After `ERGO_APPLE_APP_ID`, which is the default APNs topic

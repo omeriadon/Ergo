@@ -98,10 +98,14 @@ extension CanvasView {
 		analysis.isRunning(board.id)
 	}
 
-	/// The first time, this starts a run. After that it opens what the last one found, which has the button to run again.
-	func analyse() {
-		let hasResults = analysis.statuses[board.id] != nil || analysis.written[board.id] != nil
-		if !isAnalysing, !hasResults, sync.isSignedIn {
+	/// Whether there's a run to follow or results to open. A board nobody has researched has no button for it.
+	var hasAnalysis: Bool {
+		isAnalysing || analysis.statuses[board.id] != nil || analysis.written[board.id] != nil
+	}
+
+	/// Starts a run in the background and opens the sheet that follows it
+	func deepResearch() {
+		if !isAnalysing, sync.isSignedIn {
 			analysis.start(board: board)
 		}
 		navigation.presentSheet(.boardAnalysis(board.id, focus: nil))

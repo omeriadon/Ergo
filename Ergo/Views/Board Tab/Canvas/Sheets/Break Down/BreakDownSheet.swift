@@ -38,6 +38,12 @@ struct BreakDownSheet: View {
 	/// Finished holds what the server found, until you go back to edit the text
 	@State var run = TranslationRun<ArgumentBreakdown>.idle
 
+	/// A long text's parts, once they've all been broken down
+	@State var finishedParts: [PendingBreakDown.Parts.Finished] = []
+
+	/// Which part of a long text is being worked on, like "Part 2 of 5"
+	@State var partProgress: String?
+
 	/// Text from the share sheet starts on its own, since breaking it down is what was chosen
 	let startsOnAppear: Bool
 
@@ -56,7 +62,7 @@ struct BreakDownSheet: View {
 
 	/// The breakdown that was running when the app was closed
 	init(resuming pending: PendingBreakDown) {
-		_english = State(initialValue: pending.request.english)
+		_english = State(initialValue: pending.text)
 		input = pending.input
 		existing = pending.existing
 		startsOnAppear = false
@@ -78,10 +84,24 @@ struct BreakDownSheet: View {
 		!english.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
 	}
 
+	/// How many parts a text over the limit would go in. Nil when it fits, or is too long even for that.
+	var partCount: Int? {
+		guard overLimit != nil else { return nil }
+		let count = TextParts.split(english).count
+		return count <= TextParts.limit ? count : nil
+	}
+
+	/// Over the limit and able to go in parts, or within it
+	var canStart: Bool {
+		canBreakDown && (overLimit == nil || (partCount != nil && account.hasPlusFeatures))
+	}
+
 	var body: some View {
 		NavigationStack {
 			ZStack {
-				if let found {
+				if !finishedParts.isEmpty {
+					BreakdownPartsView(parts: finishedParts)
+				} else if let found {
 					BreakdownResultView(
 						breakdown: found,
 						application: application(of: found)
@@ -99,12 +119,17 @@ struct BreakDownSheet: View {
 		.presentationDragIndicator(.visible)
 		// A result is worth a model call, so swiping the sheet away doesn't throw it out. Cancel does.
 		.interactiveDismissDisabled(run.isRunning || found != nil)
-		.onDisappear(perform: stop)
+		// Leaving the tab only hides the sheet, and coming back finds the same run
+		.onDisappear {
+			if navigation.boardSheet == nil {
+				stop()
+			}
+		}
 		.task {
 			guard !run.isRunning, run.output == nil, run.failure == nil else { return }
 			if let pending = Defaults[.pendingBreakDown], pending.matches(english: english, input: input, existing: existing) {
 				// Still going on the server, or finished while the app was closed
-				english = pending.request.english
+				english = pending.text
 				follow(pending)
 			} else if startsOnAppear {
 				startBreakDown()
@@ -130,7 +155,10 @@ struct BreakDownSheet: View {
 			run: run,
 			setUp: setUp,
 			overLimit: overLimit,
-			canBreakDown: canBreakDown && overLimit == nil,
+			parts: partCount,
+			partProgress: partProgress,
+			seePlus: overLimit != nil && !account.hasPlusFeatures ? { navigation.presentSheet(.plus) } : nil,
+			canBreakDown: canStart,
 			breakDown: startBreakDown,
 			stop: stop
 		)
@@ -146,6 +174,7 @@ struct BreakDownSheet: View {
 			},
 			editText: {
 				Defaults[.pendingBreakDown] = nil
+				finishedParts = []
 				run = .idle
 			},
 			create: create

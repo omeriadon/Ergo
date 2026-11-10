@@ -9,6 +9,7 @@ import ErgoProtocol
 import SwiftUI
 
 struct AskMessageView: View {
+	let conversationID: AskConversation.ID
 	let message: AskMessage
 
 	/// Set while this is the answer being written
@@ -19,7 +20,7 @@ struct AskMessageView: View {
 			case .user:
 				AskUserBubble(text: message.text, attachments: message.attachments)
 			case .assistant:
-				AskAnswerView(message: message, run: run)
+				AskAnswerView(conversationID: conversationID, message: message, run: run)
 		}
 	}
 }
@@ -59,6 +60,7 @@ private struct AskUserBubble: View {
 }
 
 private struct AskAnswerView: View {
+	let conversationID: AskConversation.ID
 	let message: AskMessage
 
 	/// Set while it's being written
@@ -84,6 +86,14 @@ private struct AskAnswerView: View {
 			if run == nil, !message.text.isEmpty {
 				AskCopyButton(text: message.text)
 					.padding(.top, 2)
+			}
+
+			if let edits = message.edits, !edits.isEmpty {
+				AskBoardEditsView(conversationID: conversationID, message: message, edits: edits)
+			}
+
+			if run == nil, let request = message.modeRequest {
+				AskModeRequestCard(conversationID: conversationID, message: message, request: request)
 			}
 
 			GlassEffectContainer(spacing: 1) {

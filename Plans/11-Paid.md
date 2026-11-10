@@ -1,5 +1,7 @@
 # 11 · Paid and usage
 
+Built. It's off in production until the App Store products exist and `ERGO_ENFORCE_PLANS` is set, and the prices are still to be chosen.
+
 What's free, what's paid, and how AI use is limited. None of it is built, and nothing is priced. Monetisation comes after users, so the price waits for TestFlight. What the AI should do is in [12-Identity.md](12-Identity.md).
 
 **Decided** means Adon has settled it. **Proposed** means it's on the table but not agreed.
@@ -68,12 +70,11 @@ Some free providers may train on what they're sent. Check each model before sayi
 
 ## Long text into Break Down
 
-**Proposed:** a pad takes text of any length and shows how many parts it will become.
-- Parts split at paragraph breaks, each under the limit.
-- Each part is its own server run, so one failing doesn't lose the others, and the cards from every part go onto one board with repeats merged.
+**Built:** Break Down takes text too long for one run and shows how many parts it will become, up to 40.
+- Parts split at paragraph breaks, then sentences, each under the limit.
+- Each part is its own server run, one after another. The cards from every part go onto one board, each part with its own source and region. Repeats across parts aren't merged yet.
 
 ## Open
 
 - The price and its shape.
-- How many parts the pad allows before it asks first.
 - Which paid model, and what limit paying accounts get. At Sonnet's price a $5 subscription covers about 160 chat messages after Apple's cut.

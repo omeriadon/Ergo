@@ -14,51 +14,56 @@ struct ContentView: View {
 	var body: some View {
 		@Bindable var router = navigation
 
-		// The tabs read the selected tab themselves, so changing tabs doesn't re-run this body
+		// The tabs read the selected tab themselves, so changing tabs only changes which sheet this shows
 		AppTabs()
-			.sheet(item: $router.presentedSheet) { sheet in
+			.sheet(item: $router.visibleSheet) { sheet in
 				switch sheet {
-					case .scanner:
-						Text("sheet here!")
+					case let .app(sheet):
+						AppSheetContent(sheet: sheet)
 
-					case .paste:
-						Text("sheet here!")
+					case let .board(sheet):
+						BoardSheetContent(sheet: sheet)
 
-					case .result:
-						Text("sheet here!")
+					case let .logic(sheet):
+						LogicSheetContent(sheet: sheet)
 
-					case .settings:
-						SettingsView()
-
-					case .logicLetters:
-						LogicLettersSheet()
-
-					case .boards:
-						BoardsSheet()
-
-					case let .shared(item):
-						SharedItemSheet(item: item)
-
-					case let .breakDownSource(id):
-						SourceBreakDownSheet(id: id)
-
-					case .resumeBreakDown:
-						ResumedBreakDownSheet()
-
-					case let .boardPeople(board):
-						BoardPeopleSheet(board: board)
-
-					case let .boardAnalysis(board, focus):
-						BoardAnalysisSheet(board: board, focus: focus)
-
-					case let .joinBoard(token):
-						JoinBoardSheet(token: token)
-
-					case let .addToChat(content):
-						AddToChatSheet(content: content)
+					case let .library(sheet):
+						LibrarySheetContent(sheet: sheet)
 				}
 			}
 			.fontDesign(.rounded)
+	}
+}
+
+private struct AppSheetContent: View {
+	let sheet: AppSheet
+
+	var body: some View {
+		switch sheet {
+			case .scanner:
+				Text("sheet here!")
+
+			case .paste:
+				Text("sheet here!")
+
+			case .result:
+				Text("sheet here!")
+
+			case .settings:
+				SettingsView()
+
+			case let .shared(item):
+				SharedItemSheet(item: item)
+
+			case let .joinBoard(token):
+				JoinBoardSheet(token: token)
+
+			case let .addToChat(content):
+				AddToChatSheet(content: content)
+
+			case .plus:
+				PlusSheet()
+		}
 	}
 }
 
@@ -132,6 +137,12 @@ private struct AppTabs: View {
 							switch route {
 								case .scratchpad:
 									ScratchpadEditorView()
+
+								case .course:
+									LogicCourseView()
+
+								case let .lesson(id):
+									LogicLessonView(lessonID: id)
 							}
 						}
 				}
@@ -194,6 +205,7 @@ private struct AppTabs: View {
 		}
 		.tabViewStyle(.tabBarOnly)
 		.tabBarMinimizeBehavior(.onScrollDown)
+		.modifier(DeepResearchAccessory())
 		.tabBarHaptics()
 		.tabTransition {
 			if navigation.selectedTab == .board {
@@ -209,6 +221,7 @@ private struct AppTabs: View {
 	@Previewable @State var boardStore = BoardStore()
 	@Previewable @State var scratchpadStore = ScratchpadStore()
 	@Previewable @State var askStore = AskStore()
+	@Previewable @State var analysisStore = BoardAnalysisStore()
 	@Previewable @State var account = TranslationAccount()
 
 	ContentView()
@@ -217,6 +230,7 @@ private struct AppTabs: View {
 		.environment(boardStore)
 		.environment(scratchpadStore)
 		.environment(askStore)
+		.environment(analysisStore)
 		.environment(account)
 		.onAppear {
 			thing.startup()

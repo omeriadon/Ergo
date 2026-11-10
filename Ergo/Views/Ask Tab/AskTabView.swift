@@ -48,11 +48,8 @@ struct AskTabView: View {
 	private var toolbar: some ToolbarContent {
 		if account.isSignedInHere, !store.isChatOpen || !store.current.messages.isEmpty {
 			ToolbarItem(placement: .topBarTrailing) {
-				Button("New Chat", systemImage: "square.and.pencil") {
-					store.newConversation()
-				}
-				.buttonStyle(.glassProminent)
-				.accessibilityIdentifier("ask.newChat")
+				AskNewChatButton()
+					.buttonStyle(.glassProminent)
 			}
 		}
 	}

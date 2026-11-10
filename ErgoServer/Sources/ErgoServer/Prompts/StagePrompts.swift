@@ -19,7 +19,14 @@ enum StagePrompts {
 		}
 	}
 
-	private static let names = StageModels.stages + [StageModels.ask, StageModels.analyse, StageModels.title]
+	/// Added to Ask's instructions for a chat about a board
+	static let board = "board"
+
+	/// Added to a deep research run's instructions when it may search the web
+	static let web = "web"
+
+	private static let names = StageModels.stages + [StageModels.ask, StageModels.analyse, StageModels.title, board, web]
+		+ AskMode.allCases.filter { $0 != .normal }.map(\.rawValue)
 
 	private static let all: [String: String] = Dictionary(uniqueKeysWithValues: names.compactMap { stage in
 		Bundle.module.url(forResource: stage, withExtension: "md")
@@ -40,19 +47,37 @@ enum StagePrompts {
 	}
 
 	/// The conversation as data too, so what's pasted into it can't pass for an instruction
-	static func askMessage(for messages: [AskRequestMessage], instructions: String? = nil) throws -> String {
+	static func askMessage(for messages: [AskRequestMessage], instructions: String? = nil, mode: AskMode = .normal, board: AskBoard? = nil) throws -> String {
 		let encoder = JSONEncoder()
 		encoder.outputFormatting = [.prettyPrinted, .withoutEscapingSlashes]
 		let json = try String(decoding: encoder.encode(messages), as: UTF8.self)
 
+		var about = ""
+		if let board {
+			encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+			about = try """
+			The board this chat is about, as it is now:
+
+			```json
+			\(String(decoding: encoder.encode(board), as: UTF8.self))
+			```
+
+
+			"""
+		}
+		// A mode or a board has rules of its own about what you may say from your own reasoning
+		let ending = mode == .normal && board == nil
+			? "Answer the last message. Search and read the library first, and only say what the entries you read this turn say. Your own knowledge isn't a source here."
+			: "Answer the last message, by the rules of this chat's mode. Anything you name still comes from a library entry you read this turn."
+
 		return """
-		The conversation so far:
+		\(about)The conversation so far:
 
 		```json
 		\(json)
 		```
 
-		Answer the last message. Search and read the library first, and only say what the entries you read this turn say. Your own knowledge isn't a source here.
+		\(ending)
 		\(instructionsNote(instructions))
 		"""
 	}

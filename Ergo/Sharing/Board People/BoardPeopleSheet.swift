@@ -114,6 +114,12 @@ struct OwnerPeopleList: View {
 	@Environment(BoardStore.self)
 	private var boardStore
 
+	@Environment(NavigationManager.self)
+	private var navigation
+
+	@Environment(TranslationAccount.self)
+	private var account
+
 	@Default(.sharingName) private var name
 
 	@State private var role = BoardRole.editor
@@ -230,6 +236,10 @@ struct OwnerPeopleList: View {
 	// MARK: - Doing things
 
 	private func sendInvite() {
+		guard account.hasPlusFeatures else {
+			navigation.presentSheet(.plus)
+			return
+		}
 		guard let title = boardStore.boards.first(where: { $0.id == board })?.title else { return }
 		let name = SharingName.cleaned(name)
 		let role = role

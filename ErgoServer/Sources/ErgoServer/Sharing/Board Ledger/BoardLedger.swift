@@ -124,6 +124,12 @@ struct BoardLedger: Sendable {
 		pushes.append(PushEvent(board: board.key, heading: heading, title: board.title(vault), recipients: recipients))
 	}
 
+	/// Tells someone something that isn't about a shared board's people. `body` is never logged.
+	mutating func alert(_ recipients: [UUID], board: String, heading: String, body: String) {
+		guard !recipients.isEmpty else { return }
+		pushes.append(PushEvent(board: board, heading: heading, title: body, recipients: recipients))
+	}
+
 	/// Wakes devices that have no open socket so they sync, with no alert
 	mutating func syncSilently(_ recipients: [UUID], board: String) {
 		guard !recipients.isEmpty else { return }

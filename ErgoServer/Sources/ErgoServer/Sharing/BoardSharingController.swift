@@ -14,6 +14,8 @@ import Vapor
 enum BoardSharingController {
 	static func createInvite(_ request: Request) async throws -> Response {
 		let body = try request.decode(CreateBoardInvite.self)
+		// Sharing is on the paid plan. Joining a board someone else shared never is.
+		try await request.ergo.usage.requirePlus(request.accountID, for: "Sharing a board", on: request.quietDB)
 		let invite = try await request.ergo.sharing.createInvite(
 			body,
 			board: request.parameters.get("board"),

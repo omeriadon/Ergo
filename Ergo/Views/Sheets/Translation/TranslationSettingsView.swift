@@ -49,6 +49,10 @@ struct TranslationSettingsView: View {
 				Text("Your own Claude or ChatGPT account answers your questions and analyses your boards. Works with Claude Pro or Max, ChatGPT Plus or Pro, or an API key for either.")
 			}
 
+			if let usage = account.usage {
+				UsageSection(usage: usage)
+			}
+
 			Section {
 				NavigationLink {
 					AgentInstructionsView()
@@ -118,6 +122,7 @@ struct TranslationSettingsView: View {
 		}
 		.task(id: server) {
 			await account.refresh()
+			await account.refreshUsage()
 		}
 	}
 }
@@ -269,6 +274,43 @@ struct TranslationSettingsView: View {
 		}
 	}
 #endif
+
+/// How much of Ergo's model is left. Someone's own Claude or ChatGPT login isn't counted.
+private struct UsageSection: View {
+	let usage: UsageStatus
+
+	private var percentLeft: Int {
+		Int(((1 - min(max(usage.fractionUsed, 0), 1)) * 100).rounded())
+	}
+
+	var body: some View {
+		Section {
+			VStack(alignment: .leading, spacing: 8) {
+				LabeledContent("Today", value: "\(percentLeft)% left")
+				ProgressView(value: min(max(usage.fractionUsed, 0), 1))
+					.tint(usage.fractionUsed >= 0.9 ? .orange : .accent)
+				Text("Starts again \(usage.resets, format: .relative(presentation: .named))")
+					.font(.caption)
+					.foregroundStyle(.secondary)
+			}
+			.accessibilityElement(children: .combine)
+			.accessibilityIdentifier("translation.usage")
+
+			LabeledContent("Deep Research", value: "\(usage.deepResearchLeft) of \(usage.deepResearchPerWeek) left this week")
+
+			NavigationLink {
+				PlusView()
+			} label: {
+				LabeledContent("Ergo Plus", value: usage.plan == .plus ? "On" : "Off")
+			}
+			.accessibilityIdentifier("translation.plus")
+		} header: {
+			Text(Provider.openrouter.name)
+		} footer: {
+			Text("Only what runs on Ergo's model counts. Your own Claude or ChatGPT account never does.")
+		}
+	}
+}
 
 private struct ConnectionRow: View {
 	let provider: Provider

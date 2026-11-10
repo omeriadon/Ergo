@@ -19,9 +19,10 @@ struct ErgoApp: App {
 	@State private var catalog = CatalogStore()
 	@State private var boardStore: BoardStore
 	@State private var scratchpadStore: ScratchpadStore
-	@State private var askStore = AskStore()
+	@State private var askStore: AskStore
 	@State private var analysisStore: BoardAnalysisStore
 	@State private var translationAccount: TranslationAccount
+	@State private var purchases: PurchaseStore
 	@State private var sync: SyncController
 
 	@Environment(\.scenePhase)
@@ -43,6 +44,13 @@ struct ErgoApp: App {
 		_analysisStore = State(initialValue: analysisStore)
 		let sync = SyncController(account: translationAccount, boardStore: boardStore, scratchpadStore: scratchpadStore, catalog: catalog, analysis: analysisStore)
 		_sync = State(initialValue: sync)
+
+		let purchases = PurchaseStore(account: translationAccount)
+		_purchases = State(initialValue: purchases)
+
+		let askStore = AskStore()
+		askStore.boardStore = boardStore
+		_askStore = State(initialValue: askStore)
 
 		AskIntents.prepare()
 
@@ -69,6 +77,7 @@ struct ErgoApp: App {
 				.environment(askStore)
 				.environment(analysisStore)
 				.environment(translationAccount)
+				.environment(purchases)
 				.environment(sync)
 				.task {
 					await sync.run()
@@ -76,6 +85,10 @@ struct ErgoApp: App {
 				.onChange(of: translationAccount.signedIn) {
 					// Also signed out when translation finds the server forgot the token
 					sync.accountChanged()
+					Task {
+						await translationAccount.refreshUsage()
+						await purchases.uploadCurrent()
+					}
 				}
 				// Universal links arrive here too
 				.onOpenURL { url in
@@ -83,6 +96,8 @@ struct ErgoApp: App {
 						navigation.presentSheet(.joinBoard(token))
 					} else if let entry = ItemOfTheDayItem.entry(from: url) {
 						navigation.openLibraryEntry(category: entry.category, id: entry.id)
+					} else if let board = DeepResearchAttributes.board(from: url) {
+						navigation.openAnalysis(of: board, in: boardStore)
 					} else {
 						receiveShared()
 					}
@@ -93,6 +108,8 @@ struct ErgoApp: App {
 					askStore.resumeInterrupted(account: translationAccount)
 					navigation.resumeBreakDown()
 					receiveShared()
+					purchases.start()
+					await translationAccount.refreshUsage()
 
 					do {
 						try await catalog.load()

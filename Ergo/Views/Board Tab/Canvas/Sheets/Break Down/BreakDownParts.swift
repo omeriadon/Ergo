@@ -20,6 +20,9 @@ struct BreakDownInputForm: View {
 	let run: TranslationRun<ArgumentBreakdown>
 	let setUp: (() -> Void)?
 	let overLimit: Int?
+	let parts: Int?
+	let partProgress: String?
+	let seePlus: (() -> Void)?
 	let canBreakDown: Bool
 	let breakDown: () -> Void
 	let stop: () -> Void
@@ -53,6 +56,9 @@ struct BreakDownInputForm: View {
 				issues: run.output?.issues ?? [],
 				progress: run.progress,
 				overLimit: overLimit,
+				parts: parts,
+				partProgress: partProgress,
+				seePlus: seePlus,
 				keepFirst: { english = SharedText.cut(english, to: EnglishValidator.characterLimit) },
 				canBreakDown: canBreakDown,
 				breakDown: breakDown,
