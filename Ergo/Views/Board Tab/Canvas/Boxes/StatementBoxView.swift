@@ -44,15 +44,17 @@ struct StatementBoxView: View, Equatable {
 	var annotationCount = 0
 	var support: BoardConclusionSupport?
 	var comment: BoardAnalysisComment?
+	var findHighlight: String?
 
 	static func == (left: Self, right: Self) -> Bool {
 		left.statement == right.statement && left.relations == right.relations && left.appearance == right.appearance
 			&& left.annotationCount == right.annotationCount && left.support == right.support && left.comment == right.comment
+			&& left.findHighlight == right.findHighlight
 	}
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 3) {
-			Text(headline.text)
+			Text(AttributedString(headline.text).findHighlighted(headline.isPlaceholder ? nil : findHighlight))
 				.font(.subheadline)
 				.foregroundStyle(headline.isPlaceholder ? .secondary : .primary)
 				.lineLimit(2)

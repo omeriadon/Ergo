@@ -72,6 +72,9 @@ private struct AskMarkdownTable: View {
 	let header: [AttributedString]
 	let rows: [[AttributedString]]
 
+	@Environment(\.findHighlight)
+	private var findHighlight
+
 	/// Table cells are SwiftUI's own `Text`, so maths gets the same look through its attributes
 	private func styled(_ cell: AttributedString) -> AttributedString {
 		var cell = cell
@@ -86,7 +89,7 @@ private struct AskMarkdownTable: View {
 				cell[run.range].link = nil
 			}
 		}
-		return cell
+		return cell.findHighlighted(findHighlight)
 	}
 
 	var body: some View {
@@ -121,6 +124,9 @@ private struct AskCodeBlock: View {
 	let language: String?
 	let code: String
 
+	@Environment(\.findHighlight)
+	private var findHighlight
+
 	var body: some View {
 		VStack(alignment: .leading, spacing: 6) {
 			HStack {
@@ -136,7 +142,7 @@ private struct AskCodeBlock: View {
 			}
 
 			ScrollView(.horizontal, showsIndicators: false) {
-				Text(code)
+				Text(AttributedString(code).findHighlighted(findHighlight))
 					.font(.callout.monospaced())
 					.textSelection(.enabled)
 			}

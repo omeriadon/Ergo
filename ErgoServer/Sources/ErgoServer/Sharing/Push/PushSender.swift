@@ -45,7 +45,6 @@ struct PushSender: Sendable {
 	/// `client` is called for each send, since the application's client isn't ready, and shouldn't be started, in `configure`
 	static func live(config: ServerConfig, client: @escaping @Sendable () -> (any Client)?, logger: Logger) -> PushSender {
 		guard let apns = config.apns else {
-			logger.notice("No ERGO_APNS_KEY, so no pushes will be sent")
 			return .disabled
 		}
 		do {

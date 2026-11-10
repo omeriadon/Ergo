@@ -27,6 +27,9 @@ struct AskSelectableText: UIViewRepresentable {
 	@Environment(AskStore.self)
 	private var store
 
+	@Environment(\.findHighlight)
+	private var findHighlight
+
 	func makeUIView(context: Context) -> UITextView {
 		let storage = NSTextStorage()
 		let layoutManager = RoundedBackgroundLayoutManager()
@@ -57,7 +60,7 @@ struct AskSelectableText: UIViewRepresentable {
 		context.coordinator.store = store
 
 		let traits = UITraitCollection(preferredContentSizeCategory: UIContentSizeCategory(dynamicTypeSize))
-		let text = AskAttributedText(traits: traits).attributed(blocks)
+		let text = AskAttributedText(traits: traits).attributed(blocks).findHighlighted(findHighlight)
 		// Setting it again would lose a selection
 		if view.attributedText != text {
 			view.attributedText = text

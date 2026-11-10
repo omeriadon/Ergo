@@ -36,19 +36,12 @@ services:
       - "8080"
     volumes:
       - ergo-data:/data
+    # Every variable in the .env beside this file reaches the server, which is where Dokploy writes its list.
+    env_file:
+      - path: .env
+        required: false
     environment:
-      # postgres://user:password@host:5432/database, with the password percent-encoded. Empty uses SQLite in the data volume.
-      ERGO_DATABASE_URL: ${ERGO_DATABASE_URL:-}
-      # The audience Sign in with Apple tokens must have
-      ERGO_APPLE_APP_ID: ${ERGO_APPLE_APP_ID:-com.adonis.Ergo}
-      ERGO_MAX_PROCESSES: ${ERGO_MAX_PROCESSES:-8}
-      ERGO_STAGE_TIMEOUT: ${ERGO_STAGE_TIMEOUT:-120}
-      # Empty keeps the defaults in StageModels. Set, each applies to every stage.
-      ERGO_CLAUDE_MODEL: ${ERGO_CLAUDE_MODEL:-}
-      ERGO_CODEX_MODEL: ${ERGO_CODEX_MODEL:-}
-      ERGO_OPENROUTER_API_KEY: ${ERGO_OPENROUTER_API_KEY:-}
-      ERGO_OPENROUTER_MODEL: ${ERGO_OPENROUTER_MODEL:-}
-      ERGO_MODEL_EFFORT: ${ERGO_MODEL_EFFORT:-}
+      # Only what differs from the server's own default.
       # Only for a proxy on this machine or Docker network, and never when the port is reachable without it
       ERGO_TRUST_PROXY: ${ERGO_TRUST_PROXY:-1}
     # The entrypoint starts as root and drops itself with setpriv, which needs these to do it (setpcap to shrink

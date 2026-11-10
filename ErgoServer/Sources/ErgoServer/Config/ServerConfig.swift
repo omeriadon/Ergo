@@ -245,8 +245,44 @@ struct ServerConfig: Sendable {
 		if config.codexPath == nil {
 			logger.warning("Couldn't find 'codex' on PATH, ChatGPT connections will fail until ERGO_CODEX_PATH is set")
 		}
+		logUnset(in: environment, logger: logger)
 
 		return config
+	}
+
+	/// Variables that leave something off when none of their names is set, and what that is
+	private static let featureVariables: [(names: [String], without: String)] = [
+		(["ERGO_DATABASE_URL"], "the database is SQLite"),
+		(["ERGO_OPENROUTER_API_KEY"], "the server's own model isn't offered"),
+		(["ERGO_APNS_KEY", "ERGO_APNS_KEY_FILE"], "no pushes will be sent"),
+		(["ERGO_DEVICECHECK_KEY", "ERGO_DEVICECHECK_KEY_FILE"], "every account gets its own free allowance"),
+		(["ERGO_APPLE_ROOT_CERT_FILE"], "App Store purchases will be refused"),
+		(["ERGO_APP_STORE_ID"], "the join page has no App Store link"),
+	]
+
+	/// Variables with a default that works. One that's required, or required with another, refuses to start instead.
+	private static let defaultedVariables = [
+		"ERGO_DATABASE_PATH", "ERGO_RUNS_DIRECTORY", "ERGO_CLI_DIRECTORY", "ERGO_RUNNER_PREFIX", "ERGO_RUNNER_USER",
+		"ERGO_MAX_PROCESSES", "ERGO_STAGE_TIMEOUT", "ERGO_MODELS_FILE", "ERGO_CLAUDE_MODEL", "ERGO_CODEX_MODEL",
+		"ERGO_MODEL_EFFORT", "ERGO_APPLE_APP_ID", "ERGO_TRUST_PROXY", "ERGO_OPENROUTER_PLUS_MODEL",
+		"ERGO_FREE_DAILY_USD", "ERGO_PLUS_DAILY_USD", "ERGO_USAGE_PRICE_INPUT", "ERGO_USAGE_PRICE_OUTPUT",
+		"ERGO_FREE_DEEP_PER_WEEK", "ERGO_PLUS_DEEP_PER_WEEK", "ERGO_ENFORCE_PLANS", "ERGO_WEB_SEARCH",
+		"ERGO_DEVICECHECK_TEAM_ID", "ERGO_PUBLIC_URL", "ERGO_APPLE_TEAM_IDS", "ERGO_APNS_TEAM_ID", "ERGO_APNS_TOPIC",
+	]
+
+	/// Says which variables have no value, by name only. An empty one counts as unset, as it does everywhere above.
+	private static func logUnset(in environment: [String: String], logger: Logger) {
+		func isSet(_ name: String) -> Bool {
+			environment[name]?.isEmpty == false
+		}
+
+		for variable in featureVariables where !variable.names.contains(where: isSet) {
+			logger.notice("\(variable.names.joined(separator: " or ")) isn't set, so \(variable.without)")
+		}
+		let defaulted = defaultedVariables.filter { !isSet($0) }
+		if !defaulted.isEmpty {
+			logger.notice("Using the default for \(defaulted.joined(separator: ", "))")
+		}
 	}
 
 	private static func loadOpenRouter(from environment: [String: String], into config: inout ServerConfig) throws {

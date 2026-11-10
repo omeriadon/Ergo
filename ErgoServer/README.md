@@ -108,7 +108,7 @@ swift run ErgoServer serve --hostname 0.0.0.0 --port 8080
 
 ## Configuration
 
-Everything comes from the environment.
+Everything comes from the environment. `compose.yaml` passes the server everything in the `.env` beside it, so a new variable needs no change there. Each launch logs, by name and never by value, what isn't set: a line for each that leaves something off, and one line for those on their default. A new variable goes in `ServerConfig`'s `featureVariables` or `defaultedVariables`.
 
 | Variable | Default | |
 |---|---|---|

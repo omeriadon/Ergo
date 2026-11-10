@@ -71,6 +71,9 @@ struct CanvasView: View {
 	@State var canUndo = false
 	@State var canRedo = false
 
+	/// Set while the search bar is open
+	@State var find: FindState?
+
 	var board: Board {
 		boardStore.current
 	}
@@ -95,7 +98,11 @@ struct CanvasView: View {
 			fitUntilMoved()
 		}
 		.safeAreaInset(edge: .bottom, spacing: 0) { bottomStack }
+		.safeAreaBar(edge: .top, spacing: 0) { findBar }
+		.onChange(of: currentFindMatch?.selection) { reveal(currentFindMatch) }
 		.toolbar { toolbar }
+		// The search bar takes the navigation bar's place
+		.toolbarVisibility(find == nil ? .automatic : .hidden, for: .navigationBar)
 		.background { editorPresenter }
 		.sheet(item: $sourceSheet, content: sourceSheet(for:))
 		.modifier(lifecycle)
@@ -138,6 +145,7 @@ struct CanvasView: View {
 			canRedo: canRedo,
 			fit: { fit(animated: true) },
 			showBoards: { navigation.presentSheet(.boards) },
+			search: startFind,
 			quickAI: { navigation.presentSheet(.quickAI(board.id)) },
 			showAnalysis: { navigation.presentSheet(.boardAnalysis(board.id, focus: nil)) },
 			deepResearch: deepResearch,
@@ -166,7 +174,8 @@ struct CanvasView: View {
 				isReadOnly: isReadOnly,
 				annotationCount: counts[statement.id] ?? 0,
 				support: supports[statement.id],
-				comment: comments[statement.id]
+				comment: comments[statement.id],
+				findHighlight: find?.query
 			)
 		}
 
@@ -208,7 +217,7 @@ struct CanvasView: View {
 			} else {
 				activeSelection == .source(source.id) ? .selected : .normal
 			}
-			return CanvasSourceModel(source: source, appearance: appearance, isReadOnly: isReadOnly, annotationCount: counts[source.id] ?? 0, comment: comments[source.id])
+			return CanvasSourceModel(source: source, appearance: appearance, isReadOnly: isReadOnly, annotationCount: counts[source.id] ?? 0, comment: comments[source.id], findHighlight: find?.query)
 		}
 	}
 

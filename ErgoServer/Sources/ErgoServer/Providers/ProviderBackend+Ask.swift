@@ -31,10 +31,13 @@ struct AskRunSettings: Sendable {
 	/// Whether the server's own model may search the web, when the server allows it at all
 	var searchesWeb = false
 
+	/// Whether each round's text and tool calls go in the log, which only `AskService.loggedEmail`'s account ever does
+	var logsConversation = false
+
 	static let ask = AskRunSettings(instructions: StageModels.ask, toolNames: AskTools.names, timeout: .seconds(300), maxTurns: ClaudeCodeAskCommand.maxTurns)
 
 	/// A chat in a mode, or about a board, which then has the board's tools
-	static func ask(mode: AskMode, board: AskBoard?) -> AskRunSettings {
+	static func ask(mode: AskMode, board: AskBoard?, logsConversation: Bool = false) -> AskRunSettings {
 		var additions: [String] = []
 		if board != nil {
 			additions.append(StagePrompts.board)
@@ -47,7 +50,8 @@ struct AskRunSettings: Sendable {
 			additions: additions,
 			toolNames: board.map { BoardChatTools.names(canEdit: $0.canEdit) } ?? AskTools.names,
 			timeout: .seconds(300),
-			maxTurns: ClaudeCodeAskCommand.maxTurns
+			maxTurns: ClaudeCodeAskCommand.maxTurns,
+			logsConversation: logsConversation
 		)
 	}
 

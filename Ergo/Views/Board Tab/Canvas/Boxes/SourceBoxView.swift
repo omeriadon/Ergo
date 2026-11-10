@@ -37,7 +37,7 @@ struct CanvasSourceBox: View {
 	}
 
 	var body: some View {
-		SourceBoxView(source: source, appearance: model.appearance, annotationCount: model.annotationCount, comment: model.comment)
+		SourceBoxView(source: source, appearance: model.appearance, annotationCount: model.annotationCount, comment: model.comment, findHighlight: model.findHighlight)
 			.equatable()
 			.onTapGesture(perform: actions.select)
 			.simultaneousGesture(TapGesture(count: 2).onEnded(actions.open))
@@ -126,6 +126,7 @@ struct SourceBoxView: View, Equatable {
 	let appearance: BoxAppearance
 	var annotationCount = 0
 	var comment: BoardAnalysisComment?
+	var findHighlight: String?
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 5) {
@@ -133,13 +134,13 @@ struct SourceBoxView: View, Equatable {
 				.font(.caption.weight(.semibold))
 				.foregroundStyle(.tint)
 
-			Text(source.title)
+			Text(AttributedString(source.title).findHighlighted(findHighlight))
 				.font(.subheadline.weight(.medium))
 				.lineLimit(source.link == nil ? 3 : 2)
 				.frame(maxWidth: .infinity, alignment: .leading)
 
 			if let host = source.link?.host() {
-				Text(host)
+				Text(AttributedString(host).findHighlighted(findHighlight))
 					.font(.caption)
 					.foregroundStyle(.secondary)
 					.lineLimit(1)

@@ -23,6 +23,9 @@ final class AskService: Sendable {
 	/// Longest a chat's name can be, since it's shown in a list
 	static let titleLimit = 60
 
+	/// The one account whose conversations go in the log, for debugging Ask. Nobody else's ever do.
+	static let loggedEmail = "omeriadon@outlook.com"
+
 	init(translations: TranslationService, tools: AskToolServer<AskTools>) {
 		self.translations = translations
 		self.tools = tools
@@ -43,8 +46,18 @@ final class AskService: Sendable {
 		}
 		let mode = request.mode ?? .normal
 		let prompt = try StagePrompts.askMessage(for: request.messages, instructions: request.instructions, mode: mode, board: request.board)
-		let settings = AskRunSettings.ask(mode: mode, board: request.board)
+		let logsConversation = await Self.logsConversation(of: account, on: database)
+		let settings = AskRunSettings.ask(mode: mode, board: request.board, logsConversation: logsConversation)
 		let answer = Mutex<String>("")
+
+		if logsConversation {
+			logger.notice("Ask question", metadata: [
+				"provider": "\(request.provider)",
+				"mode": "\(mode)",
+				"messages": "\(request.messages.count)",
+				"text": "\((request.messages.last?.text ?? "").debugDescription)",
+			])
+		}
 
 		try await translations.withBackend(provider: request.provider, scope: StageModels.ask, account: account, database: database, logger: logger) { backend in
 			let tools = tools
@@ -74,9 +87,18 @@ final class AskService: Sendable {
 		// Only a chat's first reply is named, since that's when it has no name yet. It's sent before `.finished`, so
 		// the app has it by the time the answer ends.
 		let reply = answer.withLock { $0 }
+		if logsConversation {
+			logger.notice("Ask answer", metadata: ["provider": "\(request.provider)", "text": "\(reply.debugDescription)"])
+		}
 		if request.messages.count == 1, let question = request.messages.last?.text, !reply.isEmpty, let title = await chatName(question: question, answer: reply, provider: request.provider, account: account, database: database, logger: logger) {
 			await send(.title(title))
 		}
+	}
+
+	/// False when the account can't be read, since an answer never depends on being logged
+	private static func logsConversation(of account: UUID, on database: any Database) async -> Bool {
+		let email = try? await Account.find(account, on: database)?.email
+		return email == loggedEmail
 	}
 
 	/// Names the chat from its first question and answer. A name is optional, so a failure only means there isn't one.

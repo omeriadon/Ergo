@@ -97,6 +97,15 @@ extension ProviderBackend {
 			let start = ContinuousClock.now
 			let completion = try await client.complete(body, timeout: remaining, text: text)
 			log(StageModels.ask, completion, since: start, sent: body.count)
+			if settings.logsConversation {
+				logger.notice("Ask round", metadata: [
+					"round": "\(turn + 1)",
+					"model": "\(model)",
+					"finish": "\(completion.finishReason ?? "none")",
+					"tools": "\(completion.toolCalls.map { "\($0.name) \($0.arguments)" })",
+					"text": "\(completion.text.debugDescription)",
+				])
+			}
 
 			guard !completion.toolCalls.isEmpty else {
 				guard completion.finishReason != "length" else {
@@ -116,10 +125,19 @@ extension ProviderBackend {
 				},
 			])
 			for call in completion.toolCalls {
-				try await messages.append([
+				let result = try await openRouterToolResult(call, responder: responder)
+				if settings.logsConversation {
+					logger.notice("Ask tool result", metadata: [
+						"round": "\(turn + 1)",
+						"tool": "\(call.name)",
+						"characters": "\(result.count)",
+						"result": "\(String(result.prefix(500)).debugDescription)",
+					])
+				}
+				messages.append([
 					"role": "tool",
 					"tool_call_id": call.id,
-					"content": openRouterToolResult(call, responder: responder),
+					"content": result,
 				])
 			}
 		}

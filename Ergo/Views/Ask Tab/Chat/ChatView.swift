@@ -17,14 +17,20 @@ struct AskThreadView: View {
 	@Environment(\.accessibilityReduceMotion)
 	private var reduceMotion
 
+	/// Set while the search bar is open
+	@State private var find: FindState?
+
 	var body: some View {
 		let id = store.current.id
 		ZStack {
-			AskConversationView(conversationID: id)
+			AskConversationView(conversationID: id, find: $find)
 				.id(id)
 				.transition(.opacity)
 		}
 		.animation(reduceMotion ? nil : .smooth, value: id)
+		.onChange(of: id) { find = nil }
+		// The search bar takes the navigation bar's place
+		.toolbarVisibility(find == nil ? .automatic : .hidden, for: .navigationBar)
 		.navigationTitle(store.current.title)
 		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {
@@ -38,6 +44,18 @@ struct AskThreadView: View {
 				ToolbarItem(placement: .topBarTrailing) {
 					AskNewChatButton()
 				}
+
+				ToolbarSpacer(.fixed, placement: .topBarTrailing)
+			}
+
+			ToolbarOverflowMenu {
+				Button("Search", systemImage: "magnifyingglass") {
+					withAnimation(reduceMotion ? nil : .smooth) {
+						find = FindState()
+					}
+				}
+				.disabled(store.current.messages.isEmpty)
+				.accessibilityIdentifier("ask.search")
 			}
 		}
 	}
@@ -49,6 +67,9 @@ struct AskConversationView: View {
 
 	/// The tab it's on, so only the one on screen takes a follow-up left for the composer
 	var tab: AppTab = .ask
+
+	/// Quick AI has no search, so it's left closed there
+	var find: Binding<FindState?> = .constant(nil)
 
 	@Environment(AskStore.self)
 	private var store
@@ -92,6 +113,18 @@ struct AskConversationView: View {
 		return answer.text.count + answer.tools.count + answer.actions.count
 	}
 
+	/// Newest first, since a chat opens at its end
+	private var findMatches: [AskMessage.ID] {
+		guard let query = find.wrappedValue?.query, !query.isEmpty else { return [] }
+		return conversation.messages.reversed()
+			.filter { $0.text.matchesFind(query) }
+			.map(\.id)
+	}
+
+	private var currentFindMatch: AskMessage.ID? {
+		find.wrappedValue?.current(in: findMatches)
+	}
+
 	var body: some View {
 		ScrollViewReader { proxy in
 			thread
@@ -102,6 +135,16 @@ struct AskConversationView: View {
 				}
 				.safeAreaBar(edge: .bottom, spacing: 0) {
 					composer
+				}
+				.safeAreaBar(edge: .top, spacing: 0) {
+					findBar
+				}
+				.onChange(of: currentFindMatch) {
+					if let currentFindMatch {
+						withAnimation(reduceMotion ? nil : .smooth) {
+							proxy.scrollTo(currentFindMatch, anchor: .center)
+						}
+					}
 				}
 				.onChange(of: sent) {
 					// In a task so the end has moved to below what was just sent
@@ -125,6 +168,14 @@ struct AskConversationView: View {
 		.animation(.smooth, value: run?.activity)
 		.animation(.smooth, value: run == nil)
 		.animation(.smooth, value: store.failures[conversation.id])
+	}
+
+	@ViewBuilder
+	private var findBar: some View {
+		if find.wrappedValue != nil {
+			FindBar(find: find, prompt: "Search this chat", count: findMatches.count, isNewestFirst: true)
+				.transition(.move(edge: .top).combined(with: .opacity))
+		}
 	}
 
 	private var composer: some View {
@@ -186,6 +237,7 @@ struct AskConversationView: View {
 			.padding(.horizontal, 16)
 			.padding(.top, 16)
 			.frame(maxWidth: .infinity, alignment: .leading)
+			.environment(\.findHighlight, find.wrappedValue?.query)
 		}
 		// Opens on the newest messages, and stays at the end while an answer grows, unless you've scrolled up to read
 		.defaultScrollAnchor(.bottom, for: .initialOffset)

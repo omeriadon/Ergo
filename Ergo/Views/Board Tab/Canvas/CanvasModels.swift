@@ -26,6 +26,9 @@ struct CanvasBoxModel: Equatable {
 
 	/// The finding shown beside the box
 	var comment: BoardAnalysisComment?
+
+	/// What's being searched for, to mark in the text. A hosted box can't read it from the environment.
+	var findHighlight: String?
 }
 
 /// What one source shows, compared the same way
@@ -35,6 +38,7 @@ struct CanvasSourceModel: Equatable {
 	var isReadOnly = false
 	var annotationCount = 0
 	var comment: BoardAnalysisComment?
+	var findHighlight: String?
 }
 
 /// A source and the cards in its region. Where they are is read from the views, so the shape follows a drag.

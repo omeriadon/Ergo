@@ -20,6 +20,7 @@ struct CanvasToolbar: ToolbarContent {
 	let canRedo: Bool
 	let fit: () -> Void
 	let showBoards: () -> Void
+	let search: () -> Void
 	let quickAI: () -> Void
 	let showAnalysis: () -> Void
 	let deepResearch: () -> Void
@@ -52,6 +53,7 @@ struct CanvasToolbar: ToolbarContent {
 				isAnalysing: isAnalysing,
 				canUndo: canUndo,
 				canRedo: canRedo,
+				search: search,
 				deepResearch: deepResearch,
 				sendToChat: sendToChat,
 				undo: undo,
@@ -86,6 +88,7 @@ private struct CanvasMenuContent: View {
 	let isAnalysing: Bool
 	let canUndo: Bool
 	let canRedo: Bool
+	let search: () -> Void
 	let deepResearch: () -> Void
 	let sendToChat: () -> Void
 	let undo: () -> Void
@@ -93,6 +96,11 @@ private struct CanvasMenuContent: View {
 	let arrange: () -> Void
 
 	var body: some View {
+		Section {
+			Button("Search", systemImage: "magnifyingglass", action: search)
+				.accessibilityIdentifier("board.search")
+		}
+
 		// A person who can only view gets just what doesn't change the board
 		if !isReadOnly {
 			Section {

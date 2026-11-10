@@ -64,7 +64,8 @@ struct CanvasBox: View {
 			appearance: appearance,
 			annotationCount: model.annotationCount,
 			support: model.support,
-			comment: model.comment
+			comment: model.comment,
+			findHighlight: model.findHighlight
 		)
 		.equatable()
 		.onTapGesture(perform: actions.select)

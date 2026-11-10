@@ -29,6 +29,9 @@ private struct AskUserBubble: View {
 	let text: String
 	let attachments: [AskAttachment]
 
+	@Environment(\.findHighlight)
+	private var findHighlight
+
 	var body: some View {
 		VStack(spacing: 8) {
 			if !attachments.isEmpty {
@@ -46,7 +49,7 @@ private struct AskUserBubble: View {
 		HStack {
 			Spacer(minLength: 48)
 
-			Text(text)
+			Text(AttributedString(text).findHighlighted(findHighlight))
 				.padding(.horizontal, 14)
 				.padding(.vertical, 10)
 				.glassEffect(.clear.tint(.accent).interactive(), in: RoundedRectangle(cornerRadius: 20))
