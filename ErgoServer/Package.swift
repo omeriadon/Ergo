@@ -44,14 +44,6 @@ let package = Package(
 				.process("Prompts/Formalize"),
 				.process("Prompts/Verify"),
 				.process("Prompts/Title"),
-			],
-			swiftSettings: [
-				.unsafeFlags(
-					[
-						"-no-whole-module-optimization",
-					],
-					.when(configuration: .release)
-				),
 			]
 		),
 		.testTarget(
