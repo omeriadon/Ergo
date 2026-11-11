@@ -198,6 +198,10 @@ struct ErgoProtocolTests {
 	@Test func signInWithApple() throws {
 		try expectRoundTrip(SignInWithAppleRequest(identityToken: "eyJ", nonce: "n0nce"), #"{"identityToken":"eyJ","nonce":"n0nce"}"#)
 		try expectRoundTrip(
+			SignInWithAppleRequest(identityToken: "eyJ", nonce: "n0nce", authorizationCode: "c1"),
+			#"{"authorizationCode":"c1","identityToken":"eyJ","nonce":"n0nce"}"#
+		)
+		try expectRoundTrip(
 			SignedIn(accountID: Self.id, token: "secret", isNewAccount: false),
 			#"{"accountID":"6F1C2E9A-3B4D-4E5F-8A9B-0C1D2E3F4A5B","isNewAccount":false,"token":"secret"}"#
 		)
@@ -237,7 +241,7 @@ struct ErgoProtocolTests {
 		#expect(ErgoProtocol.Path.connections == "v1/connections")
 		#expect(ErgoProtocol.Path.deviceLogin == "v1/connections/codex/device-login")
 		#expect(ErgoProtocol.Path.translate == "v1/translate")
-		#expect(Provider.allCases.map(\.rawValue) == ["claude", "codex"])
+		#expect(Provider.allCases.map(\.rawValue) == ["claude", "codex", "openrouter"])
 		#expect(TranslationStep.allCases.map(\.rawValue) == [GateStage.name, BreakdownStage.name, FormalizeStage.name, VerifyStage.name])
 	}
 

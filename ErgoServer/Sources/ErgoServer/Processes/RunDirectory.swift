@@ -6,11 +6,15 @@
 //
 
 import Foundation
+import Logging
 
 /// A fresh, private directory for one CLI call: `home/` stands in for the user's home, `work/` is where it runs.
 /// Nothing in it outlives the call.
 struct RunDirectory: Sendable {
 	let root: URL
+
+	/// For what goes wrong with the directory itself, which has no account to speak of
+	private static let log = Logger(label: "ergo.runs")
 
 	var home: URL {
 		root.appending(path: "home", directoryHint: .isDirectory)
@@ -63,7 +67,14 @@ struct RunDirectory: Sendable {
 	}
 
 	func remove() {
-		try? FileManager.default.removeItem(at: root)
+		do {
+			try FileManager.default.removeItem(at: root)
+		} catch where !FileManager.default.fileExists(atPath: root.path) {
+			// Already gone
+		} catch {
+			// What's left may hold a credential
+			Self.log.warning("Couldn't remove a run directory", metadata: ["error": "\(String(describing: type(of: error)))"])
+		}
 	}
 
 	// MARK: - Handing over
@@ -75,7 +86,12 @@ struct RunDirectory: Sendable {
 
 	/// Takes it back afterwards, so the server can read what the CLI left and delete it
 	func takeBack() {
-		try? chown(root.path, to: ProcessRunner.Owner(user: getuid(), group: getgid()), contentsFirst: false)
+		do {
+			try chown(root.path, to: ProcessRunner.Owner(user: getuid(), group: getgid()), contentsFirst: false)
+		} catch {
+			// Without it the server may not be able to read the answer, or delete the directory
+			Self.log.warning("Couldn't take a run directory back from the runner user", metadata: ["error": "\(String(describing: type(of: error)))"])
+		}
 	}
 
 	/// The server can only list a directory it owns, so handing over does the contents before the directory, and

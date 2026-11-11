@@ -51,6 +51,15 @@ struct SharingProtocolTests {
 		try expectRoundTrip(JoinedBoard(board: Self.board, role: .owner), #"{"board":"\#(Self.board)","role":"owner"}"#)
 	}
 
+	@Test func reports() throws {
+		try expectRoundTrip(ReportBoard(reason: "Abuse"), #"{"reason":"Abuse"}"#)
+		#expect(ErgoProtocol.Path.boardReport("B") == "v1/boards/B/report")
+		#expect(try ReportBoard.normalized("  Abuse \n") == "Abuse")
+		#expect(throws: ServiceError.self) { try ReportBoard.normalized(" \n ") }
+		#expect(try ReportBoard.normalized(String(repeating: "a", count: 1000)).count == 1000)
+		#expect(throws: ServiceError.self) { try ReportBoard.normalized(String(repeating: "a", count: 1001)) }
+	}
+
 	@Test func pushDevices() throws {
 		try expectRoundTrip(PushDevice(token: "ab12"), #"{"token":"ab12"}"#)
 	}

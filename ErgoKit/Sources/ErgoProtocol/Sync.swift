@@ -21,9 +21,15 @@ public struct SignInWithAppleRequest: Codable, Sendable, Hashable {
 	/// The raw nonce. The Apple request carried its SHA-256, which the server checks against the token's `nonce` claim.
 	public let nonce: String
 
-	public init(identityToken: String, nonce: String) {
+	/// `ASAuthorizationAppleIDCredential.authorizationCode`, as UTF-8. The server trades it with Apple for a refresh token,
+	/// which it keeps only to revoke the sign-in when the account is deleted. Apple's code works once and expires in minutes.
+	/// Nil from an app that doesn't send it, and then nothing can be revoked.
+	public let authorizationCode: String?
+
+	public init(identityToken: String, nonce: String, authorizationCode: String? = nil) {
 		self.identityToken = identityToken
 		self.nonce = nonce
+		self.authorizationCode = authorizationCode
 	}
 }
 

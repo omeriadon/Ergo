@@ -39,6 +39,7 @@ extension BoardSharing {
 			try await ledger.writeShares(of: board, on: database)
 			ledger.tell([target.$account.id], about: board, heading: role.canEdit ? "You can now edit" : "You can now only view")
 		}
+		logger.verbose("Changed a member's role", metadata: ["role": "\(role.rawValue)"])
 	}
 
 	/// Their rows stay, under a tombstone on the board, so pruning stays the only thing that deletes them
@@ -53,6 +54,7 @@ extension BoardSharing {
 			try await ledger.remove(target, from: key, tombstoningBoard: true, on: database)
 			ledger.tell([target.$account.id], about: board, heading: "You were removed")
 		}
+		logger.verbose("Removed a member")
 	}
 
 	/// Everyone else loses the board, the owner keeps it as an ordinary private one
@@ -64,7 +66,7 @@ extension BoardSharing {
 			let board = try await Self.owned(key, by: account, ledger: &ledger, on: database)
 			try await ledger.end(board, heading: "You were removed", deletingOwnersBoard: false, on: database)
 		}
-		logger.info("Stopped sharing a board")
+		logger.verbose("Stopped sharing a board")
 	}
 
 	// MARK: - Checks

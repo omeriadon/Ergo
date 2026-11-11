@@ -363,7 +363,8 @@ final class AskStore {
 		write(conversation)
 	}
 
-	private func apply(_ event: AskServerMessage, to answerID: AskMessage.ID, in id: AskConversation.ID) {
+	/// Not private so tests can hear an answer without a server
+	func apply(_ event: AskServerMessage, to answerID: AskMessage.ID, in id: AskConversation.ID) {
 		guard var conversation = conversation(id) else { return }
 		func updateAnswer(_ update: (inout AskMessage) -> Void) {
 			if let index = conversation.messages.firstIndex(where: { $0.id == answerID }) {

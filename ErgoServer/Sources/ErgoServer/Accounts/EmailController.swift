@@ -46,7 +46,9 @@ enum EmailController {
 			throw ServiceError.emailInUse
 		}
 
-		request.logger.info("Registered an email")
+		// The account may be one of the configured ones, now that it has an email to say so
+		request.identify(attaching: email, to: callerID)
+		request.logger.verbose("Registered an email")
 		return Response(status: .noContent)
 	}
 
@@ -100,7 +102,9 @@ enum EmailController {
 		if let changedCursor {
 			request.ergo.live.changed(account: targetID, cursor: changedCursor, except: tokenID)
 		}
-		request.logger.info("Signed in with an email", metadata: ["merged": "\(targetID != callerID)"])
+		// After a merge the account is the one that owns the email, which may be verbose when the caller's was not
+		await request.identify(targetID)
+		request.logger.verbose("Signed in with an email", metadata: ["merged": "\(targetID != callerID)"])
 		return try Response.json(SignedIn(accountID: targetID, token: bearer, isNewAccount: false))
 	}
 
@@ -141,7 +145,7 @@ enum EmailController {
 			request.ergo.live.close(token: token, account: accountID)
 		}
 
-		request.logger.info("Changed a password", metadata: ["signedOut": "\(revoked.count)"])
+		request.logger.verbose("Changed a password", metadata: ["signedOut": "\(revoked.count)"])
 		return Response(status: .noContent)
 	}
 

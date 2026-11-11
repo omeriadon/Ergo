@@ -20,16 +20,18 @@ struct CodexDeviceLogin {
 	static let arguments = ["login", "--device-auth"] + CodexCommand.settings([("cli_auth_credentials_store", "file")])
 
 	func run() async {
+		socket.logClosing("Codex login", logger: request.logger)
 		let work = Task { () -> DeviceLoginMessage in
 			do {
 				return try await .connected(login(account: request.accountID))
 			} catch let failure as ProviderFailure {
+				request.logger.warning("Device login refused", metadata: ["code": "\(failure.serviceError.code)"])
 				return .failed(failure.serviceError)
 			} catch let error as ServiceError {
 				return .failed(error)
 			} catch {
 				if !(error is CancellationError) {
-					request.logger.error("Device login failed", metadata: ["error": "\(String(reflecting: error))"])
+					request.logger.error("Device login failed", metadata: ["error": "\(request.logger.reason(for: error))"])
 				}
 				return .failed(.internalFailure)
 			}
@@ -70,6 +72,7 @@ struct CodexDeviceLogin {
 					}
 				}
 			} catch is ProcessRunner.TimedOut {
+				request.logger.warning("Codex login timed out", metadata: ["limit": "\(services.config.deviceLoginTimeout.spelledOut)"])
 				throw ServiceError(code: .timedOut, message: "Expected the ChatGPT login to finish within \(services.config.deviceLoginTimeout.spelledOut)")
 			}
 
@@ -86,11 +89,13 @@ struct CodexDeviceLogin {
 		if let problem = CodexAuthFile.problem(with: auth) {
 			throw ProviderFailure.unavailable(problem)
 		}
-		return try await ConnectionController.store(
+		let status = try await ConnectionController.store(
 			ProviderCredential(provider: .codex, kind: .subscription, secret: Secret(auth)),
 			account: account,
 			on: request
 		)
+		request.logger.verbose("Codex login finished")
+		return status
 	}
 
 	private func send(_ message: DeviceLoginMessage) async {

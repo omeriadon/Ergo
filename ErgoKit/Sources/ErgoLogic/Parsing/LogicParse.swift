@@ -89,6 +89,15 @@ public enum LogicProblem: Equatable, Sendable {
 	/// Sets hold members, never other sets
 	case usedAsSetAndMember(letter: Int)
 	case setAsMember
+
+	/// Brackets and ¬ □ ◇ ∀ ∃ inside one another further than anything checks
+	case tooDeep(limit: Int)
+
+	/// One statement of more symbols than anything checks
+	case tooLong(limit: Int)
+
+	/// Short as written, but letters standing for letters make it this long once each is written out
+	case tooLongWrittenOut(limit: Int)
 }
 
 public struct LogicParse: Equatable, Sendable {

@@ -30,11 +30,11 @@ extension BoardStore {
 	}
 
 	/// Adds an empty statement with its centre at `position`, for the canvas dropping one where the person is looking.
-	/// Nil when the board is full (`ArgumentMapValidator.defaultMaximumStatements`).
+	/// Nil when the board is full (`ArgumentMapValidator.defaultMaximumStatements`), or can only be viewed.
 	@discardableResult
 	func addStatement(at position: CanvasPoint) -> Statement.ID? {
 		var board = current
-		guard board.statements.count < ArgumentMapValidator.defaultMaximumStatements else { return nil }
+		guard canEdit(board.id), board.statements.count < ArgumentMapValidator.defaultMaximumStatements else { return nil }
 
 		var statement = Statement(position: position)
 		statement.source = board.home(of: statement)

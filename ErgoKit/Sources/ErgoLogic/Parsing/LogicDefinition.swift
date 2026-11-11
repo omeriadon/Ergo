@@ -56,6 +56,80 @@ public extension LogicParse {
 	}
 }
 
+extension LogicParse {
+	/// The first definition or statement that's over `LogicParser.maximumWrittenOutLength` once its letters are written
+	/// out. Counted without writing anything out, since that's what there'd be no room for. Only call when no
+	/// definition is circular.
+	var firstOversized: LogicDiagnostic? {
+		guard !definitions.isEmpty else { return nil }
+
+		let limit = LogicParser.maximumWrittenOutLength
+		let values = Dictionary(definitions.map { ($0.name, $0.value) }) { first, _ in first }
+		var sizes: [Int: Int] = [:]
+
+		// Never more than a little past the limit, so nothing overflows however much the letters multiply
+		func size(of letter: Int) -> Int {
+			if let known = sizes[letter] {
+				return known
+			}
+			let size: Int = switch values[letter] {
+				case let .formula(formula): formula.size(size(of:), limit: limit)
+				case let .term(term): term.size(size(of:), limit: limit)
+				case nil: 1
+			}
+			sizes[letter] = size
+			return size
+		}
+
+		if let definition = definitions.first(where: { size(of: $0.name) > limit }) {
+			return LogicDiagnostic(problem: .tooLongWrittenOut(limit: limit), range: definition.range)
+		}
+		let statements = (argument.premises + [argument.conclusion].compactMap(\.self)).sorted { $0.range.lowerBound < $1.range.lowerBound }
+		if let statement = statements.first(where: { $0.formula.size(size(of:), limit: limit) > limit }) {
+			return LogicDiagnostic(problem: .tooLongWrittenOut(limit: limit), range: statement.range)
+		}
+		return nil
+	}
+}
+
+private extension LogicFormula {
+	/// How many symbols it is with each letter counted as `letter` says, stopping just past `limit`
+	func size(_ letter: (Int) -> Int, limit: Int) -> Int {
+		let size: Int = switch self {
+			case let .atom(slot):
+				letter(slot)
+			case .truth:
+				1
+			case let .not(value), let .necessarily(value), let .possibly(value):
+				1 + value.size(letter, limit: limit)
+			case let .and(left, right), let .or(left, right), let .xor(left, right),
+			     let .implies(left, right), let .iff(left, right):
+				1 + left.size(letter, limit: limit) + right.size(letter, limit: limit)
+			case let .forAll(_, body), let .exists(_, body):
+				1 + body.size(letter, limit: limit)
+			case let .predicate(_, terms):
+				terms.reduce(1) { min($0 + $1.size(letter, limit: limit), limit + 1) }
+			case let .relation(_, left, right):
+				1 + left.size(letter, limit: limit) + right.size(letter, limit: limit)
+		}
+		return min(size, limit + 1)
+	}
+}
+
+private extension LogicTerm {
+	func size(_ letter: (Int) -> Int, limit: Int) -> Int {
+		let size: Int = switch self {
+			case let .variable(slot):
+				letter(slot)
+			case .emptySet:
+				1
+			case let .union(left, right), let .intersection(left, right):
+				1 + left.size(letter, limit: limit) + right.size(letter, limit: limit)
+		}
+		return min(size, limit + 1)
+	}
+}
+
 extension [LogicDefinition] {
 	/// The first definition that ends up depending on its own letter
 	var firstCircular: LogicDefinition? {

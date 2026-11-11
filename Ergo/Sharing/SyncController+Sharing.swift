@@ -46,6 +46,13 @@ extension SyncController {
 		syncNow()
 	}
 
+	// MARK: - Reporting
+
+	/// Tells whoever looks after the server why a shared board is a problem. Needs to be on it, as a member or the owner.
+	func report(_ board: Board.ID, reason: String) async throws {
+		try await withSyncClient { try await $0.reportBoard(board: BoardRecord.id(board), reason: reason) }
+	}
+
 	// MARK: - Joining
 
 	/// Asks without an account, since someone can open a link before they have one

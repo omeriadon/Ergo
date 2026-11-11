@@ -49,6 +49,7 @@ struct MemberPeopleList: View {
 	private var boardStore
 
 	@State private var confirmingLeave = false
+	@State private var isReporting = false
 
 	var body: some View {
 		List {
@@ -59,11 +60,20 @@ struct MemberPeopleList: View {
 			}
 
 			Section {
+				Button("Report Board…", systemImage: "exclamationmark.bubble") {
+					isReporting = true
+				}
+				.accessibilityIdentifier("people.report")
+
 				Button("Leave Board", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
 					confirmingLeave = true
 				}
 				.accessibilityIdentifier("people.leave")
 			}
+		}
+		.sheet(isPresented: $isReporting) {
+			ReportBoardSheet(board: board)
+				.presentationDetents([.medium, .large])
 		}
 		.confirmationDialog("Leave this board?", isPresented: $confirmingLeave, titleVisibility: .visible) {
 			Button("Leave", role: .destructive) {

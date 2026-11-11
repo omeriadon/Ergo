@@ -129,6 +129,12 @@ extension LogicProblem {
 				"\(glyph(.variable(letter))) is already defined"
 			case let .circularDefinition(letter):
 				"\(glyph(.variable(letter))) is defined in terms of itself"
+			case let .tooDeep(limit):
+				"Expected at most \(limit) levels of nesting"
+			case let .tooLong(limit):
+				"Expected a statement of at most \(limit) symbols"
+			case let .tooLongWrittenOut(limit):
+				"Expected at most \(limit) symbols once every letter is written out"
 		}
 	}
 
@@ -149,6 +155,10 @@ extension LogicProblem {
 				"Sets hold members, never other sets"
 			case .definitionAsConclusion:
 				"Move the definition before the premises"
+			case .tooLong:
+				"Split it into premises, or give part of it a letter with ≔"
+			case .tooLongWrittenOut:
+				"A letter that stands for other letters is as long as all of them together"
 			case .extraArgumentMarker:
 				"An argument has one marker, between the premises and the conclusion"
 			case .extraConclusions(.symbol("∵")):

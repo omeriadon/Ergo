@@ -20,7 +20,7 @@ enum UsageController {
 	static func plan(_ request: Request) async throws -> Response {
 		let body = try request.decode(PlanUpload.self)
 		let account = try request.accountID
-		try await request.ergo.usage.activate(body, for: account, on: request.quietDB)
+		try await request.ergo.usage.activate(body, for: account, on: request.quietDB, logger: request.logger)
 		return try await Response.json(request.ergo.usage.status(of: account, on: request.quietDB))
 	}
 

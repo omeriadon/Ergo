@@ -51,7 +51,7 @@ final class TranslationService: Sendable {
 		logger: Logger,
 		events: @escaping @Sendable (TranslationEvent) async -> Void
 	) async throws -> Translation {
-		try check(request)
+		try check(request, logger: logger)
 		if let problem = EnglishValidator.problem(with: request.english) {
 			return Translation(english: request.english, issues: [TranslationIssue(severity: .error, message: problem)])
 		}
@@ -71,7 +71,7 @@ final class TranslationService: Sendable {
 		logger: Logger,
 		events: @escaping @Sendable (TranslationEvent) async -> Void
 	) async throws -> ArgumentBreakdown {
-		try check(request)
+		try check(request, logger: logger)
 		if let problem = EnglishValidator.problem(with: request.english) {
 			return ArgumentBreakdown(
 				kind: .neither,
@@ -89,6 +89,16 @@ final class TranslationService: Sendable {
 
 	private func pipeline(for request: TranslateRequest, backend: ProviderBackend) -> TranslationPipeline {
 		TranslationPipeline(backend: backend, letters: request.letters, descriptors: request.descriptors)
+	}
+
+	/// Says so in the log when it refuses, since a socket has no status to
+	private func check(_ request: TranslateRequest, logger: Logger) throws {
+		do {
+			try check(request)
+		} catch let refusal as ServiceError {
+			logger.warning("A request was refused", metadata: ["scope": "\(request.scope.rawValue)", "code": "\(refusal.code)"])
+			throw refusal
+		}
 	}
 
 	/// What no model call is needed to refuse: another grammar, letters or descriptors the app would never send
@@ -117,7 +127,8 @@ final class TranslationService: Sendable {
 	/// Claude Code login, which has nothing to spend, when the call shouldn't make everything else wait.
 	///
 	/// The server's own model is refused once the account's allowance for today is used, and what the call uses is counted
-	/// against it. `counts` is false for a deep research run, which is counted by the week instead.
+	/// against it. `counts` is false for a deep research run, which is counted by the week instead. A run that finds the
+	/// account busy says so in the log, unless `warnsWhenBusy` is false for a caller that will try again.
 	func withBackend<Result: Sendable>(
 		provider: Provider,
 		scope: String,
@@ -126,6 +137,7 @@ final class TranslationService: Sendable {
 		logger: Logger,
 		exclusive isExclusive: Bool = true,
 		counts: Bool = true,
+		warnsWhenBusy: Bool = true,
 		_ work: (ProviderBackend) async throws -> Result,
 		summary: (Result) -> Logger.Metadata
 	) async throws -> Result {
@@ -133,37 +145,60 @@ final class TranslationService: Sendable {
 		let id: UUID?
 		let credential: ProviderCredential
 		let meter: UsageMeter?
-		if provider.isServerManaged {
-			guard let openRouter = config.openRouter else {
-				throw ServiceError(code: .notConnected, message: "\(provider.displayName) isn't set up on the Ergo server")
-			}
-			id = nil
-			credential = ProviderCredential(provider: provider, kind: .apiKey, secret: openRouter.key)
-			let plan: AccountPlan = if counts {
-				try await usage.requireAllowance(for: account, on: database)
+		do {
+			if provider.isServerManaged {
+				guard let openRouter = config.openRouter else {
+					throw ServiceError(code: .notConnected, message: "\(provider.displayName) isn't set up on the Ergo server")
+				}
+				id = nil
+				credential = ProviderCredential(provider: provider, kind: .apiKey, secret: openRouter.key)
+				let plan: AccountPlan = if counts {
+					try await usage.requireAllowance(for: account, on: database)
+				} else {
+					try await usage.plan(of: account, on: database).plan
+				}
+				meter = UsageMeter(model: plan == .plus ? openRouter.plusModel : nil)
+				logger.verbose("Allowance checked", metadata: ["plan": "\(plan)", "counted": "\(counts)"])
 			} else {
-				try await usage.plan(of: account, on: database).plan
+				meter = nil
+				guard let stored = try await Credential.find(provider, for: account, on: database), let storedID = stored.id else {
+					throw ServiceError(code: .notConnected, message: "\(provider.displayName) isn't connected")
+				}
+				id = storedID
+				do {
+					credential = try ProviderCredential(
+						provider: stored.provider,
+						kind: stored.kind,
+						secret: vault.open(stored.sealed, account: account, provider: stored.provider)
+					)
+				} catch {
+					logger.error("Couldn't unseal a credential", metadata: ["provider": "\(provider)"])
+					throw ServiceError(code: .notConnected, message: "Couldn't read the saved \(provider.displayName) connection, connect it again")
+				}
 			}
-			meter = UsageMeter(model: plan == .plus ? openRouter.plusModel : nil)
-		} else {
-			meter = nil
-			guard let stored = try await Credential.find(provider, for: account, on: database), let storedID = stored.id else {
-				throw ServiceError(code: .notConnected, message: "\(provider.displayName) isn't connected")
-			}
-			id = storedID
+		} catch let refusal as ServiceError {
+			// Nothing has run, and what asked (a socket, a detached run) has no status of its own to say so
+			logger.warning("A run was refused", metadata: ["provider": "\(provider)", "scope": "\(scope)", "code": "\(refusal.code)"])
+			throw refusal
+		} catch let cancelled as CancellationError {
+			throw cancelled
+		} catch {
+			// The database, most likely, which a detached run would otherwise report to the app without a word here
+			logger.error("A run couldn't be set up", metadata: ["provider": "\(provider)", "scope": "\(scope)", "error": "\(logger.reason(for: error))"])
+			throw error
+		}
+
+		// A connection's status is for the app's Settings, so not saving it fails nothing, but it should be known
+		func note(_ what: String, _ update: () async throws -> Void) async {
 			do {
-				credential = try ProviderCredential(
-					provider: stored.provider,
-					kind: stored.kind,
-					secret: vault.open(stored.sealed, account: account, provider: stored.provider)
-				)
+				try await update()
 			} catch {
-				logger.error("Couldn't unseal a credential", metadata: ["provider": "\(provider)"])
-				throw ServiceError(code: .notConnected, message: "Couldn't read the saved \(provider.displayName) connection, connect it again")
+				logger.warning("Couldn't save a connection's status", metadata: ["status": "\(what)", "error": "\(String(describing: type(of: error)))"])
 			}
 		}
 
 		func run() async throws -> Result {
+			logger.verbose("Run started", metadata: ["provider": "\(credential.provider)", "scope": "\(scope)"])
 			let backend = ProviderBackend(credential: credential, config: config, runner: runner, logger: logger, meter: meter) { [vault] refreshed in
 				guard let id else { return }
 				do {
@@ -191,7 +226,7 @@ final class TranslationService: Sendable {
 				}
 				await settle()
 				if let id {
-					try? await Credential.markWorking(id, on: database)
+					await note("working") { try await Credential.markWorking(id, on: database) }
 				}
 				var metadata: Logger.Metadata = [
 					"provider": "\(credential.provider)",
@@ -199,19 +234,19 @@ final class TranslationService: Sendable {
 					"duration": "\(start.duration(to: .now))",
 				]
 				metadata.merge(summary(result)) { first, _ in first }
-				logger.info("Translated", metadata: metadata)
+				logger.verbose("Translated", metadata: metadata)
 				return result
 			} catch let failure as ProviderFailure {
 				if let id, case let .credentialRejected(problem) = failure {
-					try? await Credential.mark(id, problem: problem, on: database)
+					await note("rejected") { try await Credential.mark(id, problem: problem, on: database) }
 				}
-				logger.warning("Translation failed", metadata: ["provider": "\(credential.provider)", "code": "\(failure.serviceError.code)"])
+				logger.warning("Translation failed", metadata: ["provider": "\(credential.provider)", "code": "\(failure.serviceError.code)", "duration": "\(start.duration(to: .now))"])
 				throw failure.serviceError
 			} catch let error as CancellationError {
-				logger.info("Translation cancelled", metadata: ["provider": "\(credential.provider)"])
+				logger.verbose("Translation cancelled", metadata: ["provider": "\(credential.provider)", "duration": "\(start.duration(to: .now))"])
 				throw error
 			} catch {
-				logger.error("Translation failed", metadata: ["provider": "\(credential.provider)", "error": "\(String(reflecting: error))"])
+				logger.error("Translation failed", metadata: ["provider": "\(credential.provider)", "error": "\(logger.reason(for: error))"])
 				throw ServiceError.internalFailure
 			}
 		}
@@ -219,6 +254,12 @@ final class TranslationService: Sendable {
 		guard isExclusive else {
 			return try await run()
 		}
-		return try await exclusive(for: account, run)
+		do {
+			return try await exclusive(for: account, run)
+		} catch let busy as ServiceError where busy.code == .busy && warnsWhenBusy {
+			// Only `exclusive` says busy, before anything ran
+			logger.warning("A run was refused", metadata: ["provider": "\(provider)", "scope": "\(scope)", "code": "\(busy.code)"])
+			throw busy
+		}
 	}
 }

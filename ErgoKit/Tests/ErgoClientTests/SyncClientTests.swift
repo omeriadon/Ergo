@@ -40,6 +40,12 @@ struct SyncClientTests {
 		#expect(signedIn == SignedIn(accountID: StubServer.account, token: StubServer.signedIn, isNewAccount: false))
 	}
 
+	/// The stub only answers `isNewAccount` when the code reached it
+	@Test func signingInSendsTheAuthorizationCodeWhenThereIsOne() async throws {
+		let signedIn = try await client.signInWithApple(identityToken: "eyJ", nonce: "nonce", authorizationCode: "code")
+		#expect(signedIn == SignedIn(accountID: StubServer.account, token: StubServer.signedIn, isNewAccount: true))
+	}
+
 	@Test func signingOutDeletesThisDevicesToken() async throws {
 		try await client.signOut()
 	}
@@ -98,9 +104,11 @@ final class StubServer: URLProtocol {
 				return (200, json(SyncResponse(cursor: (sync.cursor ?? 0) + 1, changes: sync.changes.map(\.record), more: false, serverTime: now)))
 			case ("POST", "/v1/account/apple"):
 				guard let signIn = try? ErgoProtocol.decoder.decode(SignInWithAppleRequest.self, from: body),
-				      signIn == SignInWithAppleRequest(identityToken: "eyJ", nonce: "nonce")
+				      signIn.identityToken == "eyJ", signIn.nonce == "nonce",
+				      [nil, "code"].contains(signIn.authorizationCode)
 				else { return (400, Data()) }
-				return (200, json(SignedIn(accountID: account, token: signedIn, isNewAccount: false)))
+				// A new account says the code arrived
+				return (200, json(SignedIn(accountID: account, token: signedIn, isNewAccount: signIn.authorizationCode != nil)))
 			case ("POST", "/v1/account/register"):
 				guard let credentials = try? ErgoProtocol.decoder.decode(EmailCredentials.self, from: body) else { return (400, Data()) }
 				return credentials.email == email.email ? (409, json(emailInUse)) : (204, Data())

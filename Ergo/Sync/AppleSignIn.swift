@@ -31,8 +31,22 @@ struct AppleSignIn {
 		request.nonce = hashedNonce
 	}
 
+	/// What to send the server once Apple has answered
+	struct Credentials {
+		let identityToken: String
+
+		/// What the server trades with Apple for a token it can later revoke the sign-in with. Nil if Apple sent none, which
+		/// still signs in.
+		let authorizationCode: String?
+	}
+
 	/// The identity token to send the server. Nil when the person cancelled, which isn't an error.
 	static func identityToken(from result: Result<ASAuthorization, any Error>) throws -> String? {
+		try credentials(from: result)?.identityToken
+	}
+
+	/// The identity token and authorization code to send the server. Nil when the person cancelled, which isn't an error.
+	static func credentials(from result: Result<ASAuthorization, any Error>) throws -> Credentials? {
 		switch result {
 			case let .success(authorization):
 				guard
@@ -42,7 +56,7 @@ struct AppleSignIn {
 				else {
 					throw failed
 				}
-				return token
+				return Credentials(identityToken: token, authorizationCode: credential.authorizationCode.flatMap { String(data: $0, encoding: .utf8) })
 			case let .failure(error):
 				if let error = error as? ASAuthorizationError, error.code == .canceled {
 					return nil

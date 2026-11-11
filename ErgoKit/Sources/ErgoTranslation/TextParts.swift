@@ -44,7 +44,11 @@ public enum TextParts {
 					flush()
 					var rest = Substring(sentence)
 					while !rest.isEmpty {
-						parts.append(rest.prefix(characterLimit).trimmingCharacters(in: .whitespaces))
+						// A cut can land on nothing but spaces, and an empty part is nothing to break down
+						let piece = rest.prefix(characterLimit).trimmingCharacters(in: .whitespacesAndNewlines)
+						if !piece.isEmpty {
+							parts.append(piece)
+						}
 						rest = rest.dropFirst(characterLimit)
 					}
 				}

@@ -72,7 +72,8 @@ struct ServerProbeTests {
 		#expect(probe == ErgoClient.Probe(rest: refused, socket: refused))
 	}
 
-	/// What to look for on the Mac's console when the app can't translate
+	/// What to look for on the Mac's console when the app can't translate: a turned-away upgrade for anyone, and every line for
+	/// a verbose account
 	@Test func upgradesAreLoggedWithTheirStatus() async throws {
 		let scratch = try Scratch()
 		defer { scratch.remove() }
@@ -81,16 +82,32 @@ struct ServerProbeTests {
 			let logs = CapturedLogs()
 			app.logger = logs.logger
 
-			let account = try await ErgoClient(server: server, token: nil).createAccount()
-			_ = try await ErgoClient(server: server, token: account.token).probe()
-			_ = try await ErgoClient(server: server, token: "not-a-token").probe()
-
 			// Vapor's own trace lines print request heads, bearer token and all, so only what's on at the default level counts
-			let shown = logs.all.filter { !$0.hasPrefix("trace") && !$0.hasPrefix("debug") }.joined(separator: "\n")
+			func shownLines() -> [String] {
+				logs.all.filter { !$0.hasPrefix("trace") && !$0.hasPrefix("debug") }
+			}
+
+			// Working as normal, an account that isn't verbose says nothing at all
+			let quiet = try await ErgoClient(server: server, token: nil).createAccount()
+			_ = try await ErgoClient(server: server, token: quiet.token).probe()
+			#expect(!shownLines().contains { $0.contains("/v1/") }, "Expected no request lines for an account that isn't verbose, found \(shownLines())")
+
+			// Being turned away is said, as a warning, and says nothing of whose token it was
+			_ = try await ErgoClient(server: server, token: "not-a-token").probe()
+			#expect(shownLines().contains { $0.hasPrefix("warning GET /v1/translate 401 (WebSocket upgrade)") })
+
+			// A verbose account's requests are all there, with its real id
+			let account = try await ErgoClient(server: server, token: nil).createAccount()
+			app.ergo.verbose.remember(account.id)
+			_ = try await ErgoClient(server: server, token: account.token).probe()
+
+			let shown = shownLines().joined(separator: "\n")
 			#expect(shown.contains("info GET /v1/translate 101 (WebSocket upgrade)"))
-			#expect(shown.contains("info GET /v1/translate 401 (WebSocket upgrade)"))
 			#expect(shown.contains("info GET /v1/connections 200"))
+			#expect(shown.contains(account.id.uuidString))
+			#expect(!shown.contains(quiet.id.uuidString))
 			#expect(!shown.contains(account.token))
+			#expect(!shown.contains(quiet.token))
 			#expect(!shown.contains("not-a-token"))
 		}
 	}

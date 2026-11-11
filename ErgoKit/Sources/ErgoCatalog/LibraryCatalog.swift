@@ -62,9 +62,15 @@ public struct LibraryCatalog: Sendable {
 		entries.first { $0.category == category && $0.id == id }
 	}
 
-	/// Best first. Every word of the query counts, and a match in the name counts most.
+	/// The most words of a query that count. Every one is looked for in every entry, and a model can send any amount.
+	public static let queryWordLimit = 16
+
+	/// Best first. Every word of the query counts once, up to `queryWordLimit`, and a match in the name counts most.
 	public func search(_ query: String, category: String? = nil, limit: Int = 12) -> [LibraryEntryText] {
-		let words = LibraryEntryText.words(in: query)
+		var words: [String] = []
+		for word in LibraryEntryText.words(in: query) where words.count < Self.queryWordLimit && !words.contains(word) {
+			words.append(word)
+		}
 		guard !words.isEmpty else { return [] }
 		let phrase = words.joined(separator: " ")
 

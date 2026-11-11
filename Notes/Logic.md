@@ -1,0 +1,11 @@
+# Logic: the editor, the checker and scratchpads
+
+- Editor content is `[LogicKeyboardEntry]`, never a String. The six letters are `.variable(1...6)`, and the actual letter is only applied when displaying (`LogicLetters.resolved(Defaults[.logicLetters])`), so changing letters is lossless.
+- Every entry glyph is exactly one UTF-16 unit; `LogicEditorTextView` relies on that to map text ranges to entry indices.
+- `≔` defines a letter (`X≔Y∧Z`). It isn't a claim: `LogicParse.expandedArgument` replaces the letter with what it stands for, and that's what gets checked.
+- The parser refuses what's too big instead of crashing on it, since it runs on every keystroke: `LogicParser.maximumDepth` levels of nesting, `maximumStatementLength` symbols in a statement, and `maximumWrittenOutLength` once every `≔` letter is written out. `LaTeX` and `MarkdownDocument` stop nesting the same way, and `LibraryCatalog.search` only counts `queryWordLimit` words.
+- `LogicChecker` uses a truth table for plain ¬ ∧ ∨ ⊕ → ↔, and `LogicProver` (a tableau) for □ ◇ ∀ ∃, identity and sets. □ ◇ are S5. A letter is either a member or a set (`LogicSorts`), and sets hold members, never other sets. `.undecided` is honest: it's only for what ran out of steps or quantifies over sets. Never make it guess.
+- Fallacy ids in `LogicFallacyForm` (ErgoLogic) must match ids in `ErgoKit/Sources/ErgoCatalog/Resources/fallacies.json`.
+- Logic lives in the Logic tab, as a list of saved scratchpads. A `LogicScratchpad` holds a whole argument: `descriptors`, `logic` and `english`, which is always `LogicEnglish`'s reading of the logic. Letters are app-wide, descriptors are per scratchpad. `ScratchpadStore` (`Ergo/Scratchpads/`) is how they change, and `ScratchpadEditorView` edits `ScratchpadStore.current`: logic on top, read-only English below it, updated on every keystroke while the logic parses, and arrow keys in a safe area inset above the keyboard.
+- Logic → English is `LogicEnglish`, deterministic and exact, and reads everything the logic keyboard can write (a test fails if a new key isn't covered). `text(for: LogicArgument…)` is what the verify stage compares against.
+- `LogicCourse` (ErgoLogic) is the course in the Logic tab, and a test checks every answer against `LogicChecker`. The first two lessons are free. Progress stays on the device.

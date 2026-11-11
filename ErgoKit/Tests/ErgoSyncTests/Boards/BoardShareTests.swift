@@ -60,6 +60,13 @@ struct BoardShareTests {
 		#expect(Self.share.fields[SyncFieldName.role] == "viewer")
 	}
 
+	/// Nil would make the board look like one nobody shared, which this person could edit
+	@Test func aRoleAddedLaterIsAShareThatCanOnlyBeViewed() {
+		var newerRole = Self.share.fields
+		newerRole[SyncFieldName.role] = "admin"
+		#expect(BoardShare(Self.shareRecord(newerRole))?.role == .viewer)
+	}
+
 	@Test func aShareIsNilForWhatItCantRead() {
 		var wrongKind = Self.shareRecord()
 		wrongKind.kind = .board
@@ -68,10 +75,6 @@ struct BoardShareTests {
 		var tombstone = Self.shareRecord()
 		tombstone.fields[SyncFieldName.deleted] = SyncField(value: true, stamp: SyncStamp(time: Self.stamp.time + 1, counter: 0, device: "server"))
 		#expect(BoardShare(tombstone) == nil)
-
-		var newerRole = Self.share.fields
-		newerRole[SyncFieldName.role] = "admin"
-		#expect(BoardShare(Self.shareRecord(newerRole)) == nil)
 
 		var badMember = Self.share.fields
 		badMember[SyncFieldName.member] = "not a uuid"

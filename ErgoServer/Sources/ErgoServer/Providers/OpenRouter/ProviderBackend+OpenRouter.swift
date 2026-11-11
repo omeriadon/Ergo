@@ -97,15 +97,13 @@ extension ProviderBackend {
 			let start = ContinuousClock.now
 			let completion = try await client.complete(body, timeout: remaining, text: text)
 			log(StageModels.ask, completion, since: start, sent: body.count)
-			if settings.logsConversation {
-				logger.notice("Ask round", metadata: [
-					"round": "\(turn + 1)",
-					"model": "\(model)",
-					"finish": "\(completion.finishReason ?? "none")",
-					"tools": "\(completion.toolCalls.map { "\($0.name) \($0.arguments)" })",
-					"text": "\(completion.text.debugDescription)",
-				])
-			}
+			// Sizes and the tools' names, never the text or what the tools were asked
+			logger.verbose("Ask round", metadata: [
+				"round": "\(turn + 1)",
+				"finish": "\(completion.finishReason ?? "none")",
+				"tools": "\(completion.toolCalls.map(\.name))",
+				"characters": "\(completion.text.count)",
+			])
 
 			guard !completion.toolCalls.isEmpty else {
 				guard completion.finishReason != "length" else {
@@ -126,14 +124,11 @@ extension ProviderBackend {
 			])
 			for call in completion.toolCalls {
 				let result = try await openRouterToolResult(call, responder: responder)
-				if settings.logsConversation {
-					logger.notice("Ask tool result", metadata: [
-						"round": "\(turn + 1)",
-						"tool": "\(call.name)",
-						"characters": "\(result.count)",
-						"result": "\(String(result.prefix(500)).debugDescription)",
-					])
-				}
+				logger.verbose("Ask tool result", metadata: [
+					"round": "\(turn + 1)",
+					"tool": "\(call.name)",
+					"characters": "\(result.count)",
+				])
 				messages.append([
 					"role": "tool",
 					"tool_call_id": call.id,
@@ -209,6 +204,6 @@ extension ProviderBackend {
 			metadata["input_tokens"] = "\(usage.promptTokens.map(String.init) ?? "none")"
 			metadata["output_tokens"] = "\(usage.completionTokens.map(String.init) ?? "none")"
 		}
-		logger.info("OpenRouter call", metadata: metadata)
+		logger.verbose("OpenRouter call", metadata: metadata)
 	}
 }

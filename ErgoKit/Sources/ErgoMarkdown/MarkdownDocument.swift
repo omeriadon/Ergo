@@ -53,11 +53,28 @@ public struct MarkdownDocument: Sendable, Hashable {
 			self.identity = identity
 		}
 
+		/// Quotes and lists inside one another further than this are read as one paragraph at this level. No screen
+		/// could show them, and every level is a level of the stack for whatever walks the blocks.
+		static let maximumDepth = 40
+
+		/// The paragraph that holds what was nested too far
+		static let flattened = -2
+
 		static func tree(of parsed: AttributedString) -> Node {
 			let root = Node(kind: nil, identity: -1)
 			for run in parsed.runs {
 				var node = root
-				for component in (run.presentationIntent?.components ?? []).reversed() {
+				for (depth, component) in (run.presentationIntent?.components ?? []).reversed().enumerated() {
+					guard depth < maximumDepth else {
+						if let last = node.children.last, last.identity == flattened {
+							node = last
+						} else {
+							let child = Node(kind: .paragraph, identity: flattened)
+							node.children.append(child)
+							node = child
+						}
+						break
+					}
 					if let last = node.children.last, last.identity == component.identity {
 						node = last
 					} else {

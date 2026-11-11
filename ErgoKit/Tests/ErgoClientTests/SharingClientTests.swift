@@ -31,6 +31,16 @@ struct SharingClientTests {
 		try await client.unregisterPushDevice()
 	}
 
+	@Test func reportingSendsTheTrimmedReason() async throws {
+		try await client.reportBoard(board: Self.board, reason: "  Abuse \n")
+	}
+
+	@Test func reportingWithNoReasonNeverLeaves() async {
+		await #expect(throws: ServiceError.self) {
+			try await client.reportBoard(board: Self.board, reason: "  ")
+		}
+	}
+
 	@Test func analysisStartsWithTheRequestAndStopsWithoutOne() async throws {
 		let request = BoardAnalysisRequest(run: UUID(), provider: .claude, statements: [.init(id: UUID(), english: "It rained.")], links: [], sources: [])
 		try await client.startBoardAnalysis(board: Self.board, request)
@@ -111,6 +121,8 @@ final class SharingStub: URLProtocol {
 			     ("DELETE", "/v1/boards/\(board)/share"),
 			     ("DELETE", "/v1/push/device"):
 				return (204, Data())
+			case ("POST", "/v1/boards/\(board)/report"):
+				return (try? ErgoProtocol.decoder.decode(ReportBoard.self, from: body)) == ReportBoard(reason: "Abuse") ? (204, Data()) : (400, Data())
 			case ("POST", "/v1/boards/\(board)/analysis"):
 				return (try? ErgoProtocol.decoder.decode(BoardAnalysisRequest.self, from: body))?.problem == nil ? (202, Data()) : (400, Data())
 			case ("DELETE", "/v1/boards/\(board)/analysis"):

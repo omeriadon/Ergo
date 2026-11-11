@@ -38,6 +38,13 @@ public extension ErgoClient {
 		_ = try await data(for: request("DELETE", ErgoProtocol.Path.boardShare(board)))
 	}
 
+	/// Tells whoever looks after the server why this board is a problem. Needs to be on the board, and a reason of 1 to 1,000
+	/// characters.
+	func reportBoard(board: String, reason: String) async throws {
+		let body = try ReportBoard(reason: ReportBoard.normalized(reason))
+		_ = try await data(for: request("POST", ErgoProtocol.Path.boardReport(board), body: body))
+	}
+
 	// MARK: - Joining
 
 	/// Sends no bearer token, since someone can open a link before they have an account

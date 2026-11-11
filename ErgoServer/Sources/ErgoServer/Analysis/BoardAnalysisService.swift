@@ -91,7 +91,7 @@ struct BoardAnalysisService: Sendable {
 			await job.run()
 		}
 		jobs.attach(task, board: key, run: request.run)
-		logger.info("Started a board analysis", metadata: [
+		logger.verbose("Started a board analysis", metadata: [
 			"provider": "\(request.provider)",
 			"statements": "\(request.statements.count)",
 			"links": "\(request.links.count)",
@@ -194,9 +194,26 @@ struct BoardAnalysisService: Sendable {
 			}
 
 			// The board went away, or so is the database
+			if service.jobs.isShuttingDown {
+				logger.warning("A board analysis was cut short by the server shutting down", metadata: ["reports": "\(heard.reports)", "provider": "\(request.provider)"])
+			} else if heard.isGone {
+				logger.verbose("A board analysis stopped, since its board is gone", metadata: ["reports": "\(heard.reports)"])
+			}
 			guard !heard.isGone, !service.jobs.isShuttingDown else { return }
 			await finish(state, error: problem, discussion: heard.discussion)
-			logger.info("Analysed a board", metadata: ["state": "\(state.rawValue)", "reports": "\(heard.reports)", "provider": "\(request.provider)"])
+			var summary: Logger.Metadata = [
+				"state": "\(state.rawValue)",
+				"reports": "\(heard.reports)",
+				"provider": "\(request.provider)",
+				"seconds": "\(Int(Date.now.timeIntervalSince(started)))",
+			]
+			if state == .failed {
+				// What the account's model or server did, in the server's own words, never anything from the board
+				summary["reason"] = "\(problem ?? "unknown")"
+				logger.warning("A board analysis failed", metadata: summary)
+			} else {
+				logger.verbose("Analysed a board", metadata: summary)
+			}
 		}
 
 		private func analyse(_ heard: Heard) async throws {
@@ -211,7 +228,7 @@ struct BoardAnalysisService: Sendable {
 			defer { service.runs.remove(token) }
 
 			let url = "http://127.0.0.1:\(port)/\(ErgoProtocol.Path.askTools)/\(token)"
-			try await Self.waitingForTurn {
+			try await Self.waitingForTurn(logger: logger) {
 				// Claude Code has nothing to spend, so it needn't make Ask wait
 				try await service.translations.withBackend(
 					provider: request.provider,
@@ -220,7 +237,8 @@ struct BoardAnalysisService: Sendable {
 					database: database,
 					logger: logger,
 					exclusive: request.provider == .codex,
-					counts: false
+					counts: false,
+					warnsWhenBusy: false
 				) { backend in
 					try await backend.ask(prompt: prompt, tools: url, responder: responder, settings: .analysis) { text in
 						heard.add(text: text)
@@ -232,12 +250,18 @@ struct BoardAnalysisService: Sendable {
 		}
 
 		/// A Codex login keeps the one call at a time, so this waits for Ask's turn instead of failing
-		private static func waitingForTurn(_ work: () async throws -> Void) async throws {
+		private static func waitingForTurn(logger: Logger, _ work: () async throws -> Void) async throws {
 			let deadline = ContinuousClock.now + BoardAnalysisService.turnWait
+			var hasSaid = false
 			while true {
 				do {
 					return try await work()
 				} catch let error as ServiceError where error.code == .busy && ContinuousClock.now < deadline {
+					// Once, not every few seconds for minutes
+					if !hasSaid {
+						hasSaid = true
+						logger.warning("A board analysis is waiting for the account's other run to finish", metadata: ["limit": "\(BoardAnalysisService.turnWait.spelledOut)"])
+					}
 					try await Task.sleep(for: BoardAnalysisService.turnPoll)
 				}
 			}

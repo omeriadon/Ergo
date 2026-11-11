@@ -857,7 +857,11 @@ struct EmailLogTests {
 		let scratch = try Scratch()
 		defer { scratch.remove() }
 
-		try await withLiveServer(.testing(scratch)) { app, server in
+		// The email is one of the configured ones, in another case, so the account is verbose once it has it
+		var config = ServerConfig.testing(scratch)
+		config.verboseAccounts = ["Log.Canary@Example.com"]
+
+		try await withLiveServer(config) { app, server in
 			let logs = CapturedLogs()
 			app.logger = logs.logger
 
@@ -896,6 +900,8 @@ struct EmailLogTests {
 			// The server did log, so an empty capture can't pass
 			#expect(everything.contains("Registered an email"))
 			#expect(everything.contains("Signed in with an email"))
+			// A verbose account is logged by its id, and everyone else by a pseudonym that isn't it
+			#expect(everything.contains(phone.id.uuidString))
 			for secret in [email, "canary", password, changed, "wrong canary horse", hash, newHash, String(hash.dropFirst(7)), "not an email"] {
 				#expect(!everything.contains(secret), "Expected the logs without '\(secret.prefix(12))…', found it")
 			}

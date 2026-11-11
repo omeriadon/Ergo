@@ -149,16 +149,17 @@ extension AskServerMessage: Codable {
 		switch try container.decode(String.self, forKey: .type) {
 			case "text":
 				self = try .text(container.decode(String.self, forKey: .text))
+			// None of these ends an answer, so one this version can't read is skipped like a kind it doesn't know
 			case "tool":
-				self = try .tool(container.decode(AskToolActivity.self, forKey: .tool))
+				self = (try? container.decode(AskToolActivity.self, forKey: .tool)).map(Self.tool) ?? .unknown
 			case "action":
-				self = try .action(container.decode(AskAction.self, forKey: .action))
+				self = (try? container.decode(AskAction.self, forKey: .action)).map(Self.action) ?? .unknown
 			case "title":
-				self = try .title(container.decode(String.self, forKey: .text))
+				self = (try? container.decode(String.self, forKey: .text)).map(Self.title) ?? .unknown
 			case "modeRequest":
-				self = try .modeRequest(container.decode(AskModeRequest.self, forKey: .mode))
+				self = (try? container.decode(AskModeRequest.self, forKey: .mode)).map(Self.modeRequest) ?? .unknown
 			case "boardEdit":
-				self = try .boardEdit(container.decode(AskBoardEdit.self, forKey: .edit))
+				self = (try? container.decode(AskBoardEdit.self, forKey: .edit)).map(Self.boardEdit) ?? .unknown
 			case "finished":
 				self = .finished
 			case "failed":

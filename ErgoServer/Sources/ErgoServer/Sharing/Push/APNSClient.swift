@@ -107,19 +107,25 @@ final class APNSClient: Sendable {
 
 	/// `<header>.<claims>.<signature>`, each base64url, the signature raw rather than DER as JWTs need
 	static func signedToken(key: P256.Signing.PrivateKey, keyID: String, teamID: String, now: Date) throws -> String {
-		struct Header: Encodable {
-			let alg: String
-			let kid: String
-		}
-
 		struct Claims: Encodable {
 			let iss: String
 			let iat: Int
 		}
 
+		return try signedToken(key: key, keyID: keyID, claims: Claims(iss: teamID, iat: Int(now.timeIntervalSince1970)))
+	}
+
+	/// The same ES256 token with other claims, which is what Apple's other services take: DeviceCheck and the Sign in with
+	/// Apple client secret both sign like this
+	static func signedToken(key: P256.Signing.PrivateKey, keyID: String, claims: some Encodable) throws -> String {
+		struct Header: Encodable {
+			let alg: String
+			let kid: String
+		}
+
 		let header = try base64URL(JSONEncoder().encode(Header(alg: "ES256", kid: keyID)))
-		let claims = try base64URL(JSONEncoder().encode(Claims(iss: teamID, iat: Int(now.timeIntervalSince1970))))
-		let signed = "\(header).\(claims)"
+		let payload = try base64URL(JSONEncoder().encode(claims))
+		let signed = "\(header).\(payload)"
 		let signature = try key.signature(for: Data(signed.utf8))
 		return "\(signed).\(base64URL(signature.rawRepresentation))"
 	}

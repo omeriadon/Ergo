@@ -22,14 +22,15 @@ func configure(_ app: Application) async throws {
 	try await configure(app, config: config)
 }
 
-/// Tests pass their own config, a verifier that doesn't run a CLI, an Apple check that doesn't need Apple, and a push
-/// sender that doesn't either
+/// Tests pass their own config, a verifier that doesn't run a CLI, an Apple check that doesn't need Apple, a stand-in for
+/// trading and revoking Apple's refresh tokens, and a push sender that doesn't need Apple either
 func configure(
 	_ app: Application,
 	config: ServerConfig,
 	verifier: ConnectionVerifier? = nil,
 	apple: AppleTokenVerifier? = nil,
-	push: PushSender? = nil
+	push: PushSender? = nil,
+	appleTokens: AppleRefreshTokens? = nil
 ) async throws {
 	guard StagePrompts.missing.isEmpty else {
 		throw ServerConfig.Problem(description: "Missing prompts for \(StagePrompts.missing.map { "'\($0)'" }.joined(separator: ", "))")
@@ -39,7 +40,11 @@ func configure(
 		throw ServerConfig.Problem(description: "ERGO_RUNNER_USER: Unknown user '\(user)'")
 	}
 	let sender = push ?? PushSender.live(config: config, client: { [weak app] in app?.client }, logger: app.logger)
-	app.ergo = try ErgoServices(config: config, verifier: verifier, apple: apple, push: sender)
+	app.ergo = try ErgoServices(config: config, verifier: verifier, apple: apple, appleTokens: appleTokens, push: sender)
+	if config.appleRootCertificate != nil, app.ergo.usage.appStore == nil {
+		// The file has a certificate in it, but not one the verifier can use, and nothing else would say so until a purchase failed
+		app.logger.error("ERGO_APPLE_ROOT_CERT_FILE isn't a certificate App Store purchases can be checked against, so they will be refused")
+	}
 	app.lifecycle.use(app.ergo.analyses.jobs)
 	app.lifecycle.use(DetachedRunsShutdown(app.ergo.detached))
 	app.passwords.use(.bcrypt(cost: config.passwordCost))
@@ -81,6 +86,8 @@ func addMigrations(to app: Application) {
 	app.migrations.add(CreateBoardSharing())
 	app.migrations.add(DropPushDeviceEnvironment())
 	app.migrations.add(CreateUsage())
+	app.migrations.add(AddAppleRefreshToken())
+	app.migrations.add(CreateReport())
 }
 
 /// SQLite creates the file with the umask's permissions, which would let the runner user read every sealed credential

@@ -102,7 +102,12 @@ struct OpenRouterClient: Sendable {
 		}
 
 		let message = (try? JSONDecoder().decode(Reply.self, from: body))?.error?.message
-		logger.warning("OpenRouter refused a call", metadata: ["status": "\(status)", "message": "\(message.map { String($0.prefix(300)) } ?? "none")"])
+		var metadata: Logger.Metadata = ["status": "\(status)"]
+		// What OpenRouter says can quote the request, so it's only for a verbose account
+		if logger.isVerbose, let message {
+			metadata["message"] = "\(String(message.prefix(300)))"
+		}
+		logger.warning("OpenRouter refused a call", metadata: metadata)
 
 		switch status {
 			case 401, 403:

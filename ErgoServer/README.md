@@ -13,8 +13,8 @@ Every request from the app sends `Ergo-Protocol-Version: 1`, and all but `POST v
 | Route | Needs | |
 |---|---|---|
 | `POST v1/accounts` | nothing | A new anonymous account and this device's token. 5 an hour per address. |
-| `DELETE v1/account` | token | Deletes the account, its connections, its synced records and every device's token |
-| `POST v1/account/apple` | token | `SignInWithAppleRequest` → `SignedIn`. Attaches the Apple ID, or merges this device's account into the one that has it. |
+| `DELETE v1/account` | token | Deletes the account, its connections, its synced records and every device's token. Revokes its Sign in with Apple first, see [Revoking Sign in with Apple](#revoking-sign-in-with-apple). |
+| `POST v1/account/apple` | token | `SignInWithAppleRequest` → `SignedIn`. Attaches the Apple ID, or merges this device's account into the one that has it. The optional `authorizationCode` is traded for a refresh token, see [Revoking Sign in with Apple](#revoking-sign-in-with-apple). |
 | `POST v1/account/register` | token | `EmailCredentials` → `204`. Attaches an email and password to this device's account. `409` `emailInUse` if the email is taken, `400` if the account already has one. 10 an hour per address. |
 | `POST v1/account/login` | token | `EmailCredentials` → `SignedIn`. Merges this device's anonymous account into the one that owns the email, like Sign in with Apple. `401` `invalidCredentials` for a wrong password or an unknown email, `429` `rateLimited` after too many failures. |
 | `POST v1/account/password` | token | `ChangePasswordRequest` → `204`. Signs out every other device of the account and closes their sockets; this device's token stays. |
@@ -30,6 +30,7 @@ Every request from the app sends `Ergo-Protocol-Version: 1`, and all but `POST v
 | `POST` / `DELETE v1/boards/<board>/members/<member>` | signed in, owner | `UpdateBoardMember` → `204`, or removes them |
 | `DELETE v1/boards/<board>/share` | signed in, owner | Stops sharing: everyone else loses the board, the owner keeps it |
 | `POST` / `DELETE v1/boards/<board>/analysis` | signed in, can edit the board | `BoardAnalysisRequest` → `202`, and the run carries on without the request. `DELETE` stops it, keeping what's been written. See Board analysis. |
+| `POST v1/boards/<board>/report` | signed in, on the board | `ReportBoard` → `204`. Saves the reason for whoever looks after the server, see [Reporting a board](#reporting-a-board). 10 an hour per account. |
 | `POST v1/invites/preview` | version header only | `BoardInviteToken` → `BoardInvitePreview`. 30 a minute per address. |
 | `POST v1/invites/accept` | signed in | `AcceptBoardInvite` → `JoinedBoard`. Accepting twice, or as the owner, keeps the role you have. |
 | `PUT` / `DELETE v1/push/device` | signed in | `PushDevice` → `204`, or forgets this device's token only |
@@ -96,14 +97,20 @@ swift run ErgoServer serve --hostname 0.0.0.0 --port 8080
 - The first request shows iOS's local network prompt. If it was turned down, turn it back on in Settings → Privacy & Security → Local Network. Only debug builds have the usage description, so release builds never ask.
 - Plain `http://` and `ws://` to a `.local` name or a local address are allowed by the app's `NSAllowsLocalNetworking`, so no other ATS exception is needed.
 - Settings → Translation → Test Server (debug builds only) tries REST and the translate socket separately, and shows each one's error as the app would.
-- Every request logs one line at `info` with its status, so the console shows what actually reached the server:
+- The log is quiet while things work, see [Logs](#logs). To see what reached the server, list your own account in `ERGO_VERBOSE_ACCOUNTS` (an email, or the account id for an account signed in with Apple alone). Its requests then log one line each at `info` with the status:
 
 	```
-	[ INFO ] GET /v1/connections 200 [request-id: …]
-	[ INFO ] GET /v1/translate 101 (WebSocket upgrade) [request-id: …]
+	[ INFO ] GET /v1/connections 200 [account: …, duration: …, request-id: …]
+	[ INFO ] GET /v1/translate 101 (WebSocket upgrade) [account: …, duration: …, request-id: …]
 	```
 
-	A translation always starts with `GET /v1/translate`. A status other than 101 is why it was turned away: 401 for an unknown account, 426 for another protocol version. No line at all means the upgrade never reached the server, so look at the address, the network, local network access and the firewall.
+	A translation always starts with `GET /v1/translate`. A status other than 101 is why it was turned away, and that shows for every account, as a `warning` that names the `ServiceError` `code`: 401 `unauthorized` for an unknown account, 426 `outdatedApp` for another protocol version.
+
+	```
+	[ WARNING ] GET /v1/translate 401 (WebSocket upgrade) [code: unauthorized, request-id: …]
+	```
+
+	With no line at all, either the account isn't a verbose one and it worked, or the upgrade never reached the server, so look at the address, the network, local network access and the firewall.
 - Don't run with `--log trace` outside your own machine: Vapor's trace lines print every request's headers, bearer token included.
 
 ## Configuration
@@ -131,7 +138,13 @@ Everything comes from the environment. `compose.yaml` passes the server everythi
 | `ERGO_APNS_KEY_ID` | required with a key | The key's id |
 | `ERGO_APNS_TEAM_ID` | `P6PV2R9443` | The team the key belongs to |
 | `ERGO_APNS_TOPIC` | `ERGO_APPLE_APP_ID` | The `apns-topic`, the app's bundle id |
+| `ERGO_APPLE_SIGNIN_KEY` or `ERGO_APPLE_SIGNIN_KEY_FILE` | none | A Sign in with Apple key (`.p8`, PEM; a literal `\n` is accepted in the variable). Unset, deleting an account can't revoke its Apple sign-in, and launch says so once. One that doesn't read refuses to start. See [Revoking Sign in with Apple](#revoking-sign-in-with-apple). |
+| `ERGO_APPLE_SIGNIN_KEY_ID` | required with a key | The key's id |
+| `ERGO_APPLE_SIGNIN_TEAM_ID` | `P6PV2R9443` | The team the key belongs to |
 | `ERGO_APP_STORE_ID` | none | Adds an App Store link and banner to the join page |
+| `ERGO_MINIMUM_PROTOCOL` | the oldest the code answers | Apps below it get `outdatedApp` and can't use the server until they update. Raise it once nearly everyone has. |
+| `ERGO_RECOMMENDED_PROTOCOL` | the minimum | Apps below it are still answered, with `Ergo-App-Update: recommended` on every reply, and show a badge asking for an update. Raise it only once the newer app is out. |
+| `ERGO_VERBOSE_ACCOUNTS` | none | Comma separated emails and account ids of your own accounts, whose activity is logged in full. An email matches in any case. An account signed in with Apple alone has no email on the server, so list its id. Anything that is neither refuses to start, without saying which. Unset logs only problems, for everyone. The list is never logged, only how many entries it has. See [Logs](#logs). |
 
 Production is `serve --env production`. It refuses to start without a vault key, an unreadable models file, or an unknown runner user.
 
@@ -223,7 +236,7 @@ The CLIs run with users' secrets on a machine holding everyone's sealed credenti
 - **No account enumeration:** a login for an unknown email checks the password against a made-up hash, so it takes as long as a wrong password, and both answer with the same `invalidCredentials`. Registering an email that's taken does say so (`emailInUse`), which the app needs to offer signing in instead. Anyone can find out whether an email has an account by trying to register it.
 - **Brute force:** 10 failed logins per 15 minutes per client address and 10 per email, counted whether or not the email has an account, answered with `rateLimited` and how long to wait. Wrong current passwords when changing a password count too. A success forgets that email's failures, not the address's. In memory, so a restart forgets. The cost: anyone can use up an email's failures to lock its owner out of logging in for 15 minutes.
 - **Lost devices:** changing the password deletes every other device's token and closes their live sockets. Signing in with the password on a device doesn't sign the others out.
-- **Logs:** never request bodies, secrets, CLI output or synced values. Each call logs its stage, provider, duration, exit status and token usage. A failed call adds the tail of the CLI's stderr. A sync logs only how many records it pushed, changed and returned. Emails, passwords and hashes are never logged: SQL query logging is off (it prints bound values at debug), and the email routes use a database handle at `info` so Fluent's own debug log of every query stays quiet. A test captures the server's logs at `trace` through a real register, login and password change and checks none of them appear.
+- **Logs:** see [Logs](#logs) for what is said and to whom. Never request bodies, secrets, CLI output or synced values. Emails, passwords and hashes are never logged: SQL query logging is off (it prints bound values at debug), and the email routes use a database handle at `info` so Fluent's own debug log of every query stays quiet. Tests capture the server's logs at `trace` through a real register, login and password change and check none of them appear.
 
 ## Sync
 
@@ -252,12 +265,12 @@ Sync follows `Plans/05-Sync.md`. The merge rules are ErgoKit's `ErgoSync`, so th
 
 Sharing follows `Plans/09-Sharing.md`. Each member keeps their own copy of a board's records, sealed for their account, and the server copies every change to the others, each taking that account's own seq. Who's on a board reaches devices as a `share` record, which only the server writes.
 
-- **Tables:** `board_shares` (the board's id, its owner, the title sealed by the vault), `board_members` (role and name, unique per board and account; the owner has a row too), `board_invites` (only the token's hash, 30 days, at most 20 open per board) and `push_devices` (one per APNs token, tied to the account token, so signing out of a device stops its pushes).
+- **Tables:** `board_shares` (the board's id, its owner, the title sealed by the vault), `board_members` (role and name, unique per board and account; the owner has a row too), `board_invites` (only the token's hash, 30 days, at most 20 open per board), `push_devices` (one per APNs token, tied to the account token, so signing out of a device stops its pushes) and `reports`, see [Reporting a board](#reporting-a-board).
 - **Pushing:** a change on a board the caller can't edit, or a pushed `share`, comes back in `SyncResponse.rejected` with what the account has, and the rest of the request goes through. A board record with only `deleted: true` is allowed from anyone: the owner's deletes for everyone, and a member's leaves.
 - **Locks:** everyone on a touched board is locked in sorted order before a shared write, so two pushes can't deadlock on Postgres.
 - **Limits:** 30 people per board. What other members' pushes copy in doesn't count towards the 50,000 records, so nobody's limit can fail someone else's push.
 - **Pushes:** `Sharing/Push/`, with no dependency beyond swift-crypto and Vapor's client. Edits alert at most once per board and person per 15 minutes, otherwise silently at most once per account per minute. A device with a live socket gets nothing. In memory, so a restart forgets. A `410`, `BadDeviceToken` or `Unregistered` deletes the device.
-- **Logs:** never an invite token, an APNs token, a title or a name. The sharing routes use the quiet database handle, and the request log says `/join` for an invite link. Sending only logs Apple's reason or the status.
+- **Logs:** never an invite token, an APNs token, a title or a name. The sharing routes use the quiet database handle, and the request log says `/join` for an invite link. A push that couldn't be sent is a `warning` with Apple's reason or the status, for the person it was meant for. Everything else is for verbose accounts.
 
 ## Sign in with Apple notifications
 
@@ -274,11 +287,21 @@ Apple posts to `POST v1/apple/notifications` when someone changes their Hide My 
 | `email-enabled`, `email-disabled` | Nothing. The relay address is never stored. |
 | `consent-revoked` | Deletes every device token of the account with that `sub` and closes its live sockets, so each device is signed out on its next request. The account, its `appleSubject` and all its data stay, so signing in with Apple again gets back to them. |
 | `account-delete` | That Apple ID can never sign in again. An account that also has an email only loses its `appleSubject`, and its devices stay signed in. Otherwise the whole account goes, exactly like `DELETE v1/account`: connections, synced records, every token, and its live sockets. |
-| anything else | Nothing, and the type is logged. |
+| anything else | Nothing, and the type is logged as a `warning`. |
 
-The log says only the event type and whether an account matched. Never the `sub`, an email, a token or the JWT, and the route's queries use the quiet database handle, so Fluent's debug log can't print the `sub` either.
+This route has no account of its own, so a handled notification is only logged, as an event type and whether an account matched, for a verbose account it was about. A notification that doesn't verify, a repeat, or an unknown type is a `warning` (the first two at most once a minute). Never the `sub`, an email, a token or the JWT, and the route's queries use the quiet database handle, so Fluent's debug log can't print the `sub` either.
 
 **Registering it**, once the server is hosted: in the developer portal, open Certificates, Identifiers & Profiles → Identifiers → the App ID `com.adonis.Ergo` → Sign in with Apple → Configure (or Edit), and set **Server-to-Server Notification Endpoint** to `https://<production host>/v1/apple/notifications`. It must be an absolute HTTPS URL with TLS 1.2 or later, and there's one per primary App ID group. Then save the App ID.
+
+## Reporting a board
+
+`POST v1/boards/<board>/report` is how a member says a shared board has something on it that shouldn't be. Anyone on the board can send one, the owner too. It follows App Store guideline 1.2: blocking is leaving the board (a member) or removing someone (the owner), which already exist, and this is the way to tell someone who can act.
+
+- **Request:** `ReportBoard`, a `reason` of 1 to 1,000 characters after trimming. `invalidRequest` for anything else. The same `invalidRequest` ("Expected a board you're on, found none with that id") for a board the caller isn't on and one that doesn't exist, so it can't be used to find boards. A member who left or was removed isn't on it any more.
+- **Answers:** `204`. 10 an hour per account (`429` `rateLimited`), counted only for reports that are saved, and in memory, so a restart forgets.
+- **Table:** `reports` has the id, when, the reporter's account id, the board's id, the board owner's account id, the reason, and `handled`, empty until dealt with. No foreign keys, so a report outlives the accounts and the board it names, and deleting an account doesn't remove the reports it sent.
+- **Nothing is sent yet.** There is no mail provider, so a report only waits in the table: read it with the database. The plan is for a mail provider to send every row whose `handled` is empty to whoever looks after the server, and set `handled`.
+- **Logs:** one `warning` for each saved report with the report's id, which is how to find it in the table. Never the reason, which is a stranger's words about someone else's board, or the board's id.
 
 ## Board analysis
 
@@ -290,7 +313,58 @@ The log says only the event type and whether an account matched. Never the `sub`
 - **Reports** are checked in `BoardAnalysisTools` (ErgoKit), and each accepted one is written straight away as an `annotation` record in every member's row, in one transaction with them locked in order (`BoardLedger.writeServerOwned`). When the run finishes well, annotations from other runs are tombstoned for everyone, the `analysis` record says how it went and holds the discussion (at most 40,000 characters), and a silent push syncs devices without a live socket. A job on a board that was deleted, or that the person left, stops without writing.
 - **One call at a time:** a Claude Code login doesn't take the per-account lock, so a run doesn't block Ask. A Codex login keeps it: the job checks every 3 seconds for up to 5 minutes, and Ask answers `busy` meanwhile.
 - **Sync:** `annotation` (`board`, `content`, `deleted`) and `analysis` (the same, id = the board's) are server-owned like `share`: a pushed one is rejected. Joining a shared board copies them with the rest, since they carry `board`.
-- **Logs:** counts and states only. Never the board's text, a report, the discussion or the token.
+- **Logs:** counts and states only. Never the board's text, a report, the discussion or the token. A run that fails, or is cut short by a shutdown, is a `warning` for everyone, and waiting for a Codex login's turn is said once.
+
+## Revoking Sign in with Apple
+
+App Store guideline 5.1.1(v) wants deleting an account to revoke its Sign in with Apple, so Apple stops listing Ergo for the person. Apple only revokes with a refresh token, which a sign-in's `authorizationCode` buys once.
+
+- **Off without a key.** Set `ERGO_APPLE_SIGNIN_KEY` (or `_FILE`), `ERGO_APPLE_SIGNIN_KEY_ID`, and `ERGO_APPLE_SIGNIN_TEAM_ID` if it isn't `P6PV2R9443`. The client id is `ERGO_APPLE_APP_ID`. Without a key the code is ignored and nothing is revoked.
+- **Signing in:** the app sends `SignInWithAppleRequest.authorizationCode` (optional, so older apps still work). With a key, the server posts it to `https://appleid.apple.com/auth/token` (`grant_type=authorization_code`) with a client secret: an ES256 JWT signed with the key (`iss` the team, `sub` the client id, `aud` `https://appleid.apple.com`, five minutes), made by the same signing as APNs and DeviceCheck. The `refresh_token` it returns is sealed with the vault (associated data `<account>/apple/refresh`) into `accounts.apple_refresh_token` of the account that signed in, which after a merge is the surviving one. A newer token replaces the older. If the reply's id token names a different Apple ID, nothing is kept.
+- **A failed trade never fails the sign-in.** The code is single use and expires in minutes, so it isn't retried. The log says only why Apple refused or what the error was, never the code.
+- **Deleting:** `DELETE v1/account` posts the stored token to `https://appleid.apple.com/auth/revoke` (`token_type_hint=refresh_token`) before the account's rows go. A failure logs a warning and the account is deleted anyway. Signing out of a device, and Apple's own `consent-revoked` and `account-delete` notifications, revoke nothing: Apple already knows. An `account-delete` for an account that also has an email forgets the stored token.
+- **Anyone who signed in before this shipped** has no stored token until they sign in again, so deleting their account can't revoke it.
+- **Logs:** never the code, a refresh token or the client secret. A trade or a revoke that fails is a `warning` for everyone.
+
+**In the developer portal**, once: Certificates, Identifiers & Profiles → Keys → add a key with **Sign in with Apple** turned on, configured for the primary App ID `com.adonis.Ergo`. Download the `.p8` (Apple offers it once), note its Key ID, and set `ERGO_APPLE_SIGNIN_KEY_FILE` and `ERGO_APPLE_SIGNIN_KEY_ID`. Only app builds that send `authorizationCode` fill it in, and each person has a token after their next sign-in with Apple.
+
+## Logs
+
+Two kinds of reader share one log. Everyone's accounts get silence while things work and a line when something doesn't. Your own accounts, listed in `ERGO_VERBOSE_ACCOUNTS`, get everything they do. Nothing is logged for the first kind that could say who it was or what they wrote.
+
+**For every account**, only problems, as `warning` for what recovered or was refused and `error` for what shouldn't happen:
+
+- A request that failed: its method, the route as written in `routes.swift` (`/v1/boards/:board/members/:member`, never the ids in it), the status and the `ServiceError` `code`. That covers a dead token (401 `unauthorized`), a protocol version too old (426 `outdatedApp`), a wrong password (401 `invalidCredentials`), a limit hit (429), an account that is busy (409) and an upgrade that was turned away (any status but 101). A line that can repeat is said once a minute per route, status and code, and `leftOut` says how many weren't. A 500 is an `error` with the kind of error.
+- A run that was refused before it started, a CLI that timed out, couldn't be run or answered in the wrong shape, a provider that failed, a run that failed, a retry of the schema, and a login that Codex or Apple refused.
+- A sync push that was rejected, a push that Apple refused, a purchase that didn't verify, a board that was reported, a board analysis that failed or was cut short, Apple's keys that couldn't be fetched, a notification or sign-in that didn't verify.
+- A record or a credential that won't unseal, a run directory that couldn't be removed, a connection's status that couldn't be saved.
+
+A line that belongs to an account says `who`, a short pseudonym: the first 8 hex characters of the SHA-256 of the account's id as the database has it (uppercase), so the same account always has the same one, and it doesn't give the id away. To find one for an id you have: `printf %s 3F2504E0-4F89-11D3-9A0C-0305E82C3301 | shasum -a 256 | cut -c1-8`.
+
+**Verbose accounts add**, at `info`, with `account` set to the real id:
+
+- Each request and its status and duration, with its real path (still never an invite or tool token), and each socket opening (the `101` line) and closing, with how long and how it ended.
+- Each run: starting, finishing with its duration and counts, and each CLI call with its stage, exit status and token usage, and OpenRouter calls and rounds with their sizes.
+- Each sync with how many records went each way (pushed, changed, returned, superseded, rejected), each invite, join, member change and stop sharing, a push device registered, each analysis starting and finishing.
+- Each purchase, allowance check and use of the allowance, sign-in, registration, password change, connection, and an account being deleted.
+- When something fails, the details a stranger's line leaves out: the error in full, the CLI's last lines of stderr (with the credential and anything shaped like a key taken out), and what a provider said.
+
+**Never logged**, for anyone, verbose accounts included: account tokens, provider credentials and API keys, invite tokens, Ask tool tokens, authorization codes, refresh tokens, passwords and hashes, push tokens, emails, Apple's `sub`, and anything anyone wrote (questions, answers, board text, titles, names, a report's reason, shared text). Sizes and counts instead. The list in `ERGO_VERBOSE_ACCOUNTS` is never logged either, only how many entries it has.
+
+**How an account is known to be yours.** The request's token gives the account's row, so its email is compared with the list (in any case) as it signs in, and again when an email is attached to it. The result is remembered, so a run that outlives its request, a push or a socket needs no query. An account that hasn't made a request since launch isn't known by its email until it does, and one listed by its id always is.
+
+**Reading a line:**
+
+```
+[ INFO ] POST /v1/sync 200 [account: 3F2504E0-4F89-11D3-9A0C-0305E82C3301, duration: 0.021 seconds, request-id: …]
+[ INFO ] Synced [account: 3F2504E0-…, pushed: 4, changed: 4, returned: 2, superseded: 0, rejected: 0, more: false, request-id: …]
+[ WARNING ] POST /v1/sync 429 [who: 9c1d02ab, code: rateLimited, request-id: …]
+[ WARNING ] Translation failed [who: 9c1d02ab, provider: claude, code: timedOut, duration: 120.4 seconds, request-id: …]
+```
+
+`account` is a listed account's id. `who` is anyone else's pseudonym. `request-id` ties the lines of one request together. A run that outlives its request (an answer, a breakdown, an analysis) logs without it. `code` is the `ServiceError` code the app was given.
+
+**For the code.** `AccountAuthenticator` makes `request.logger` the account's, with `VerboseAccounts` (`request.ergo.verbose`). On it, `info` and below are dropped unless the account is listed, and `warning` and `error` carry the pseudonym. Use `logger.verbose(…)` for anything that is as normal as it gets, since it does nothing on a logger that isn't a verbose account's. Work that outlives the request takes `request.jobLogger(for: account)`, and a change to which account a request is about (a sign-in that merges) calls `request.identify(_:)`. Use `logger.reason(for: error)` for an error, since a database's can quote what was being saved.
 
 ## Known gaps
 
@@ -300,7 +374,7 @@ The log says only the event type and whether an account matched. Never the `sub`
 
 ## Tests
 
-`swift test` is offline. Shell scripts stand in for `claude` and `codex`, so it never uses a real login, a fake `AppleTokenVerifier` stands in for Apple, and a `PushSender` that only keeps what it's given stands in for APNs. The socket and sync tests run a real server on a free port and talk to it with the app's own `ErgoClient`, and two real `SyncReplica`s converge through the actual route.
+`swift test` is offline. Shell scripts stand in for `claude` and `codex`, so it never uses a real login, a fake `AppleTokenVerifier` stands in for Apple, a fake `AppleRefreshTokens` for its token and revoke calls, and a `PushSender` that only keeps what it's given stands in for APNs. The socket and sync tests run a real server on a free port and talk to it with the app's own `ErgoClient`, and two real `SyncReplica`s converge through the actual route.
 
 Codex can't be called from the network this was built on, so its command line follows the 0.166 docs and `codex exec --help`, and is only exercised with fakes.
 

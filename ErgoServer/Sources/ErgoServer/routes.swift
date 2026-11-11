@@ -76,8 +76,10 @@ func routes(_ app: Application) throws {
 	// Registers straight away on the socket's event loop, so a push just after the upgrade can't be missed
 	synced.webSocket(ErgoProtocol.Path.syncLive.pathComponents, maxFrameSize: .init(integerLiteral: 1 << 12)) { request, socket in
 		guard let account = try? request.accountID, let token = try? request.tokenID else {
+			request.logger.warning("A live sync socket opened without an account")
 			return socket.close(code: .policyViolation, promise: nil)
 		}
+		socket.logClosing("Sync live", logger: request.logger)
 		request.ergo.live.listen(socket, account: account, token: token, pingInterval: request.ergo.config.pingInterval)
 	}
 
@@ -88,6 +90,7 @@ func routes(_ app: Application) throws {
 	synced.post(boardMember, use: BoardSharingController.updateMember)
 	synced.delete(boardMember, use: BoardSharingController.removeMember)
 	synced.delete(ErgoProtocol.Path.boardShare(":board").pathComponents, use: BoardSharingController.stopSharing)
+	synced.post(ErgoProtocol.Path.boardReport(":board").pathComponents, use: BoardSharingController.report)
 	synced.post(ErgoProtocol.Path.inviteAccept.pathComponents, use: BoardSharingController.accept)
 	let boardAnalysis = ErgoProtocol.Path.boardAnalysis(":board").pathComponents
 	synced.on(.POST, boardAnalysis, body: .collect(maxSize: "2mb"), use: BoardAnalysisController.start)

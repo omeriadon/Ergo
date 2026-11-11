@@ -37,7 +37,12 @@ struct MoveAccountTokens: AsyncMigration {
 					try await rebuild(database)
 				}
 			} catch {
-				try? await sql.raw("PRAGMA foreign_keys = \(unsafeRaw: String(foreignKeys))").run()
+				do {
+					try await sql.raw("PRAGMA foreign_keys = \(unsafeRaw: String(foreignKeys))").run()
+				} catch {
+					// This connection goes back to the pool without them, so deleting a row would no longer cascade
+					database.logger.error("Couldn't turn foreign keys back on after a failed migration")
+				}
 				throw error
 			}
 			try await sql.raw("PRAGMA foreign_keys = \(unsafeRaw: String(foreignKeys))").run()

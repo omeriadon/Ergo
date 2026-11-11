@@ -31,10 +31,12 @@ struct CanvasToolbar: ToolbarContent {
 	let remove: () -> Void
 
 	var body: some ToolbarContent {
-		ToolbarItemGroup(placement: .topBarTrailing) {
+		ToolbarItem(placement: .topBarLeading) {
 			Button("Fit", systemImage: "arrow.up.left.and.down.right.magnifyingglass", action: fit)
 				.accessibilityIdentifier("board.fitButton")
+		}
 
+		ToolbarItemGroup(placement: .topBarTrailing) {
 			Button("Quick AI", systemImage: "sparkles", action: quickAI)
 				.accessibilityIdentifier("board.quickAI")
 
@@ -42,9 +44,6 @@ struct CanvasToolbar: ToolbarContent {
 			if !isReadOnly, hasAnalysis {
 				AnalyseButton(isAnalysing: isAnalysing, analyse: showAnalysis)
 			}
-
-			Button("Boards", systemImage: "text.page.and.line.vertical.and.text.page", action: showBoards)
-				.accessibilityIdentifier("board.boardsButton")
 		}
 
 		ToolbarOverflowMenu {

@@ -75,7 +75,7 @@ extension BoardSharing {
 			try await invite.save(on: database)
 		}
 
-		logger.info("Made a board invite", metadata: ["role": "\(body.role.rawValue)"])
+		logger.verbose("Made a board invite", metadata: ["role": "\(body.role.rawValue)"])
 		return BoardInvite(url: url, role: body.role, expires: expires)
 	}
 
@@ -86,7 +86,7 @@ extension BoardSharing {
 			_ = try await Self.owned(key, by: account, ledger: &ledger, on: database)
 			try await BoardInviteRow.query(on: database).filter(\.$board.$id == boardID).delete()
 		}
-		logger.info("Revoked board invites")
+		logger.verbose("Revoked board invites")
 	}
 
 	// MARK: - Previews
@@ -146,7 +146,7 @@ extension BoardSharing {
 			ledger.tell([owner.$account.id], about: board, heading: "\(name) joined")
 			return JoinedBoard(board: key, role: member.boardRole)
 		}
-		logger.info("Joined a shared board", metadata: ["role": "\(joined.role.rawValue)"])
+		logger.verbose("Joined a shared board", metadata: ["role": "\(joined.role.rawValue)"])
 		return joined
 	}
 }

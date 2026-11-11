@@ -13,6 +13,9 @@ struct FormulaParser {
 	let range: Range<Int>
 	var index: Int
 
+	/// How many brackets and ¬ □ ◇ ∀ ∃ the statement being read is inside
+	private var depth = 0
+
 	init(entries: [LogicKeyboardEntry], range: Range<Int>) {
 		self.entries = entries
 		self.range = range
@@ -103,6 +106,13 @@ struct FormulaParser {
 	}
 
 	private mutating func unary() throws -> LogicFormula {
+		// Everything that reads a formula goes as deep as it does, so one nested without end would run out of stack
+		depth += 1
+		defer { depth -= 1 }
+		guard depth <= LogicParser.maximumDepth else {
+			throw failure(.tooDeep(limit: LogicParser.maximumDepth))
+		}
+
 		switch current {
 			case .symbol("¬"):
 				index += 1

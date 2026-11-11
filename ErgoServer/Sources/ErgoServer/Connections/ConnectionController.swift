@@ -51,6 +51,7 @@ enum ConnectionController {
 			.filter(\.$account.$id == request.accountID)
 			.filter(\.$provider == provider)
 			.delete()
+		request.logger.verbose("Disconnected a provider", metadata: ["provider": "\(provider)"])
 		return Response(status: .noContent)
 	}
 
@@ -66,14 +67,14 @@ enum ConnectionController {
 			do {
 				secret = try await services.verifier(credential, logger: request.logger)
 			} catch let failure as ProviderFailure {
-				request.logger.info("Connection check failed", metadata: ["provider": "\(credential.provider)", "code": "\(failure.serviceError.code)"])
+				request.logger.warning("Connection check failed", metadata: ["provider": "\(credential.provider)", "code": "\(failure.serviceError.code)"])
 				throw failure.serviceError
 			}
 
 			let sealed = try services.vault.seal(secret, account: account, provider: credential.provider)
 			let now = Date.now
 
-			return try await request.db.transaction { database in
+			let status = try await request.db.transaction { database in
 				try await Credential.query(on: database)
 					.filter(\.$account.$id == account)
 					.filter(\.$provider == credential.provider)
@@ -91,6 +92,8 @@ enum ConnectionController {
 				try await stored.save(on: database)
 				return stored.status
 			}
+			request.logger.verbose("Connected a provider", metadata: ["provider": "\(credential.provider)", "kind": "\(credential.kind)"])
+			return status
 		}
 	}
 

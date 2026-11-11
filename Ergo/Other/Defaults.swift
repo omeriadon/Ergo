@@ -105,6 +105,9 @@ extension Defaults.Keys {
 	/// so keeping it would leave sync failing forever.
 	static let syncState = Key<SyncReplica?>("canvasSyncState", default: nil)
 
+	/// When the "update Ergo" badge last showed, so it isn't shown more than once a day. This device only.
+	static let updateWarningShown = Key<Date?>("updateWarningShown", default: nil)
+
 	/// What other people see this person called on a board they share. Only ever typed in here, never taken from the
 	/// email. Not synced: the server keeps the name that each board was joined with, and this only fills in the next one.
 	static let sharingName = Key<String>("sharingName", default: "")

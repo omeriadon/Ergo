@@ -27,11 +27,11 @@ struct QuickAISheet: View {
 	var body: some View {
 		NavigationStack {
 			content
-				.navigationTitle("Quick AI")
 				.navigationBarTitleDisplayMode(.inline)
+				.scrollEdgeEffectHidden(true, for: .top)
 				.toolbar { toolbar }
 		}
-		.presentationDetents([.medium, .large])
+		.presentationDetents([.medium, .large, .fraction(1 / 4)])
 		// The board stays usable behind it at half height
 		.presentationBackgroundInteraction(.enabled(upThrough: .medium))
 		.presentationDragIndicator(.visible)
@@ -61,8 +61,10 @@ struct QuickAISheet: View {
 				.accessibilityIdentifier("quickAI.signIn")
 			}
 		} else if store.current.board == board {
-			AskConversationView(conversationID: store.current.id, tab: .board)
+			AskConversationView(conversationID: store.current.id, tab: .board, fitsSheet: true)
 				.id(store.current.id)
+				// Down to the sheet's edge, so the composer's corners can follow the sheet's. The keyboard still pushes it up.
+				.ignoresSafeArea(.container, edges: .bottom)
 		}
 	}
 

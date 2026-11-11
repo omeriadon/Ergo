@@ -9,15 +9,18 @@ import ErgoProtocol
 import Foundation
 import Vapor
 
-/// Every error leaves as a `ServiceError` body, the only shape the app reads. Anything unexpected is logged and kept vague.
+/// Every error leaves as a `ServiceError` body, the only shape the app reads. Anything unexpected is logged and kept vague:
+/// the route and, for a verbose account, what went wrong, otherwise only the kind of error, since a database's can quote what
+/// was being saved. The code of every failure goes to `RequestLogMiddleware` for its line.
 struct ServiceErrorMiddleware: AsyncMiddleware {
 	func respond(to request: Request, chainingTo next: any AsyncResponder) async throws -> Response {
 		do {
 			return try await next.respond(to: request)
 		} catch {
 			let failure = Self.serviceError(for: error, path: request.url.path)
+			request.failureCode = "\(failure.code)"
 			if failure.code == .internalError {
-				request.logger.error("Request failed", metadata: ["path": "\(JoinController.loggablePath(of: request))", "error": "\(String(reflecting: error))"])
+				request.logger.error("Request failed", metadata: ["path": "\(RequestLogMiddleware.path(of: request))", "error": "\(request.logger.reason(for: error))"])
 			}
 			return try Response.json(failure, status: failure.status)
 		}
@@ -90,6 +93,20 @@ extension Response {
 }
 
 extension Request {
+	private struct FailureCodeKey: StorageKey {
+		typealias Value = String
+	}
+
+	/// The `ServiceError` code this request was answered with, when it failed
+	var failureCode: String? {
+		get {
+			storage[FailureCodeKey.self]
+		}
+		set {
+			storage[FailureCodeKey.self] = newValue
+		}
+	}
+
 	func decode<Value: Decodable>(_: Value.Type) throws -> Value {
 		guard let body = body.data else {
 			throw ServiceError(code: .invalidRequest, message: "Expected a JSON body")

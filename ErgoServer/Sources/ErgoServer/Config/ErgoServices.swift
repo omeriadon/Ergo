@@ -22,6 +22,10 @@ struct ErgoServices: Sendable {
 	let appleNotificationLimiter: CreateAccountLimiter
 	let appleNotifications: SeenNotifications
 
+	/// Which accounts are logged in full, and the lines that would repeat too often to be said every time
+	let verbose: VerboseAccounts
+	let logThrottle = LogThrottle()
+
 	/// What an unknown email's password is checked against, so it takes as long as a known one's
 	let dummyPasswordHash: String
 	let translations: TranslationService
@@ -34,14 +38,22 @@ struct ErgoServices: Sendable {
 	let detached = DetachedRuns()
 	let verifier: ConnectionVerifier
 	let apple: AppleTokenVerifier
+	let appleTokens: AppleRefreshTokens
 	let syncLimits: SyncLimits
 	let live: SyncLive
 	let sync: SyncService
 	let push: PushService
 	let sharing: BoardSharing
 	let invitePreviewLimiter: CreateAccountLimiter
+	let reportLimiter: CreateAccountLimiter
 
-	init(config: ServerConfig, verifier: ConnectionVerifier? = nil, apple: AppleTokenVerifier? = nil, push sender: PushSender = .disabled) throws {
+	init(
+		config: ServerConfig,
+		verifier: ConnectionVerifier? = nil,
+		apple: AppleTokenVerifier? = nil,
+		appleTokens: AppleRefreshTokens? = nil,
+		push sender: PushSender = .disabled
+	) throws {
 		let runner = ProcessRunner(
 			prefix: config.runnerPrefix,
 			owner: config.runnerUser.flatMap(ProcessRunner.Owner.init(named:)),
@@ -51,6 +63,8 @@ struct ErgoServices: Sendable {
 
 		self.config = config
 		self.runner = runner
+		let verbose = VerboseAccounts(config.verboseAccounts)
+		self.verbose = verbose
 		let vault = CredentialVault(key: config.vaultKey)
 		self.vault = vault
 		accountLimiter = CreateAccountLimiter(limit: config.accountsPerHour)
@@ -70,14 +84,16 @@ struct ErgoServices: Sendable {
 		self.ask = ask
 		self.verifier = verifier ?? .live(config: config, runner: runner)
 		self.apple = apple ?? .live(applicationIdentifier: config.appleApplicationID)
+		self.appleTokens = appleTokens ?? .live(config: config)
 		syncLimits = SyncLimits(requestsPerMinute: config.syncsPerMinute)
 		let live = SyncLive()
 		self.live = live
-		let push = PushService(sender: sender, live: live)
+		let push = PushService(sender: sender, live: live, verbose: verbose)
 		self.push = push
 		let sharing = BoardSharing(vault: vault, live: live, push: push, publicURL: config.publicURL)
 		self.sharing = sharing
 		invitePreviewLimiter = CreateAccountLimiter(limit: config.invitePreviewsPerMinute, window: 60)
+		reportLimiter = CreateAccountLimiter(limit: config.reportsPerHour)
 		sync = SyncService(vault: vault, live: live, sharing: sharing, recordsPerAccount: config.recordsPerAccount)
 		analyses = BoardAnalysisService(translations: translations, runs: ask.runs, sharing: sharing, catalog: catalog)
 	}

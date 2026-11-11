@@ -54,8 +54,8 @@ extension SyncController {
 		analysis.refresh(from: replica)
 	}
 
-	func signIn(identityToken: String, nonce: String) async throws {
-		try await account.signInWithApple(identityToken: identityToken, nonce: nonce)
+	func signIn(identityToken: String, nonce: String, authorizationCode: String? = nil) async throws {
+		try await account.signInWithApple(identityToken: identityToken, nonce: nonce, authorizationCode: authorizationCode)
 		accountChanged()
 	}
 

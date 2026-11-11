@@ -28,6 +28,12 @@ final class Account: Model, Authenticatable, @unchecked Sendable {
 	@OptionalField(key: "apple_subject")
 	var appleSubject: String?
 
+	/// Apple's refresh token for this sign-in, sealed by `CredentialVault`. Kept only to revoke the sign-in when the account is
+	/// deleted, never used to sign anyone in. Nil without `ERGO_APPLE_SIGNIN_KEY`, before the app sent a code, and for accounts
+	/// that signed in before this existed. Never leaves the server.
+	@OptionalField(key: "apple_refresh_token")
+	var appleRefreshToken: Data?
+
 	/// Lowercased and trimmed, the same on every device. Kept in the clear because it's what a login looks up,
 	/// and never logged. Nil until registered. Not verified, since there's no mail provider yet.
 	@OptionalField(key: "email")

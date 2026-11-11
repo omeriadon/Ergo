@@ -29,9 +29,11 @@ enum AccountController {
 		return try Response.json(AccountCreated(id: id, token: token))
 	}
 
-	/// Everything the server keeps for the account, on every device. Data on the devices stays.
+	/// Everything the server keeps for the account, on every device. Data on the devices stays. Its Sign in with Apple
+	/// connection is revoked first, when the server has the means to.
 	static func delete(_ request: Request) async throws -> Response {
 		let id = try request.accountID
+		await revokeAppleSignIn(of: id, on: request)
 		let sharing = request.ergo.sharing
 		let vault = request.ergo.vault
 		let logger = request.logger
@@ -42,6 +44,7 @@ enum AccountController {
 		}
 		request.ergo.live.close(account: id)
 		await sharing.finish(effects, caller: nil, token: nil, on: request.db, logger: logger)
+		logger.verbose("Deleted the account", metadata: ["pushes": "\(effects.pushes.count)", "sharedWith": "\(others.count)"])
 		return Response(status: .noContent)
 	}
 
@@ -85,6 +88,7 @@ enum AccountController {
 			}
 		}
 		request.ergo.live.close(token: tokenID, account: accountID)
+		logger.verbose("Signed out a device")
 		return Response(status: .noContent)
 	}
 
@@ -134,7 +138,10 @@ enum AccountController {
 		if let changedCursor {
 			request.ergo.live.changed(account: accountID, cursor: changedCursor, except: tokenID)
 		}
-		request.logger.info("Signed in with Apple", metadata: ["merged": "\(accountID != callerID)", "new": "\(isNewAccount)"])
+		// After a merge the account is the one that was signed in to, which may be verbose when the caller's was not
+		await request.identify(accountID)
+		await keepAppleRefreshToken(for: accountID, code: body.authorizationCode, subject: identity.subject, on: request)
+		request.logger.verbose("Signed in with Apple", metadata: ["merged": "\(accountID != callerID)", "new": "\(isNewAccount)"])
 		return try Response.json(SignedIn(accountID: accountID, token: bearer, isNewAccount: isNewAccount))
 	}
 }

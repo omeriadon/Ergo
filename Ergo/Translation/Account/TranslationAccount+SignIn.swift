@@ -36,13 +36,14 @@ extension TranslationAccount {
 	}
 
 	/// Attaches this device's account to the Apple ID, or joins the account that already has it. Signed in with an
-	/// email, it gains a second way in. `nonce` is the raw one; the Apple request carried its hash.
-	func signInWithApple(identityToken: String, nonce: String) async throws {
+	/// email, it gains a second way in. `nonce` is the raw one; the Apple request carried its hash. `authorizationCode` lets
+	/// the server revoke the Apple sign-in if the account is ever deleted.
+	func signInWithApple(identityToken: String, nonce: String, authorizationCode: String? = nil) async throws {
 		guard let server else {
 			throw Self.noServer
 		}
 
-		let reply = try await withClient { try await $0.signInWithApple(identityToken: identityToken, nonce: nonce) }
+		let reply = try await withClient { try await $0.signInWithApple(identityToken: identityToken, nonce: nonce, authorizationCode: authorizationCode) }
 		AccountKeychain.setToken(reply.token, for: server)
 		signedIn = SignedInAccount(server: server, id: reply.accountID, email: signedIn?.email, hasApple: true)
 

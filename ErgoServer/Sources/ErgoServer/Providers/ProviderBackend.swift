@@ -156,7 +156,7 @@ struct ProviderBackend: TranslationBackend {
 		guard let contents = run.read(file), contents != secret.value, CodexAuthFile.problem(with: contents) == nil else {
 			return
 		}
-		logger.info("Codex refreshed its login", metadata: ["provider": "\(credential.provider)"])
+		logger.verbose("Codex refreshed its login", metadata: ["provider": "\(credential.provider)"])
 		latest.replace(with: Secret(contents))
 		await refreshed(Secret(contents))
 	}
@@ -177,7 +177,8 @@ struct ProviderBackend: TranslationBackend {
 		}
 	}
 
-	/// Never the output itself, it can echo the prompt or a secret. The stderr tail only goes out when something's wrong.
+	/// Never the output itself, it can echo the prompt or a secret. The stderr tail only goes out when something's wrong,
+	/// and only for a verbose account, since it can quote what was asked or the credential. Even then it's scrubbed.
 	private func log(_ stage: String, _ finished: ProcessRunner.Finished, usage: [String: Int?] = [:], problem: String? = nil) {
 		var metadata: Logger.Metadata = [
 			"stage": "\(stage)",
@@ -191,11 +192,22 @@ struct ProviderBackend: TranslationBackend {
 
 		if let problem {
 			metadata["problem"] = "\(problem)"
-			metadata["stderr"] = "\(finished.errorOutput.suffix(1000))"
+			if logger.isVerbose {
+				metadata["stderr"] = "\(Self.scrubbed(String(finished.errorOutput.suffix(1000)), of: credential.secret))"
+			}
 			logger.error("CLI call failed", metadata: metadata)
 		} else {
-			logger.info("CLI call", metadata: metadata)
+			logger.verbose("CLI call", metadata: metadata)
 		}
+	}
+
+	/// Without the credential, or anything shaped like a key or a token, which a CLI sometimes prints back
+	static func scrubbed(_ text: String, of secret: Secret) -> String {
+		var scrubbed = text
+		if !secret.value.isEmpty {
+			scrubbed = scrubbed.replacingOccurrences(of: secret.value, with: "<redacted>")
+		}
+		return scrubbed.replacing(/(?:sk-|eyJ)[A-Za-z0-9_.\-]{12,}/, with: "<redacted>")
 	}
 }
 

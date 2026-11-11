@@ -12,6 +12,9 @@ import Foundation
 /// REST sends `versionHeader` on every request, and `Authorization: Bearer <token>` on all but `Path.accounts` and
 /// `Path.invitePreview`. Errors come back as a non-2xx status with a `ServiceError` body.
 ///
+/// The server answers every version from its minimum up to its own. Below that is `outdatedApp`, and an app that's
+/// answered but getting old finds `updateHeader` on its replies. See `Plans/13-Versions.md`.
+///
 /// The translate socket gets exactly one `TranslateClientMessage.translate`, answers with any number of `.event`s,
 /// then exactly one `.finished` or `.failed`, and closes. Sending `.cancel` or closing stops the work.
 /// `TranslateRequest.scope` picks the answer's type: `.statement` gets `TranslateServerMessage`s, `.argument` gets
@@ -31,8 +34,17 @@ import Foundation
 /// server writes. A push to a board the account may not edit doesn't fail the request: it comes back in
 /// `SyncResponse.rejected`. Invite tokens go in bodies, never in API paths, so they can't land in logs.
 public enum ErgoProtocol {
+	/// What this build speaks. Only a change an older app would misread bumps it: a new field, path or message kind doesn't.
 	public static let version = 1
+
+	/// The oldest protocol the server's code can still answer. Only the server reads it, and its `ERGO_MINIMUM_PROTOCOL`
+	/// can ask for a newer one. Raising it drops the code that served the versions below.
+	public static let minimumVersion = 1
+
 	public static let versionHeader = "Ergo-Protocol-Version"
+
+	/// On every reply to an app the server still answers but would like updated, holding `AppUpdate.recommended`
+	public static let updateHeader = "Ergo-App-Update"
 
 	public enum Path {
 		/// POST → `AccountCreated`, no auth

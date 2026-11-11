@@ -10,6 +10,15 @@ import Foundation
 /// What someone can do on a shared board
 public enum BoardRole: String, Codable, Sendable, Hashable {
 	case owner, editor, viewer
+
+	/// A role added later reads as `viewer` in an older app: the least it could mean, and the server is the judge anyway
+	public init(wire: String) {
+		self = Self(rawValue: wire) ?? .viewer
+	}
+
+	public init(from decoder: any Decoder) throws {
+		try self.init(wire: decoder.singleValueContainer().decode(String.self))
+	}
 }
 
 public extension BoardRole {
@@ -59,14 +68,13 @@ public extension BoardShare {
 	init?(_ record: SyncRecord) {
 		guard record.kind == .share, !record.isDeleted,
 		      case let .string(role)? = record.fields[SyncFieldName.role]?.value,
-		      let role = BoardRole(rawValue: role),
 		      case let .string(member)? = record.fields[SyncFieldName.member]?.value,
 		      let member = UUID(uuidString: member),
 		      let members = try? record.fields[SyncFieldName.members]?.value.decode([BoardMember].self)
 		else {
 			return nil
 		}
-		self.init(board: record.id, role: role, member: member, members: members)
+		self.init(board: record.id, role: BoardRole(wire: role), member: member, members: members)
 	}
 
 	/// What the server writes. Built by hand rather than with an encoder, since these values can't fail to encode and

@@ -93,6 +93,9 @@ struct AskConversationView: View {
 	/// Quick AI has no search, so it's left closed there
 	var find: Binding<FindState?> = .constant(nil)
 
+	/// Quick AI's composer sits in the corners of its sheet
+	var fitsSheet = false
+
 	@Environment(AskStore.self)
 	private var store
 
@@ -214,7 +217,7 @@ struct AskConversationView: View {
 					remove: { store.removeAttachment($0, from: conversationID) },
 					update: { store.updateAttachment($0, in: conversationID, text: $1) }
 				)
-				.contentMargins(.horizontal, 22, for: .scrollContent)
+				.contentMargins(.horizontal, fitsSheet ? AskComposer.sheetInset : 22, for: .scrollContent)
 				.transition(.blurReplace)
 			}
 
@@ -224,6 +227,7 @@ struct AskConversationView: View {
 				hasAttachments: !attachments.isEmpty,
 				isRunning: run != nil,
 				sent: sent,
+				fitsSheet: fitsSheet,
 				send: send,
 				stop: { store.stop(conversation.id) }
 			)

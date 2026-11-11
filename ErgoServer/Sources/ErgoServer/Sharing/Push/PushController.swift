@@ -37,6 +37,7 @@ enum PushController {
 			row.updated = .now
 			try await row.save(on: database)
 		}
+		request.logger.verbose("Registered a push device")
 		return Response(status: .noContent)
 	}
 
@@ -44,6 +45,7 @@ enum PushController {
 	static func unregister(_ request: Request) async throws -> Response {
 		let token = try request.tokenID
 		try await PushDeviceRow.query(on: request.quietDB).filter(\.$token.$id == token).delete()
+		request.logger.verbose("Forgot a push device")
 		return Response(status: .noContent)
 	}
 }

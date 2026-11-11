@@ -1,29 +1,38 @@
 # 07 · Direction
 
-Where the product is heading. The four tabs, scratchpads, a first Ask and sharing boards are built; the rest isn't built or scheduled. It's a living record of the conversation, so it changes as the thinking does.
+Where the product is heading. It's a living record of the conversation, so it changes as the thinking does. [What's left](#whats-left) is the list of what's still to do.
 
 **Decided** means Adon has settled it. **Proposed** means it's on the table but not agreed.
 
 **Decided:** until v1, migrations and existing data are not a constraint. Don't let them limit any idea here.
 
-## What's next
+## What's left
 
-Adon's checklist, in the order he wrote it. It isn't a schedule.
+A list of what's still to do, with no status. The code says what's built.
 
-- Check sharing works well.
-- The Board fully analyses its cards, arrows and links, and potentially gains more on top. Built, see [10-BoardAnalysis.md](10-BoardAnalysis.md); not yet checked on devices.
-- Ask gets better thinking, and maybe more interactivity.
-- Widgets for all kinds of things.
-- Teach the user the logic language.
-- An "item of the day" or similar. The library has about 2,000 entries, more than enough for each day to have its own.
-- Potentially a Watch app.
-- Keep finding backend bugs.
-- The UI works on iPhone Duo, then iPad.
-- Clean up the markdown files across the repo.
-- Analytics as we go: log events when a feature needs them, rather than as a project of its own.
-- Send the current board into a chat.
-- Chat modes. Give the model a plain text argument, then debate it, or be mentored on it.
-- Find the fallacies and other problems in a text or web page. See [Finding problems in a text](#finding-problems-in-a-text). Annotating a board's sources is built; making a board from the annotations isn't.
+Adon's working list:
+- iPad, and iPhone Duo.
+- More tests, and trying to break the UI by hand.
+- Bug fixes.
+
+Before strangers use it:
+- **A first run.** An intro, the privacy statement and AI consent, and a short tutorial for what isn't obvious, like tapping a tab again. The legal screens name every provider that gets what's sent. The rest of the app never names OpenRouter.
+- **A privacy policy and terms**, hosted, and linked from the app and the paywall. The drafts are in `Legal/`.
+- **Password reset and verified email.** Waits on a mail provider.
+- **Reports reach Adon by email.** They're saved on the server, and wait on the same mail provider.
+- **The App Store products** and prices.
+
+It can wait:
+- An eval for Ask and deep research.
+- Accessibility on the canvas.
+- Checking that a finding's quote is really in the source.
+- Ask's tools over the person's own boards and scratchpads.
+- Making a board from a source's annotations. See [Finding problems in a text](#finding-problems-in-a-text).
+- Merging repeated claims across the parts of a long Break Down.
+- Making deep research faster.
+- More widgets, a Watch app, and other languages.
+- More than one server instance.
+- Analytics: events, never content.
 
 ## The tabs
 
@@ -33,7 +42,7 @@ Adon's checklist, in the order he wrote it. It isn't a schedule.
 |---|---|---|
 | **Board** | A workspace for pulling arguments out of what you find and analysing them | Built: a canvas of cards, arrows and sources, with Break Down and an analysis that annotates them from the library |
 | **Logic** | Writing and converting formal logic | Built: saved scratchpads |
-| **Ask** | An AI chat with tools over the library and your work | Built, early: tools over the library only |
+| **Ask** | An AI chat with tools over the library and your work | Built: tools over the library, modes, and a board chat that edits its board. Nothing over the rest of your work yet |
 | **Library** | The catalog | Exists, and is the most settled part of the app |
 
 A More tab is only for the distant future, if the app ever gets past four or five tabs.
@@ -123,33 +132,13 @@ Limits to design around:
 - Buttons come from an MCP tool such as `suggest_action(intent, parameters)`, not from a block of JSON in the text. The tool's schema validates them, and the text stays pure markdown while it streams.
 - The server still checks what comes back, because a capable model can still invent an ID. A link to an unknown entry becomes plain text, and an action outside the list is dropped.
 
-## API versions
+## Versions
 
-Today `ProtocolVersionMiddleware` requires an exact match with `ErgoProtocol.version`, and otherwise returns `outdatedApp`. So any bump cuts off every older app at that moment.
-
-**Decided:**
-- Spend longer getting the API right up front, so that when a new version is needed, adding one is fine. Don't bump it for every change.
-- Old apps ignore what they don't recognise. Response blocks, button kinds and similar types decode to an `unknown` case instead of failing, so a new block type doesn't need a version.
-- The server checks a minimum supported version instead of an exact match. That leaves room for one version of overlap, and retiring an old version is a deliberate choice.
-
-**Proposed:**
-- Additions don't bump the version: new optional fields, new endpoints and new block types. Only breaking changes do.
-- `outdatedApp` becomes the friendly "please update to keep using cloud features" message.
-
-## Catalog versions
-
-**Decided:** the catalog ships inside the app, and a new catalog goes out as an app update. There is no download from the server.
-
-**Adon's leaning, not final:** the server keeps the newest catalog plus the previous one, and older apps get the "please update" message.
-
-**Proposed:**
-- IDs are permanent. Entries can be added and edited, but an ID is never renamed or removed, so an older app only ever lacks new entries. Bookmarks rely on this too.
-- The app sends its catalog version with AI requests, and the server only offers the model entries that version has. Then the model can't cite something the app can't open.
-- The server's catalog updates only once the matching app release is live, not before.
+See [13-Versions.md](13-Versions.md), which covers the protocol and the catalog.
 
 ## Built so far: Ask
 
-A preliminary version of the Ask tab exists. See `CLAUDE.md`'s Ask section for how it works.
+See `CLAUDE.md`'s Ask section for how it works.
 
 **Decided along the way:**
 - Translation never returns logic that verify rejected. A wrong split of premises goes back to breakdown instead of failing every retry.
@@ -158,9 +147,8 @@ A preliminary version of the Ask tab exists. See `CLAUDE.md`'s Ask section for h
 - Conversations stay on the device, for now.
 
 **Not built yet:**
-- Tools over the user's own boards and scratchpads.
+- Tools over the user's own boards and scratchpads. A board chat sees and edits its own board only.
 - Rich answers beyond markdown and buttons, like entity cards.
-- Answers surviving the app being suspended: iOS closes the socket, so it shows as a lost connection.
 - `Find text` as a tool, and any intent beyond the library and navigation ones.
 - Enforcing that findings quote the source. It's in the prompt, not checked.
 

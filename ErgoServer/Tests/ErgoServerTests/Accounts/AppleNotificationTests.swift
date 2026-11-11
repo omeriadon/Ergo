@@ -430,9 +430,12 @@ struct AppleNotificationRouteTests {
 		try await withTestApp(.testing(scratch)) { app in
 			let subject = "001234.subject-canary.5678"
 			let kept = "001234.kept-canary.5678"
-			_ = try await app.signedInAccount(subject)
+			let signedIn = try await app.signedInAccount(subject)
 			let withEmail = try await app.signedInAccount(kept)
 			#expect(try await app.register(withEmail.token, email: "email.canary@example.com").status == .noContent)
+			// This route has no account of its own, so a notification is only said for a verbose account it was about
+			app.ergo.verbose.remember(signedIn.accountID)
+			app.ergo.verbose.remember(withEmail.accountID)
 
 			// Only from here, since signing in isn't what's tested
 			let logs = CapturedLogs()

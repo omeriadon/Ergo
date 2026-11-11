@@ -116,8 +116,25 @@ struct ServerConfig: Sendable {
 	/// Nil sends no pushes
 	var apns: APNS?
 
+	struct AppleSignIn: Sendable {
+		/// PEM, a key from the developer portal with Sign in with Apple turned on
+		var key: String
+		var keyID: String
+		var teamID: String
+	}
+
+	/// Nil never trades a sign-in's code with Apple, so deleting an account can't revoke it
+	var appleSignIn: AppleSignIn?
+
 	/// For the join page's App Store link, none until the app is on the store
 	var appStoreID: String?
+
+	/// Which apps are answered, and which of those are told to update
+	var protocols = ProtocolVersions()
+
+	/// Emails and account ids (`ERGO_VERBOSE_ACCOUNTS`) whose activity is logged in full. Everyone else's is only ever a
+	/// pseudonymised warning or error. Never logged itself. See `VerboseAccounts`.
+	var verboseAccounts: [String] = []
 
 	// MARK: - Fixed, but shortened by tests
 
@@ -132,6 +149,9 @@ struct ServerConfig: Sendable {
 
 	/// Someone opening a few links is a few of these. Tokens can't be guessed, so this only slows a script.
 	var invitePreviewsPerMinute = 30
+
+	/// Reports of shared boards per account
+	var reportsPerHour = 10
 
 	/// Failed logins per address, and per email, within `loginWindow`
 	var failedLoginsPerWindow = 10
@@ -238,6 +258,9 @@ struct ServerConfig: Sendable {
 		try loadOpenRouter(from: environment, into: &config)
 		try loadUsage(from: environment, into: &config)
 		try loadSharing(from: environment, into: &config)
+		try loadAppleSignIn(from: environment, into: &config)
+		try loadProtocols(from: environment, into: &config)
+		try loadVerboseAccounts(from: environment, into: &config)
 
 		if config.claudePath == nil {
 			logger.warning("Couldn't find 'claude' on PATH, Claude connections will fail until ERGO_CLAUDE_PATH is set")
@@ -246,6 +269,10 @@ struct ServerConfig: Sendable {
 			logger.warning("Couldn't find 'codex' on PATH, ChatGPT connections will fail until ERGO_CODEX_PATH is set")
 		}
 		logUnset(in: environment, logger: logger)
+		if !config.verboseAccounts.isEmpty {
+			// How many, never who
+			logger.notice("Logging everything for \(config.verboseAccounts.count) configured accounts")
+		}
 
 		return config
 	}
@@ -256,8 +283,10 @@ struct ServerConfig: Sendable {
 		(["ERGO_OPENROUTER_API_KEY"], "the server's own model isn't offered"),
 		(["ERGO_APNS_KEY", "ERGO_APNS_KEY_FILE"], "no pushes will be sent"),
 		(["ERGO_DEVICECHECK_KEY", "ERGO_DEVICECHECK_KEY_FILE"], "every account gets its own free allowance"),
+		(["ERGO_APPLE_SIGNIN_KEY", "ERGO_APPLE_SIGNIN_KEY_FILE"], "Apple sign-ins won't be revoked when an account is deleted"),
 		(["ERGO_APPLE_ROOT_CERT_FILE"], "App Store purchases will be refused"),
 		(["ERGO_APP_STORE_ID"], "the join page has no App Store link"),
+		(["ERGO_VERBOSE_ACCOUNTS"], "only problems are logged, for every account"),
 	]
 
 	/// Variables with a default that works. One that's required, or required with another, refuses to start instead.
@@ -267,7 +296,8 @@ struct ServerConfig: Sendable {
 		"ERGO_MODEL_EFFORT", "ERGO_APPLE_APP_ID", "ERGO_TRUST_PROXY", "ERGO_OPENROUTER_PLUS_MODEL",
 		"ERGO_FREE_DAILY_USD", "ERGO_PLUS_DAILY_USD", "ERGO_USAGE_PRICE_INPUT", "ERGO_USAGE_PRICE_OUTPUT",
 		"ERGO_FREE_DEEP_PER_WEEK", "ERGO_PLUS_DEEP_PER_WEEK", "ERGO_ENFORCE_PLANS", "ERGO_WEB_SEARCH",
-		"ERGO_DEVICECHECK_TEAM_ID", "ERGO_PUBLIC_URL", "ERGO_APPLE_TEAM_IDS", "ERGO_APNS_TEAM_ID", "ERGO_APNS_TOPIC",
+		"ERGO_DEVICECHECK_TEAM_ID", "ERGO_APPLE_SIGNIN_TEAM_ID", "ERGO_PUBLIC_URL", "ERGO_APPLE_TEAM_IDS", "ERGO_APNS_TEAM_ID", "ERGO_APNS_TOPIC",
+		"ERGO_MINIMUM_PROTOCOL", "ERGO_RECOMMENDED_PROTOCOL",
 	]
 
 	/// Says which variables have no value, by name only. An empty one counts as unset, as it does everywhere above.
@@ -378,6 +408,35 @@ struct ServerConfig: Sendable {
 		)
 	}
 
+	private static func loadProtocols(from environment: [String: String], into config: inout ServerConfig) throws {
+		func version(_ name: String, from lowest: Int) throws -> Int? {
+			guard let value = environment[name], !value.isEmpty else { return nil }
+			guard let version = Int(value), lowest ... config.protocols.current ~= version else {
+				throw Problem(description: "\(name): Expected a protocol from \(lowest) to \(config.protocols.current), found '\(value)'")
+			}
+			return version
+		}
+
+		config.protocols.minimum = try version("ERGO_MINIMUM_PROTOCOL", from: ErgoProtocol.minimumVersion) ?? config.protocols.minimum
+		config.protocols.recommended = try version("ERGO_RECOMMENDED_PROTOCOL", from: config.protocols.minimum) ?? config.protocols.minimum
+	}
+
+	/// Emails or account ids separated by commas. An entry that is neither refuses to start, without saying what it was,
+	/// since the list is Adon's own accounts and never goes in a log.
+	private static func loadVerboseAccounts(from environment: [String: String], into config: inout ServerConfig) throws {
+		guard let list = environment["ERGO_VERBOSE_ACCOUNTS"], !list.isEmpty else { return }
+
+		for entry in list.split(separator: ",").map({ $0.trimmingCharacters(in: .whitespacesAndNewlines) }) where !entry.isEmpty {
+			if let id = UUID(uuidString: entry) {
+				config.verboseAccounts.append(id.uuidString)
+			} else if let email = try? AccountEmail.normalized(entry) {
+				config.verboseAccounts.append(email)
+			} else {
+				throw Problem(description: "ERGO_VERBOSE_ACCOUNTS: Expected emails or account ids separated by commas, found an entry that is neither")
+			}
+		}
+	}
+
 	/// After `ERGO_APPLE_APP_ID`, which is the default APNs topic
 	private static func loadSharing(from environment: [String: String], into config: inout ServerConfig) throws {
 		if let url = environment["ERGO_PUBLIC_URL"], !url.isEmpty {
@@ -422,6 +481,33 @@ struct ServerConfig: Sendable {
 			keyID: keyID,
 			teamID: environment["ERGO_APNS_TEAM_ID"].flatMap { $0.isEmpty ? nil : $0 } ?? "P6PV2R9443",
 			topic: environment["ERGO_APNS_TOPIC"].flatMap { $0.isEmpty ? nil : $0 } ?? config.appleApplicationID
+		)
+	}
+
+	/// After `ERGO_APPLE_APP_ID`, which is the client id
+	private static func loadAppleSignIn(from environment: [String: String], into config: inout ServerConfig) throws {
+		var pem = environment["ERGO_APPLE_SIGNIN_KEY"].flatMap { $0.isEmpty ? nil : $0 }
+		if pem == nil, let file = environment["ERGO_APPLE_SIGNIN_KEY_FILE"], !file.isEmpty {
+			do {
+				pem = try String(contentsOf: URL(filePath: file), encoding: .utf8)
+			} catch {
+				throw Problem(description: "ERGO_APPLE_SIGNIN_KEY_FILE: Couldn't read '\(file)'")
+			}
+		}
+		guard let pem else { return }
+
+		// Environment files often can't hold a newline. The error never quotes the key.
+		let key = pem.replacingOccurrences(of: "\\n", with: "\n")
+		guard (try? P256.Signing.PrivateKey(pemRepresentation: key)) != nil else {
+			throw Problem(description: "ERGO_APPLE_SIGNIN_KEY: Expected a P-256 private key in PEM, the .p8 file Apple gives you")
+		}
+		guard let keyID = environment["ERGO_APPLE_SIGNIN_KEY_ID"], !keyID.isEmpty else {
+			throw Problem(description: "ERGO_APPLE_SIGNIN_KEY_ID: Expected the key's id to go with ERGO_APPLE_SIGNIN_KEY")
+		}
+		config.appleSignIn = AppleSignIn(
+			key: key,
+			keyID: keyID,
+			teamID: environment["ERGO_APPLE_SIGNIN_TEAM_ID"].flatMap { $0.isEmpty ? nil : $0 } ?? "P6PV2R9443"
 		)
 	}
 

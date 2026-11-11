@@ -75,6 +75,19 @@ enum BoardSharingController {
 		return Response(status: .noContent)
 	}
 
+	static func report(_ request: Request) async throws -> Response {
+		let body = try request.decode(ReportBoard.self)
+		try await BoardReports.file(
+			body,
+			board: request.parameters.get("board"),
+			account: request.accountID,
+			limiter: request.ergo.reportLimiter,
+			on: request.quietDB,
+			logger: request.logger
+		)
+		return Response(status: .noContent)
+	}
+
 	/// No auth, since someone without an account yet sees it, so limited per address
 	static func preview(_ request: Request) async throws -> Response {
 		guard request.ergo.invitePreviewLimiter.allow(request.clientAddress) else {

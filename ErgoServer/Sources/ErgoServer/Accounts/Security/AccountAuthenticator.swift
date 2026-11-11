@@ -10,6 +10,7 @@ import Fluent
 import Vapor
 
 /// Signs the request in from its bearer token, or turns it away. Runs before a socket upgrades, so a bad token gets a plain 401.
+/// A dead token is logged as a warning by `RequestLogMiddleware`, with nothing to say whose it was.
 struct AccountAuthenticator: AsyncMiddleware {
 	func respond(to request: Request, chainingTo next: any AsyncResponder) async throws -> Response {
 		guard let bearer = request.headers.bearerAuthorization?.token else {
@@ -37,6 +38,8 @@ struct AccountAuthenticator: AsyncMiddleware {
 
 		request.auth.login(account)
 		request.auth.login(token)
+		// From here on this request's logger is the account's: everything but problems is only for a verbose account
+		request.identify(account)
 		return try await next.respond(to: request)
 	}
 }

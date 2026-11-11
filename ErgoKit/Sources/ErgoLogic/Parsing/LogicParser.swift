@@ -17,6 +17,16 @@ public enum LogicParser {
 		let side: Side
 	}
 
+	/// The most brackets and ¬ □ ◇ ∀ ∃ inside one another. Far past anything written by hand.
+	public static let maximumDepth = 24
+
+	/// The most symbols in one statement. A chain like X∧Y∧Z… is as deep as it is long.
+	public static let maximumStatementLength = 120
+
+	/// The most symbols in a statement once every defined letter is replaced by what it stands for. Letters defined
+	/// with letters multiply: five lines can stand for millions of symbols.
+	public static let maximumWrittenOutLength = 5000
+
 	public static func parse(_ entries: [LogicKeyboardEntry]) -> LogicParse {
 		var parse = LogicParse()
 		var segments: [Segment] = []
@@ -91,6 +101,9 @@ public enum LogicParser {
 		for segment in segments {
 			var parser = FormulaParser(entries: entries, range: segment.range)
 			do {
+				guard segment.range.count <= maximumStatementLength else {
+					throw LogicDiagnostic(problem: .tooLong(limit: maximumStatementLength), range: segment.range)
+				}
 				if let marker = entries[segment.range].firstIndex(of: .symbol("≔")) {
 					try parse.definitions.append(definition(at: marker, in: segment, marker: parse.marker, entries: entries, after: parse.definitions))
 					continue
@@ -133,6 +146,11 @@ public enum LogicParser {
 				if after.count != 1, !hasExtraMarker, !failedSides.contains(.after) {
 					parse.diagnostics.append(conclusionDiagnostic(count: after.count, entries: entries, end: end))
 				}
+		}
+
+		// Before anything writes the letters out, which is everything from here on
+		if parse.diagnostics.isEmpty, let oversized = parse.firstOversized {
+			parse.diagnostics.append(oversized)
 		}
 
 		if parse.diagnostics.isEmpty {

@@ -108,8 +108,12 @@ public enum LaTeX {
 	// MARK: - Parsing
 
 	struct Parser {
+		/// Groups and arguments inside one another further than this stay as written, since each is a level of the stack
+		static let maximumDepth = 48
+
 		let characters: [Character]
 		var index = 0
+		private var depth = 0
 
 		init(_ source: String) {
 			characters = Array(source)
@@ -157,6 +161,12 @@ public enum LaTeX {
 		}
 
 		private mutating func group(script: Int) -> [Run] {
+			depth += 1
+			defer { depth -= 1 }
+			guard depth <= Self.maximumDepth else {
+				return [Run("{" + rawGroup() + "}", script: script)]
+			}
+
 			index += 1
 			let runs = parse(script: script)
 			if current == "}" {
@@ -168,6 +178,10 @@ public enum LaTeX {
 		/// What a command or a script applies to: a group, a command, or one character
 		private mutating func argument(script: Int) -> [Run] {
 			skipSpaces()
+			depth += 1
+			defer { depth -= 1 }
+			guard depth <= Self.maximumDepth else { return [] }
+
 			switch current {
 				case "{":
 					return group(script: script)

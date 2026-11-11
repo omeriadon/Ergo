@@ -40,6 +40,9 @@ struct PushEvent: Sendable, Hashable {
 struct PushService: Sendable {
 	let sender: PushSender
 	let live: SyncLive
+
+	/// For a failure to reach someone, which is about them and not whoever's change it was
+	let verbose: VerboseAccounts
 	let throttle = PushThrottle()
 
 	/// Finds the devices now, and sends in a detached task. `database` should be one the request can give up.
@@ -56,7 +59,7 @@ struct PushService: Sendable {
 		}
 		let reachable = Dictionary(grouping: devices.filter { !live.isListening(token: $0.$token.id) }) { $0.$account.id }
 
-		var messages: [(message: PushMessage, device: UUID?)] = []
+		var messages: [(message: PushMessage, device: UUID?, account: UUID)] = []
 		for event in events {
 			for account in event.recipients {
 				guard let devices = reachable[account], !devices.isEmpty else { continue }
@@ -77,7 +80,7 @@ struct PushService: Sendable {
 						board: event.board,
 						alert: alert
 					)
-					messages.append((message, device.id))
+					messages.append((message, device.id, account))
 				}
 			}
 		}
@@ -85,17 +88,20 @@ struct PushService: Sendable {
 
 		let sender = sender
 		let sending = messages
+		// Each failure is about the person it was for: a push that Apple refused is a warning, with their pseudonym
+		let loggers = Dictionary(uniqueKeysWithValues: accounts.map { ($0, verbose.logger(for: $0, from: logger)) })
 		Task.detached {
-			for (message, device) in sending {
+			for (message, device, account) in sending {
+				let log = loggers[account] ?? logger
 				switch await sender.send(message) {
 					case .sent:
 						break
 					case .deviceGone:
 						if let device {
-							await Self.forget(device, on: database, logger: logger)
+							await Self.forget(device, on: database, logger: log)
 						}
 					case let .failed(reason):
-						logger.notice("Couldn't send a push", metadata: ["reason": "\(reason)"])
+						log.warning("Couldn't send a push", metadata: ["reason": "\(reason)"])
 				}
 			}
 		}

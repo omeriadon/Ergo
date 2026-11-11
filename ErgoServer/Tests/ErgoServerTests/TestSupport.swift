@@ -154,10 +154,11 @@ func withTestApp(
 	verifier: ConnectionVerifier = .accepting,
 	apple: AppleTokenVerifier = .fake,
 	push: PushSender? = nil,
+	appleTokens: AppleRefreshTokens? = nil,
 	_ body: (Application) async throws -> Void
 ) async throws {
 	try await withApp(configure: { app in
-		try await configure(app, config: config, verifier: verifier, apple: apple, push: push)
+		try await configure(app, config: config, verifier: verifier, apple: apple, push: push, appleTokens: appleTokens)
 	}, body)
 }
 

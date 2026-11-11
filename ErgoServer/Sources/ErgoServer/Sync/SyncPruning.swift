@@ -24,7 +24,8 @@ final class SyncPruning: LifecycleHandler {
 			while !Task.isCancelled {
 				do {
 					let pruned = try await sync.prune(on: database)
-					logger.info("Pruned tombstones", metadata: ["count": "\(pruned)"])
+					// Nobody's account, so not for a verbose account to hear about, and it's as normal as a day passing
+					logger.debug("Pruned tombstones", metadata: ["count": "\(pruned)"])
 				} catch {
 					logger.error("Pruning tombstones failed", metadata: ["error": "\(String(reflecting: error))"])
 				}

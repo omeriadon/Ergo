@@ -30,6 +30,7 @@ struct AccountMerger {
 
 		try await moveCredentials(from: sourceID, to: targetID, on: database)
 		let changed = try await mergeRecords(from: sourceID, into: target, on: database, now: now)
+		try await moveAppleRefreshToken(from: source, to: target, on: database)
 
 		token.$account.id = targetID
 		try await token.save(on: database)
@@ -58,6 +59,23 @@ struct AccountMerger {
 			credential.$account.id = target
 			try await credential.save(on: database)
 		}
+	}
+
+	// MARK: - Apple
+
+	/// An anonymous account has none, so this only keeps a merge from ever being what loses the way to revoke a sign-in.
+	/// The target's own stays when it has one. Sealed to its account, so it's opened and sealed again.
+	private func moveAppleRefreshToken(from source: Account, to target: Account, on database: any Database) async throws {
+		guard target.appleRefreshToken == nil, let sealed = source.appleRefreshToken else { return }
+
+		do {
+			let token = try vault.openAppleRefreshToken(sealed, account: source.requireID())
+			target.appleRefreshToken = try vault.seal(appleRefreshToken: token, account: target.requireID())
+		} catch {
+			logger.error("Couldn't unseal Apple's refresh token to move it")
+			return
+		}
+		try await target.save(on: database)
 	}
 
 	// MARK: - Records

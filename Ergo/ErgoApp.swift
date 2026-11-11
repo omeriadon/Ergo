@@ -103,6 +103,8 @@ struct ErgoApp: App {
 					}
 				}
 				.task {
+					StatusBadgeWindow.install()
+					AppUpdateWarning.shared.start()
 					navigation.startup()
 					// Answers and breakdowns the server carried on with while the app was closed
 					askStore.resumeInterrupted(account: translationAccount)

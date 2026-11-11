@@ -55,6 +55,7 @@ struct AskSocket {
 		guard let account = try? request.accountID else {
 			return await finish(.failed(.unknownAccount))
 		}
+		socket.logClosing("Ask", logger: request.logger)
 
 		let timer = Task {
 			do {
@@ -70,6 +71,7 @@ struct AskSocket {
 			switch message {
 				case .waitedTooLong:
 					if run == nil {
+						request.logger.warning("An ask socket sent no request", metadata: ["waited": "\(config.requestWait.spelledOut)"])
 						await finish(.failed(ServiceError(
 							code: .timedOut,
 							message: "Expected an ask request within \(config.requestWait.spelledOut)"
@@ -87,18 +89,21 @@ struct AskSocket {
 									await forward(stream)
 								}
 							} catch {
+								request.logger.warning("Couldn't start an ask", metadata: ["code": "\((error as? ServiceError)?.code.rawValue ?? "internalError")"])
 								await finish(.failed(error as? ServiceError ?? .internalFailure))
 							}
 						case .ask?:
 							// The protocol has one request per socket, so a second one changes nothing
 							break
 						case .cancel?:
+							request.logger.verbose("Cancelled an ask")
 							if let run {
 								request.ergo.detached.cancel(run: run, account: account)
 							} else {
 								await close()
 							}
 						case nil where run == nil:
+							request.logger.warning("An ask socket sent something that isn't a request")
 							await finish(.failed(ServiceError(code: .invalidRequest, message: "Expected an ask request")))
 						case nil:
 							break
@@ -118,7 +123,7 @@ struct AskSocket {
 		let port = application.http.server.shared.localAddress?.port ?? application.http.server.configuration.port
 		let service = request.ergo.ask
 		let database = application.db
-		let logger = application.logger
+		let logger = request.jobLogger(for: account)
 
 		return try request.ergo.detached.start(run: ask.id, account: account) { emit in
 			await Self.answer(ask, account: account, port: port, service: service, database: database, logger: logger, emit: emit)

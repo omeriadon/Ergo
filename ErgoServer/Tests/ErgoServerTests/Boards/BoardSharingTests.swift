@@ -715,8 +715,10 @@ struct BoardSharingTests {
 			let logs = CapturedLogs()
 			app.logger = logs.logger
 
-			let (owner, _) = try await SyncLiveTests().device(server, "owner")
-			let (member, _) = try await SyncLiveTests().device(server, "member")
+			let (owner, ownerSignedIn) = try await SyncLiveTests().device(server, "owner")
+			let (member, memberSignedIn) = try await SyncLiveTests().device(server, "member")
+			app.ergo.verbose.remember(ownerSignedIn.accountID)
+			app.ergo.verbose.remember(memberSignedIn.accountID)
 			let board = newBoardID()
 			_ = try await owner.sync(SyncRequest(cursor: nil, changes: [boardChange(board, ["created": SyncField(value: 1, stamp: stamp())])]))
 
@@ -731,8 +733,10 @@ struct BoardSharingTests {
 
 			let everything = logs.all.joined(separator: "\n")
 			// The server did log, so an empty capture can't pass
-			#expect(everything.contains("GET /join 200"))
+			#expect(everything.contains("Made a board invite"))
 			#expect(everything.contains("Joined a shared board"))
+			// Someone without the app opening a link is as normal as it gets, and has no account to be verbose
+			#expect(!everything.contains("/join"))
 			for secret in [token, "canary", "abcdef0123456789"] {
 				#expect(!everything.contains(secret), "Expected the logs without '\(secret.prefix(6))…', found it")
 			}

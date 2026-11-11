@@ -2,7 +2,7 @@
 
 Built, apart from the tagline. Web search is only on deep research on Ergo's model, as a few results the server fetches once at the start of a run, so the model can't choose to search and a person's own Claude or ChatGPT login doesn't get it.
 
-What Ergo is, who it's for first, and how its AI should work. Nothing here is built yet.
+What Ergo is, who it's for first, and how its AI should work.
 
 **Decided** means Adon has settled it. **Proposed** means it's on the table but not agreed.
 

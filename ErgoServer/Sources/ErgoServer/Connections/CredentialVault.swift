@@ -69,6 +69,16 @@ struct CredentialVault: Sendable, CustomStringConvertible {
 		try String(decoding: open(sealed, as: Data("board/\(board)/title".utf8)), as: UTF8.self)
 	}
 
+	// MARK: - Apple refresh tokens
+
+	func seal(appleRefreshToken: Secret, account: UUID) throws -> Data {
+		try seal(Data(appleRefreshToken.value.utf8), as: Data("\(account)/apple/refresh".utf8))
+	}
+
+	func openAppleRefreshToken(_ sealed: Data, account: UUID) throws -> Secret {
+		try Secret(String(decoding: open(sealed, as: Data("\(account)/apple/refresh".utf8)), as: UTF8.self))
+	}
+
 	// MARK: - Sealing
 
 	private func seal(_ data: Data, as associatedData: Data) throws -> Data {

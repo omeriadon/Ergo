@@ -1,6 +1,24 @@
 {
-  "originHash" : "de7da4612ebabc21866e565276709cbf75f27be88955f38f5ac2f6d9cb692fe3",
+  "originHash" : "2eb06cdba85e5f7c3af3b65d435f9f37e2e243eeb20c67bd162b0c5c65bd4f55",
   "pins" : [
+    {
+      "identity" : "colorfulx",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lakr233/ColorfulX",
+      "state" : {
+        "revision" : "025be056e59a62d06c6867ad65a7cb03fc63baf1",
+        "version" : "6.2.1"
+      }
+    },
+    {
+      "identity" : "colorvector",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lakr233/ColorVector.git",
+      "state" : {
+        "revision" : "6dc3839b6060b835aed8dc82d2d620cc3b4ebe33",
+        "version" : "2.0.0"
+      }
+    },
     {
       "identity" : "defaults",
       "kind" : "remoteSourceControl",
@@ -11,12 +29,30 @@
       }
     },
     {
+      "identity" : "displaylink",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lakr233/DisplayLink.git",
+      "state" : {
+        "revision" : "41bea2661e04bebcb1c4f15fc0b6197850100fdd",
+        "version" : "3.0.1"
+      }
+    },
+    {
       "identity" : "fuzzymatch",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ordo-one/FuzzyMatch",
       "state" : {
         "revision" : "ea09aa7faa3c1832716d1ccdb81dcb83bea89774",
         "version" : "1.4.0"
+      }
+    },
+    {
+      "identity" : "springinterpolation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lakr233/SpringInterpolation.git",
+      "state" : {
+        "revision" : "c98d56c895abc41b3f78097dae7ab6dfb015e147",
+        "version" : "3.0.1"
       }
     },
     {

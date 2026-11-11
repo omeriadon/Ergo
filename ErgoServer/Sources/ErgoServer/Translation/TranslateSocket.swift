@@ -54,6 +54,7 @@ struct TranslateSocket {
 		guard let account = try? request.accountID else {
 			return await finish(.failed(.unknownAccount))
 		}
+		socket.logClosing("Translate", logger: request.logger)
 
 		let timer = Task {
 			do {
@@ -70,6 +71,7 @@ struct TranslateSocket {
 			switch message {
 				case .waitedTooLong:
 					if work == nil, run == nil {
+						request.logger.warning("A translate socket sent no request", metadata: ["waited": "\(config.requestWait.spelledOut)"])
 						await finish(.failed(ServiceError(
 							code: .timedOut,
 							message: "Expected a translate request within \(config.requestWait.spelledOut)"
@@ -93,6 +95,7 @@ struct TranslateSocket {
 											await forward(stream)
 										}
 									} catch {
+										request.logger.warning("Couldn't start a breakdown", metadata: ["code": "\((error as? ServiceError)?.code.rawValue ?? "internalError")"])
 										// Coded like a breakdown's own failure
 										await finish(.failed(error as? ServiceError ?? .internalFailure))
 									}
@@ -101,6 +104,7 @@ struct TranslateSocket {
 							// The protocol has one request per socket, so a second one changes nothing
 							break
 						case .cancel?:
+							request.logger.verbose("Cancelled a translation")
 							if let run {
 								request.ergo.detached.cancel(run: run, account: account)
 							} else if let work {
@@ -109,6 +113,7 @@ struct TranslateSocket {
 								await close()
 							}
 						case nil where work == nil && run == nil:
+							request.logger.warning("A translate socket sent something that isn't a request")
 							await finish(.failed(ServiceError(code: .invalidRequest, message: "Expected a translate request")))
 						case nil:
 							break
@@ -129,7 +134,7 @@ struct TranslateSocket {
 		let application = request.application
 		let service = request.ergo.translations
 		let database = application.db
-		let logger = application.logger
+		let logger = request.jobLogger(for: account)
 
 		return try request.ergo.detached.start(run: translate.id, account: account) { emit in
 			let say: @Sendable (BreakDownServerMessage) -> Void = { message in

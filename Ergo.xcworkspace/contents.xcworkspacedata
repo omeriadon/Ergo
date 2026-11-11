@@ -11,9 +11,6 @@
       location = "group:ErgoServer">
    </FileRef>
    <FileRef
-      location = "group:Evals">
-   </FileRef>
-   <FileRef
       location = "group:Plans">
    </FileRef>
 </Workspace>

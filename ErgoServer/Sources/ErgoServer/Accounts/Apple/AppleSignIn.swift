@@ -52,7 +52,7 @@ struct AppleTokenVerifier: Sendable {
 				let token = try await request.jwt.apple.verify(identityToken, applicationIdentifier: applicationIdentifier)
 				return AppleIdentity(subject: token.subject.value, nonce: token.nonce)
 			} catch let error as JWTError {
-				request.logger.info("Apple sign-in refused", metadata: ["reason": "\(error.errorType)"])
+				request.logger.warning("Apple sign-in refused", metadata: ["reason": "\(error.errorType)"])
 				throw ServiceError(code: .invalidRequest, message: "Couldn't verify the Sign in with Apple token")
 			} catch {
 				request.logger.warning("Couldn't fetch Apple's keys", metadata: ["error": "\(String(reflecting: error))"])
@@ -83,7 +83,10 @@ struct AppleTokenVerifier: Sendable {
 				case let error as AppleNotification.Refusal: error.description
 				default: "malformed"
 			}
-			request.logger.info("Apple notification refused", metadata: ["reason": "\(reason)"])
+			// Anyone can post here, so a flood of forgeries is said once a minute
+			if let leftOut = request.ergo.logThrottle.allow("Apple notification refused \(reason)") {
+				request.logger.warning("Apple notification refused", metadata: ["reason": "\(reason)", "leftOut": "\(leftOut)"])
+			}
 			throw ServiceError.invalidNotification
 		}
 	}

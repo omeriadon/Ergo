@@ -10,6 +10,11 @@ import Foundation
 /// Everything that can go wrong talking to the server, and the only error `ErgoClient` throws
 public struct ServiceError: Error, Codable, Sendable, Hashable {
 	public enum Code: String, Codable, Sendable {
+		/// A code newer than this app reads as `internalError`, so a new one needs no protocol version
+		public init(from decoder: any Decoder) throws {
+			self = try Self(rawValue: decoder.singleValueContainer().decode(String.self)) ?? .internalError
+		}
+
 		/// Missing or unknown account token
 		case unauthorized
 

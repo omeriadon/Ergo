@@ -17,17 +17,18 @@ enum BoardAnalysisController {
 		let body = try request.decode(BoardAnalysisRequest.self)
 		let application = request.application
 		let port = application.http.server.shared.localAddress?.port ?? application.http.server.configuration.port
+		let account = try request.accountID
 
 		// The job outlives this request, so it gets the application's database and logger, never the request's
 		try await request.ergo.analyses.start(
 			body,
 			board: request.parameters.get("board"),
-			account: request.accountID,
+			account: account,
 			port: port,
 			database: request.quietDB,
 			logger: request.logger,
 			jobDatabase: application.db,
-			jobLogger: application.logger
+			jobLogger: request.jobLogger(for: account)
 		)
 		return Response(status: .accepted)
 	}
@@ -35,6 +36,7 @@ enum BoardAnalysisController {
 	/// Nothing running is as good as stopped
 	static func stop(_ request: Request) async throws -> Response {
 		try request.ergo.analyses.stop(board: request.parameters.get("board"), account: request.accountID)
+		request.logger.verbose("Stopped a board analysis")
 		return Response(status: .noContent)
 	}
 }

@@ -109,13 +109,19 @@ struct SyncService: Sendable {
 			return (response, changed, effects)
 		}
 
-		logger.info("Synced", metadata: [
+		logger.verbose("Synced", metadata: [
 			"pushed": "\(changes.count)",
 			"changed": "\(changed)",
 			"returned": "\(response.changes.count)",
 			"superseded": "\(response.superseded.count)",
 			"rejected": "\(response.rejected?.count ?? 0)",
+			"more": "\(response.more)",
 		])
+		if let rejected = response.rejected, !rejected.isEmpty {
+			// A device that keeps sending what it may not is a bug in the app, or a board it can no longer edit
+			let kinds = Set(rejected.map(\.kind.rawValue)).sorted().joined(separator: ", ")
+			logger.warning("A sync push was rejected", metadata: ["rejected": "\(rejected.count)", "kinds": "\(kinds)"])
+		}
 		await sharing.finish(effects, caller: id, token: token, on: database, logger: logger)
 		return response
 	}

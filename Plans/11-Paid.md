@@ -2,7 +2,7 @@
 
 Built. It's off in production until the App Store products exist and `ERGO_ENFORCE_PLANS` is set, and the prices are still to be chosen.
 
-What's free, what's paid, and how AI use is limited. None of it is built, and nothing is priced. Monetisation comes after users, so the price waits for TestFlight. What the AI should do is in [12-Identity.md](12-Identity.md).
+What's free, what's paid, and how AI use is limited. Nothing is priced. Monetisation comes after users, so the price waits for TestFlight. What the AI should do is in [12-Identity.md](12-Identity.md).
 
 **Decided** means Adon has settled it. **Proposed** means it's on the table but not agreed.
 

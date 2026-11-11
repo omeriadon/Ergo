@@ -28,6 +28,11 @@ public extension ErgoProtocol.Path {
 		"v1/boards/\(board)/share"
 	}
 
+	/// POST `ReportBoard` → 204. Anyone on the board, the owner included, limited per account.
+	static func boardReport(_ board: String) -> String {
+		"v1/boards/\(board)/report"
+	}
+
 	/// POST `BoardInviteToken` → `BoardInvitePreview`, no auth, limited per address
 	static let invitePreview = "v1/invites/preview"
 
@@ -131,6 +136,29 @@ public struct JoinedBoard: Codable, Sendable, Hashable {
 	public init(board: String, role: BoardRole) {
 		self.board = board
 		self.role = role
+	}
+}
+
+// MARK: - Reports
+
+/// A member's report of a shared board, for whoever looks after the server to read
+public struct ReportBoard: Codable, Sendable, Hashable {
+	public static let reasonCharacters = 1000
+
+	/// Why, 1–1,000 characters after trimming
+	public let reason: String
+
+	public init(reason: String) {
+		self.reason = reason
+	}
+
+	/// Trimmed. Throws a `ServiceError` worded for the user.
+	public static func normalized(_ reason: String) throws -> String {
+		let trimmed = reason.trimmingCharacters(in: .whitespacesAndNewlines)
+		guard (1 ... reasonCharacters).contains(trimmed.count) else {
+			throw ServiceError(code: .invalidRequest, message: "Expected a reason of 1 to \(reasonCharacters) characters, found \(trimmed.count)")
+		}
+		return trimmed
 	}
 }
 

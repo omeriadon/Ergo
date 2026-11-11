@@ -101,8 +101,8 @@ struct AccountTests {
 }
 
 struct VersionHeaderTests {
-	@Test(arguments: [nil, "0", "2", "one"])
-	func otherVersionsAreOutdated(version: String?) async throws {
+	@Test(arguments: [nil, "0", "one"])
+	func olderVersionsAreOutdated(version: String?) async throws {
 		let scratch = try Scratch()
 		defer { scratch.remove() }
 
@@ -114,11 +114,49 @@ struct VersionHeaderTests {
 					#expect(response.status == .upgradeRequired)
 					#expect(try response.decoded(ServiceError.self) == ServiceError(
 						code: .outdatedApp,
-						message: "Expected Ergo with protocol 1, update the app"
+						message: "Expected Ergo with protocol 1 or later, update the app"
 					))
 				}
 			}
 		}
+	}
+
+	@Test func anAppAheadOfTheServerIsNotToldToUpdate() async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+
+		try await withTestApp(.testing(scratch)) { app in
+			let headers: HTTPHeaders = [ErgoProtocol.versionHeader: String(ErgoProtocol.version + 1)]
+			try await app.testing().test(.POST, ErgoProtocol.Path.accounts, headers: headers) { response async throws in
+				#expect(response.status == .badGateway)
+				#expect(try response.decoded(ServiceError.self).code == .providerUnavailable)
+			}
+		}
+	}
+
+	@Test func theCurrentVersionIsNotToldToUpdate() async throws {
+		let scratch = try Scratch()
+		defer { scratch.remove() }
+
+		try await withTestApp(.testing(scratch)) { app in
+			try await app.testing().test(.POST, ErgoProtocol.Path.accounts, headers: .version) { response async throws in
+				#expect(response.status.code < 300)
+				#expect(response.headers.first(name: ErgoProtocol.updateHeader) == nil)
+			}
+		}
+	}
+
+	/// Two versions served at once, which the real constants can't show until there's a second protocol
+	@Test func everyVersionFromTheMinimumIsServed() {
+		let versions = ProtocolVersions(minimum: 2, recommended: 3, current: 4)
+
+		#expect(versions.check(nil) == .tooOld)
+		#expect(versions.check("one") == .tooOld)
+		#expect(versions.check("1") == .tooOld)
+		#expect(versions.check("2") == .served(version: 2, update: true))
+		#expect(versions.check("3") == .served(version: 3, update: false))
+		#expect(versions.check("4") == .served(version: 4, update: false))
+		#expect(versions.check("5") == .tooNew(5))
 	}
 
 	@Test func unknownPathIsAServiceError() async throws {

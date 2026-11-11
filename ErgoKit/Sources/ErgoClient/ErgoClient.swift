@@ -37,8 +37,8 @@ public struct ErgoClient: Sendable {
 	}
 
 	/// Attaches this device's account to the Apple ID, or merges it into the account that already has it
-	public func signInWithApple(identityToken: String, nonce: String) async throws -> SignedIn {
-		let body = SignInWithAppleRequest(identityToken: identityToken, nonce: nonce)
+	public func signInWithApple(identityToken: String, nonce: String, authorizationCode: String? = nil) async throws -> SignedIn {
+		let body = SignInWithAppleRequest(identityToken: identityToken, nonce: nonce, authorizationCode: authorizationCode)
 		return try await send(request("POST", ErgoProtocol.Path.appleSignIn, body: body))
 	}
 
@@ -69,8 +69,10 @@ public struct ErgoClient: Sendable {
 
 	// MARK: - Connections
 
+	/// Without any for a provider or kind of credential this version doesn't know
 	public func connections() async throws -> [ConnectionStatus] {
-		try await send(request("GET", ErgoProtocol.Path.connections))
+		let list: TolerantList<ConnectionStatus> = try await send(request("GET", ErgoProtocol.Path.connections))
+		return list.elements
 	}
 
 	public func connect(_ provider: Provider, _ upload: ConnectionUpload) async throws -> ConnectionStatus {
@@ -139,8 +141,15 @@ public struct ErgoClient: Sendable {
 
 		let status = (response as? HTTPURLResponse)?.statusCode ?? 0
 		guard 200 ..< 300 ~= status else {
-			throw (try? ErgoProtocol.decoder.decode(ServiceError.self, from: data))
+			let failure = (try? ErgoProtocol.decoder.decode(ServiceError.self, from: data))
 				?? ServiceError(code: .internalError, message: "Unexpected status \(status) from the Ergo server")
+			if failure.code == .outdatedApp {
+				Self.announce(.required)
+			}
+			throw failure
+		}
+		if (response as? HTTPURLResponse)?.value(forHTTPHeaderField: ErgoProtocol.updateHeader) == AppUpdate.recommended.rawValue {
+			Self.announce(.recommended)
 		}
 		return data
 	}
@@ -177,7 +186,8 @@ public struct ErgoClient: Sendable {
 						try await socket.send(.string(opening))
 					}
 					while true {
-						let message: Message = try await Self.decode(socket.receive())
+						// Nil is a kind this version doesn't know, from a newer server
+						guard let message: Message = try await Self.decode(socket.receive()) else { continue }
 						continuation.yield(message)
 						if isLast(message) {
 							break
@@ -208,7 +218,7 @@ public struct ErgoClient: Sendable {
 		(try? ErgoProtocol.encoder.encode(message)).map { String(decoding: $0, as: UTF8.self) }
 	}
 
-	private static func decode<Message: Decodable>(_ frame: URLSessionWebSocketTask.Message) throws -> Message {
+	static func decode<Message: Decodable>(_ frame: URLSessionWebSocketTask.Message) throws -> Message? {
 		let data: Data
 		switch frame {
 			case let .string(text):
@@ -222,17 +232,34 @@ public struct ErgoClient: Sendable {
 		do {
 			return try ErgoProtocol.decoder.decode(Message.self, from: data)
 		} catch {
+			if let skipping = Message.self as? any SkipsUnknownKinds.Type, skipping.canSkip(data) {
+				return nil
+			}
 			throw ServiceError.unexpectedReply
 		}
 	}
 
 	/// The task's own error is the first thing that went wrong. `thrown` can be a later one, like "not connected".
 	static func failure(of socket: URLSessionWebSocketTask, _ thrown: any Error) -> ServiceError {
-		failure(
+		let failure = failure(
 			status: (socket.response as? HTTPURLResponse)?.statusCode,
 			error: socket.error ?? thrown,
 			host: socket.originalRequest?.url?.host()
 		)
+		if failure.code == .outdatedApp {
+			announce(.required)
+		}
+		return failure
+	}
+
+	// MARK: - Updates
+
+	/// Posted whenever the server says this app is getting old or is too old, with the `AppUpdate` as its object. It can
+	/// come many times a minute and from any thread, so whoever shows it decides how often.
+	public static let appUpdateNotification = Notification.Name("ErgoClient.appUpdate")
+
+	static func announce(_ update: AppUpdate) {
+		NotificationCenter.default.post(name: appUpdateNotification, object: update)
 	}
 
 	/// The upgrade's status comes first, a socket can't carry an error body. No status means no HTTP reply at all.
@@ -244,6 +271,8 @@ public struct ErgoClient: Sendable {
 				ServiceError(code: .unauthorized, message: "Unknown Ergo account")
 			case 403?:
 				ServiceError(code: .signInRequired, message: "Sign in to sync")
+			case 426?:
+				.outdated
 			case let status?:
 				.unreachable("the server answered HTTP \(status) to the WebSocket upgrade")
 			case nil:
@@ -256,4 +285,7 @@ extension ServiceError {
 	static let unreachable = ServiceError(code: .providerUnavailable, message: "Couldn't reach the Ergo server")
 	static let disconnected = ServiceError(code: .providerUnavailable, message: "Lost connection to the Ergo server")
 	static let unexpectedReply = ServiceError(code: .internalError, message: "Unexpected reply from the Ergo server")
+
+	/// A socket's upgrade can't carry the server's own message
+	static let outdated = ServiceError(code: .outdatedApp, message: "Expected a newer version of Ergo, update the app")
 }

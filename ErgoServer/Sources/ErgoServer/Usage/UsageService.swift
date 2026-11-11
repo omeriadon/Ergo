@@ -111,6 +111,7 @@ struct UsageService: Sendable {
 		guard micros > 0 else { return }
 		do {
 			try await UsagePeriodRow.add(micros: micros, runs: 0, to: UsagePeriod.day(of: now), for: account, on: database)
+			logger.verbose("Counted usage", metadata: ["micros": "\(micros)"])
 		} catch {
 			logger.warning("Couldn't record usage", metadata: ["error": "\(String(reflecting: type(of: error)))"])
 		}
@@ -142,6 +143,7 @@ struct UsageService: Sendable {
 	func recordDeepResearch(_ runs: Int = 1, for account: UUID, on database: any Database, logger: Logger, now: Date = .now) async {
 		do {
 			try await UsagePeriodRow.add(micros: 0, runs: runs, to: UsagePeriod.week(of: now), for: account, on: database)
+			logger.verbose(runs < 0 ? "Gave back a deep research run" : "Counted a deep research run")
 		} catch {
 			logger.warning("Couldn't record a deep research run", metadata: ["error": "\(String(reflecting: type(of: error)))"])
 		}
@@ -169,21 +171,31 @@ struct UsageService: Sendable {
 	// MARK: - Paying
 
 	/// Takes an App Store transaction as Apple signed it. One subscription pays for one account: the last to show it.
-	func activate(_ upload: PlanUpload, for account: UUID, on database: any Database, now: Date = .now) async throws {
+	func activate(_ upload: PlanUpload, for account: UUID, on database: any Database, logger: Logger, now: Date = .now) async throws {
 		guard let appStore else {
+			logger.warning("A purchase was refused, since purchases aren't set up")
 			throw ServiceError(code: .providerUnavailable, message: "Purchases aren't set up on the Ergo server")
 		}
-		let transaction = try await appStore.verified(upload.transaction)
+		let transaction: AppStoreTransaction
+		do {
+			transaction = try await appStore.verified(upload.transaction)
+		} catch {
+			// Never the transaction: its ids are Apple's and the purchaser's
+			logger.warning("A purchase didn't verify", metadata: ["reason": "\((error as? ServiceError)?.message ?? "unknown")"])
+			throw error
+		}
 		let expires = transaction.expiresDate.map { Date(timeIntervalSince1970: $0 / 1000) }
 		let isActive = transaction.revocationDate == nil && (expires.map { $0 > now } ?? true)
 
-		try await database.transaction { database in
+		let moved = try await database.transaction { database -> Int in
 			let holders = try await AccountPlanRow.query(on: database).filter(\.$originalTransaction == transaction.originalTransactionId).all()
+			var released = 0
 			for holder in holders where holder.$account.id != account {
 				holder.plan = AccountPlan.free.rawValue
 				holder.expires = nil
 				holder.originalTransaction = nil
 				try await holder.save(on: database)
+				released += 1
 			}
 
 			let row = try await AccountPlanRow.findOrMake(account, on: database)
@@ -191,7 +203,9 @@ struct UsageService: Sendable {
 			row.expires = expires
 			row.originalTransaction = transaction.originalTransactionId
 			try await row.save(on: database)
+			return released
 		}
+		logger.verbose("Recorded a purchase", metadata: ["active": "\(isActive)", "movedFromAnotherAccount": "\(moved)"])
 	}
 
 	// MARK: - One free allowance per device
@@ -207,7 +221,9 @@ struct UsageService: Sendable {
 			case .granted:
 				row.deviceClaimed = now
 				try await row.save(on: database)
+				logger.verbose("Claimed this device's free allowance")
 			case .claimedThisMonth:
+				logger.warning("A device's free allowance had already moved this month")
 				throw ServiceError(
 					code: .invalidRequest,
 					message: "This device's free allowance went to another Ergo account this month. Sign in to that one, connect your own Claude or ChatGPT, or try again next month"
