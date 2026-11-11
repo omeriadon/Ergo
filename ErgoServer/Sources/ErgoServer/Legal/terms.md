@@ -14,7 +14,7 @@ You are responsible for your account and for keeping your password and devices s
 
 ## What you write
 
-Your boards, scratchpads, chats and everything else you write stay yours. You give us permission to store, copy and send them only as far as running Ergo needs: syncing them to your devices, showing a shared board to the people you shared it with, and sending what you ask to an AI model. Our [Privacy Policy]([PRIVACY POLICY URL]) says where they go.
+Your boards, scratchpads, chats and everything else you write stay yours. You give us permission to store, copy and send them only as far as running Ergo needs: syncing them to your devices, showing a shared board to the people you shared it with, and sending what you ask to an AI model. Our [Privacy Policy](/policy) says where they go.
 
 You are responsible for what you write and share, and for having the right to use any text or link you put into Ergo.
 

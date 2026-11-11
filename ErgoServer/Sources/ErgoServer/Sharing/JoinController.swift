@@ -17,7 +17,8 @@ enum JoinController {
 	/// What `ProtocolVersionMiddleware` lets through without the header
 	static func isPublic(_ request: Request) -> Bool {
 		guard request.method == .GET || request.method == .HEAD else { return false }
-		return isJoinPage(request) || request.url.path.split(separator: "/") == ErgoProtocol.Path.appleAppSiteAssociation.split(separator: "/")
+		let parts = request.url.path.split(separator: "/")
+		return isJoinPage(request) || LegalController.isPage(parts) || parts == ErgoProtocol.Path.appleAppSiteAssociation.split(separator: "/")
 	}
 
 	/// The path holds an invite token, so it's never logged

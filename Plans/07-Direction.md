@@ -17,7 +17,7 @@ Adon's working list:
 
 Before strangers use it:
 - **A first run.** An intro, the privacy statement and AI consent, and a short tutorial for what isn't obvious, like tapping a tab again. The legal screens name every provider that gets what's sent. The rest of the app never names OpenRouter.
-- **A privacy policy and terms**, hosted, and linked from the app and the paywall. The drafts are in `Legal/`.
+- **A privacy policy and terms**, linked from the app and the paywall. The server hosts them at `/policy` and `/terms`.
 - **Password reset and verified email.** Waits on a mail provider.
 - **Reports reach Adon by email.** They're saved on the server, and wait on the same mail provider.
 - **The App Store products** and prices.

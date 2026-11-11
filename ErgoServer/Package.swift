@@ -44,6 +44,8 @@ let package = Package(
 				.process("Prompts/Formalize"),
 				.process("Prompts/Verify"),
 				.process("Prompts/Title"),
+				.process("Legal/privacy-policy.md"),
+				.process("Legal/terms.md"),
 			]
 		),
 		.testTarget(

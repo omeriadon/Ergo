@@ -118,16 +118,17 @@ final class APNSClient: Sendable {
 	/// The same ES256 token with other claims, which is what Apple's other services take: DeviceCheck and the Sign in with
 	/// Apple client secret both sign like this
 	static func signedToken(key: P256.Signing.PrivateKey, keyID: String, claims: some Encodable) throws -> String {
-		struct Header: Encodable {
-			let alg: String
-			let kid: String
-		}
-
-		let header = try base64URL(JSONEncoder().encode(Header(alg: "ES256", kid: keyID)))
+		let header = try base64URL(JSONEncoder().encode(TokenHeader(alg: "ES256", kid: keyID)))
 		let payload = try base64URL(JSONEncoder().encode(claims))
 		let signed = "\(header).\(payload)"
 		let signature = try key.signature(for: Data(signed.utf8))
 		return "\(signed).\(base64URL(signature.rawRepresentation))"
+	}
+
+	/// Outside `signedToken`, since the Swift the server is built with can't nest a type in a generic function
+	private struct TokenHeader: Encodable {
+		let alg: String
+		let kid: String
 	}
 
 	private static func base64URL(_ data: Data) -> String {

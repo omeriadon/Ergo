@@ -35,6 +35,9 @@ func configure(
 	guard StagePrompts.missing.isEmpty else {
 		throw ServerConfig.Problem(description: "Missing prompts for \(StagePrompts.missing.map { "'\($0)'" }.joined(separator: ", "))")
 	}
+	guard LegalController.missing.isEmpty else {
+		throw ServerConfig.Problem(description: "Missing legal pages for \(LegalController.missing.map { "'\($0)'" }.joined(separator: ", "))")
+	}
 
 	if let user = config.runnerUser, ProcessRunner.Owner(named: user) == nil {
 		throw ServerConfig.Problem(description: "ERGO_RUNNER_USER: Unknown user '\(user)'")

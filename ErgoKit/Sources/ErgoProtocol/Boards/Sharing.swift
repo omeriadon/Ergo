@@ -47,6 +47,12 @@ public extension ErgoProtocol.Path {
 
 	/// GET `join/<token>`, public, no version header: a small page for someone without the app
 	static let join = "join"
+
+	/// GET, public, no version header: the privacy policy as a web page
+	static let privacyPolicy = "policy"
+
+	/// GET, public, no version header: the terms of use as a web page
+	static let terms = "terms"
 }
 
 // MARK: - Invites

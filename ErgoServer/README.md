@@ -36,6 +36,7 @@ Every request from the app sends `Ergo-Protocol-Version: 1`, and all but `POST v
 | `PUT` / `DELETE v1/push/device` | signed in | `PushDevice` → `204`, or forgets this device's token only |
 | `GET /.well-known/apple-app-site-association` | nothing | What makes invite links open the app. No version header. |
 | `GET /join/<token>` | nothing | A small page for someone without the app. No version header, reads nothing from the database, and its path is never logged. |
+| `GET /policy`, `GET /terms` | nothing | The privacy policy and the terms as web pages, made from the markdown in `Sources/ErgoServer/Legal/`. No version header. |
 
 "Signed in" means an Apple ID, an email, or both, on one account. An anonymous account gets `403` `signInRequired` from both sync routes, and from every signed-in route above.
 

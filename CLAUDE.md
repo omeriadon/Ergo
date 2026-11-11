@@ -72,7 +72,7 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -configuration Debug -destinatio
 - No Foundation Models, on-device or otherwise.
 - Anything that talks to the server and takes a while is a run the server owns, with a way to find it again (as Ask and Break Down do), never a socket the work depends on.
 - Never call an App Intent's `perform()` from app code: `@Dependency` only resolves inside the system's own intent flow, and crashes outside it. Call the `NavigationManager` method the intent calls.
-- `PrivacyInfo.xcprivacy` (the app's in `Ergo/Special/`, the widgets' in `Ergo Widgets/`) needs a new entry when the app starts collecting something new or calls another required-reason API. `Legal/` has the privacy policy and terms as drafts to host.
+- `PrivacyInfo.xcprivacy` (the app's in `Ergo/Special/`, the widgets' in `Ergo Widgets/`) needs a new entry when the app starts collecting something new or calls another required-reason API. The privacy policy and terms are markdown in `ErgoServer/Sources/ErgoServer/Legal/`, and the server serves them at `/policy` and `/terms` (`LegalController`, which only reads headings, lists, bold and links).
 
 ## Navigation
 - A sheet belongs to a tab or to the whole app. `BoardSheet`, `LogicSheet` and `LibrarySheet` live with their tabs, each with its own slot on `NavigationManager` (this device only), and only show while that tab is selected: leaving hides it and coming back restores it. `AppSheet` (settings, what's shared in, invites) shows over any tab.

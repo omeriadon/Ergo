@@ -29,6 +29,8 @@ func routes(_ app: Application) throws {
 	let joinPage: [PathComponent] = ErgoProtocol.Path.join.pathComponents + [":token"]
 	app.get(ErgoProtocol.Path.appleAppSiteAssociation.pathComponents, use: JoinController.association)
 	app.get(joinPage, use: JoinController.page)
+	app.get(ErgoProtocol.Path.privacyPolicy.pathComponents) { _ async throws -> Response in LegalController.page(.privacyPolicy) }
+	app.get(ErgoProtocol.Path.terms.pathComponents) { _ async throws -> Response in LegalController.page(.terms) }
 	// Someone may not have an account yet when they open a link
 	app.post(ErgoProtocol.Path.invitePreview.pathComponents, use: BoardSharingController.preview)
 
