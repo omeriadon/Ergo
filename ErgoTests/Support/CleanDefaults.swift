@@ -88,7 +88,8 @@ enum TestDefaults {
 	/// of it would see the simulator's value, and leave its own behind.
 	///
 	/// Left out on purpose: the server and sign-in keys, since the app that is hosting the tests watches those and would
-	/// sign out, and the synced settings and bookmarks, which it watches too.
+	/// sign out, the synced settings and bookmarks, which it watches too, and `firstRunFinished`, which would swap the
+	/// hosting app between its tabs and the first run for every test.
 	static let keys: [Defaults.Keys] = [
 		.boards, .currentBoardID, .pinnedBoards, .archivedBoards,
 		.scratchpads, .currentScratchpadID,
@@ -97,6 +98,7 @@ enum TestDefaults {
 		.selectedTab, .libraryPath, .askThreadSelected, .logicPath, .libraryGeneralSearchText,
 		.presentedSheet, .boardSheet, .logicSheet, .librarySheet,
 		.syncState, .syncDeviceID,
+		.aiConsent,
 	]
 
 	/// What was there before the test, as stored. A key that wasn't set isn't in here.

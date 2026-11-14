@@ -62,6 +62,14 @@ struct SettingsView: View {
 					} label: {
 						Label("About Ergo", image: "Ergo")
 					}
+
+					SwiftUI.Link(destination: ServerEnvironment.privacyPolicyURL) {
+						Label("Privacy Policy", systemImage: "hand.raised")
+					}
+
+					SwiftUI.Link(destination: ServerEnvironment.termsURL) {
+						Label("Terms of Use", systemImage: "doc.text")
+					}
 				}
 			}
 			.tint(.accent)

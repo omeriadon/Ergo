@@ -38,6 +38,8 @@ struct TranslationSettingsView: View {
 				ServerSection()
 			#endif
 
+			AIConsentSection()
+
 			Section {
 				Picker("Model", selection: $translationProvider) {
 					ForEach(models, id: \.self) { provider in
@@ -336,6 +338,23 @@ private struct ConnectionRow: View {
 			}
 			.font(.subheadline)
 			.foregroundStyle(.secondary)
+		}
+	}
+}
+
+/// Whether what the person writes may go to AI at all. The first run asks; this is where it changes.
+private struct AIConsentSection: View {
+	@Default(.aiConsent) private var consent
+
+	var body: some View {
+		Section {
+			Toggle("Send Text to AI", isOn: $consent)
+				.accessibilityIdentifier("translation.consent")
+		} footer: {
+			VStack(alignment: .leading, spacing: 6) {
+				Text("Ask, Break Down and Deep Research send what you give them to the company behind the model you choose. Off, everything else still works.")
+				LegalLinks()
+			}
 		}
 	}
 }

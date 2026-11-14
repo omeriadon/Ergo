@@ -171,25 +171,42 @@ struct MarkdownMathExtraction {
 		return nil
 	}
 
-	/// The placeholders in `text` swapped back for their maths
+	/// The placeholders in `text` swapped back for their maths. It reads only the placeholders `text` holds, since a long
+	/// answer has a piece of maths in most of its blocks and trying each piece on each block grows with the square.
 	func restored(_ text: AttributedString) -> AttributedString {
 		guard !pieces.isEmpty else { return text }
-		var text = text
-		for (index, piece) in pieces.enumerated() {
-			let placeholder = Self.placeholder(index)
-			while let range = text.range(of: placeholder) {
-				text.replaceSubrange(range, with: LaTeX.attributed(piece.source))
+		var result = AttributedString()
+		var rest = text[text.startIndex ..< text.endIndex]
+		while let open = rest.characters.firstIndex(of: Self.open) {
+			let after = rest.characters.index(after: open)
+			guard
+				let close = rest.characters[after...].firstIndex(of: Self.close),
+				let index = Int(String(rest.characters[after ..< close])),
+				pieces.indices.contains(index)
+			else {
+				// Not one of ours, so it's kept as written
+				result += AttributedString(rest[rest.startIndex ..< after])
+				rest = rest[after ..< rest.endIndex]
+				continue
 			}
+			result += AttributedString(rest[rest.startIndex ..< open])
+			result += LaTeX.attributed(pieces[index].source)
+			rest = rest[rest.characters.index(after: close) ..< rest.endIndex]
 		}
-		return text
+		result += AttributedString(rest)
+		return result
 	}
 
 	/// The maths a paragraph holds, when that's all it holds and it's meant to stand on its own line
 	func display(in text: AttributedString) -> AttributedString? {
 		let plain = String(text.characters).trimmingCharacters(in: .whitespacesAndNewlines)
-		for (index, piece) in pieces.enumerated() where piece.isDisplay && plain == Self.placeholder(index) {
-			return LaTeX.attributed(piece.source)
+		guard
+			plain.first == Self.open, plain.last == Self.close,
+			let index = Int(plain.dropFirst().dropLast()),
+			pieces.indices.contains(index), pieces[index].isDisplay
+		else {
+			return nil
 		}
-		return nil
+		return LaTeX.attributed(pieces[index].source)
 	}
 }

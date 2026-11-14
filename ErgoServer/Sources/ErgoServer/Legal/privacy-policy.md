@@ -52,7 +52,7 @@ If you're signed in, we keep a push token for your device so shared boards and f
 
 ### Logs
 
-The server logs problems, such as a failed request. These entries carry a pseudonym in place of your account id, and never your email address, tokens, or anything you wrote. [We keep logs for 30 days.]
+The server logs problems, such as a failed request. These entries carry a pseudonym in place of your account id, and never your email address, tokens, or anything you wrote. We keep logs for 30 days.
 
 ## Who else receives your data
 

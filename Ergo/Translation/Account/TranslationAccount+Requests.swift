@@ -33,6 +33,7 @@ extension TranslationAccount {
 	/// The server doesn't stop when this connection does, so a dropped one is `ConnectionLost`, not a failure: call again
 	/// with the same request to hear it from the start.
 	func breakDown(_ request: TranslateRequest, events: (TranslationEvent) -> Void) async throws -> ArgumentBreakdown {
+		try requireAIConsent()
 		let (server, token) = try credentials()
 
 		return try await signedOutOnUnauthorized(of: server) {
@@ -70,6 +71,7 @@ extension TranslationAccount {
 	///
 	/// `board` is the board the chat is about, as it is now, which gives the model tools to change it.
 	func ask(id: UUID, messages: [AskRequestMessage], mode: AskMode = .normal, board: AskBoard? = nil, events: (AskServerMessage) -> Void) async throws {
+		try requireAIConsent()
 		let (server, token) = try credentials()
 		let request = AskRequest(id: id, provider: Defaults[.translationProvider], messages: messages, instructions: Defaults[.agentInstructions], mode: mode, board: board)
 
@@ -114,6 +116,7 @@ extension TranslationAccount {
 
 	/// Hands a board to the server, which carries on without this request. Its results come back through sync.
 	func startAnalysis(board: String, _ request: BoardAnalysisRequest) async throws {
+		try requireAIConsent()
 		try await withSyncClient { try await $0.startBoardAnalysis(board: board, request) }
 	}
 
@@ -132,6 +135,14 @@ extension TranslationAccount {
 		} catch let error as ServiceError where error.code == .unauthorized {
 			forgetToken(for: signedIn.server)
 			throw error
+		}
+	}
+
+	/// Nothing the person wrote goes to a model until they've allowed it. Only `breakDown`, `ask` and `startAnalysis` check:
+	/// usage, connecting a provider and sync send nothing to one.
+	func requireAIConsent() throws {
+		guard Defaults[.aiConsent] else {
+			throw Self.noAIConsent
 		}
 	}
 

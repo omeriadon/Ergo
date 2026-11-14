@@ -169,6 +169,8 @@ final class TranslationAccount {
 	static let notSignedIn = ServiceError(code: .signInRequired, message: "Expected to be signed in, sign in first")
 	static let keychainUnavailable = ServiceError(code: .internalError, message: "Couldn't read the account token from the Keychain")
 	static let disconnected = ServiceError(code: .providerUnavailable, message: "Lost connection to the Ergo server")
+	/// `notConnected`, so the failure rows offer Settings, where it's turned on
+	static let noAIConsent = ServiceError(code: .notConnected, message: "Expected permission to send text to AI, allow it in Settings → AI")
 
 	static func notConnected(_ provider: Provider) -> ServiceError {
 		ServiceError(code: .notConnected, message: "\(provider.name) isn't connected")

@@ -130,6 +130,7 @@ final class BoardAnalysisStore {
 		guard sync.isSignedIn else {
 			throw TranslationAccount.notSignedIn
 		}
+		try account.requireAIConsent()
 		// The server reads the board from its own copy, so what's pending goes first
 		try await sync.syncAndWait()
 

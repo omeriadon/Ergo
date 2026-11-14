@@ -53,7 +53,9 @@ struct PlusView: View {
 		SubscriptionStoreView(productIDs: PlanProducts.all) {
 			PlusFeaturesView()
 		}
-		.storeButton(.visible, for: .restorePurchases)
+		.storeButton(.visible, for: .restorePurchases, .policies)
+		.subscriptionStorePolicyDestination(url: ServerEnvironment.privacyPolicyURL, for: .privacyPolicy)
+		.subscriptionStorePolicyDestination(url: ServerEnvironment.termsURL, for: .termsOfService)
 		.onInAppPurchaseCompletion { _, result in
 			if case let .success(.success(verification)) = result {
 				await purchases.handle(verification)

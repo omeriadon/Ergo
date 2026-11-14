@@ -70,7 +70,7 @@ Ergo is provided "as is". As far as the law allows, we give no warranties about 
 
 As far as the law allows, we are not liable for indirect or consequential loss, or for lost data, profits or opportunities.
 
-Nothing in these terms takes away rights you have under consumer law that can't be excluded, [including the consumer guarantees of the Australian Consumer Law].
+Nothing in these terms takes away rights you have under consumer law that can't be excluded, including the consumer guarantees of the Australian Consumer Law.
 
 ## Changes to these terms
 

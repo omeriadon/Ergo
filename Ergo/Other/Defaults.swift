@@ -111,6 +111,13 @@ extension Defaults.Keys {
 	/// What other people see this person called on a board they share. Only ever typed in here, never taken from the
 	/// email. Not synced: the server keeps the name that each board was joined with, and this only fills in the next one.
 	static let sharingName = Key<String>("sharingName", default: "")
+
+	/// Whether this device has been through the first run. Not synced, since it comes before signing in.
+	static let firstRunFinished = Key<Bool>("firstRunFinished", default: false)
+
+	/// Whether the person allowed what they write to go to the AI providers the privacy policy names. Asked in the first
+	/// run and changed in Settings → AI. Not synced, since it's asked before there's an account to sync it with.
+	static let aiConsent = Key<Bool>("aiConsent", default: false)
 }
 
 extension Provider: @retroactive Defaults.Serializable {}

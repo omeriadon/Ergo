@@ -70,10 +70,30 @@ struct MarkdownFuzzTests {
 		}
 	}
 
+	/// Every paragraph holds maths, which once made this take as long as the square of the paragraphs
 	@Test func aVeryLongAnswerReads() {
 		let paragraph = "It **rained**, so the ground is *wet* [see](ergo://library/fallacies/straw-man) and $X \\to Y$.\n\n"
-		let document = MarkdownDocument(String(repeating: paragraph, count: 400))
-		#expect(document.blocks.count == 400)
+		let start = ContinuousClock.now
+		let document = MarkdownDocument(String(repeating: paragraph, count: 3000))
+		#expect(document.blocks.count == 3000)
+		#expect(ContinuousClock.now - start < .seconds(10))
+	}
+
+	@Test func eachPlaceholderGetsItsOwnMaths() {
+		let document = MarkdownDocument("$A$ then $B$, and $A$ again.\n\n$$C$$\n\nNot maths: \u{E000}7\u{E001} stays.")
+		let texts = document.blocks.map { block -> String in
+			switch block {
+				case let .paragraph(text), let .math(text): String(text.characters)
+				default: ""
+			}
+		}
+		#expect(texts.count == 3)
+		#expect(!texts[0].contains("\u{E000}"))
+		#expect(texts[0].contains("then") && texts[0].contains("again."))
+		if case .math = document.blocks[1] {} else {
+			Issue.record("Expected $$C$$ on its own to be a maths block")
+		}
+		#expect(texts[2].contains("\u{E000}7\u{E001}"))
 	}
 
 	@Test func whatIsNestedTooFarIsStillThere() {

@@ -6,6 +6,7 @@
 //
 
 import Defaults
+import ErgoProtocol
 import Foundation
 
 /// Which Ergo server this install talks to. Only debug builds can choose; release builds always use production.
@@ -16,6 +17,11 @@ enum ServerEnvironment: String, CaseIterable, Codable, Defaults.Serializable {
 
 	/// The hosted server, and the only server address written in the app
 	static let productionURL = URL(string: "https://ergo-15.235.184.129.sslip.io")!
+
+	/// Always production's, even in a debug build pointed at a Mac, since it's the text people agree to
+	static let privacyPolicyURL = productionURL.appending(path: ErgoProtocol.Path.privacyPolicy)
+
+	static let termsURL = productionURL.appending(path: ErgoProtocol.Path.terms)
 
 	/// The server to talk to now. Nil only in a debug build set to This Mac without a usable address.
 	static var current: URL? {

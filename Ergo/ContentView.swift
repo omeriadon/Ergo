@@ -5,9 +5,26 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
+import Defaults
 import SwiftUI
 
 struct ContentView: View {
+	@Default(.firstRunFinished) private var firstRunFinished
+
+	var body: some View {
+		// The tabs and their sheets only exist after the first run, so a sheet asked for during it (a shared item, an
+		// invite) waits and shows over the tabs when they appear
+		if firstRunFinished {
+			MainView()
+				.transition(.opacity)
+		} else {
+			FirstRunView()
+				.transition(.opacity)
+		}
+	}
+}
+
+private struct MainView: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
