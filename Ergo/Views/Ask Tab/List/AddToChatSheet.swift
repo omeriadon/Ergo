@@ -47,7 +47,7 @@ struct AddToChatSheet: View {
 			.navigationTitle("Add to Chat")
 			.toolbarTitleDisplayMode(.inline)
 			.toolbar {
-				ToolbarItem(placement: .topBarLeading) {
+				ToolbarItem(placement: .sheetDismissal) {
 					Button(role: .cancel) {
 						navigation.dismissSheet()
 					}

@@ -10,14 +10,18 @@ import ErgoProtocol
 import Foundation
 
 /// A `Statement` as a statement record's fields. `position` is its own field, so dragging a box never clashes with
-/// typing in it. The English is its `content`, and `source` is the region it's in.
+/// typing in it. The English (and any placeholder) is its `content`, and `source` is the region it's in.
 enum StatementRecord {
 	/// Never rename a property: it's on the server, and other devices decode it
 	struct Content: Codable, Hashable {
 		var english: String
 
+		/// Optional, so content from an older app still decodes. Its edits drop it, which only loses the prompt.
+		var placeholder: String?
+
 		init(_ statement: Statement) {
 			english = statement.english
+			placeholder = statement.placeholder
 		}
 	}
 
@@ -84,5 +88,6 @@ enum StatementRecord {
 private extension Statement {
 	mutating func apply(_ content: StatementRecord.Content) {
 		english = content.english
+		placeholder = content.placeholder
 	}
 }

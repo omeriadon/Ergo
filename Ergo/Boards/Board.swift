@@ -24,9 +24,15 @@ nonisolated struct Board: Codable, Hashable, Identifiable, Defaults.Serializable
 	var links: [Link] = []
 	var sources: [BoardSource] = []
 
-	/// Nothing written yet, so the board stays out of the list. Where boxes sit isn't writing.
+	/// Nothing written yet, so the board stays out of the list. Where boxes sit isn't writing, and nor are the arrows
+	/// between a template's cards. Any other arrow is, even between empty cards.
 	var isEmpty: Bool {
-		sources.isEmpty && hasOnlyPlaceholder
+		sources.isEmpty && statements.allSatisfy(\.isEmpty) && links.allSatisfy(isBetweenTemplateCards)
+	}
+
+	/// Both ends are cards a template made (`BoardTemplate`), which still say what goes in them
+	private func isBetweenTemplateCards(_ link: Link) -> Bool {
+		statement(link.premise)?.placeholder != nil && statement(link.conclusion)?.placeholder != nil
 	}
 
 	/// No cards but the empty one a new board starts with, which something added can replace

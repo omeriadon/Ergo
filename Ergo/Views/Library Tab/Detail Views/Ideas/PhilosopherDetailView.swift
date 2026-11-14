@@ -42,29 +42,31 @@ struct PhilosopherDetailView: View {
 									.aspectRatio(contentMode: .fill)
 									.clipShape(Circle())
 
-								LiquidLens(
-									isLifted: true,
-									animated: false,
-									configuration: .init(
-										style: 0,
-										warpsContentBelow: true,
-										restingBackgroundColor: .white.withAlphaComponent(0),
-										liftedDisplacement: 100,
-										innerShadowOpacity: 0
-									),
-									configure: { handle in
-										guard let flex = handle.value(for: .flexInteraction) as? NSObject else {
-											return
-										}
+								#if os(iOS)
+									LiquidLens(
+										isLifted: true,
+										animated: false,
+										configuration: .init(
+											style: 0,
+											warpsContentBelow: true,
+											restingBackgroundColor: .white.withAlphaComponent(0),
+											liftedDisplacement: 100,
+											innerShadowOpacity: 0
+										),
+										configure: { handle in
+											guard let flex = handle.value(for: .flexInteraction) as? NSObject else {
+												return
+											}
 
-										handle.setValue(
-											0,
-											forKeyPath: "preferredFlexSources",
-											on: flex
-										)
-									}
-								)
-								.frame(width: geo.size.width, height: geo.size.width)
+											handle.setValue(
+												0,
+												forKeyPath: "preferredFlexSources",
+												on: flex
+											)
+										}
+									)
+									.frame(width: geo.size.width, height: geo.size.width)
+								#endif
 							}
 							.frame(width: geo.size.width, height: geo.size.width)
 						}

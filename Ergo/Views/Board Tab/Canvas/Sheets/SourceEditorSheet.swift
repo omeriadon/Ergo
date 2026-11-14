@@ -57,7 +57,7 @@ struct SourceEditorSheet: View {
 			.navigationTitle(kind == .text ? "Text" : "Web Link")
 			.toolbarTitleDisplayMode(.inline)
 			.toolbar {
-				ToolbarItem(placement: .topBarLeading) {
+				ToolbarItem(placement: .sheetDismissal) {
 					Button(role: .cancel) {
 						dismiss()
 					}

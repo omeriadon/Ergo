@@ -71,6 +71,7 @@ struct WideSidebar: View {
 			WideSidebarLibrary()
 		}
 		.listStyle(.sidebar)
+		.modifier(DeepResearchAccessory(inSidebar: true))
 	}
 
 	var body: some View {
@@ -98,7 +99,7 @@ struct WideSidebar: View {
 				scratchpadStore.rename(id, to: name)
 			case let .chat(id):
 				askStore.rename(id, to: name)
-			case .course, .ask, .libraryHome, .library, .bookmarks:
+			case .course, .ask, .libraryHome, .library, .bookmarks, .practice:
 				break
 		}
 	}

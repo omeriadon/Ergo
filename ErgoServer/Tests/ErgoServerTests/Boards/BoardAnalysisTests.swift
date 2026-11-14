@@ -150,6 +150,36 @@ struct BoardAnalysisPromptTests {
 		#expect(!message.contains("\"run\""))
 	}
 
+	@Test func aLongSourceTravelsInParts() throws {
+		let card = UUID()
+		let source = UUID()
+		let text = (0 ..< 8).map { "Paragraph \($0) makes a claim." }.joined(separator: "\n\n")
+		let request = BoardAnalysisRequest(
+			run: UUID(),
+			provider: .claude,
+			statements: [.init(id: card, english: "It rained.")],
+			links: [],
+			sources: [.init(id: source, title: "Post", text: text)]
+		)
+		let passes = request.passes(partLimit: 80)
+		#expect(passes.count > 1)
+		let first = try StagePrompts.analysisMessage(for: passes[0], board: request)
+		#expect(first.contains(#""part" : "1 of \#(passes.count)""#))
+		#expect(first.contains(card.uuidString))
+		#expect(first.contains("Paragraph 0"))
+		#expect(!first.contains("Paragraph 7"))
+
+		let last = try StagePrompts.analysisMessage(for: passes[passes.count - 1], board: request)
+		#expect(last.contains("Paragraph 7"))
+		#expect(!last.contains("Paragraph 0"))
+		#expect(last.contains(card.uuidString), "The cards come as context")
+		#expect(last.contains("for context only"))
+
+		let whole = try StagePrompts.analysisMessage(for: request.passes()[0], board: request)
+		let single = try StagePrompts.analysisMessage(for: request)
+		#expect(whole == single, "A board read in one go is told what it always was")
+	}
+
 	@Test func claudeCodeIsAllowedTheAnalysisTools() throws {
 		let scratch = try Scratch()
 		defer { scratch.remove() }

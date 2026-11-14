@@ -36,7 +36,7 @@ struct JoinBoardSheet: View {
 				.navigationTitle("Join Board")
 				.toolbarTitleDisplayMode(.inline)
 				.toolbar {
-					ToolbarItem(placement: .topBarLeading) {
+					ToolbarItem(placement: .sheetDismissal) {
 						Button(role: .cancel) {
 							navigation.dismissSheet()
 						}

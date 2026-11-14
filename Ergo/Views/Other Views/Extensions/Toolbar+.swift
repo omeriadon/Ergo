@@ -7,6 +7,16 @@
 
 import SwiftUI
 
+extension ToolbarItemPlacement {
+	// A sheet's Close or Cancel button: the top leading corner on iOS, and where a Mac sheet keeps its cancel button,
+	// which also answers Escape
+	#if os(macOS)
+		static let sheetDismissal = ToolbarItemPlacement.cancellationAction
+	#else
+		static let sheetDismissal = ToolbarItemPlacement.topBarLeading
+	#endif
+}
+
 extension View {
 	func toolbarTitleItem() -> some View {
 		modifier(ToolbarTitleItemModifier())

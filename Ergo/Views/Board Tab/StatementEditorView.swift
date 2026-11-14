@@ -44,15 +44,29 @@ struct StatementEditorView: View {
 				.padding(.horizontal, 15)
 				.accessibilityLabel("English editor")
 				.accessibilityIdentifier("board.englishEditor")
+				.overlay(alignment: .topLeading) { placeholder }
 		} else {
 			ScrollView {
-				Text(statement.english.isEmpty ? "Empty statement" : statement.english)
+				Text(statement.english.isEmpty ? statement.placeholderText : statement.english)
 					.foregroundStyle(statement.english.isEmpty ? .secondary : .primary)
 					.textSelection(.enabled)
 					.frame(maxWidth: .infinity, alignment: .leading)
 					.padding(.horizontal, 20)
 					.accessibilityIdentifier("board.englishReader")
 			}
+		}
+	}
+
+	/// `TextEditor` has no prompt of its own, so a template's placeholder sits over it until something's written
+	@ViewBuilder
+	private var placeholder: some View {
+		if statement.english.isEmpty, let placeholder = statement.placeholder {
+			Text(placeholder)
+				.foregroundStyle(.tertiary)
+				.padding(.horizontal, 20)
+				.padding(.top, 8)
+				.allowsHitTesting(false)
+				.accessibilityHidden(true)
 		}
 	}
 

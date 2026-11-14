@@ -62,7 +62,9 @@ struct BoardAnalysisService: Sendable {
 		} else if try await Credential.find(request.provider, for: account, on: database) == nil {
 			throw ServiceError(code: .notConnected, message: "\(request.provider.displayName) isn't connected")
 		}
-		let prompt = try StagePrompts.analysisMessage(for: request)
+		// A long source is read in parts, one model call after another, each with its own message
+		let passes = request.passes()
+		let prompts = try passes.map { try StagePrompts.analysisMessage(for: $0, board: request) }
 
 		try jobs.reserve(board: key, account: account, run: request.run)
 		let started = Date.now
@@ -86,7 +88,7 @@ struct BoardAnalysisService: Sendable {
 			await translations.usage.recordDeepResearch(for: account, on: database, logger: logger)
 		}
 
-		let job = Job(service: self, request: request, board: boardID, account: account, started: started, prompt: prompt, port: port, database: jobDatabase, logger: jobLogger)
+		let job = Job(service: self, request: request, board: boardID, account: account, started: started, passes: passes, prompts: prompts, port: port, database: jobDatabase, logger: jobLogger)
 		let task = Task {
 			await job.run()
 		}
@@ -96,6 +98,7 @@ struct BoardAnalysisService: Sendable {
 			"statements": "\(request.statements.count)",
 			"links": "\(request.links.count)",
 			"sources": "\(request.sources.count)",
+			"parts": "\(passes.count)",
 		])
 	}
 
@@ -160,7 +163,10 @@ struct BoardAnalysisService: Sendable {
 		let board: UUID
 		let account: UUID
 		let started: Date
-		let prompt: String
+
+		/// What each model call may report on, and what it's told, in order
+		let passes: [BoardAnalysisPass]
+		let prompts: [String]
 		let port: Int
 		let database: any Database
 		let logger: Logger
@@ -204,6 +210,7 @@ struct BoardAnalysisService: Sendable {
 			var summary: Logger.Metadata = [
 				"state": "\(state.rawValue)",
 				"reports": "\(heard.reports)",
+				"parts": "\(passes.count)",
 				"provider": "\(request.provider)",
 				"seconds": "\(Int(Date.now.timeIntervalSince(started)))",
 			]
@@ -216,8 +223,32 @@ struct BoardAnalysisService: Sendable {
 			}
 		}
 
+		/// One model call for each pass. Later ones are a long source's next parts, with what's left of the report limit,
+		/// and only the first's own words become the discussion. A pass that fails fails the run, keeping what was saved.
 		private func analyse(_ heard: Heard) async throws {
-			let tools = AskToolServer(tools: BoardAnalysisTools(request: request, catalog: service.catalog))
+			for (pass, prompt) in zip(passes, prompts) {
+				try Task.checkCancellation()
+				var budget = BoardAnalysisTools.reportLimit
+				if !pass.isFirst {
+					budget -= heard.reports
+					guard budget > 0 else {
+						logger.verbose("A board analysis stopped before its last parts, having reported all it may", metadata: ["part": "\(pass.number)", "parts": "\(pass.count)"])
+						return
+					}
+					try await beat(heard)
+					logger.verbose("A board analysis is reading the next part", metadata: [
+						"part": "\(pass.number)",
+						"parts": "\(pass.count)",
+						"characters": "\(pass.request.sources.reduce(0) { $0 + $1.text.count })",
+					])
+				}
+				try await analyse(pass, prompt: prompt, budget: budget, heard: heard)
+			}
+		}
+
+		private func analyse(_ pass: BoardAnalysisPass, prompt: String, budget: Int, heard: Heard) async throws {
+			// The pass's own request, so a quote is checked against the part the model read
+			let tools = AskToolServer(tools: BoardAnalysisTools(request: pass.request, catalog: service.catalog, reportBudget: budget))
 			let responder: AskRuns.Responder = { [self] body in
 				await tools.respond(to: body) { event in
 					guard case let .report(report) = event else { return }
@@ -241,11 +272,30 @@ struct BoardAnalysisService: Sendable {
 					warnsWhenBusy: false
 				) { backend in
 					try await backend.ask(prompt: prompt, tools: url, responder: responder, settings: .analysis) { text in
-						heard.add(text: text)
+						if pass.isFirst {
+							heard.add(text: text)
+						}
 					}
 				} summary: { _ in
-					["reports": "\(heard.reports)"]
+					["reports": "\(heard.reports)", "part": "\(pass.number)"]
 				}
+			}
+		}
+
+		/// Says the run is still going, so a run in parts that takes longer than `staleAfter` isn't shown as interrupted.
+		/// A board that's gone stops the run, and any other failure is only logged.
+		private func beat(_ heard: Heard) async throws {
+			let status = BoardAnalysisStatus(board: board, run: request.run, state: .running, started: started, heartbeat: .now)
+			do {
+				try await write { ledger, database in
+					try await ledger.writeServerOwned(.analysis, id: key, fields: status.fields, board: key, requester: account, on: database)
+				}
+			} catch is BoardGone {
+				heard.markGone()
+				throw CancellationError()
+			} catch {
+				// A missed heartbeat only risks the run looking interrupted, which is better than failing it
+				logger.warning("Couldn't say a board analysis is still going", metadata: ["error": "\(String(reflecting: type(of: error)))"])
 			}
 		}
 

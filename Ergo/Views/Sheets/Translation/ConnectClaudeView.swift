@@ -125,7 +125,12 @@ struct CopyButton: View {
 
 	var body: some View {
 		Button("Copy", systemImage: "doc.on.doc") {
-			UIPasteboard.general.string = text
+			#if os(iOS)
+				UIPasteboard.general.string = text
+			#else
+				NSPasteboard.general.clearContents()
+				NSPasteboard.general.setString(text, forType: .string)
+			#endif
 		}
 		.labelStyle(.iconOnly)
 		.buttonStyle(.borderless)

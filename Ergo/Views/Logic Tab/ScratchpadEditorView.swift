@@ -26,7 +26,9 @@ struct ScratchpadEditorView: View {
 	@State private var analysis: LogicAnalysis?
 	@State private var analyzedLogic: [LogicKeyboardEntry] = []
 	@State private var isLogicFocused = false
-	@State private var cursor = LogicEditorCursor()
+	#if os(iOS)
+		@State private var cursor = LogicEditorCursor()
+	#endif
 
 	private var scratchpad: LogicScratchpad {
 		scratchpadStore.current
@@ -55,50 +57,56 @@ struct ScratchpadEditorView: View {
 		}
 		.padding(15)
 		.frame(maxWidth: .infinity, maxHeight: .infinity)
-		.safeAreaInset(edge: .bottom, spacing: 0) {
-			if isLogicFocused {
-				cursorKeys
-					.transition(.opacity)
+		#if os(iOS)
+			.safeAreaInset(edge: .bottom, spacing: 0) {
+				if isLogicFocused {
+					cursorKeys
+						.transition(.opacity)
+				}
 			}
-		}
-		.task(id: scratchpad.logic) {
-			// Waits for a pause in typing, an instant verdict feels like it's grading every keystroke
-			try? await Task.sleep(for: .seconds(1))
-			guard !Task.isCancelled else { return }
+		#endif
+			.task(id: scratchpad.logic) {
+				// Waits for a pause in typing, an instant verdict feels like it's grading every keystroke
+				try? await Task.sleep(for: .seconds(1))
+				guard !Task.isCancelled else { return }
 
-			await analyze()
-		}
-		.onAppear(perform: opened)
-		.onChange(of: scratchpadStore.currentID, opened)
-		.onChange(of: scratchpad.logic) {
-			englishFollowsLogic()
-		}
-		.onChange(of: scratchpad.descriptors) {
-			englishFollowsLogic()
-		}
-		.onChange(of: letters) {
-			englishFollowsLogic()
-		}
-		.toolbar {
-			ToolbarItem(placement: .topBarTrailing) {
-				doneButton
+				await analyze()
 			}
-		}
-		.animation(.easeInOut, value: isLogicFocused)
+			.onAppear(perform: opened)
+			.onChange(of: scratchpadStore.currentID, opened)
+			.onChange(of: scratchpad.logic) {
+				englishFollowsLogic()
+			}
+			.onChange(of: scratchpad.descriptors) {
+				englishFollowsLogic()
+			}
+			.onChange(of: letters) {
+				englishFollowsLogic()
+			}
+			.toolbar {
+				ToolbarItem(placement: .topBarTrailing) {
+					doneButton
+				}
+			}
+			.animation(.easeInOut, value: isLogicFocused)
 	}
 
 	private var logicBox: some View {
 		VStack(alignment: .leading, spacing: 14) {
-			LogicTextEditor(
-				entries: scratchpadBinding.logic,
-				isFocused: $isLogicFocused,
-				highlights: currentAnalysis?.highlights ?? [],
-				cursor: cursor,
-				descriptors: scratchpad.descriptors,
-				onEditLetters: {
-					navigation.presentSheet(.logicLetters)
-				}
-			)
+			#if os(iOS)
+				LogicTextEditor(
+					entries: scratchpadBinding.logic,
+					isFocused: $isLogicFocused,
+					highlights: currentAnalysis?.highlights ?? [],
+					cursor: cursor,
+					descriptors: scratchpad.descriptors,
+					onEditLetters: {
+						navigation.presentSheet(.logicLetters)
+					}
+				)
+			#else
+				ScratchpadLogicText(logic: scratchpad.logic, letters: letters)
+			#endif
 
 			if let currentAnalysis {
 				LogicAnalysisView(analysis: currentAnalysis, entries: scratchpad.logic) { fix in
@@ -121,10 +129,12 @@ struct ScratchpadEditorView: View {
 		ScratchpadEnglishBox(english: scratchpad.english)
 	}
 
-	/// In a safe area inset, so it sits on top of the keyboard
-	private var cursorKeys: some View {
-		LogicCursorKeys(cursor: cursor)
-	}
+	#if os(iOS)
+		/// In a safe area inset, so it sits on top of the keyboard
+		private var cursorKeys: some View {
+			LogicCursorKeys(cursor: cursor)
+		}
+	#endif
 
 	@ContentBuilder
 	private var doneButton: some View {
@@ -201,7 +211,12 @@ struct ScratchpadEnglishBox: View {
 		.frame(maxWidth: .infinity, maxHeight: .infinity)
 		.overlay(alignment: .topTrailing) {
 			Button("Copy English", systemImage: "doc.on.doc") {
-				UIPasteboard.general.string = english
+				#if os(iOS)
+					UIPasteboard.general.string = english
+				#else
+					NSPasteboard.general.clearContents()
+					NSPasteboard.general.setString(english, forType: .string)
+				#endif
 			}
 			.labelStyle(.iconOnly)
 			.disabled(english.isEmpty)
@@ -215,30 +230,53 @@ struct ScratchpadEnglishBox: View {
 	}
 }
 
-/// Holding one keeps moving
-struct LogicCursorKeys: View {
-	let cursor: LogicEditorCursor
+#if os(macOS)
+	/// The logic as it's written, read-only: the logic keyboard and its editor are UIKit
+	struct ScratchpadLogicText: View {
+		let logic: [LogicKeyboardEntry]
+		let letters: [String]
 
-	var body: some View {
-		HStack(spacing: 10) {
-			Button("Move left", systemImage: "arrow.left") {
-				cursor.move(by: -1)
+		var body: some View {
+			VStack(alignment: .leading, spacing: 8) {
+				Text(logic.isEmpty ? "No logic yet" : logic.map { $0.glyph(letters: letters) }.joined())
+					.font(.title3)
+					.foregroundStyle(logic.isEmpty ? .secondary : .primary)
+					.textSelection(.enabled)
+					.frame(maxWidth: .infinity, alignment: .leading)
+					.accessibilityIdentifier("logic.readOnly")
+
+				Text("Writing logic on the Mac is coming later.")
+					.font(.footnote)
+					.foregroundStyle(.secondary)
 			}
-			.accessibilityIdentifier("logic.cursorLeft")
-
-			Button("Move right", systemImage: "arrow.right") {
-				cursor.move(by: 1)
-			}
-			.accessibilityIdentifier("logic.cursorRight")
-
-			Spacer(minLength: 0)
 		}
-		.labelStyle(.iconOnly)
-		.buttonStyle(.glass)
-		.buttonBorderShape(.circle)
-		.controlSize(.large)
-		.buttonRepeatBehavior(.enabled)
-		.padding(.horizontal, 15)
-		.padding(.bottom, 8)
 	}
-}
+#else
+	/// Holding one keeps moving
+	struct LogicCursorKeys: View {
+		let cursor: LogicEditorCursor
+
+		var body: some View {
+			HStack(spacing: 10) {
+				Button("Move left", systemImage: "arrow.left") {
+					cursor.move(by: -1)
+				}
+				.accessibilityIdentifier("logic.cursorLeft")
+
+				Button("Move right", systemImage: "arrow.right") {
+					cursor.move(by: 1)
+				}
+				.accessibilityIdentifier("logic.cursorRight")
+
+				Spacer(minLength: 0)
+			}
+			.labelStyle(.iconOnly)
+			.buttonStyle(.glass)
+			.buttonBorderShape(.circle)
+			.controlSize(.large)
+			.buttonRepeatBehavior(.enabled)
+			.padding(.horizontal, 15)
+			.padding(.bottom, 8)
+		}
+	}
+#endif

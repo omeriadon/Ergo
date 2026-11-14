@@ -5,46 +5,22 @@
 //  Created by Adon Omeri on 7/11/2026.
 //
 
-import UIKit
+#if os(iOS)
+	import UIKit
+#else
+	import AppKit
+#endif
 import UserNotifications
 
 /// The only way iOS hands an app its push token, silent pushes and notification taps. SwiftUI has nothing for these, so
-/// this is a thin layer that passes them on.
+/// this is a thin layer that passes them on. The Mac's `NSApplicationDelegate` does the same below.
 ///
 /// iOS can start the app in the background for a push, with no view on screen, so what it needs is set in `ErgoApp.init`
 /// rather than read from the environment.
-final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+final class AppDelegate: NSObject, UNUserNotificationCenterDelegate {
 	static var sync: SyncController?
 	static var navigation: NavigationManager?
 	static var boardStore: BoardStore?
-
-	func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-		UNUserNotificationCenter.current().delegate = self
-		return true
-	}
-
-	// MARK: - Push
-
-	func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-		Self.sync?.uploadPushToken(deviceToken)
-	}
-
-	/// Sync still works without pushes, it just finds out when the app next opens
-	func application(_: UIApplication, didFailToRegisterForRemoteNotificationsWithError _: any Error) {}
-
-	func application(
-		_: UIApplication,
-		didReceiveRemoteNotification _: [AnyHashable: Any],
-		fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-	) {
-		guard let sync = Self.sync else {
-			completionHandler(.noData)
-			return
-		}
-		Task {
-			await completionHandler(sync.syncForPush())
-		}
-	}
 
 	// MARK: - Notifications
 
@@ -93,3 +69,57 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
 		(notification.request.content.userInfo["board"] as? String).flatMap(UUID.init(uuidString:))
 	}
 }
+
+#if os(iOS)
+	extension AppDelegate: UIApplicationDelegate {
+		func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+			UNUserNotificationCenter.current().delegate = self
+			return true
+		}
+
+		// MARK: - Push
+
+		func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+			Self.sync?.uploadPushToken(deviceToken)
+		}
+
+		/// Sync still works without pushes, it just finds out when the app next opens
+		func application(_: UIApplication, didFailToRegisterForRemoteNotificationsWithError _: any Error) {}
+
+		func application(
+			_: UIApplication,
+			didReceiveRemoteNotification _: [AnyHashable: Any],
+			fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+		) {
+			guard let sync = Self.sync else {
+				completionHandler(.noData)
+				return
+			}
+			Task {
+				await completionHandler(sync.syncForPush())
+			}
+		}
+	}
+#else
+	extension AppDelegate: NSApplicationDelegate {
+		func applicationDidFinishLaunching(_: Notification) {
+			UNUserNotificationCenter.current().delegate = self
+		}
+
+		// MARK: - Push
+
+		func application(_: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+			Self.sync?.uploadPushToken(deviceToken)
+		}
+
+		/// Sync still works without pushes, it just finds out when the app next opens
+		func application(_: NSApplication, didFailToRegisterForRemoteNotificationsWithError _: any Error) {}
+
+		func application(_: NSApplication, didReceiveRemoteNotification _: [String: Any]) {
+			guard let sync = Self.sync else { return }
+			Task {
+				await sync.syncForPush()
+			}
+		}
+	}
+#endif

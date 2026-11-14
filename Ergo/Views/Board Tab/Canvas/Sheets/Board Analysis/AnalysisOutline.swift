@@ -25,6 +25,9 @@ struct AnalysisOutline {
 
 		/// A text source's text, to highlight the quotes in
 		let text: String?
+
+		/// Whether that text starts open, as it does when the sheet is about this source alone
+		var opensText = false
 	}
 
 	struct Group: Identifiable {
@@ -127,7 +130,9 @@ struct AnalysisOutline {
 					return [Group(title: "Arrow", things: [arrow(link)])]
 				case let .source(id):
 					guard let found = board.source(id) else { return [] }
-					return [Group(title: "Source", things: [source(found)])]
+					var thing = source(found)
+					thing.opensText = true
+					return [Group(title: "Source", things: [thing])]
 			}
 		}
 	}

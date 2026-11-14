@@ -107,6 +107,9 @@ struct ScratchpadRow: View {
 	let scratchpad: LogicScratchpad
 	let letters: [String]
 
+	/// Off in the sidebar, where selecting a row doesn't push anything
+	var showsChevron = true
+
 	var body: some View {
 		HStack {
 			VStack(alignment: .leading, spacing: 4) {
@@ -121,8 +124,10 @@ struct ScratchpadRow: View {
 
 			Spacer(minLength: 0)
 
-			Image(systemName: "chevron.right")
-				.foregroundStyle(.secondary)
+			if showsChevron {
+				Image(systemName: "chevron.right")
+					.foregroundStyle(.secondary)
+			}
 		}
 		.frame(maxWidth: .infinity, alignment: .leading)
 		.contentShape(Rectangle())

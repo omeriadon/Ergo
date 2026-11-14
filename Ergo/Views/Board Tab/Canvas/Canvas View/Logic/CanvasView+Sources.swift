@@ -28,7 +28,11 @@ extension CanvasView {
 
 		if let link = source.link {
 			if link.isWebLink {
-				UIApplication.shared.open(link)
+				#if os(iOS)
+					UIApplication.shared.open(link)
+				#else
+					NSWorkspace.shared.open(link)
+				#endif
 			}
 		} else {
 			sourceSheet = .edit(id)
@@ -83,6 +87,26 @@ extension CanvasView {
 		if let added {
 			findTitle(of: added)
 		}
+	}
+
+	/// What was dropped on the canvas from another app, as sources where it landed. One undo step for the lot, and the
+	/// canvas stays where it is, since the person chose the spot.
+	func addSources(_ contents: [BoardSource.Content], at point: CanvasPoint) {
+		guard !isReadOnly, !contents.isEmpty else { return }
+		var added: [BoardSource.ID] = []
+		history.perform("Add Source") {
+			withAnimation(motion) {
+				for content in contents {
+					added.append(boardStore.addSource(content, at: freeSpot(near: point)))
+				}
+				if let last = added.last {
+					selection = .source(last)
+				}
+			}
+		}
+		pick = nil
+		keepsFitting = false
+		added.forEach(findTitle(of:))
 	}
 
 	/// A link typed in has no title, and the card says more with the page's. It's fine if the page won't load.

@@ -94,7 +94,7 @@ struct SharedItemSheet: View {
 		NavigationStack {
 			content()
 				.toolbar {
-					ToolbarItem(placement: .topBarLeading) {
+					ToolbarItem(placement: .sheetDismissal) {
 						Button(role: .cancel) {
 							navigation.dismissSheet()
 						}
@@ -216,7 +216,7 @@ private struct AddToBoardSheet: View {
 			.navigationTitle("Add to Board")
 			.toolbarTitleDisplayMode(.inline)
 			.toolbar {
-				ToolbarItem(placement: .topBarLeading) {
+				ToolbarItem(placement: .sheetDismissal) {
 					Button(role: .cancel) {
 						navigation.dismissSheet()
 					}

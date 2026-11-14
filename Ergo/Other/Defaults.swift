@@ -6,6 +6,7 @@
 //
 
 import Defaults
+import ErgoCatalog
 import ErgoLogic
 import ErgoProtocol
 import Foundation
@@ -74,6 +75,10 @@ extension Defaults.Keys {
 	static let pinnedBoards = Key<Set<UUID>>("pinnedBoards", default: [])
 	static let archivedBoards = Key<Set<UUID>>("archivedBoards", default: [])
 
+	/// Whether boards show as the canvas or as an outline. This device only: it's how this screen draws them, and a Mac
+	/// with a keyboard may want the outline where a phone wants the canvas.
+	static let boardLayout = Key<BoardLayout>("boardLayout", default: .canvas)
+
 	static let currentScratchpadID = Key<UUID?>("currentScratchpadID", default: nil)
 
 	static let logicPath = Key<[LogicRoute]>("logicPath", default: [])
@@ -93,6 +98,11 @@ extension Defaults.Keys {
 
 	/// The course lessons finished on this device. Not synced, since it's only a tick beside each one.
 	static let logicCourseFinished = Key<Set<String>>("logicCourseFinished", default: [])
+
+	/// When each practice card is next due: card ids, boxes and dates, never what a card says. This device only, like the
+	/// course: a synced setting is one whole value, last writer wins, so practising on two devices would throw one's
+	/// answers away, and it changes on every answer. Syncing it properly needs a record per card, a new sync kind.
+	static let practiceProgress = Key<PracticeProgress>("practiceProgress", default: PracticeProgress())
 
 	/// Set while this device is signed in, with Apple or an email, which sync needs. This device only.
 	static let signedInAccount = Key<SignedInAccount?>("signedInAccount", default: nil)
@@ -122,3 +132,4 @@ extension Defaults.Keys {
 
 extension Provider: @retroactive Defaults.Serializable {}
 extension SyncReplica: @retroactive Defaults.Serializable {}
+extension PracticeProgress: @retroactive Defaults.Serializable {}

@@ -37,7 +37,7 @@ struct AnalysisThingView: View {
 				.frame(maxWidth: .infinity, alignment: .leading)
 
 			if let text = thing.text {
-				AnalysisSourceText(text: text, quotes: thing.annotations.compactMap(\.quote))
+				AnalysisSourceText(text: text, annotations: thing.annotations, isOpen: thing.opensText)
 			}
 
 			if thing.isUnassessed {
@@ -49,6 +49,8 @@ struct AnalysisThingView: View {
 
 			ForEach(thing.annotations) { annotation in
 				AnalysisAnnotationView(annotation: annotation)
+					// What a highlight in the source's text scrolls to
+					.id(annotation.id)
 			}
 		}
 		.padding(14)
@@ -57,22 +59,47 @@ struct AnalysisThingView: View {
 	}
 }
 
-/// A text source's words, with what the annotations quote marked
+/// A highlight in a source's text, which goes to the finding it quotes. `AnalysisContent` handles it.
+enum AnalysisFindingLink {
+	private static let scheme = "ergo-finding"
+
+	static func url(for annotation: BoardAnnotation.ID) -> URL {
+		// Always a valid URL: a fixed scheme and an id
+		URL(string: "\(scheme):\(annotation.uuidString)")!
+	}
+
+	static func annotation(in url: URL) -> BoardAnnotation.ID? {
+		guard url.scheme == scheme else { return nil }
+		return UUID(uuidString: String(url.absoluteString.dropFirst(scheme.count + 1)))
+	}
+}
+
+/// A text source's words, with what the annotations quote marked. Tapping a mark goes to its finding. One whose quote
+/// can't be found here is still listed below, just without a mark.
 struct AnalysisSourceText: View {
 	let text: String
-	let quotes: [String]
+	let annotations: [BoardAnnotation]
+
+	@State private var isOpen: Bool
+
+	init(text: String, annotations: [BoardAnnotation], isOpen: Bool) {
+		self.text = text
+		self.annotations = annotations
+		_isOpen = State(initialValue: isOpen)
+	}
 
 	private var marked: AttributedString {
 		var result = AttributedString(text)
-		for quote in quotes {
-			guard let range = BoardQuote.range(of: quote, in: text), let found = Range(range, in: result) else { continue }
+		for annotation in annotations {
+			guard let quote = annotation.quote, let range = BoardQuote.range(of: quote, in: text), let found = Range(range, in: result) else { continue }
 			result[found].backgroundColor = Color.accent.opacity(0.25)
+			result[found].link = AnalysisFindingLink.url(for: annotation.id)
 		}
 		return result
 	}
 
 	var body: some View {
-		DisclosureGroup("Text") {
+		DisclosureGroup("Text", isExpanded: $isOpen) {
 			Text(marked)
 				.font(.callout)
 				.textSelection(.enabled)

@@ -218,6 +218,38 @@ struct BoardAnalysisToolsTests {
 		_ = tools
 	}
 
+	@Test func aLaterPartHasWhatsLeftOfTheBudget() throws {
+		let tools = BoardAnalysisTools(request: Self.request, catalog: Self.catalog, reportBudget: 1)
+		_ = try tools.reply(to: "get_library_entry", arguments: ["category": "fallacies", "id": "straw-man"])
+		#expect(Self.refusal(tools, "annotate", Self.annotate()) == nil)
+		let another = Self.annotate(["target_id": .string(Self.wet.uuidString), "quote": "ground is wet"])
+		#expect(Self.refusal(tools, "annotate", another)?.contains("at most 1 reports") == true)
+	}
+
+	@Test func aLaterPartOnlyTakesReportsOnItsPart() throws {
+		let text = (0 ..< 8).map { "Paragraph \($0) makes a claim about the plan." }.joined(separator: "\n\n")
+		let long = BoardAnalysisRequest(
+			run: UUID(),
+			provider: .claude,
+			statements: Self.request.statements,
+			links: Self.request.links,
+			sources: [.init(id: Self.source, title: "Post", text: text)]
+		)
+		let passes = long.passes(partLimit: 120)
+		let last = try #require(passes.last)
+		#expect(passes.count > 1)
+		let tools = BoardAnalysisTools(request: last.request, catalog: Self.catalog)
+		_ = try tools.reply(to: "get_library_entry", arguments: ["category": "fallacies", "id": "straw-man"])
+
+		let here = Self.annotate(["target_kind": "source", "target_id": .string(Self.source.uuidString), "quote": "Paragraph 7 makes"])
+		#expect(Self.refusal(tools, "annotate", here) == nil)
+		let earlier = Self.annotate(["target_kind": "source", "target_id": .string(Self.source.uuidString), "quote": "Paragraph 0 makes"])
+		#expect(Self.refusal(tools, "annotate", earlier)?.contains("isn't in the text") == true, "Quotes are checked against this part")
+		#expect(Self.refusal(tools, "annotate", Self.annotate()) != nil, "Cards were the first part's")
+		let arrow: [String: JSONValue] = ["link_id": .string(Self.arrow.uuidString), "strength": "weak", "category": "fallacies", "id": "straw-man", "markdown": "m"]
+		#expect(Self.refusal(tools, "assess_arrow", arrow) != nil, "Arrows were assessed in the first part")
+	}
+
 	@Test func aConclusionNeedsPremises() throws {
 		let tools = try Self.tools()
 		for statement in [Self.rain, Self.lonely] {

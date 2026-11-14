@@ -99,6 +99,7 @@ public struct BoardAnalysisStatus: Codable, Sendable, Hashable {
 	public let finished: Date?
 	public let error: String?            // worded like a compiler diagnostic, for showing
 	public let discussion: String?       // markdown
+	public let heartbeat: Date?          // optional: a run in parts says it's still going, see Server
 }
 ```
 
@@ -148,6 +149,7 @@ The server creates each `BoardAnnotation`'s `id` and fills in `basis`. Accepted 
 - **A job outlives its request**, so it must use the application's database and logger, never `request.db` or `request.logger`.
 - `POST v1/boards/<id>/analysis`, body limit 2 MB, signed in. `problem` is an `invalidRequest`. The board must be a live record of this account, else `invalidRequest` ("Expected a synced board, sync and try again"). On a shared board the caller must be able to edit. A run already going on that board is `busy`. `DELETE` stops it, leaving what's been written.
 - Each write checks the board is still live, and a job on a deleted board stops quietly.
+- **A long source is read in parts**, within one run, since a model reads a long text less carefully than a short one. The whole request is still capped at `characterLimit`. `BoardAnalysisRequest.passes()` cuts each source over `partLimit` (Break Down's limit) with `TextParts`, at paragraphs then sentences. The first pass is the board with each source's first part, and each later pass is only the next parts, with the cards and arrows as context in its message. Each pass gets tools built from its own request, so a quote is checked against the part the model read, and cards and arrows can't be reported on twice. The report limit is shared, only the first pass writes the discussion, and before each later pass the `analysis` record gets an optional `heartbeat`, which `isInterrupted` measures from, so a long run isn't shown as interrupted. The app sends and receives exactly what it would for a short source.
 - `ProviderBackend.ask` takes which instructions to use and a timeout. Ask keeps 300 seconds and analysis gets 600. Failure messages must quote the actual timeout. Model choice is `StageModels.ask`.
 - `StagePrompts` gains `analyse`, and `StagePrompts.missing` must cover it.
 - The model's plain text collects into `discussion`, capped at 40,000 characters.
@@ -202,7 +204,6 @@ What's shown is worked out, never stored, and belongs in ErgoKit so it's tested:
 ## Not in this version
 
 - A run that's going when the server restarts is lost, and shows as interrupted. A deploy does this. Resuming would need jobs in the database.
-- Long sources in parts. The whole request is capped at `characterLimit`, and over that is an error.
 - A person dismissing a single annotation.
 - Making a board from a source's annotations.
 - Eval cases, including clean arguments that must come back unannotated. Prompt quality is unmeasured until those exist.

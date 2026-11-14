@@ -55,7 +55,12 @@ private struct AskUserBubble: View {
 				.glassEffect(.clear.tint(.accent).interactive(), in: RoundedRectangle(cornerRadius: 20))
 				.contextMenu {
 					Button("Copy", systemImage: "doc.on.doc") {
-						UIPasteboard.general.string = text
+						#if os(iOS)
+							UIPasteboard.general.string = text
+						#else
+							NSPasteboard.general.clearContents()
+							NSPasteboard.general.setString(text, forType: .string)
+						#endif
 					}
 				}
 		}

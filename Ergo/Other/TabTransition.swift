@@ -5,184 +5,186 @@
 //  Created by Adon Omeri on 8/11/2026.
 //
 
-import SwiftUI
+#if os(iOS)
+	import SwiftUI
 
-extension UIViewController {
-	/// The `UITabBarController` that SwiftUI's `TabView` sits on.
-	func hostingTabBarController() -> UITabBarController? {
-		tabBarController ?? Self.tabBarController(in: view.window?.rootViewController)
-	}
-
-	private static func tabBarController(in controller: UIViewController?) -> UITabBarController? {
-		guard let controller else {
-			return nil
+	extension UIViewController {
+		/// The `UITabBarController` that SwiftUI's `TabView` sits on.
+		func hostingTabBarController() -> UITabBarController? {
+			tabBarController ?? Self.tabBarController(in: view.window?.rootViewController)
 		}
 
-		if let tabBarController = controller as? UITabBarController {
-			return tabBarController
-		}
-
-		for child in controller.children {
-			if let found = tabBarController(in: child) {
-				return found
-			}
-		}
-
-		return tabBarController(in: controller.presentedViewController)
-	}
-}
-
-/// Changing tab blurs and fades one tab into the other instead of cutting, and tapping the selected tab again is reported. SwiftUI's `TabView` has no way to animate that, so this gives its tab bar controller an animator, through a delegate that hands everything else to the delegate SwiftUI had already set.
-private struct TabTransition: UIViewControllerRepresentable {
-	let onReselect: () -> Void
-
-	func makeUIViewController(context _: Context) -> Finder {
-		Finder()
-	}
-
-	func updateUIViewController(_ finder: Finder, context _: Context) {
-		finder.proxy.onReselect = onReselect
-		finder.install()
-	}
-
-	final class Finder: UIViewController {
-		let proxy = TabTransitionDelegate()
-		private weak var host: UITabBarController?
-
-		override func viewDidAppear(_ animated: Bool) {
-			super.viewDidAppear(animated)
-			install()
-		}
-
-		/// SwiftUI may set its own delegate again, so this is safe to repeat.
-		func install() {
-			guard let host = hostingTabBarController(), host.delegate !== proxy else {
-				return
+		private static func tabBarController(in controller: UIViewController?) -> UITabBarController? {
+			guard let controller else {
+				return nil
 			}
 
-			proxy.forwardee = host.delegate
-			host.delegate = proxy
-			self.host = host
+			if let tabBarController = controller as? UITabBarController {
+				return tabBarController
+			}
+
+			for child in controller.children {
+				if let found = tabBarController(in: child) {
+					return found
+				}
+			}
+
+			return tabBarController(in: controller.presentedViewController)
+		}
+	}
+
+	/// Changing tab blurs and fades one tab into the other instead of cutting, and tapping the selected tab again is reported. SwiftUI's `TabView` has no way to animate that, so this gives its tab bar controller an animator, through a delegate that hands everything else to the delegate SwiftUI had already set.
+	private struct TabTransition: UIViewControllerRepresentable {
+		let onReselect: () -> Void
+
+		func makeUIViewController(context _: Context) -> Finder {
+			Finder()
 		}
 
-		deinit {
-			MainActor.assumeIsolated {
-				if host?.delegate === proxy {
-					host?.delegate = proxy.forwardee
+		func updateUIViewController(_ finder: Finder, context _: Context) {
+			finder.proxy.onReselect = onReselect
+			finder.install()
+		}
+
+		final class Finder: UIViewController {
+			let proxy = TabTransitionDelegate()
+			private weak var host: UITabBarController?
+
+			override func viewDidAppear(_ animated: Bool) {
+				super.viewDidAppear(animated)
+				install()
+			}
+
+			/// SwiftUI may set its own delegate again, so this is safe to repeat.
+			func install() {
+				guard let host = hostingTabBarController(), host.delegate !== proxy else {
+					return
+				}
+
+				proxy.forwardee = host.delegate
+				host.delegate = proxy
+				self.host = host
+			}
+
+			deinit {
+				MainActor.assumeIsolated {
+					if host?.delegate === proxy {
+						host?.delegate = proxy.forwardee
+					}
 				}
 			}
 		}
 	}
-}
 
-private final nonisolated class TabTransitionDelegate: NSObject, UITabBarControllerDelegate {
-	weak var forwardee: any UITabBarControllerDelegate?
-	var onReselect: () -> Void = {}
+	private final nonisolated class TabTransitionDelegate: NSObject, UITabBarControllerDelegate {
+		weak var forwardee: any UITabBarControllerDelegate?
+		var onReselect: () -> Void = {}
 
-	/// UIKit asks this for every tap on a tab, including the one that's already selected, which SwiftUI's `TabView` never reports.
-	func tabBarController(_ tabBarController: UITabBarController, shouldSelectTab tab: UITab) -> Bool {
-		if tab.identifier == tabBarController.selectedTab?.identifier {
-			onReselect()
+		/// UIKit asks this for every tap on a tab, including the one that's already selected, which SwiftUI's `TabView` never reports.
+		func tabBarController(_ tabBarController: UITabBarController, shouldSelectTab tab: UITab) -> Bool {
+			if tab.identifier == tabBarController.selectedTab?.identifier {
+				onReselect()
+			}
+
+			return forwardee?.tabBarController?(tabBarController, shouldSelectTab: tab) ?? true
 		}
 
-		return forwardee?.tabBarController?(tabBarController, shouldSelectTab: tab) ?? true
-	}
-
-	func tabBarController(_: UITabBarController, animationControllerForTransitionFrom _: UIViewController, to _: UIViewController) -> (any UIViewControllerAnimatedTransitioning)? {
-		TabBlurAnimator()
-	}
-
-	override func responds(to aSelector: Selector!) -> Bool {
-		super.responds(to: aSelector) || forwardee?.responds(to: aSelector) == true
-	}
-
-	override func forwardingTarget(for aSelector: Selector!) -> Any? {
-		forwardee?.responds(to: aSelector) == true ? forwardee : nil
-	}
-}
-
-/// Blurs with the same private filter as `BackdropBlur`, on the tabs' own layers. The tab bar isn't in the transition's container, so it stays sharp.
-private final class TabBlurAnimator: NSObject, UIViewControllerAnimatedTransitioning {
-	private static let duration: TimeInterval = 0.2
-	private static let radius: CGFloat = 16
-	private static let scale: CGFloat = 0.95
-	private static let filterName = "tabTransitionBlur"
-
-	func transitionDuration(using _: any UIViewControllerContextTransitioning?) -> TimeInterval {
-		Self.duration
-	}
-
-	func animateTransition(using context: any UIViewControllerContextTransitioning) {
-		guard let from = context.view(forKey: .from), let to = context.view(forKey: .to) else {
-			context.completeTransition(false)
-			return
+		func tabBarController(_: UITabBarController, animationControllerForTransitionFrom _: UIViewController, to _: UIViewController) -> (any UIViewControllerAnimatedTransitioning)? {
+			TabBlurAnimator()
 		}
 
-		if let controller = context.viewController(forKey: .to) {
-			to.frame = context.finalFrame(for: controller)
+		override func responds(to aSelector: Selector!) -> Bool {
+			super.responds(to: aSelector) || forwardee?.responds(to: aSelector) == true
 		}
 
-		// UIKit won't take another tab tap until this transition completes, so it completes now. The old tab lives on as a snapshot that fades out over the new one, so the animation still plays while taps go through.
-		let outgoing = from.snapshotView(afterScreenUpdates: false)
-		outgoing?.frame = from.frame
+		override func forwardingTarget(for aSelector: Selector!) -> Any? {
+			forwardee?.responds(to: aSelector) == true ? forwardee : nil
+		}
+	}
 
-		context.containerView.addSubview(to)
-		to.alpha = 0
+	/// Blurs with the same private filter as `BackdropBlur`, on the tabs' own layers. The tab bar isn't in the transition's container, so it stays sharp.
+	private final class TabBlurAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+		private static let duration: TimeInterval = 0.2
+		private static let radius: CGFloat = 16
+		private static let scale: CGFloat = 0.95
+		private static let filterName = "tabTransitionBlur"
 
-		if let outgoing {
-			context.containerView.addSubview(outgoing)
+		func transitionDuration(using _: any UIViewControllerContextTransitioning?) -> TimeInterval {
+			Self.duration
 		}
 
-		let blurs = unsafe !UIAccessibility.isReduceMotionEnabled
-		if blurs {
-			Self.blur(to, from: Self.radius, to: 0)
+		func animateTransition(using context: any UIViewControllerContextTransitioning) {
+			guard let from = context.view(forKey: .from), let to = context.view(forKey: .to) else {
+				context.completeTransition(false)
+				return
+			}
+
+			if let controller = context.viewController(forKey: .to) {
+				to.frame = context.finalFrame(for: controller)
+			}
+
+			// UIKit won't take another tab tap until this transition completes, so it completes now. The old tab lives on as a snapshot that fades out over the new one, so the animation still plays while taps go through.
+			let outgoing = from.snapshotView(afterScreenUpdates: false)
+			outgoing?.frame = from.frame
+
+			context.containerView.addSubview(to)
+			to.alpha = 0
+
 			if let outgoing {
-				Self.blur(outgoing, from: 0, to: Self.radius)
+				context.containerView.addSubview(outgoing)
 			}
-		}
 
-		context.completeTransition(true)
-
-		UIView.animate(withDuration: Self.duration, delay: 0, options: .curveEaseInOut) {
-			outgoing?.alpha = 0
-			outgoing?.transform = CGAffineTransform(scaleX: Self.scale, y: Self.scale)
-			to.alpha = 1
-		} completion: { _ in
-			outgoing?.removeFromSuperview()
+			let blurs = unsafe !UIAccessibility.isReduceMotionEnabled
 			if blurs {
-				Self.unblur(to)
+				Self.blur(to, from: Self.radius, to: 0)
+				if let outgoing {
+					Self.blur(outgoing, from: 0, to: Self.radius)
+				}
+			}
+
+			context.completeTransition(true)
+
+			UIView.animate(withDuration: Self.duration, delay: 0, options: .curveEaseInOut) {
+				outgoing?.alpha = 0
+				outgoing?.transform = CGAffineTransform(scaleX: Self.scale, y: Self.scale)
+				to.alpha = 1
+			} completion: { _ in
+				outgoing?.removeFromSuperview()
+				if blurs {
+					Self.unblur(to)
+				}
 			}
 		}
-	}
 
-	/// A layer doesn't reliably see changes to a filter it already has, so the radius is animated by key path instead, through the filter's name. If the filter can't be made, the tab just fades.
-	private static func blur(_ view: UIView, from: CGFloat, to: CGFloat) {
-		guard let filter = BackdropBlurFilter.make(radius: from, fade: nil) else {
-			return
+		/// A layer doesn't reliably see changes to a filter it already has, so the radius is animated by key path instead, through the filter's name. If the filter can't be made, the tab just fades.
+		private static func blur(_ view: UIView, from: CGFloat, to: CGFloat) {
+			guard let filter = BackdropBlurFilter.make(radius: from, fade: nil) else {
+				return
+			}
+
+			filter.setValue(filterName, forKey: "name")
+			view.layer.filters = [filter]
+
+			let animation = CABasicAnimation(keyPath: "filters.\(filterName).inputRadius")
+			animation.fromValue = from
+			animation.toValue = to
+			animation.duration = duration
+			animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+			animation.fillMode = .forwards
+			animation.isRemovedOnCompletion = false
+			view.layer.add(animation, forKey: filterName)
 		}
 
-		filter.setValue(filterName, forKey: "name")
-		view.layer.filters = [filter]
-
-		let animation = CABasicAnimation(keyPath: "filters.\(filterName).inputRadius")
-		animation.fromValue = from
-		animation.toValue = to
-		animation.duration = duration
-		animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-		animation.fillMode = .forwards
-		animation.isRemovedOnCompletion = false
-		view.layer.add(animation, forKey: filterName)
+		private static func unblur(_ view: UIView) {
+			view.layer.removeAnimation(forKey: filterName)
+			view.layer.filters = nil
+		}
 	}
 
-	private static func unblur(_ view: UIView) {
-		view.layer.removeAnimation(forKey: filterName)
-		view.layer.filters = nil
+	extension View {
+		/// `onReselect` runs when the tab that's already selected is tapped.
+		func tabTransition(onReselect: @escaping () -> Void) -> some View {
+			background { TabTransition(onReselect: onReselect) }
+		}
 	}
-}
-
-extension View {
-	/// `onReselect` runs when the tab that's already selected is tapped.
-	func tabTransition(onReselect: @escaping () -> Void) -> some View {
-		background { TabTransition(onReselect: onReselect) }
-	}
-}
+#endif

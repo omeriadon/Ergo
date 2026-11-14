@@ -16,8 +16,14 @@ struct LibrarySearchPrompt: View {
 				.aspectRatio(contentMode: .fit)
 				.foregroundStyle(.accent.gradient)
 				.frame(width: 50, height: 50)
-			Text("Search anything")
-				.font(.title3)
+			VStack(spacing: 6) {
+				Text("Search anything")
+					.font(.title3)
+				Text("The library, and your boards, scratchpads and chats")
+					.font(.subheadline)
+					.foregroundStyle(.secondary)
+					.multilineTextAlignment(.center)
+			}
 		}
 	}
 }

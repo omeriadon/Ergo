@@ -90,6 +90,9 @@ nonisolated enum LibraryRoute: Hashable, Codable, Defaults.Serializable {
 
 	case bookmarks
 
+	/// Spaced-repetition practice over the library and the course
+	case practice
+
 	var listCategory: LibraryContent? {
 		switch self {
 			case let .category(category):
@@ -116,7 +119,7 @@ nonisolated enum LibraryRoute: Hashable, Codable, Defaults.Serializable {
 			case .arguments:
 				.arguments
 
-			case .detail, .bookmarks:
+			case .detail, .bookmarks, .practice:
 				nil
 		}
 	}

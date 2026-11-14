@@ -34,7 +34,7 @@ struct AskThreadView: View {
 		.animation(reduceMotion ? nil : .smooth, value: id)
 		.onChange(of: id) { find = nil }
 		// The search bar takes the navigation bar's place
-		.toolbarVisibility(find == nil ? .automatic : .hidden, for: .navigationBar)
+		.toolbarHiddenWhileFinding(find != nil)
 		.navigationTitle(store.current.title)
 		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {

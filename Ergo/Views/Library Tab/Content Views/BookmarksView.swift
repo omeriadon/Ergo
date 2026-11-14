@@ -15,6 +15,10 @@ struct BookmarksView: View {
 
 	@State private var selectedCategories: Set<LibraryContent> = []
 
+	#if os(macOS)
+		@State private var isShowingFilters = false
+	#endif
+
 	@Environment(NavigationManager.self)
 	private var navigation
 
@@ -154,37 +158,60 @@ struct BookmarksView: View {
 			}
 	}
 
-	private var filterMenu: some View {
-		Menu {
-			ForEach(availableCategories, id: \.self) { category in
-				Toggle(
-					category.rawValue.capitalized,
-					isOn: Binding(
-						get: {
-							selectedCategories.contains(category)
-						},
-						set: { isSelected in
-							if isSelected {
-								selectedCategories.insert(category)
-							} else {
-								selectedCategories.remove(category)
-							}
-						}
-					)
-				)
+	#if os(macOS)
+		/// A Mac menu closes after every pick, so picking several categories is a popover of checkboxes instead
+		private var filterMenu: some View {
+			Button("Filters", systemImage: "line.3.horizontal.decrease") {
+				isShowingFilters.toggle()
 			}
-
-			Divider()
-
-			Button("Clear Filters") {
-				withAnimation(.easeInOut(duration: 0.2)) {
-					selectedCategories.removeAll()
+			.labelStyle(.iconOnly)
+			.popover(isPresented: $isShowingFilters, arrowEdge: .bottom) {
+				VStack(alignment: .leading, spacing: 6) {
+					filterOptions
+						.toggleStyle(.checkbox)
 				}
+				.padding()
+				.frame(minWidth: 180, alignment: .leading)
 			}
-			.disabled(selectedCategories.isEmpty)
-		} label: {
-			Image(systemName: "line.3.horizontal.decrease")
 		}
-		.menuActionDismissBehavior(.disabled)
+	#else
+		private var filterMenu: some View {
+			Menu {
+				filterOptions
+			} label: {
+				Image(systemName: "line.3.horizontal.decrease")
+			}
+			.menuActionDismissBehavior(.disabled)
+		}
+	#endif
+
+	@ViewBuilder
+	private var filterOptions: some View {
+		ForEach(availableCategories, id: \.self) { category in
+			Toggle(
+				category.rawValue.capitalized,
+				isOn: Binding(
+					get: {
+						selectedCategories.contains(category)
+					},
+					set: { isSelected in
+						if isSelected {
+							selectedCategories.insert(category)
+						} else {
+							selectedCategories.remove(category)
+						}
+					}
+				)
+			)
+		}
+
+		Divider()
+
+		Button("Clear Filters") {
+			withAnimation(.easeInOut(duration: 0.2)) {
+				selectedCategories.removeAll()
+			}
+		}
+		.disabled(selectedCategories.isEmpty)
 	}
 }

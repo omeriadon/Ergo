@@ -69,6 +69,9 @@ private struct LibraryDestination: View {
 
 			case .bookmarks:
 				BookmarksView()
+
+			case .practice:
+				PracticeView()
 		}
 	}
 }

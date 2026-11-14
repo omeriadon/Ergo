@@ -179,7 +179,12 @@ struct AskCopyButton: View {
 	}
 
 	private func copy() {
-		UIPasteboard.general.string = text
+		#if os(iOS)
+			UIPasteboard.general.string = text
+		#else
+			NSPasteboard.general.clearContents()
+			NSPasteboard.general.setString(text, forType: .string)
+		#endif
 		copied = true
 
 		resetting?.cancel()

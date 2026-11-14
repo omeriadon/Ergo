@@ -60,7 +60,12 @@ struct CanvasSourceBox: View {
 		if let link = source.link {
 			Button("Open in Browser", systemImage: "safari", action: actions.open)
 			Button("Copy Link", systemImage: "link") {
-				UIPasteboard.general.url = link
+				#if os(iOS)
+					UIPasteboard.general.url = link
+				#else
+					NSPasteboard.general.clearContents()
+					NSPasteboard.general.writeObjects([link as NSURL])
+				#endif
 			}
 		}
 		if !model.isReadOnly {

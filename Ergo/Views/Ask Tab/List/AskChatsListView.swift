@@ -83,6 +83,9 @@ struct AskHistoryRow: View {
 	let conversation: AskConversation
 	let isAnswering: Bool
 
+	/// Off in the sidebar, where selecting a row doesn't push anything
+	var showsChevron = true
+
 	var body: some View {
 		HStack {
 			VStack(alignment: .leading, spacing: 4) {
@@ -109,8 +112,10 @@ struct AskHistoryRow: View {
 					.accessibilityLabel("Answering")
 			}
 
-			Image(systemName: "chevron.right")
-				.foregroundStyle(.secondary)
+			if showsChevron {
+				Image(systemName: "chevron.right")
+					.foregroundStyle(.secondary)
+			}
 		}
 		.contentShape(Rectangle())
 	}

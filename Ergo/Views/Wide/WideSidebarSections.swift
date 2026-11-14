@@ -25,16 +25,36 @@ struct WideSidebarBoards: View {
 
 	@State private var isExpanded = true
 
+	@State private var showsArchived = false
+
 	var body: some View {
 		Section(isExpanded: $isExpanded) {
 			ForEach(boardStore.listedBoards) { board in
 				WideSidebarBoardRow(board: board, renaming: $renaming, removing: $removing)
 			}
+
+			if !boardStore.archivedBoards.isEmpty {
+				DisclosureGroup(isExpanded: $showsArchived) {
+					ForEach(boardStore.archivedBoards) { board in
+						WideSidebarBoardRow(board: board, renaming: $renaming, removing: $removing)
+					}
+				} label: {
+					Label("Archived", systemImage: "archivebox")
+				}
+				.accessibilityIdentifier("sidebar.archivedBoards")
+			}
 		} header: {
 			WideSidebarHeader("Boards") {
-				// Blank only: Break Down closes itself through the boards sheet, which a sheet from here isn't
-				Button("New Board", systemImage: "square.and.pencil") {
-					navigation.newBoard(in: boardStore)
+				NewBoardMenu { template in
+					navigation.newBoard(template, in: boardStore)
+				} extra: {
+					Divider()
+
+					// Through the Board section's own sheet, so it closes itself the way it does anywhere else
+					Button("Break Down a Text…", systemImage: "list.bullet.indent") {
+						navigation.presentSheet(BoardSheet.breakDown)
+					}
+					.accessibilityIdentifier("sidebar.newBoard.breakDown")
 				}
 				.accessibilityIdentifier("sidebar.newBoard")
 			}
@@ -60,8 +80,8 @@ private struct WideSidebarBoardRow: View {
 		)
 		.tag(SidebarItem.board(board.id) as SidebarItem?)
 		.contextMenu {
-			// Not offered on a board this person can only read
-			if boardStore.canEdit(board.id) {
+			// Not offered on a board this person can only read, or an archived one
+			if boardStore.canEdit(board.id), !boardStore.archivedIDs.contains(board.id) {
 				Button("Rename", systemImage: "pencil") {
 					renaming = Renaming(id: SidebarItem.board(board.id), name: board.name)
 				}
@@ -99,11 +119,11 @@ struct WideSidebarLogic: View {
 
 	var body: some View {
 		Section(isExpanded: $isExpanded) {
-			LogicCourseRow()
+			LogicCourseRow(showsChevron: false)
 				.tag(SidebarItem.course as SidebarItem?)
 
 			ForEach(scratchpadStore.sortedScratchpads) { scratchpad in
-				ScratchpadRow(scratchpad: scratchpad, letters: letters)
+				ScratchpadRow(scratchpad: scratchpad, letters: letters, showsChevron: false)
 					.tag(SidebarItem.scratchpad(scratchpad.id) as SidebarItem?)
 					.contextMenu {
 						Button("Rename", systemImage: "pencil") {
@@ -140,11 +160,24 @@ struct WideSidebarAsk: View {
 
 	@State private var isExpanded = true
 
+	@State private var showsArchived = false
+
 	var body: some View {
 		Section(isExpanded: $isExpanded) {
 			if account.isSignedInHere {
 				ForEach(askStore.listedConversations) { conversation in
 					WideSidebarChatRow(conversation: conversation, renaming: $renaming, attachmentsOf: $attachmentsOf)
+				}
+
+				if !askStore.archivedConversations.isEmpty {
+					DisclosureGroup(isExpanded: $showsArchived) {
+						ForEach(askStore.archivedConversations) { conversation in
+							WideSidebarChatRow(conversation: conversation, renaming: $renaming, attachmentsOf: $attachmentsOf)
+						}
+					} label: {
+						Label("Archived", systemImage: "archivebox")
+					}
+					.accessibilityIdentifier("sidebar.archivedChats")
 				}
 			} else {
 				// Its detail is the sign-in prompt
@@ -171,11 +204,14 @@ private struct WideSidebarChatRow: View {
 	private var askStore
 
 	var body: some View {
-		AskHistoryRow(conversation: conversation, isAnswering: askStore.runs[conversation.id] != nil)
+		AskHistoryRow(conversation: conversation, isAnswering: askStore.runs[conversation.id] != nil, showsChevron: false)
 			.tag(SidebarItem.chat(conversation.id) as SidebarItem?)
 			.contextMenu {
-				Button("Rename", systemImage: "pencil") {
-					renaming = Renaming(id: SidebarItem.chat(conversation.id), name: conversation.name)
+				// Archived chats aren't renamed, as in the narrow list
+				if conversation.isArchived != true {
+					Button("Rename", systemImage: "pencil") {
+						renaming = Renaming(id: SidebarItem.chat(conversation.id), name: conversation.name)
+					}
 				}
 
 				AskChatActions(
@@ -229,6 +265,9 @@ struct WideSidebarLibrary: View {
 
 			Label("Bookmarks", systemImage: "bookmark")
 				.tag(SidebarItem.bookmarks as SidebarItem?)
+
+			PracticeSidebarRow()
+				.tag(SidebarItem.practice as SidebarItem?)
 		}
 	}
 }

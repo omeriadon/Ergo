@@ -58,6 +58,13 @@ struct LibraryGridView: View {
 				}
 				.gridCellColumns(2)
 			}
+
+			GridRow {
+				NavigationLink(value: LibraryRoute.practice) {
+					PracticeLibraryCard()
+				}
+				.gridCellColumns(2)
+			}
 		}
 	}
 }

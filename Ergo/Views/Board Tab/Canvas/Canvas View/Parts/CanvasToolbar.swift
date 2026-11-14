@@ -37,6 +37,9 @@ struct CanvasToolbar: ToolbarContent {
 		}
 
 		ToolbarItemGroup(placement: .topBarTrailing) {
+			// Canvas or outline, the same board either way
+			BoardLayoutButton()
+
 			Button("Quick AI", systemImage: "sparkles", action: quickAI)
 				.accessibilityIdentifier("board.quickAI")
 
@@ -125,6 +128,8 @@ private struct CanvasMenuContent: View {
 			}
 			Button("Send to Chat", systemImage: "bubble.left.and.text.bubble.right", action: sendToChat)
 				.accessibilityIdentifier("board.sendToChat")
+			// Only reads the board, so a viewer can export it too
+			BoardExportMenu(board: board)
 		}
 
 		if !isReadOnly {

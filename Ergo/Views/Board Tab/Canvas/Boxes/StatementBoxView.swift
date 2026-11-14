@@ -86,7 +86,7 @@ struct StatementBoxView: View, Equatable {
 	/// The English, else a prompt
 	private var headline: (text: String, isPlaceholder: Bool) {
 		let english = statement.english.trimmingCharacters(in: .whitespacesAndNewlines)
-		return english.isEmpty ? ("Empty statement", true) : (english, false)
+		return english.isEmpty ? (statement.placeholderText, true) : (english, false)
 	}
 
 	private var footer: some View {
@@ -153,6 +153,6 @@ struct AnnotationBadge: View {
 extension StatementBoxView {
 	/// "All men are mortal", or what the box would say if it had any text
 	static func title(of statement: Statement) -> String {
-		statement.englishLine ?? "Empty statement"
+		statement.englishLine ?? statement.placeholderText
 	}
 }

@@ -40,7 +40,7 @@ struct ReportBoardSheet: View {
 			.navigationTitle("Report Board")
 			.toolbarTitleDisplayMode(.inline)
 			.toolbar {
-				ToolbarItem(placement: .topBarLeading) {
+				ToolbarItem(placement: .sheetDismissal) {
 					Button(role: .cancel) {
 						dismiss()
 					}

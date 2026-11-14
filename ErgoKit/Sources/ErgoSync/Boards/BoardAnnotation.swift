@@ -202,7 +202,7 @@ public struct BoardAnnotation: Codable, Sendable, Hashable, Identifiable {
 public struct BoardAnalysisStatus: Codable, Sendable, Hashable {
 	public enum State: String, Codable, Sendable { case running, finished, failed, cancelled }
 
-	/// A `running` status older than this means the server restarted under it
+	/// A `running` status not heard from for longer than this means the server restarted under it
 	public static let staleAfter: TimeInterval = 20 * 60
 
 	public let board: UUID
@@ -217,7 +217,11 @@ public struct BoardAnalysisStatus: Codable, Sendable, Hashable {
 	/// Markdown
 	public let discussion: String?
 
-	public init(board: UUID, run: UUID, state: State, started: Date, finished: Date? = nil, error: String? = nil, discussion: String? = nil) {
+	/// When a `running` run last said it's still going, as a run in parts does before each part. Nil before then, and
+	/// from a server that doesn't, so `started` is the last word.
+	public let heartbeat: Date?
+
+	public init(board: UUID, run: UUID, state: State, started: Date, finished: Date? = nil, error: String? = nil, discussion: String? = nil, heartbeat: Date? = nil) {
 		self.board = board
 		self.run = run
 		self.state = state
@@ -225,11 +229,12 @@ public struct BoardAnalysisStatus: Codable, Sendable, Hashable {
 		self.finished = finished
 		self.error = error
 		self.discussion = discussion
+		self.heartbeat = heartbeat
 	}
 
-	/// Running for longer than `staleAfter`, so the server must have restarted under it
+	/// Running without a word for longer than `staleAfter`, so the server must have restarted under it
 	public func isInterrupted(at now: Date) -> Bool {
-		state == .running && now.timeIntervalSince(started) > Self.staleAfter
+		state == .running && now.timeIntervalSince(max(started, heartbeat ?? started)) > Self.staleAfter
 	}
 }
 

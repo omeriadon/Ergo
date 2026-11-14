@@ -70,7 +70,7 @@ struct QuickAISheet: View {
 
 	@ToolbarContentBuilder
 	private var toolbar: some ToolbarContent {
-		ToolbarItem(placement: .topBarLeading) {
+		ToolbarItem(placement: .sheetDismissal) {
 			Button(role: .close) {
 				navigation.dismissSheet()
 			}

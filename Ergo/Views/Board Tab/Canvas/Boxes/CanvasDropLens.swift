@@ -16,14 +16,18 @@ struct CanvasDropLens: View {
 	let isLifted: Bool
 
 	var body: some View {
-		LiquidLens(
-			isLifted: isLifted,
-			configuration: .init(
-				style: 2,
-				warpsContentBelow: true,
-				restingBackgroundColor: .white.withAlphaComponent(0),
-				liftedDisplacement: 15
+		#if os(iOS)
+			LiquidLens(
+				isLifted: isLifted,
+				configuration: .init(
+					style: 2,
+					warpsContentBelow: true,
+					restingBackgroundColor: .white.withAlphaComponent(0),
+					liftedDisplacement: 15
+				)
 			)
-		)
+		#else
+			LiquidLens(isLifted: isLifted)
+		#endif
 	}
 }

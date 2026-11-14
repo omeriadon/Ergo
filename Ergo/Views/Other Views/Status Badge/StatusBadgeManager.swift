@@ -155,17 +155,19 @@ final class StatusBadgeManager {
 	}
 
 	private func playHaptic(for view: StatusBadgeView) {
-		guard Defaults[.hapticsEnabled] else { return }
-		switch view {
-			case .success:
-				UINotificationFeedbackGenerator().notificationOccurred(.success)
-			case .error:
-				UINotificationFeedbackGenerator().notificationOccurred(.error)
-			case .warning:
-				UINotificationFeedbackGenerator().notificationOccurred(.warning)
-			case .info, .progressView, .progressViewAndGauge:
-				break
-		}
+		#if os(iOS)
+			guard Defaults[.hapticsEnabled] else { return }
+			switch view {
+				case .success:
+					UINotificationFeedbackGenerator().notificationOccurred(.success)
+				case .error:
+					UINotificationFeedbackGenerator().notificationOccurred(.error)
+				case .warning:
+					UINotificationFeedbackGenerator().notificationOccurred(.warning)
+				case .info, .progressView, .progressViewAndGauge:
+					break
+			}
+		#endif
 	}
 
 	private var rankedBadges: [StatusBadge] {

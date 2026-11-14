@@ -58,7 +58,7 @@ struct AskAttachmentsSheet: View {
 			.navigationTitle("Attachments")
 			.toolbarTitleDisplayMode(.inline)
 			.toolbar {
-				ToolbarItem(placement: .topBarLeading) {
+				ToolbarItem(placement: .sheetDismissal) {
 					Button(role: .close) {
 						dismiss()
 					}
@@ -240,7 +240,7 @@ private struct AskAttachmentTextSheet: View {
 					.frame(maxWidth: .infinity, alignment: .leading)
 			}
 			.toolbar {
-				ToolbarItem(placement: .topBarLeading) {
+				ToolbarItem(placement: .sheetDismissal) {
 					Button(role: .close) {
 						dismiss()
 					}

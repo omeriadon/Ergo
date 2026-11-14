@@ -51,7 +51,7 @@ struct BoardPeopleSheet: View {
 			content
 				.toolbarTitleVire("People", "person.2")
 				.toolbar {
-					ToolbarItem(placement: .topBarLeading) {
+					ToolbarItem(placement: .sheetDismissal) {
 						Button(role: .close) {
 							navigation.dismissSheet()
 						}

@@ -5,7 +5,9 @@
 //  Brought over from Timetable.
 //
 
-import ColorfulX
+#if os(iOS)
+	import ColorfulX
+#endif
 import SwiftUI
 
 /// Draws `StatusBadgeManager`'s current badge at the top of the screen. `StatusBadgeWindow` hosts it above everything,
@@ -350,35 +352,44 @@ private struct StatusBadgeCapsuleFill: View {
 	@State private var colourfulFrameLimit: Int = 30
 	@State private var colourfulRenderScale: Double = 0.9
 
-	private var loadingFill: some View {
-		ColorfulView(
-			color: $colourfulColors,
-			speed: $colourfulSpeed,
-			bias: $colourfulBias,
-			noise: $colourfulNoise,
-			transitionSpeed: $colourfulTransitionSpeed,
-			frameLimit: $colourfulFrameLimit,
-			renderScale: $colourfulRenderScale
-		)
-		.onAppear {
-			colourfulSpeed = reduceMotion ? 0 : 2.5
-		}
-		.onChange(of: reduceMotion) {
-			colourfulSpeed = reduceMotion ? 0 : 2.5
-		}
-		.mask {
-			LinearGradient(
-				stops: [
-					.init(color: .white.opacity(0.0), location: 0.00),
-					.init(color: .white.opacity(0.15), location: 0.2),
-					.init(color: .white.opacity(0.6), location: 0.66),
-					.init(color: .white.opacity(1), location: 1.00),
-
-				],
-				startPoint: .top,
-				endPoint: .bottom
+	private var colourfulFill: some View {
+		#if os(iOS)
+			ColorfulView(
+				color: $colourfulColors,
+				speed: $colourfulSpeed,
+				bias: $colourfulBias,
+				noise: $colourfulNoise,
+				transitionSpeed: $colourfulTransitionSpeed,
+				frameLimit: $colourfulFrameLimit,
+				renderScale: $colourfulRenderScale
 			)
-		}
+		#else
+			// ColorfulX doesn't build for macOS yet
+			LinearGradient(colors: colourfulColors, startPoint: .leading, endPoint: .trailing)
+		#endif
+	}
+
+	private var loadingFill: some View {
+		colourfulFill
+			.onAppear {
+				colourfulSpeed = reduceMotion ? 0 : 2.5
+			}
+			.onChange(of: reduceMotion) {
+				colourfulSpeed = reduceMotion ? 0 : 2.5
+			}
+			.mask {
+				LinearGradient(
+					stops: [
+						.init(color: .white.opacity(0.0), location: 0.00),
+						.init(color: .white.opacity(0.15), location: 0.2),
+						.init(color: .white.opacity(0.6), location: 0.66),
+						.init(color: .white.opacity(1), location: 1.00),
+
+					],
+					startPoint: .top,
+					endPoint: .bottom
+				)
+			}
 	}
 }
 

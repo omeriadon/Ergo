@@ -131,7 +131,7 @@ struct AskArchivedChatsSheet: View {
 			.navigationTitle("Archived")
 			.toolbarTitleDisplayMode(.inline)
 			.toolbar {
-				ToolbarItem(placement: .topBarLeading) {
+				ToolbarItem(placement: .sheetDismissal) {
 					Button(role: .close) {
 						dismiss()
 					}

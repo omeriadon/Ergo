@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 5/11/2026.
 //
 
+import ErgoLogic
 import ErgoProtocol
 import SwiftUI
 
@@ -64,20 +65,17 @@ struct BoardsSheet: View {
 				}
 				.toolbarTitleVire("Boards", "text.page.and.line.vertical.and.text.page")
 				.toolbar {
-					ToolbarItem(placement: .topBarLeading) {
+					ToolbarItem(placement: .sheetDismissal) {
 						Button(role: .close) {
 							navigation.dismissSheet()
 						}
 					}
 
 					ToolbarItem(placement: .topBarTrailing) {
-						Menu("New Board", systemImage: "square.and.pencil") {
-							Button("Blank", systemImage: "square.dashed") {
-								boardStore.newBoard()
-								navigation.dismissSheet()
-							}
-							.accessibilityIdentifier("boards.newBoard.blank")
-
+						NewBoardMenu { template in
+							boardStore.newBoard(from: template)
+							navigation.dismissSheet()
+						} extra: {
 							Divider()
 
 							Button("Break Down", systemImage: "list.bullet.indent") {

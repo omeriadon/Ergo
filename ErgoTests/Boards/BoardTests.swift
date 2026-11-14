@@ -33,6 +33,15 @@ struct BoardTests {
 		#expect(!Board([first, second], links: [arrow(first, second)]).isEmpty)
 	}
 
+	@Test func aTemplatesArrowsBetweenItsEmptyCardsLeaveTheBoardEmpty() {
+		var first = card()
+		first.placeholder = "A reason for it"
+		var second = card(y: 200)
+		second.placeholder = "The claim you're testing"
+
+		#expect(Board([first, second], links: [arrow(first, second)]).isEmpty)
+	}
+
 	@Test func aSourceAloneMakesTheBoardNotEmpty() {
 		let board = Board([], sources: [textSource()])
 

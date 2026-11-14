@@ -11,7 +11,9 @@ import ErgoLogic
 import ErgoProtocol
 import Network
 import SwiftUI
-import UIKit
+#if os(iOS)
+	import UIKit
+#endif
 
 /// Keeps boards, scratchpads, bookmarks and synced settings the same on every device signed in to the same account,
 /// with Apple or an email.
@@ -95,7 +97,9 @@ final class SyncController {
 	/// Goes up whenever syncing stops for an account change, so a reply that arrives afterwards is dropped
 	@ObservationIgnored var generation = 0
 
-	@ObservationIgnored var backgroundTask = UIBackgroundTaskIdentifier.invalid
+	#if os(iOS)
+		@ObservationIgnored var backgroundTask = UIBackgroundTaskIdentifier.invalid
+	#endif
 
 	@ObservationIgnored var listening: Task<Void, Never>?
 

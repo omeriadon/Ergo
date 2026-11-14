@@ -12,8 +12,16 @@ struct BoardTabView: View {
 	@Environment(BoardStore.self)
 	private var boardStore
 
-	/// Undo steps belong to the board they were made on, so they live here and are dropped when the board changes
-	@State private var history = CanvasHistory()
+	/// Undo steps belong to the board they were made on, so they live here and are dropped when the board changes. The
+	/// wide layout hands down one that outlives this view, since it removes the board when another section is chosen.
+	@State private var ownHistory = CanvasHistory()
+
+	@Environment(\.canvasHistory)
+	private var sharedHistory
+
+	private var history: CanvasHistory {
+		sharedHistory ?? ownHistory
+	}
 
 	@State private var topInset: CGFloat = 70
 
@@ -36,7 +44,12 @@ struct BoardTabView: View {
 				)
 				.id(boardStore.current.id)
 		}
+		#if os(macOS)
+		// A Mac's navigation container is the whole window, sidebar included, so the backdrop stays behind the board
+		.background { CanvasBackdrop().ignoresSafeArea() }
+		#else
 		.containerBackground(for: .navigation) { CanvasBackdrop() }
+		#endif
 		.onChange(of: boardStore.current.id) {
 			history.clear()
 		}

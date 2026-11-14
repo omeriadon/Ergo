@@ -5,6 +5,7 @@
 //  Created by Adon Omeri on 8/11/2026.
 //
 
+import Defaults
 import ErgoLogic
 import ErgoProtocol
 import ErgoShare
@@ -77,6 +78,10 @@ struct CanvasView: View {
 	/// The board waiting on the person to say it should go
 	@State var removing: Board?
 
+	/// Canvas or outline, remembered on this device
+	@Default(.boardLayout)
+	var boardLayout
+
 	var board: Board {
 		boardStore.current
 	}
@@ -93,7 +98,11 @@ struct CanvasView: View {
 
 	var body: some View {
 		ZStack {
-			canvas
+			if boardLayout == .outline {
+				outline
+			} else {
+				canvas
+			}
 		}
 		// Inside the inset, so the room it reads already has the bars taken off
 		.onGeometryChange(for: CanvasRoom.self, of: { CanvasRoom($0) }) { new in
@@ -105,7 +114,7 @@ struct CanvasView: View {
 		.onChange(of: currentFindMatch?.selection) { reveal(currentFindMatch) }
 		.toolbar { toolbar }
 		// The search bar takes the navigation bar's place
-		.toolbarVisibility(find == nil ? .automatic : .hidden, for: .navigationBar)
+		.toolbarHiddenWhileFinding(find != nil)
 		.background { editorPresenter }
 		.sheet(item: $sourceSheet, content: sourceSheet(for:))
 		.boardRemovalDialog($removing)
@@ -115,7 +124,7 @@ struct CanvasView: View {
 	var editorPresenter: some View {
 		StatementEditorPresenter(
 			statementID: editing,
-			canvasBoard: canvasBoard,
+			canvasBoard: editorBoxes,
 			editor: { [boardStore] id in
 				AnyView(
 					StatementEditorScreen(statementID: id, close: { editing = nil })
@@ -208,7 +217,8 @@ struct CanvasView: View {
 			deleteLink: deleteLink,
 			sourceDragStarted: sourceDragStarted,
 			sourceMoved: sourceMoved,
-			showAnalysis: showAnalysis(of:)
+			showAnalysis: showAnalysis(of:),
+			dropSources: addSources(_:at:)
 		)
 		.ignoresSafeArea()
 	}

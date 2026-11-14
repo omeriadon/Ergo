@@ -10,7 +10,9 @@ import ErgoClient
 import ErgoLogic
 import ErgoProtocol
 import SwiftUI
-import UIKit
+#if os(iOS)
+	import UIKit
+#endif
 
 extension SyncController {
 	// MARK: - Account

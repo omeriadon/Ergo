@@ -18,7 +18,7 @@ struct PlusSheet: View {
 		NavigationStack {
 			PlusView()
 				.toolbar {
-					ToolbarItem(placement: .topBarLeading) {
+					ToolbarItem(placement: .sheetDismissal) {
 						Button(role: .close) {
 							navigation.dismissSheet()
 						}

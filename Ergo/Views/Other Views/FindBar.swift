@@ -82,16 +82,30 @@ extension AttributedString {
 	}
 }
 
-extension NSAttributedString {
-	/// With every appearance of what's being looked for in orange
-	func findHighlighted(_ query: String?) -> NSAttributedString {
-		guard let query, !query.isEmpty else { return self }
+#if os(iOS)
+	extension NSAttributedString {
+		/// With every appearance of what's being looked for in orange
+		func findHighlighted(_ query: String?) -> NSAttributedString {
+			guard let query, !query.isEmpty else { return self }
 
-		let highlighted = NSMutableAttributedString(attributedString: self)
-		for range in string.findRanges(of: query) {
-			highlighted.addAttribute(.roundedBackground, value: UIColor.systemOrange, range: NSRange(range, in: string))
+			let highlighted = NSMutableAttributedString(attributedString: self)
+			for range in string.findRanges(of: query) {
+				highlighted.addAttribute(.roundedBackground, value: UIColor.systemOrange, range: NSRange(range, in: string))
+			}
+			return highlighted
 		}
-		return highlighted
+	}
+#endif
+
+extension View {
+	/// On iOS the find bar takes the navigation bar's place. A Mac window's toolbar also holds the sidebar button and the
+	/// window's own controls, so it stays, and the find bar sits under it.
+	func toolbarHiddenWhileFinding(_ isFinding: Bool) -> some View {
+		#if os(iOS)
+			toolbarVisibility(isFinding ? .hidden : .automatic, for: .navigationBar)
+		#else
+			self
+		#endif
 	}
 }
 

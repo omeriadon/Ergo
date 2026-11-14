@@ -12,6 +12,9 @@ import SwiftUI
 /// The sheets that belong to the Board tab. See `NavigationManager.boardSheet`.
 nonisolated enum BoardSheet: Hashable, Identifiable, Codable, Defaults.Serializable {
 	case boards
+
+	/// Pasted text broken down into a new board, from the wide layout's sidebar
+	case breakDown
 	case breakDownSource(BoardSource.ID)
 
 	/// The breakdown that was running when the app was closed, found again from `Defaults[.pendingBreakDown]`
@@ -34,7 +37,7 @@ nonisolated enum BoardSheet: Hashable, Identifiable, Codable, Defaults.Serializa
 			case .boardAnalysis, .quickAI, .boardPeople:
 				true
 
-			case .boards, .breakDownSource, .resumeBreakDown:
+			case .boards, .breakDown, .breakDownSource, .resumeBreakDown:
 				false
 		}
 	}
@@ -47,6 +50,9 @@ struct BoardSheetContent: View {
 		switch sheet {
 			case .boards:
 				BoardsSheet()
+
+			case .breakDown:
+				BreakDownSheet()
 
 			case let .breakDownSource(id):
 				SourceBreakDownSheet(id: id)

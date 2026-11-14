@@ -10,7 +10,9 @@ import ErgoClient
 import ErgoLogic
 import ErgoProtocol
 import SwiftUI
-import UIKit
+#if os(iOS)
+	import UIKit
+#endif
 
 extension SyncController {
 	// MARK: - Syncing
@@ -46,21 +48,32 @@ extension SyncController {
 		}
 	}
 
-	/// A silent push. iOS can start the app just for this, before `run()` has got going. It uses the result to judge how
-	/// often to wake the app.
-	func syncForPush() async -> UIBackgroundFetchResult {
-		if !isReady {
-			try? await catalog.load()
-			isReady = true
+	#if os(iOS)
+		/// A silent push. iOS can start the app just for this, before `run()` has got going. It uses the result to judge how
+		/// often to wake the app.
+		func syncForPush() async -> UIBackgroundFetchResult {
+			if !isReady {
+				try? await catalog.load()
+				isReady = true
+			}
+			let cursor = replica.cursor
+			do {
+				try await syncAndWait()
+			} catch {
+				return .failed
+			}
+			return replica.cursor == cursor ? .noData : .newData
 		}
-		let cursor = replica.cursor
-		do {
-			try await syncAndWait()
-		} catch {
-			return .failed
+	#else
+		/// A silent push. The Mac doesn't judge how often to wake the app, so there's no result to give.
+		func syncForPush() async {
+			if !isReady {
+				try? await catalog.load()
+				isReady = true
+			}
+			try? await syncAndWait()
 		}
-		return replica.cursor == cursor ? .noData : .newData
-	}
+	#endif
 
 	private func handle(_ event: SyncSchedule.Event) {
 		switch schedule.apply(event) {

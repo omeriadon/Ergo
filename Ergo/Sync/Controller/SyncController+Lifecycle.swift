@@ -10,7 +10,9 @@ import ErgoClient
 import ErgoLogic
 import ErgoProtocol
 import SwiftUI
-import UIKit
+#if os(iOS)
+	import UIKit
+#endif
 
 extension SyncController {
 	// MARK: - Scene
@@ -36,25 +38,33 @@ extension SyncController {
 	private func flush() {
 		boardStore.save()
 		scratchpadStore.save()
-		guard isSignedIn, !replica.pending.isEmpty, backgroundTask == .invalid else { return }
+		#if os(macOS)
+			// A Mac app keeps running in the background, so there's no time to ask for
+			guard isSignedIn, !replica.pending.isEmpty else { return }
+			syncNow()
+		#else
+			guard isSignedIn, !replica.pending.isEmpty, backgroundTask == .invalid else { return }
 
-		backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "Sync") { [weak self] in
-			self?.endBackgroundTask()
-		}
-		syncNow()
-		Task {
-			while let task = self.syncing {
-				await task.value
+			backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "Sync") { [weak self] in
+				self?.endBackgroundTask()
 			}
-			endBackgroundTask()
-		}
+			syncNow()
+			Task {
+				while let task = self.syncing {
+					await task.value
+				}
+				endBackgroundTask()
+			}
+		#endif
 	}
 
-	private func endBackgroundTask() {
-		guard backgroundTask != .invalid else { return }
-		UIApplication.shared.endBackgroundTask(backgroundTask)
-		backgroundTask = .invalid
-	}
+	#if os(iOS)
+		private func endBackgroundTask() {
+			guard backgroundTask != .invalid else { return }
+			UIApplication.shared.endBackgroundTask(backgroundTask)
+			backgroundTask = .invalid
+		}
+	#endif
 
 	// MARK: - Live
 

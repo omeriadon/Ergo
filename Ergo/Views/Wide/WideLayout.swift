@@ -11,11 +11,22 @@ import SwiftUI
 /// panels in an inspector. It draws the same `NavigationManager` and stores the tabs do, so a window that's resized
 /// between the two keeps everything.
 struct WideLayout: View {
+	@Environment(BoardStore.self)
+	private var boardStore
+
+	/// The board's undo steps, kept here because the detail drops the board when another section is chosen. Cleared
+	/// when the board changes, even while it's off screen.
+	@State private var history = CanvasHistory()
+
 	var body: some View {
 		NavigationSplitView {
 			WideSidebar()
 		} detail: {
 			WideDetail()
+		}
+		.environment(\.canvasHistory, history)
+		.onChange(of: boardStore.current.id) {
+			history.clear()
 		}
 	}
 }

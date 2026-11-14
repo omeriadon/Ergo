@@ -1743,7 +1743,7 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 	#endif
 
 	#if os(macOS)
-		deinit {
+		isolated deinit {
 			if let occlusionObserver {
 				NotificationCenter.default.removeObserver(occlusionObserver)
 			}
@@ -1762,12 +1762,15 @@ private final class DitherHostView: MTKView, MTKViewDelegate {
 				object: window,
 				queue: .main
 			) { [weak self] _ in
-				guard let self else {
-					return
-				}
-				updateScheduling()
-				if canRender {
-					requestFrame()
+				// Delivered on the main queue
+				MainActor.assumeIsolated {
+					guard let self else {
+						return
+					}
+					self.updateScheduling()
+					if self.canRender {
+						self.requestFrame()
+					}
 				}
 			}
 		}

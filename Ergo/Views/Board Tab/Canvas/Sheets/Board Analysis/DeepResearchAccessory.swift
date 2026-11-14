@@ -7,11 +7,19 @@
 
 import SwiftUI
 
-/// The bar above the tabs while a board's deep research runs. Tapping it opens that board's analysis.
+/// The bar above the tabs while a board's deep research runs, or at the foot of the wide layout's sidebar. Tapping it
+/// opens that board's analysis.
 struct DeepResearchAccessory: ViewModifier {
 	private struct Run {
 		var board: Board.ID
 		var title: String
+	}
+
+	/// Pinned to the bottom of the sidebar, since the wide layout has no tab bar
+	let inSidebar: Bool
+
+	init(inSidebar: Bool = false) {
+		self.inSidebar = inSidebar
 	}
 
 	@Environment(NavigationManager.self)
@@ -37,14 +45,7 @@ struct DeepResearchAccessory: ViewModifier {
 		// The board on screen first, since that's the one it would be about
 		let shown = runs.first { $0.board == boardStore.currentID } ?? runs.first
 
-		content
-			.tabViewBottomAccessory(isEnabled: shown != nil) {
-				if let shown {
-					DeepResearchAccessoryButton(title: shown.title, others: runs.count - 1) {
-						navigation.openAnalysis(of: shown.board, in: boardStore)
-					}
-				}
-			}
+		placed(content, shown: shown, others: runs.count - 1)
 			.task(id: runs.isEmpty) {
 				guard !runs.isEmpty else { return }
 				while !Task.isCancelled {
@@ -52,6 +53,39 @@ struct DeepResearchAccessory: ViewModifier {
 					try? await Task.sleep(for: .seconds(60))
 				}
 			}
+	}
+
+	@ViewBuilder
+	private func placed(_ content: Content, shown: Run?, others: Int) -> some View {
+		if inSidebar {
+			content
+				.safeAreaInset(edge: .bottom) {
+					if let shown {
+						button(for: shown, others: others)
+							.padding(.vertical, 12)
+							.glassEffect(.regular.interactive(), in: Capsule())
+							.padding(.horizontal)
+							.padding(.bottom, 8)
+					}
+				}
+		} else {
+			#if os(iOS)
+				content
+					.tabViewBottomAccessory(isEnabled: shown != nil) {
+						if let shown {
+							button(for: shown, others: others)
+						}
+					}
+			#else
+				content
+			#endif
+		}
+	}
+
+	private func button(for run: Run, others: Int) -> some View {
+		DeepResearchAccessoryButton(title: run.title, others: others) {
+			navigation.openAnalysis(of: run.board, in: boardStore)
+		}
 	}
 }
 

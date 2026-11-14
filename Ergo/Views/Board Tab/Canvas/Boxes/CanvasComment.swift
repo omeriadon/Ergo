@@ -52,13 +52,17 @@ struct CanvasCommentOverlay: View {
 			.padding(.vertical, 5)
 			.frame(width: CanvasCommentLayout.size.width, height: CanvasCommentLayout.size.height, alignment: .topLeading)
 			.background(tint.opacity(0.22), in: RoundedRectangle(cornerRadius: 10))
-			.background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 10))
-			.overlay {
-				RoundedRectangle(cornerRadius: 10)
-					.strokeBorder(tint.opacity(comment.isKey ? 0.9 : 0.6), lineWidth: comment.isKey ? 1.5 : 1)
-			}
-			.offset(x: CanvasCommentLayout.origin.x, y: CanvasCommentLayout.origin.y)
-			.allowsHitTesting(false)
+			#if os(iOS)
+				.background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 10))
+			#else
+				.background(Color(nsColor: .windowBackgroundColor), in: RoundedRectangle(cornerRadius: 10))
+			#endif
+				.overlay {
+					RoundedRectangle(cornerRadius: 10)
+						.strokeBorder(tint.opacity(comment.isKey ? 0.9 : 0.6), lineWidth: comment.isKey ? 1.5 : 1)
+				}
+				.offset(x: CanvasCommentLayout.origin.x, y: CanvasCommentLayout.origin.y)
+				.allowsHitTesting(false)
 		}
 	}
 }

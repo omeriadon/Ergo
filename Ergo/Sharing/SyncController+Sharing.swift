@@ -8,8 +8,12 @@
 import ErgoClient
 import ErgoProtocol
 import Foundation
-import UIKit
 import UserNotifications
+#if os(iOS)
+	import UIKit
+#else
+	import AppKit
+#endif
 
 /// The routes behind sharing a board. Who's on a board comes back through sync as a `share` record, so each of these only
 /// has to ask for a sync afterwards.
@@ -79,7 +83,11 @@ extension SyncController {
 	/// Silent pushes need no permission, so this happens as soon as someone's signed in
 	func registerForPush() {
 		guard isSignedIn else { return }
-		UIApplication.shared.registerForRemoteNotifications()
+		#if os(iOS)
+			UIApplication.shared.registerForRemoteNotifications()
+		#else
+			NSApplication.shared.registerForRemoteNotifications()
+		#endif
 	}
 
 	/// iOS hands the token over on every launch, so a failed upload gets another go on the next one

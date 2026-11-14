@@ -23,6 +23,9 @@ nonisolated struct Statement: Codable, Hashable, Identifiable, Sendable, Argumen
 	/// The source this card was broken down from, which puts it in that source's region
 	var source: BoardSource.ID?
 
+	/// What goes in the card, shown while its English is empty. A template's cards have one (`BoardTemplate`).
+	var placeholder: String?
+
 	init(
 		id: UUID = UUID(),
 		position: CanvasPoint = .zero,
@@ -35,6 +38,11 @@ nonisolated struct Statement: Codable, Hashable, Identifiable, Sendable, Argumen
 
 	var isEmpty: Bool {
 		english.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+	}
+
+	/// What's shown while there's no English
+	var placeholderText: String {
+		placeholder ?? "Empty statement"
 	}
 
 	/// The first line of the English, nil when there is none

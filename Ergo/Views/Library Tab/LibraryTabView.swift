@@ -33,6 +33,9 @@ struct LibraryTabView: View {
 	@State private var searchPresented = false
 	@State private var searchResults: [LibrarySearchEntry] = []
 
+	/// The person's own boards, scratchpads and chats that match, under the library's
+	@State private var personalResults = PersonalSearchResults()
+
 	private var libraryEntries: [LibrarySearchEntry] {
 		let query = searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !query.isEmpty else { return [] }
@@ -41,6 +44,7 @@ struct LibraryTabView: View {
 
 	var scrollView: some View {
 		let results = searchPresented ? searchResults : []
+		let personal = searchPresented ? personalResults : PersonalSearchResults()
 
 		return ScrollView {
 			if searchPresented {
@@ -50,7 +54,7 @@ struct LibraryTabView: View {
 						.listRowBackground(Color.clear)
 						.frame(maxWidth: .infinity, alignment: .center)
 						.transition(.opacity)
-				} else if results.isEmpty, searchTerm.count > 2 {
+				} else if results.isEmpty, personal.isEmpty, searchTerm.count > 2 {
 					ContentUnavailableView.search(text: searchTerm)
 						.tint(.accent)
 						.padding(.top, 90)
@@ -71,16 +75,25 @@ struct LibraryTabView: View {
 		}
 		.animation(
 			reduceMotion ? nil : .smooth(duration: 0.22),
-			value: results.map(\.id)
+			value: results.map(\.id) + personal.ids
 		)
 	}
 
 	var resultsList: some View {
 		let results = searchPresented ? searchResults : []
+		let personal = searchPresented ? personalResults : PersonalSearchResults()
 
-		return ForEach(results) { result in
-			LibrarySearchResultRow(result: result)
-				.transition(.opacity)
+		return Group {
+			if !results.isEmpty, !personal.isEmpty {
+				PersonalSearchHeader("Library")
+			}
+
+			ForEach(results) { result in
+				LibrarySearchResultRow(result: result)
+					.transition(.opacity)
+			}
+
+			PersonalSearchSections(results: personal)
 		}
 	}
 
@@ -138,5 +151,10 @@ struct LibraryTabView: View {
 					searchResults = []
 				}
 			}
+			.personalSearch(
+				query: searchTerm.trimmingCharacters(in: .whitespacesAndNewlines),
+				isPresented: searchPresented,
+				results: $personalResults
+			)
 	}
 }

@@ -44,7 +44,7 @@ struct BoardAnalysisSheet: View {
 				})
 				.toolbarTitleVire("Analysis", "text.magnifyingglass")
 				.toolbar {
-					ToolbarItem(placement: .topBarLeading) {
+					ToolbarItem(placement: .sheetDismissal) {
 						Button(role: .close) {
 							navigation.dismissSheet()
 						}
@@ -100,11 +100,31 @@ struct AnalysisContent: View {
 	@Environment(BoardAnalysisStore.self)
 	private var analysis
 
+	/// The sheet's own, for every link that isn't a highlight
+	@Environment(\.openURL)
+	private var openURL
+
 	var body: some View {
+		ScrollViewReader { proxy in
+			list
+				.environment(\.openURL, OpenURLAction { url in
+					guard let annotation = AnalysisFindingLink.annotation(in: url) else {
+						openURL(url)
+						return .handled
+					}
+					withAnimation {
+						proxy.scrollTo(annotation, anchor: .top)
+					}
+					return .handled
+				})
+		}
+	}
+
+	private var list: some View {
 		let shown = analysis.shown(on: board)
 		let outline = AnalysisOutline(board: board, current: shown.current, focus: focus)
 
-		ScrollView {
+		return ScrollView {
 			VStack(alignment: .leading, spacing: 24) {
 				if focus == nil {
 					AnalysisStatusView(board: board, hasStale: shown.hasStale)

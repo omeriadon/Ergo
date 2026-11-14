@@ -79,7 +79,7 @@ struct BreakDownToolbar: ToolbarContent {
 	let create: () -> Void
 
 	var body: some ToolbarContent {
-		ToolbarItem(placement: .topBarLeading) {
+		ToolbarItem(placement: .sheetDismissal) {
 			Button(role: .cancel, action: cancel)
 				.accessibilityIdentifier("board.breakDown.cancel")
 		}

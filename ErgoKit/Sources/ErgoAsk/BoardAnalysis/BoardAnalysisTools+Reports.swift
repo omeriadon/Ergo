@@ -155,8 +155,8 @@ extension BoardAnalysisTools {
 	/// Counts a report that passed every other check, or refuses it
 	func reserve(_ key: String, duplicate: String) throws(AskTools.Failure) {
 		let refusal: String? = locked { state in
-			if state.reported.count >= Self.reportLimit {
-				return "Expected at most \(Self.reportLimit) reports, stop reporting"
+			if state.reported.count >= reportBudget {
+				return "Expected at most \(reportBudget) reports, stop reporting"
 			}
 			if !state.reported.insert(key).inserted {
 				return duplicate

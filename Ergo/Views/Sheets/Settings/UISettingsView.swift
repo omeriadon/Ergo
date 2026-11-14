@@ -22,11 +22,14 @@ struct UISettingsView: View {
 				Text("The animated backgrounds behind detail pages and Check. Turning this off removes them entirely.")
 			}
 
-			Section {
-				Toggle("Haptics", systemImage: "hand.tap", isOn: $hapticsEnabled)
-			} footer: {
-				Text("A tap as you drag a box or arrow across the canvas grid, and a stronger one when an arrow reaches a box.")
-			}
+			// The Mac has nothing to tap with
+			#if os(iOS)
+				Section {
+					Toggle("Haptics", systemImage: "hand.tap", isOn: $hapticsEnabled)
+				} footer: {
+					Text("A tap as you drag a box or arrow across the canvas grid, and a stronger one when an arrow reaches a box.")
+				}
+			#endif
 
 			Section {
 				NavigationLink {

@@ -1,0 +1,11 @@
+# Practice
+
+- Practice is spaced repetition over the library and the course, on the device, with no AI. It's a page on the Library stack (`LibraryRoute.practice`, `SidebarItem.practice`), opened from the grid's Practice card or the wide sidebar's Practice row, so both layouts show the same page.
+- The core is in ErgoCatalog (`Practice/`), Foundation only, so a Watch app could reuse it: `PracticeDeck` builds the cards, `PracticeProgress` schedules them, `PracticeSession` asks them. Tests are `PracticeTests` in `ErgoAskTests`, since ErgoCatalog has no test target of its own.
+- Cards only use what the library or the course says. `identify` shows an example (or the summary) with the name hidden and asks which entry it is. `define` shows the name and asks which summary is its. `validity` is a course exercise, Valid or Invalid. Wrong answers come from the same category, the entry's lookalikes first, then entries that share a tag.
+- A card never shows its own answer: examples that name the entry are skipped, and summaries have the name and aliases replaced by `PracticeText.blank` (for philosophers, each part of the name too). A test checks every card in the library. Keep it passing when the library grows.
+- Card ids (`category/id/kind`, `course/lesson/argument`) are what progress is saved under. Don't change how they're made.
+- The scheduler is Leitner boxes: right moves a card up a box (1, 2, 4, 8, 16, 32 days), wrong sends it to the first. Times are offsets from the clock passed in, never calendar days, so it's deterministic. Only a card's first answer in a session counts, and a wrong card comes back once at the end of the session. A session is the due cards, longest overdue first, then up to 10 new ones in a fixed hashed order (`ItemOfTheDay.hash`), 20 at most.
+- Course cards come from finished lessons the person can still open (`PracticeLibrary.courseLessons`). The app adds them to the library deck, since ErgoCatalog can't see ErgoLogic.
+- `practiceProgress` holds card ids, boxes and due dates, never card text. It's this device only, like `logicCourseFinished`: a `SyncedSetting` is one whole value where the last writer wins, so two devices would lose each other's answers. Syncing it would need a record per card, which means a new sync kind.
+- Haptics are iOS only (`practiceHaptic`), and Reduce Motion turns off the animations.

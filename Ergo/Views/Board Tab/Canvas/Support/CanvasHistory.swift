@@ -88,3 +88,9 @@ final class CanvasHistory {
 		didChange?()
 	}
 }
+
+extension EnvironmentValues {
+	/// The wide layout's history, which outlives the Board section's views so leaving the section keeps the undo steps.
+	/// Nil in the narrow layout, where the Board tab is never torn down and keeps its own.
+	@Entry var canvasHistory: CanvasHistory?
+}

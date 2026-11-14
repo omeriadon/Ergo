@@ -6,11 +6,21 @@
 //
 
 import ErgoLogic
-import UIKit
+#if os(iOS)
+	import UIKit
+#else
+	import AppKit
+#endif
 
 /// One region on the canvas: a tinted fill, diagonal hatching cut to its shape, and an edge with a soft glow around it.
 /// All vector layers, so it stays sharp at any zoom, and it doesn't take touches, so panning works across it.
 final class CanvasRegionLayer {
+	#if os(iOS)
+		typealias PlatformColor = UIColor
+	#else
+		typealias PlatformColor = NSColor
+	#endif
+
 	/// Canvas units between the hatching's lines
 	private static let hatchSpacing = 16.0
 
@@ -68,7 +78,7 @@ final class CanvasRegionLayer {
 		}
 	}
 
-	func style(accent: UIColor) {
+	func style(accent: PlatformColor) {
 		CATransaction.begin()
 		CATransaction.setDisableActions(true)
 		fill.fillColor = accent.withAlphaComponent(0.07).cgColor

@@ -33,6 +33,8 @@ struct CardView: View {
 						"text.bubble"
 					case "Bookmarks":
 						"bookmark"
+					case "Practice":
+						PracticeView.symbol
 					default:
 						""
 				}

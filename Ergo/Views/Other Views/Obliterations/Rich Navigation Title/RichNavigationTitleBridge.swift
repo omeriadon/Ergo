@@ -29,6 +29,25 @@
 
 import SwiftUI
 
+#if os(macOS)
+	public extension View {
+		/// The Mac's toolbar has no tall title, so the content goes in its middle
+		func richNavigationTitle(
+			height _: CGFloat = 84,
+			width: CGFloat = 160,
+			@ViewBuilder content: () -> some View
+		) -> some View {
+			let content = content()
+			return toolbar {
+				ToolbarItem(placement: .principal) {
+					content
+						.frame(width: width > 0 ? width : nil)
+				}
+			}
+		}
+	}
+#endif
+
 #if os(iOS)
 
 	import ObjectiveC

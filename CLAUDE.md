@@ -33,6 +33,7 @@ This file is only what every agent needs. How one area works, and what must not 
 | File | Read it before touching |
 |---|---|
 | `Notes/Logic.md` | The logic keyboard and editor, the parser and its limits, `LogicChecker`, `LogicEnglish`, scratchpads, the course |
+| `Notes/Practice.md` | Practice: its cards, the scheduler, `practiceProgress` |
 | `Notes/Boards.md` | `Board`, `BoardStore`, sources and regions, the UIKit canvas and its hosted SwiftUI boxes, the statement editor |
 | `Notes/BreakDown.md` | Break Down, `PendingBreakDown`, the translation pipeline and its stages |
 | `Notes/Ask.md` | Ask, Quick AI, detached runs, `AskTools` and intents, modes, attachments, markdown and LaTeX |
@@ -59,6 +60,13 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -configuration Debug -destinatio
 - Tests that touch Defaults go in a suite marked `.cleanDefaults`, and a store that starts using a new Defaults key adds it to `TestDefaults.keys`.
 - Stress tests take a seed (`SeededRandom`) so a failure repeats. Keep what they build small: a test that expands or nests without a bound can take the machine's memory with it.
 - `Checks/` only holds the dither, catalog and library precondition scripts. Run them with the Xcode MCP `RunCodeSnippet`.
+
+### The Mac
+The app target also builds for native macOS (`SUPPORTED_PLATFORMS` has `macosx`; not Catalyst). The share extension, the widgets and ColorfulX are iOS-only in the project. macOS-only code is `#if os(macOS)`, and UIKit-only code is `#if os(iOS)`. `Ergo/Other/MacStandIns.swift` gives the iOS-only SwiftUI names (`.topBarTrailing`, `navigationBarTitleDisplayMode`, …) a Mac meaning, so shared call sites don't branch. A sheet's Close or Cancel goes in `.sheetDismissal` (`Toolbar+.swift`), which is `.cancellationAction` on the Mac.
+
+```sh
+xcodebuild -project Ergo.xcodeproj -scheme Ergo -configuration Debug -destination 'platform=macOS' build CODE_SIGNING_ALLOWED=NO
+```
 
 ## Conventions
 - Default actor isolation is `MainActor`. Model and logic types that must work off the main actor are marked `nonisolated`.

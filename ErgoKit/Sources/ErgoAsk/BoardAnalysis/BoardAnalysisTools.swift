@@ -78,6 +78,9 @@ public final class BoardAnalysisTools: AskToolSet, @unchecked Sendable {
 	public let request: BoardAnalysisRequest
 	public let catalog: LibraryCatalog
 
+	/// How many reports this set takes: `reportLimit`, or what a run in parts has left of it
+	public let reportBudget: Int
+
 	let library: AskTools
 
 	/// What the run has done so far, behind a lock since calls can overlap
@@ -89,9 +92,10 @@ public final class BoardAnalysisTools: AskToolSet, @unchecked Sendable {
 	let lock = NSLock()
 	var state = State()
 
-	public init(request: BoardAnalysisRequest, catalog: LibraryCatalog) {
+	public init(request: BoardAnalysisRequest, catalog: LibraryCatalog, reportBudget: Int = BoardAnalysisTools.reportLimit) {
 		self.request = request
 		self.catalog = catalog
+		self.reportBudget = reportBudget
 		library = AskTools(catalog: catalog)
 	}
 

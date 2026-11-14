@@ -8,7 +8,11 @@
 import Defaults
 import ErgoClient
 import ErgoProtocol
-import UIKit
+#if os(iOS)
+	import UIKit
+#else
+	import AppKit
+#endif
 
 /// Shows a badge when the server says this version of Ergo is getting old, or is too old to be answered.
 ///
@@ -31,7 +35,12 @@ final class AppUpdateWarning {
 				AppUpdateWarning.shared.heard(update)
 			}
 		})
-		observers.append(NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: nil) { _ in
+		#if os(iOS)
+			let foreground = UIApplication.willEnterForegroundNotification
+		#else
+			let foreground = NSApplication.willBecomeActiveNotification
+		#endif
+		observers.append(NotificationCenter.default.addObserver(forName: foreground, object: nil, queue: nil) { _ in
 			Task { @MainActor in
 				AppUpdateWarning.shared.shownSinceForeground = false
 			}

@@ -13,7 +13,11 @@ import SwiftUI
 
 @main
 struct ErgoApp: App {
-	@UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+	#if os(iOS)
+		@UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+	#else
+		@NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+	#endif
 
 	@State private var navigation = NavigationManager()
 	@State private var catalog = CatalogStore()

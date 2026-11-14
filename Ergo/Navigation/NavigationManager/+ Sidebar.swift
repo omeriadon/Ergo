@@ -3,6 +3,7 @@
 //  Ergo
 //
 
+import ErgoLogic
 import ErgoProtocol
 import SwiftUI
 
@@ -21,6 +22,7 @@ enum SidebarItem: Hashable {
 	case libraryHome
 	case library(LibraryContent)
 	case bookmarks
+	case practice
 }
 
 extension NavigationManager {
@@ -62,6 +64,8 @@ extension NavigationManager {
 		switch first {
 			case .bookmarks:
 				return .bookmarks
+			case .practice:
+				return .practice
 			case let .detail(category, _):
 				return .library(category)
 			default:
@@ -104,6 +108,9 @@ extension NavigationManager {
 			case .bookmarks:
 				selectedTab = .library
 				libraryPath = [.bookmarks]
+			case .practice:
+				selectedTab = .library
+				libraryPath = [.practice]
 		}
 	}
 
@@ -119,9 +126,9 @@ extension NavigationManager {
 		boards.open(id)
 	}
 
-	func newBoard(in boards: BoardStore) {
+	func newBoard(_ template: BoardTemplate = .blank, in boards: BoardStore) {
 		reveal(.board)
-		boards.newBoard()
+		boards.newBoard(from: template)
 	}
 
 	func openScratchpad(_ id: LogicScratchpad.ID, in scratchpads: ScratchpadStore) {
