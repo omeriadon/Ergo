@@ -27,6 +27,17 @@ nonisolated enum BoardSheet: Hashable, Identifiable, Codable, Defaults.Serializa
 	var id: Self {
 		self
 	}
+
+	/// Sits beside the board rather than being a task of its own. The wide layout shows these in the inspector, not a sheet.
+	var isPanel: Bool {
+		switch self {
+			case .boardAnalysis, .quickAI, .boardPeople:
+				true
+
+			case .boards, .breakDownSource, .resumeBreakDown:
+				false
+		}
+	}
 }
 
 struct BoardSheetContent: View {

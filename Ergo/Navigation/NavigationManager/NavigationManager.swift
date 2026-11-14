@@ -74,12 +74,26 @@ final class NavigationManager {
 		}
 	}
 
+	// MARK: - onboarding
+
+	/// Set at startup from `Defaults[.firstRunFinished]`, and only cleared by `finishOnboarding()`. While it's set the
+	/// onboarding sheet is the one on screen, and every other sheet waits behind it.
+	private(set) var needsOnboarding = false
+
+	func finishOnboarding() {
+		Defaults[.firstRunFinished] = true
+		needsOnboarding = false
+	}
+
 	// MARK: - visibleSheet
 
 	/// One presenter shows all of them, so going from one to another is SwiftUI swapping a sheet, which it does reliably.
 	/// Separate presenters would need one to finish going away before the next could appear.
 	var visibleSheet: VisibleSheet? {
 		get {
+			if needsOnboarding {
+				return .onboarding
+			}
 			if let presentedSheet {
 				return .app(presentedSheet)
 			}
@@ -91,10 +105,39 @@ final class NavigationManager {
 			}
 		}
 		set {
-			if newValue == nil {
+			if newValue == nil, !needsOnboarding {
 				dismissSheet()
 			}
 		}
+	}
+
+	/// What the one sheet presenter shows in the given layout. The wide layout shows the board's panels (`BoardSheet.isPanel`)
+	/// in the inspector beside the board, so they're left out of the sheet there.
+	func visibleSheet(isWide: Bool) -> VisibleSheet? {
+		guard isWide, !needsOnboarding, presentedSheet == nil, selectedTab == .board else {
+			return visibleSheet
+		}
+		return boardSheet.flatMap { $0.isPanel ? nil : .board($0) }
+	}
+
+	/// The panel the wide layout's inspector shows beside the board, if any
+	var boardPanel: BoardSheet? {
+		boardSheet.flatMap { $0.isPanel ? $0 : nil }
+	}
+
+	/// The sheet presenter's binding for the given layout. A sheet going away because the layout changed (a panel moving
+	/// into the inspector) has nothing on screen to dismiss, so it's ignored rather than closing the panel.
+	func visibleSheetBinding(isWide: Bool) -> Binding<VisibleSheet?> {
+		Binding(
+			get: { [unowned self] in
+				visibleSheet(isWide: isWide)
+			},
+			set: { [unowned self] newValue in
+				if newValue == nil, !needsOnboarding, visibleSheet(isWide: isWide) != nil {
+					dismissSheet()
+				}
+			}
+		)
 	}
 
 	// MARK: - listStates
@@ -234,6 +277,7 @@ final class NavigationManager {
 	// MARK: - startup()
 
 	func startup() {
+		needsOnboarding = !Defaults[.firstRunFinished]
 		presentedSheet = Defaults[.presentedSheet]
 		boardSheet = Defaults[.boardSheet]
 		logicSheet = Defaults[.logicSheet]

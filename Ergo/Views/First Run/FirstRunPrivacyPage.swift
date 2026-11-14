@@ -46,6 +46,9 @@ struct LegalLinks: View {
 }
 
 private struct FirstRunConsentButtons: View {
+	@Environment(NavigationManager.self)
+	private var navigation
+
 	var body: some View {
 		Button {
 			finish(allowingAI: true)
@@ -68,12 +71,13 @@ private struct FirstRunConsentButtons: View {
 
 	private func finish(allowingAI: Bool) {
 		Defaults[.aiConsent] = allowingAI
-		withAnimation {
-			Defaults[.firstRunFinished] = true
-		}
+		navigation.finishOnboarding()
 	}
 }
 
 #Preview {
-	FirstRunPrivacyPage()
+	NavigationStack {
+		FirstRunPrivacyPage()
+	}
+	.environment(NavigationManager())
 }

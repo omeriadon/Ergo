@@ -5,35 +5,23 @@
 //  Created by Adon Omeri on 1/11/2026.
 //
 
-import Defaults
 import SwiftUI
 
 struct ContentView: View {
-	@Default(.firstRunFinished) private var firstRunFinished
-
-	var body: some View {
-		// The tabs and their sheets only exist after the first run, so a sheet asked for during it (a shared item, an
-		// invite) waits and shows over the tabs when they appear
-		if firstRunFinished {
-			MainView()
-				.transition(.opacity)
-		} else {
-			FirstRunView()
-				.transition(.opacity)
-		}
-	}
-}
-
-private struct MainView: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
+	@Environment(\.horizontalSizeClass)
+	private var horizontalSizeClass
+
 	var body: some View {
-		@Bindable var router = navigation
+		// Chosen by width alone, so a window that's resized switches layout. Both draw the same `NavigationManager` and
+		// stores, so nothing is lost when it does.
+		let isWide = horizontalSizeClass == .regular
 
 		// The tabs read the selected tab themselves, so changing tabs only changes which sheet this shows
-		AppTabs()
-			.sheet(item: $router.visibleSheet) { sheet in
+		layout(isWide: isWide)
+			.sheet(item: navigation.visibleSheetBinding(isWide: isWide)) { sheet in
 				switch sheet {
 					case let .app(sheet):
 						AppSheetContent(sheet: sheet)
@@ -46,9 +34,21 @@ private struct MainView: View {
 
 					case let .library(sheet):
 						LibrarySheetContent(sheet: sheet)
+
+					case .onboarding:
+						OnboardingSheet()
 				}
 			}
 			.fontDesign(.rounded)
+	}
+
+	@ViewBuilder
+	private func layout(isWide: Bool) -> some View {
+		if isWide {
+			WideLayout()
+		} else {
+			AppTabs()
+		}
 	}
 }
 
@@ -84,60 +84,17 @@ private struct AppSheetContent: View {
 	}
 }
 
-/// The tab bar and its tabs. Selecting a tab only changes this view, not `ContentView`.
+/// The tab bar and its tabs, for narrow windows. Selecting a tab only changes this view, not `ContentView`.
 private struct AppTabs: View {
 	@Environment(NavigationManager.self)
 	private var navigation
 
 	@Environment(CatalogStore.self) private var catalog
 
-	/// SwiftUI only calls the setter for the user's own taps; intents change `NavigationManager` directly. That keeps intent-driven navigation out of the donations.
-	private var tabSelection: Binding<AppTab> {
-		Binding(
-			get: {
-				navigation.selectedTab
-			},
-			set: { newValue in
-				guard newValue != navigation.selectedTab else {
-					return
-				}
-
-				navigation.selectedTab = newValue
-				IntentDonations.tab(newValue)
-			}
-		)
-	}
-
-	/// Same idea as `tabSelection`. Only pushes are donated, not pops or the same path written back.
-	private var libraryPath: Binding<[LibraryRoute]> {
-		Binding(
-			get: {
-				navigation.libraryPath
-			},
-			set: { newValue in
-				let previous = navigation.libraryPath
-				navigation.libraryPath = newValue
-
-				if newValue.count > previous.count, let route = newValue.last {
-					IntentDonations.route(route, catalog: catalog)
-				}
-			}
-		)
-	}
-
-	private var logicPath: Binding<[LogicRoute]> {
-		Binding(
-			get: {
-				navigation.logicPath
-			},
-			set: { newValue in
-				navigation.logicPath = newValue
-			}
-		)
-	}
-
 	var body: some View {
-		TabView(selection: tabSelection) {
+		@Bindable var router = navigation
+
+		TabView(selection: navigation.donatingTabSelection) {
 			Tab(value: .board) {
 				NavigationStack {
 					BoardTabView()
@@ -148,20 +105,9 @@ private struct AppTabs: View {
 			}
 
 			Tab(value: .logic) {
-				NavigationStack(path: logicPath) {
+				NavigationStack(path: $router.logicPath) {
 					LogicTabView()
-						.navigationDestination(for: LogicRoute.self) { route in
-							switch route {
-								case .scratchpad:
-									ScratchpadEditorView()
-
-								case .course:
-									LogicCourseView()
-
-								case let .lesson(id):
-									LogicLessonView(lessonID: id)
-							}
-						}
+						.logicDestinations()
 				}
 			} label: {
 				Label("Logic", systemImage: "function")
@@ -178,41 +124,9 @@ private struct AppTabs: View {
 			}
 
 			Tab(value: .library, role: .prominent) {
-				NavigationStack(path: libraryPath) {
+				NavigationStack(path: navigation.donatingLibraryPath(catalog: catalog)) {
 					LibraryTabView()
-						.navigationDestination(for: LibraryRoute.self) { route in
-							switch route {
-								case let .category(category):
-									LibraryCategoryView(category: category)
-
-								case let .detail(category, id):
-									LibraryDetailView(category: category, id: id)
-
-								case let .symbols(filter):
-									LibraryListView<LogicSymbol>(initialFilter: filter.libraryFilter)
-
-								case let .biases(filter):
-									LibraryListView<Bias>(initialFilter: filter.libraryFilter)
-
-								case let .razors(filter):
-									LibraryListView<Razor>(initialFilter: filter.libraryFilter)
-
-								case let .paradoxes(filter):
-									LibraryListView<Paradox>(initialFilter: filter.libraryFilter)
-
-								case let .concepts(filter):
-									LibraryListView<Concept>(initialFilter: filter.libraryFilter)
-
-								case let .fallacies(filter):
-									LibraryListView<Fallacy>(initialFilter: filter.libraryFilter)
-
-								case let .arguments(filter):
-									LibraryListView<Argument>(initialFilter: filter.libraryFilter)
-
-								case .bookmarks:
-									BookmarksView()
-							}
-						}
+						.libraryDestinations()
 						.toolbarTitleItem()
 				}
 			} label: {

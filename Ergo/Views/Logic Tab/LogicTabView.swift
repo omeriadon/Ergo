@@ -103,7 +103,7 @@ struct LogicTabView: View {
 	}
 }
 
-private struct ScratchpadRow: View {
+struct ScratchpadRow: View {
 	let scratchpad: LogicScratchpad
 	let letters: [String]
 

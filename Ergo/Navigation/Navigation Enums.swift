@@ -64,6 +64,9 @@ nonisolated enum VisibleSheet: Hashable, Identifiable {
 	case logic(LogicSheet)
 	case library(LibrarySheet)
 
+	/// The first run, over everything until it's finished. Anything asked for meanwhile waits in its slot.
+	case onboarding
+
 	var id: Self {
 		self
 	}

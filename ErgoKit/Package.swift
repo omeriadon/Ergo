@@ -40,6 +40,8 @@ let package = Package(
 		.testTarget(name: "ErgoAskTests", dependencies: ["ErgoAsk", "ErgoCatalog", "ErgoProtocol", "ErgoSync"]),
 		.testTarget(name: "ErgoMarkdownTests", dependencies: ["ErgoMarkdown"]),
 		.testTarget(name: "ErgoShareTests", dependencies: ["ErgoShare"]),
+		// Talks to a running server, only when ERGO_LIVE_SERVER is set. See LiveServerTests.
+		.testTarget(name: "ErgoLiveTests", dependencies: ["ErgoSync", "ErgoProtocol", "ErgoClient"]),
 	],
 	swiftLanguageModes: [.v6]
 )

@@ -1,44 +1,46 @@
 //
-//  FirstRunView.swift
+//  OnboardingSheet.swift
 //  Ergo
 //
 //  Created by Adon Omeri on 14/11/2026.
 //
 
-import Defaults
 import SwiftUI
 
-/// What a new install sees in place of the tabs: what Ergo is, what isn't obvious, and permission to send text to AI.
-/// Swiping can skip ahead, but only the privacy page finishes it, so nobody gets past without choosing.
-struct FirstRunView: View {
-	@State private var page = Page.intro
+/// What a new install sees first, as a sheet over the app: what Ergo is, what isn't obvious, and permission to send text
+/// to AI. Each page pushes the next, and it can't be swiped away: only the privacy page finishes it, so nobody gets past
+/// without choosing. `NavigationManager.needsOnboarding` keeps it on screen, and other sheets wait behind it.
+struct OnboardingSheet: View {
+	@State private var path: [Page] = []
 
 	enum Page: Hashable {
-		case intro, tips, privacy
+		case tips, privacy
 	}
 
 	var body: some View {
-		TabView(selection: $page.animation()) {
+		NavigationStack(path: $path) {
 			FirstRunIntroPage {
-				page = .tips
+				path.append(.tips)
 			}
-			.tag(Page.intro)
+			.navigationDestination(for: Page.self) { page in
+				switch page {
+					case .tips:
+						FirstRunTipsPage {
+							path.append(.privacy)
+						}
 
-			FirstRunTipsPage {
-				page = .privacy
+					case .privacy:
+						FirstRunPrivacyPage()
+				}
 			}
-			.tag(Page.tips)
-
-			FirstRunPrivacyPage()
-				.tag(Page.privacy)
 		}
-		.tabViewStyle(.page(indexDisplayMode: .always))
-		.indexViewStyle(.page(backgroundDisplayMode: .always))
+		.interactiveDismissDisabled()
+		.presentationDetents([.large])
 		.fontDesign(.rounded)
 	}
 }
 
-/// A page's scrolling content, with its buttons kept above the page dots
+/// A page's scrolling content, with its buttons kept at the bottom
 struct FirstRunPage<Content: View, Buttons: View>: View {
 	@ViewBuilder let content: Content
 	@ViewBuilder let buttons: Buttons
@@ -49,7 +51,7 @@ struct FirstRunPage<Content: View, Buttons: View>: View {
 				content
 			}
 			.padding(.horizontal, 24)
-			.padding(.top, 48)
+			.padding(.top, 8)
 			.frame(maxWidth: 560, alignment: .leading)
 			.frame(maxWidth: .infinity)
 		}
@@ -60,9 +62,10 @@ struct FirstRunPage<Content: View, Buttons: View>: View {
 			}
 			.controlSize(.large)
 			.padding(.horizontal, 24)
-			.padding(.bottom, 56)
+			.padding(.bottom, 16)
 			.frame(maxWidth: 560)
 		}
+		.toolbarTitleDisplayMode(.inline)
 	}
 }
 
@@ -121,5 +124,8 @@ private struct FirstRunIntroPage: View {
 }
 
 #Preview {
-	FirstRunView()
+	Color.clear
+		.sheet(isPresented: .constant(true)) {
+			OnboardingSheet()
+		}
 }

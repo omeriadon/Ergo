@@ -11,6 +11,7 @@ Ergo's design docs. Most of them are plans that have since been built, kept for 
 | [11-Paid.md](11-Paid.md) | What's free and paid, daily AI limits, and long text into Break Down | Current. Built, not priced, and off until the App Store products exist |
 | [12-Identity.md](12-Identity.md) | What Ergo is, who it's for first, and how the board's AI should work | Current, built |
 | [13-Versions.md](13-Versions.md) | How the app and the server change without cutting anyone off | Current |
+| [14-Platforms.md](14-Platforms.md) | iPad, Mac and the Watch: two layouts chosen by width over one navigation model | Current |
 | [00-Translation.md](00-Translation.md) | The original plan: the server, ErgoKit and translation | Built, historical |
 | [01-ErgoKit.md](01-ErgoKit.md) · [02-Server.md](02-Server.md) · [03-App.md](03-App.md) · [04-Evals.md](04-Evals.md) | The phases of that plan | Built, historical |
 | [05-Sync.md](05-Sync.md) | Sync | Built, historical |
