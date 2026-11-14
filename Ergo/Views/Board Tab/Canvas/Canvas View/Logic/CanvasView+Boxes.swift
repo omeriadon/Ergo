@@ -118,7 +118,8 @@ extension CanvasView {
 	func edit(_ id: Statement.ID) {
 		pick = nil
 		selection = .statement(id)
-		isCovered = true
+		// The card leaves the bars where they are, behind it
+		isCovered = !usesEditorCard
 		editing = id
 	}
 

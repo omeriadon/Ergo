@@ -69,6 +69,7 @@ struct BoardsSheet: View {
 						Button(role: .close) {
 							navigation.dismissSheet()
 						}
+						.keyboardShortcut(.cancelAction)
 					}
 
 					ToolbarItem(placement: .topBarTrailing) {

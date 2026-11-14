@@ -108,12 +108,15 @@ private struct CanvasMenuContent: View {
 
 		// A person who can only view gets just what doesn't change the board
 		if !isReadOnly {
-			Section {
-				Button("Undo", systemImage: "arrow.uturn.backward", action: undo)
-					.disabled(!canUndo)
-				Button("Redo", systemImage: "arrow.uturn.forward", action: redo)
-					.disabled(!canRedo)
-			}
+			// The Mac's are in the Edit menu
+			#if os(iOS)
+				Section {
+					Button("Undo", systemImage: "arrow.uturn.backward", action: undo)
+						.disabled(!canUndo)
+					Button("Redo", systemImage: "arrow.uturn.forward", action: redo)
+						.disabled(!canRedo)
+				}
+			#endif
 
 			Section {
 				Button("Arrange", systemImage: "rectangle.3.group", action: arrange)

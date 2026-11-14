@@ -8,8 +8,8 @@ import ErgoLogic
 import ErgoProtocol
 import SwiftUI
 
-// Rows here are the lists' own rows without their buttons, since a button in a selectable list takes the tap from
-// selecting. Each is tagged with what selecting it opens.
+// Rows here are one line, as a sidebar's are, and have no buttons, since a button in a selectable list takes the click
+// from selecting. Each is tagged with what selecting it opens.
 
 // MARK: - Boards
 
@@ -72,13 +72,12 @@ private struct WideSidebarBoardRow: View {
 	private var boardStore
 
 	var body: some View {
-		BoardRow(
-			board: board,
-			isCurrent: false,
-			share: boardStore.shares[board.id],
-			isPinned: boardStore.pinnedIDs.contains(board.id)
-		)
-		.tag(SidebarItem.board(board.id) as SidebarItem?)
+		SidebarRow(board.title, symbol: boardStore.shares[board.id] == nil ? "flowchart" : "person.2") {
+			if boardStore.pinnedIDs.contains(board.id) {
+				SidebarPin()
+			}
+		}
+		.tag(SidebarItem.board(board.id))
 		.contextMenu {
 			// Not offered on a board this person can only read, or an archived one
 			if boardStore.canEdit(board.id), !boardStore.archivedIDs.contains(board.id) {
@@ -111,6 +110,8 @@ struct WideSidebarLogic: View {
 
 	@Default(.logicLetters) private var logicLetters
 
+	@Default(.logicCourseFinished) private var courseFinished
+
 	@State private var isExpanded = true
 
 	private var letters: [String] {
@@ -119,12 +120,13 @@ struct WideSidebarLogic: View {
 
 	var body: some View {
 		Section(isExpanded: $isExpanded) {
-			LogicCourseRow(showsChevron: false)
-				.tag(SidebarItem.course as SidebarItem?)
+			Label("Learn Logic", systemImage: "graduationcap")
+				.badge(Text("\(courseFinished.count)/\(LogicCourse.lessons.count)"))
+				.tag(SidebarItem.course)
 
 			ForEach(scratchpadStore.sortedScratchpads) { scratchpad in
-				ScratchpadRow(scratchpad: scratchpad, letters: letters, showsChevron: false)
-					.tag(SidebarItem.scratchpad(scratchpad.id) as SidebarItem?)
+				SidebarRow(scratchpad.title(letters: letters), symbol: "function")
+					.tag(SidebarItem.scratchpad(scratchpad.id))
 					.contextMenu {
 						Button("Rename", systemImage: "pencil") {
 							renaming = Renaming(id: SidebarItem.scratchpad(scratchpad.id), name: scratchpad.name)
@@ -182,7 +184,7 @@ struct WideSidebarAsk: View {
 			} else {
 				// Its detail is the sign-in prompt
 				Label("Ask", systemImage: "bubble.left.and.text.bubble.right")
-					.tag(SidebarItem.ask as SidebarItem?)
+					.tag(SidebarItem.ask)
 			}
 		} header: {
 			WideSidebarHeader("Ask") {
@@ -204,22 +206,32 @@ private struct WideSidebarChatRow: View {
 	private var askStore
 
 	var body: some View {
-		AskHistoryRow(conversation: conversation, isAnswering: askStore.runs[conversation.id] != nil, showsChevron: false)
-			.tag(SidebarItem.chat(conversation.id) as SidebarItem?)
-			.contextMenu {
-				// Archived chats aren't renamed, as in the narrow list
-				if conversation.isArchived != true {
-					Button("Rename", systemImage: "pencil") {
-						renaming = Renaming(id: SidebarItem.chat(conversation.id), name: conversation.name)
-					}
-				}
-
-				AskChatActions(
-					conversation: conversation,
-					showAttachments: { attachmentsOf = conversation },
-					delete: { askStore.delete(conversation.id) }
-				)
+		SidebarRow(conversation.title, symbol: (conversation.mode ?? .normal).symbol) {
+			if conversation.isPinned == true {
+				SidebarPin()
 			}
+
+			if askStore.runs[conversation.id] != nil {
+				ProgressView()
+					.controlSize(.small)
+					.accessibilityLabel("Answering")
+			}
+		}
+		.tag(SidebarItem.chat(conversation.id))
+		.contextMenu {
+			// Archived chats aren't renamed, as in the narrow list
+			if conversation.isArchived != true {
+				Button("Rename", systemImage: "pencil") {
+					renaming = Renaming(id: SidebarItem.chat(conversation.id), name: conversation.name)
+				}
+			}
+
+			AskChatActions(
+				conversation: conversation,
+				showAttachments: { attachmentsOf = conversation },
+				delete: { askStore.delete(conversation.id) }
+			)
+		}
 	}
 }
 
@@ -255,19 +267,58 @@ struct WideSidebarLibrary: View {
 	var body: some View {
 		Section("Library", isExpanded: $isExpanded) {
 			Label("Library", systemImage: "books.vertical")
-				.tag(SidebarItem.libraryHome as SidebarItem?)
+				.tag(SidebarItem.libraryHome)
 
 			// In the grid's order
 			ForEach(LibraryContent.allCases, id: \.self) { category in
 				Label(category.title, systemImage: category.symbol)
-					.tag(SidebarItem.library(category) as SidebarItem?)
+					.tag(SidebarItem.library(category))
 			}
 
 			Label("Bookmarks", systemImage: "bookmark")
-				.tag(SidebarItem.bookmarks as SidebarItem?)
+				.tag(SidebarItem.bookmarks)
 
 			PracticeSidebarRow()
-				.tag(SidebarItem.practice as SidebarItem?)
+				.tag(SidebarItem.practice)
 		}
+	}
+}
+
+// MARK: - Rows
+
+/// One line: a symbol, the name, and anything small after it
+struct SidebarRow<Accessory: View>: View {
+	let title: String
+	let symbol: String
+	let accessory: Accessory
+
+	init(_ title: String, symbol: String, @ViewBuilder accessory: () -> Accessory = { EmptyView() }) {
+		self.title = title
+		self.symbol = symbol
+		self.accessory = accessory()
+	}
+
+	var body: some View {
+		Label {
+			HStack(spacing: 6) {
+				Text(title)
+					.lineLimit(1)
+
+				Spacer(minLength: 0)
+
+				accessory
+			}
+		} icon: {
+			Image(systemName: symbol)
+		}
+	}
+}
+
+private struct SidebarPin: View {
+	var body: some View {
+		Image(systemName: "pin.fill")
+			.font(.caption2)
+			.foregroundStyle(.secondary)
+			.accessibilityLabel("Pinned")
 	}
 }

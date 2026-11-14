@@ -111,13 +111,29 @@ final class NavigationManager {
 		}
 	}
 
-	/// What the one sheet presenter shows in the given layout. The wide layout shows the board's panels (`BoardSheet.isPanel`)
-	/// in the inspector beside the board, so they're left out of the sheet there.
+	/// What the one sheet presenter shows in the given layout. The wide layout shows settings beside the sidebar
+	/// (`showsSettings`), with a tab's sheet waiting behind it, and the board's panels (`BoardSheet.isPanel`) in the inspector
+	/// beside the board, so those are left out of the sheet there.
 	func visibleSheet(isWide: Bool) -> VisibleSheet? {
-		guard isWide, !needsOnboarding, presentedSheet == nil, selectedTab == .board else {
+		guard isWide, !needsOnboarding else {
+			return visibleSheet
+		}
+		if showsSettings {
+			return nil
+		}
+		guard presentedSheet == nil, selectedTab == .board else {
 			return visibleSheet
 		}
 		return boardSheet.flatMap { $0.isPanel ? nil : .board($0) }
+	}
+
+	/// Settings is open. The wide layout shows it as the open item, not a sheet.
+	var showsSettings: Bool {
+		if case .settings? = presentedSheet {
+			true
+		} else {
+			false
+		}
 	}
 
 	/// The panel the wide layout's inspector shows beside the board, if any
@@ -180,6 +196,15 @@ final class NavigationManager {
 	func presentSheet(_ sheet: BoardSheet) {
 		selectedTab = .board
 		boardSheet = sheet
+	}
+
+	/// A panel's toolbar button: opens it, or closes it when it's already beside the board in the wide layout's inspector
+	func toggle(_ sheet: BoardSheet) {
+		if selectedTab == .board, presentedSheet == nil, boardSheet == sheet {
+			boardSheet = nil
+		} else {
+			presentSheet(sheet)
+		}
 	}
 
 	func presentSheet(_ sheet: LogicSheet) {

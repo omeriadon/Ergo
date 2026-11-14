@@ -23,6 +23,9 @@ enum SidebarItem: Hashable {
 	case library(LibraryContent)
 	case bookmarks
 	case practice
+
+	/// Settings, which the wide layout shows as the open item rather than a sheet
+	case settings
 }
 
 extension NavigationManager {
@@ -35,7 +38,10 @@ extension NavigationManager {
 		ask: AskStore,
 		isSignedIn: Bool
 	) -> SidebarItem? {
-		switch selectedTab {
+		if showsSettings {
+			return .settings
+		}
+		return switch selectedTab {
 			case .board:
 				.board(boards.current.id)
 			case .logic:
@@ -86,6 +92,11 @@ extension NavigationManager {
 	) {
 		guard item != sidebarSelection(boards: boards, scratchpads: scratchpads, ask: ask, isSignedIn: isSignedIn) else { return }
 
+		// Anything else picked replaces settings, which isn't a sheet here
+		if showsSettings {
+			presentedSheet = nil
+		}
+
 		switch item {
 			case let .board(id):
 				openBoard(id, in: boards)
@@ -111,6 +122,8 @@ extension NavigationManager {
 			case .practice:
 				selectedTab = .library
 				libraryPath = [.practice]
+			case .settings:
+				presentSheet(.settings(id: "3refd"))
 		}
 	}
 

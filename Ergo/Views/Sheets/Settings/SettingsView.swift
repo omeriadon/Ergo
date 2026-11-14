@@ -9,6 +9,9 @@ import Defaults
 import SwiftUI
 
 struct SettingsView: View {
+	/// False in the wide layout, where settings is the open item beside the sidebar rather than a sheet
+	var isSheet = true
+
 	@Environment(NavigationManager.self)
 	private var navigation
 
@@ -75,9 +78,12 @@ struct SettingsView: View {
 			.tint(.accent)
 			.toolbarTitleVire("Settings", "gearshape")
 			.toolbar {
-				ToolbarItem(placement: .topBarTrailing) {
-					Button(role: .close) {
-						navigation.dismissSheet()
+				if isSheet {
+					ToolbarItem(placement: .sheetTrailingDismissal) {
+						Button(role: .close) {
+							navigation.dismissSheet()
+						}
+						.keyboardShortcut(.cancelAction)
 					}
 				}
 			}

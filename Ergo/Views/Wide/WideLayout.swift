@@ -37,6 +37,15 @@ private struct WideDetail: View {
 	private var navigation
 
 	var body: some View {
+		if navigation.showsSettings {
+			SettingsView(isSheet: false)
+		} else {
+			tab
+		}
+	}
+
+	@ViewBuilder
+	private var tab: some View {
 		switch navigation.selectedTab {
 			case .board:
 				WideBoardDetail()

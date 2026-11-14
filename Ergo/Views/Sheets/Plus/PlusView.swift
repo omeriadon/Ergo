@@ -23,6 +23,7 @@ struct PlusSheet: View {
 							navigation.dismissSheet()
 						}
 						.accessibilityIdentifier("plus.close")
+						.keyboardShortcut(.cancelAction)
 					}
 				}
 		}

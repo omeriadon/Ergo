@@ -99,6 +99,7 @@ struct SharedItemSheet: View {
 							navigation.dismissSheet()
 						}
 						.accessibilityIdentifier("share.cancel")
+						.keyboardShortcut(.cancelAction)
 					}
 				}
 		}
@@ -221,6 +222,7 @@ private struct AddToBoardSheet: View {
 						navigation.dismissSheet()
 					}
 					.accessibilityIdentifier("share.board.cancel")
+					.keyboardShortcut(.cancelAction)
 				}
 			}
 		}

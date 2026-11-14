@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+/// A Mac sheet only shows its confirmation, cancellation and destructive items, at its bottom. Anything a sheet can't be
+/// left without goes in one of these, never `.topBarTrailing` (the Mac's `.primaryAction`), which a Mac sheet hides.
 extension ToolbarItemPlacement {
 	// A sheet's Close or Cancel button: the top leading corner on iOS, and where a Mac sheet keeps its cancel button,
 	// which also answers Escape
@@ -14,6 +16,27 @@ extension ToolbarItemPlacement {
 		static let sheetDismissal = ToolbarItemPlacement.cancellationAction
 	#else
 		static let sheetDismissal = ToolbarItemPlacement.topBarLeading
+	#endif
+
+	// A Close that sits in the top trailing corner on iOS, where the sheet has nothing to confirm
+	#if os(macOS)
+		static let sheetTrailingDismissal = ToolbarItemPlacement.cancellationAction
+	#else
+		static let sheetTrailingDismissal = ToolbarItemPlacement.topBarTrailing
+	#endif
+
+	// A sheet's Done, Save or Send: the top trailing corner on iOS, and the Mac sheet's default button
+	#if os(macOS)
+		static let sheetConfirmation = ToolbarItemPlacement.confirmationAction
+	#else
+		static let sheetConfirmation = ToolbarItemPlacement.topBarTrailing
+	#endif
+
+	// Anything else a sheet offers, like Break Down's Edit Text. On the Mac it's beside the cancel button.
+	#if os(macOS)
+		static let sheetSecondary = ToolbarItemPlacement.cancellationAction
+	#else
+		static let sheetSecondary = ToolbarItemPlacement.topBarLeading
 	#endif
 }
 

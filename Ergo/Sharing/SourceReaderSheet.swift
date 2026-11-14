@@ -36,10 +36,11 @@ struct SourceReaderSheet: View {
 			.navigationTitle(source.link == nil ? "Text" : "Web Link")
 			.toolbarTitleDisplayMode(.inline)
 			.toolbar {
-				ToolbarItem(placement: .topBarTrailing) {
+				ToolbarItem(placement: .sheetTrailingDismissal) {
 					Button(role: .close) {
 						dismiss()
 					}
+					.keyboardShortcut(.cancelAction)
 					.accessibilityIdentifier("source.reader.close")
 				}
 			}

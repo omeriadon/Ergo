@@ -36,6 +36,11 @@ struct CanvasView: View {
 	@Environment(\.undoManager)
 	var undoManager
 
+	#if os(iOS)
+		@Environment(\.horizontalSizeClass)
+		var horizontalSizeClass
+	#endif
+
 	// What's on screen
 	@State var canvasBoard = CanvasBoardController()
 	@State var room = CanvasRoom()
@@ -86,6 +91,15 @@ struct CanvasView: View {
 		boardStore.current
 	}
 
+	/// A wide window edits in a card over the canvas (`StatementEditorCard`), a narrow one zooms the box to fill the screen
+	var usesEditorCard: Bool {
+		#if os(iOS)
+			horizontalSizeClass == .regular
+		#else
+			true
+		#endif
+	}
+
 	/// Read every time, so a role changed by the owner applies straight away
 	var isReadOnly: Bool {
 		!boardStore.canEdit(board.id)
@@ -111,30 +125,56 @@ struct CanvasView: View {
 		}
 		.safeAreaInset(edge: .bottom, spacing: 0) { bottomStack }
 		.safeAreaBar(edge: .top, spacing: 0) { findBar }
+		.overlay { editorCard }
 		.onChange(of: currentFindMatch?.selection) { reveal(currentFindMatch) }
 		.toolbar { toolbar }
 		// The search bar takes the navigation bar's place
 		.toolbarHiddenWhileFinding(find != nil)
-		.background { editorPresenter }
-		.sheet(item: $sourceSheet, content: sourceSheet(for:))
-		.boardRemovalDialog($removing)
-		.modifier(lifecycle)
+		#if os(iOS)
+			.background { editorPresenter }
+		#endif
+			.sheet(item: $sourceSheet, content: sourceSheet(for:))
+			.boardRemovalDialog($removing)
+			.focusedSceneValue(\.canvasCommands, commands)
+			.modifier(lifecycle)
 	}
 
-	var editorPresenter: some View {
-		StatementEditorPresenter(
-			statementID: editing,
-			canvasBoard: editorBoxes,
-			editor: { [boardStore] id in
-				AnyView(
-					StatementEditorScreen(statementID: id, close: { editing = nil })
-						.environment(boardStore)
-						.fontDesign(.rounded)
-				)
-			},
-			closed: { isCovered = false }
+	var editorCard: some View {
+		StatementEditorCardLayer(
+			statementID: usesEditorCard ? editing : nil,
+			anchor: editorAnchor(for:),
+			close: { editing = nil }
 		)
 	}
+
+	/// Where the box is in the canvas, for the card to grow out of. The outline has no box on screen, so it grows from the middle.
+	private func editorAnchor(for id: Statement.ID) -> UnitPoint {
+		guard boardLayout != .outline, let statement = board.statement(id), room.viewport.width > 0, room.viewport.height > 0 else {
+			return .center
+		}
+		let point = canvasBoard.transform.screen(statement.position)
+		return UnitPoint(
+			x: min(max(point.x / room.viewport.width, 0), 1),
+			y: min(max(point.y / room.viewport.height, 0), 1)
+		)
+	}
+
+	#if os(iOS)
+		var editorPresenter: some View {
+			StatementEditorPresenter(
+				statementID: usesEditorCard ? nil : editing,
+				canvasBoard: editorBoxes,
+				editor: { [boardStore] id in
+					AnyView(
+						StatementEditorScreen(statementID: id, close: { editing = nil })
+							.environment(boardStore)
+							.fontDesign(.rounded)
+					)
+				},
+				closed: { isCovered = false }
+			)
+		}
+	#endif
 
 	private var bottomStack: some View {
 		CanvasBottomStack(
@@ -145,6 +185,18 @@ struct CanvasView: View {
 			isCovered: isCovered,
 			motion: motion,
 			clearNotice: { notice = nil }
+		)
+	}
+
+	private var commands: CanvasCommandActions {
+		CanvasCommandActions(
+			isReadOnly: isReadOnly,
+			isAnalysing: isAnalysing,
+			find: startFind,
+			fit: { fit(animated: true) },
+			arrange: arrange,
+			quickAI: { navigation.toggle(.quickAI(board.id)) },
+			deepResearch: deepResearch
 		)
 	}
 
@@ -159,8 +211,8 @@ struct CanvasView: View {
 			fit: { fit(animated: true) },
 			showBoards: { navigation.presentSheet(.boards) },
 			search: startFind,
-			quickAI: { navigation.presentSheet(.quickAI(board.id)) },
-			showAnalysis: { navigation.presentSheet(.boardAnalysis(board.id, focus: nil)) },
+			quickAI: { navigation.toggle(.quickAI(board.id)) },
+			showAnalysis: { navigation.toggle(.boardAnalysis(board.id, focus: nil)) },
 			deepResearch: deepResearch,
 			sendToChat: { navigation.presentSheet(.addToChat(.text(board.chatText))) },
 			undo: { undoManager?.undo() },

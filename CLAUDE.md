@@ -62,7 +62,7 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -configuration Debug -destinatio
 - `Checks/` only holds the dither, catalog and library precondition scripts. Run them with the Xcode MCP `RunCodeSnippet`.
 
 ### The Mac
-The app target also builds for native macOS (`SUPPORTED_PLATFORMS` has `macosx`; not Catalyst). The share extension, the widgets and ColorfulX are iOS-only in the project. macOS-only code is `#if os(macOS)`, and UIKit-only code is `#if os(iOS)`. `Ergo/Other/MacStandIns.swift` gives the iOS-only SwiftUI names (`.topBarTrailing`, `navigationBarTitleDisplayMode`, …) a Mac meaning, so shared call sites don't branch. A sheet's Close or Cancel goes in `.sheetDismissal` (`Toolbar+.swift`), which is `.cancellationAction` on the Mac.
+The app target also builds for native macOS (`SUPPORTED_PLATFORMS` has `macosx`; not Catalyst). The share extension, the widgets and ColorfulX are iOS-only in the project. macOS-only code is `#if os(macOS)`, and UIKit-only code is `#if os(iOS)`. `Ergo/Other/MacStandIns.swift` gives the iOS-only SwiftUI names (`.topBarTrailing`, `navigationBarTitleDisplayMode`, …) a Mac meaning, so shared call sites don't branch. A Mac sheet only shows its confirmation and cancellation items, so a sheet's buttons use the placements in `Toolbar+.swift`, never `.topBarTrailing`: Close or Cancel in `.sheetDismissal` (or `.sheetTrailingDismissal` where iOS has it on the right), Done, Save or Send in `.sheetConfirmation`, anything else in `.sheetSecondary`. Every sheet needs a way out on the Mac, since there's no swipe down. Menu commands are `AppCommands`.
 
 ```sh
 xcodebuild -project Ergo.xcodeproj -scheme Ergo -configuration Debug -destination 'platform=macOS' build CODE_SIGNING_ALLOWED=NO
@@ -84,6 +84,6 @@ xcodebuild -project Ergo.xcodeproj -scheme Ergo -configuration Debug -destinatio
 
 ## Navigation
 - There are two layouts, chosen by width alone (`horizontalSizeClass`, never the device): `AppTabs` when compact, `WideLayout` (`Ergo/Views/Wide/`: a sidebar, the open item, an inspector) when regular. Both only draw `NavigationManager` and the stores, so a resize switches without losing anything. Pushed pages come from `.logicDestinations()` and `.libraryDestinations()`, shared by both.
-- In wide, a board sheet that's a panel (`BoardSheet.isPanel`) shows in the inspector beside the board instead of a sheet (`visibleSheet(isWide:)`, `boardPanel`).
+- In wide, a board sheet that's a panel (`BoardSheet.isPanel`) shows in the inspector beside the board instead of a sheet (`visibleSheet(isWide:)`, `boardPanel`), and settings is the open item beside the sidebar (`showsSettings`, `SidebarItem.settings`), with any tab's sheet waiting behind it.
 - A sheet belongs to a tab or to the whole app. `BoardSheet`, `LogicSheet` and `LibrarySheet` live with their tabs, each with its own slot on `NavigationManager` (this device only), and only show while that tab is selected: leaving hides it and coming back restores it. `AppSheet` (settings, what's shared in, invites) shows over any tab.
 - `ContentView` presents them all from `visibleSheet`, so a swap is SwiftUI replacing one sheet. `dismissSheet()` closes what's on screen, so call it before changing tab. `reveal(tab)` goes to a tab with nothing over it.

@@ -133,10 +133,11 @@ struct LogicLettersSheet: View {
 		NavigationStack {
 			LogicLettersView(descriptors: $scratchpadStore.current.descriptors)
 				.toolbar {
-					ToolbarItem(placement: .topBarTrailing) {
+					ToolbarItem(placement: .sheetTrailingDismissal) {
 						Button(role: .close) {
 							navigation.dismissSheet()
 						}
+						.keyboardShortcut(.cancelAction)
 					}
 				}
 		}

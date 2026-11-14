@@ -138,6 +138,9 @@ struct ErgoApp: App {
 			}
 			sync.scenePhaseChanged(phase)
 		}
+		.commands {
+			AppCommands(navigation: navigation, boardStore: boardStore, scratchpadStore: scratchpadStore)
+		}
 	}
 
 	private func receiveShared() {

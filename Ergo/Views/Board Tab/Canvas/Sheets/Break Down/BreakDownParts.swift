@@ -82,15 +82,16 @@ struct BreakDownToolbar: ToolbarContent {
 		ToolbarItem(placement: .sheetDismissal) {
 			Button(role: .cancel, action: cancel)
 				.accessibilityIdentifier("board.breakDown.cancel")
+				.keyboardShortcut(.cancelAction)
 		}
 
 		if hasResult {
-			ToolbarItem(placement: .topBarLeading) {
+			ToolbarItem(placement: .sheetSecondary) {
 				Button("Edit Text", systemImage: "pencil", action: editText)
 					.accessibilityIdentifier("board.breakDown.editText")
 			}
 
-			ToolbarItem(placement: .topBarTrailing) {
+			ToolbarItem(placement: .sheetConfirmation) {
 				Button(role: .confirm, action: create) {
 					Label("Create", systemImage: "checkmark")
 				}

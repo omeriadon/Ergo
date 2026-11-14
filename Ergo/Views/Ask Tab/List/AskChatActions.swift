@@ -136,6 +136,7 @@ struct AskArchivedChatsSheet: View {
 						dismiss()
 					}
 					.accessibilityIdentifier("ask.archived.close")
+					.keyboardShortcut(.cancelAction)
 				}
 			}
 			.sheet(item: $attachmentsOf) { AskAttachmentsSheet(conversation: $0, leaving: { dismiss() }) }

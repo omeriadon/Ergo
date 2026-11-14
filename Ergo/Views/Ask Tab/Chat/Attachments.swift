@@ -63,6 +63,7 @@ struct AskAttachmentsSheet: View {
 						dismiss()
 					}
 					.accessibilityIdentifier("ask.attachments.close")
+					.keyboardShortcut(.cancelAction)
 				}
 			}
 		}
@@ -245,6 +246,7 @@ private struct AskAttachmentTextSheet: View {
 						dismiss()
 					}
 					.accessibilityIdentifier("ask.attachment.close")
+					.keyboardShortcut(.cancelAction)
 				}
 			}
 		}

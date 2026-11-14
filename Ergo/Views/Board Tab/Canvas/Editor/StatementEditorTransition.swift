@@ -9,7 +9,8 @@
 	import SwiftUI
 	import UIKit
 
-	/// Opens the statement editor out of its box, and closes it back in. This is UIKit because the box is hosted on its own,
+	/// Opens the statement editor out of its box, and closes it back in, in a narrow window (a wide one uses
+	/// `StatementEditorCard`). This is UIKit because the box is hosted on its own,
 	/// out of reach of SwiftUI's zoom, which needs a source view it can find. Here the source is simply the box's own view.
 	///
 	/// `statementID` is the only thing that opens or closes the editor. A hosted editor has its own SwiftUI environment, so
@@ -237,29 +238,6 @@
 			} completion: { _ in
 				finish()
 			}
-		}
-	}
-#else
-	import SwiftUI
-
-	/// The Mac has no zoom out of the box, so the editor is a plain sheet. Only `statementID` opens or closes it, as on iOS.
-	struct StatementEditorPresenter: View {
-		let statementID: Statement.ID?
-		let canvasBoard: CanvasBoardController
-		let editor: (Statement.ID) -> AnyView
-
-		/// The editor has finished closing, and the canvas is what's on screen again
-		let closed: () -> Void
-
-		var body: some View {
-			Color.clear
-				.sheet(isPresented: .constant(statementID != nil), onDismiss: closed) {
-					if let statementID {
-						editor(statementID)
-							.frame(minWidth: 480, minHeight: 420)
-							.interactiveDismissDisabled()
-					}
-				}
 		}
 	}
 #endif

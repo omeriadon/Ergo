@@ -17,6 +17,9 @@ struct StatementEditorView: View {
 	let statementID: Statement.ID
 	let close: () -> Void
 
+	/// In the wide layout's card (`StatementEditorCard`), which has its own title and Done, rather than a navigation stack
+	var isInCard = false
+
 	@State private var englishSelection: TextSelection?
 	@FocusState private var englishFocused: Bool
 
@@ -71,12 +74,32 @@ struct StatementEditorView: View {
 	}
 
 	var body: some View {
+		if isInCard {
+			editor
+		} else {
+			editor
+				.toolbarTitleDisplayMode(.inline)
+				.navigationTitle("Card")
+				.toolbar {
+					ToolbarItem(placement: .topBarTrailing) {
+						Button(role: .confirm) {
+							boardStore.save()
+							close()
+						} label: {
+							Label("Done", systemImage: "checkmark")
+						}
+						.buttonStyle(.glassProminent)
+						.accessibilityIdentifier("board.doneButton")
+					}
+				}
+		}
+	}
+
+	private var editor: some View {
 		content
-			.toolbarTitleDisplayMode(.inline)
-			.navigationTitle("Card")
 			.onAppear {
-				// Nothing to read yet, so it's ready to write in
-				if statement.english.isEmpty {
+				// Nothing to read yet, so it's ready to write in. The card is small enough that opening it means writing.
+				if isInCard || statement.english.isEmpty {
 					englishFocused = true
 				}
 			}
@@ -86,18 +109,6 @@ struct StatementEditorView: View {
 			.onChange(of: boardStore.remoteEdits) {
 				// Another device changed this board, and the selection was into the old English
 				englishSelection = nil
-			}
-			.toolbar {
-				ToolbarItem(placement: .topBarTrailing) {
-					Button(role: .confirm) {
-						boardStore.save()
-						close()
-					} label: {
-						Label("Done", systemImage: "checkmark")
-					}
-					.buttonStyle(.glassProminent)
-					.accessibilityIdentifier("board.doneButton")
-				}
 			}
 	}
 }

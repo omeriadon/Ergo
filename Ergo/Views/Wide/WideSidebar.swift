@@ -72,18 +72,14 @@ struct WideSidebar: View {
 		}
 		.listStyle(.sidebar)
 		.modifier(DeepResearchAccessory(inSidebar: true))
+		.safeAreaInset(edge: .bottom, spacing: 0) {
+			WideSidebarSettingsButton()
+		}
 	}
 
 	var body: some View {
 		list
 			.navigationTitle("Ergo")
-			.toolbar {
-				ToolbarItem(placement: .topBarTrailing) {
-					Button("Settings", systemImage: "gear") {
-						navigation.presentSheet(.settings(id: "3refd"))
-					}
-				}
-			}
 			.renameAlert(renameTitle, renaming: $renaming) { item, name in
 				rename(item, to: name)
 			}
@@ -99,7 +95,7 @@ struct WideSidebar: View {
 				scratchpadStore.rename(id, to: name)
 			case let .chat(id):
 				askStore.rename(id, to: name)
-			case .course, .ask, .libraryHome, .library, .bookmarks, .practice:
+			case .course, .ask, .libraryHome, .library, .bookmarks, .practice, .settings:
 				break
 		}
 	}
@@ -125,5 +121,39 @@ struct WideSidebarHeader<Actions: View>: View {
 				.labelStyle(.iconOnly)
 				.buttonStyle(.borderless)
 		}
+	}
+}
+
+/// Pinned under the list, so it's there however long the list gets. Settings opens beside the sidebar like anything
+/// else picked in it.
+private struct WideSidebarSettingsButton: View {
+	@Environment(NavigationManager.self)
+	private var navigation
+
+	var body: some View {
+		Button {
+			if navigation.showsSettings {
+				navigation.dismissSheet()
+			} else {
+				navigation.presentSheet(.settings(id: "3refd"))
+			}
+		} label: {
+			Label("Settings", systemImage: "gear")
+				.frame(maxWidth: .infinity, alignment: .leading)
+				.padding(.horizontal, 10)
+				.padding(.vertical, 6)
+				.contentShape(.rect(cornerRadius: 8))
+				.background {
+					if navigation.showsSettings {
+						RoundedRectangle(cornerRadius: 8)
+							.fill(.selection)
+					}
+				}
+		}
+		.buttonStyle(.plain)
+		.padding(.horizontal, 10)
+		.padding(.vertical, 8)
+		.accessibilityAddTraits(navigation.showsSettings ? .isSelected : [])
+		.accessibilityIdentifier("sidebar.settings")
 	}
 }

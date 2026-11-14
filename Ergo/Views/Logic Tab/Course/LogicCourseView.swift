@@ -13,13 +13,6 @@ import SwiftUI
 struct LogicCourseRow: View {
 	@Default(.logicCourseFinished) private var finished
 
-	/// Off in the sidebar, where selecting a row doesn't push anything
-	let showsChevron: Bool
-
-	init(showsChevron: Bool = true) {
-		self.showsChevron = showsChevron
-	}
-
 	var body: some View {
 		HStack {
 			Label {
@@ -36,10 +29,8 @@ struct LogicCourseRow: View {
 
 			Spacer(minLength: 0)
 
-			if showsChevron {
-				Image(systemName: "chevron.right")
-					.foregroundStyle(.secondary)
-			}
+			Image(systemName: "chevron.right")
+				.foregroundStyle(.secondary)
 		}
 		.contentShape(Rectangle())
 	}

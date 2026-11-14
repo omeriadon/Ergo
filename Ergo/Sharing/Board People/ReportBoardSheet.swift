@@ -45,8 +45,9 @@ struct ReportBoardSheet: View {
 						dismiss()
 					}
 					.accessibilityIdentifier("report.cancel")
+					.keyboardShortcut(.cancelAction)
 				}
-				ToolbarItem(placement: .topBarTrailing) {
+				ToolbarItem(placement: .sheetConfirmation) {
 					Button("Send", role: .confirm, action: send)
 						.disabled(!canSend)
 						.accessibilityIdentifier("report.send")

@@ -62,9 +62,10 @@ struct SourceEditorSheet: View {
 						dismiss()
 					}
 					.accessibilityIdentifier("source.cancel")
+					.keyboardShortcut(.cancelAction)
 				}
 
-				ToolbarItem(placement: .topBarTrailing) {
+				ToolbarItem(placement: .sheetConfirmation) {
 					Button(role: .confirm, action: finish)
 						.disabled(isBlank)
 						.accessibilityIdentifier("source.save")

@@ -52,6 +52,7 @@ struct AddToChatSheet: View {
 						navigation.dismissSheet()
 					}
 					.accessibilityIdentifier("addToChat.cancel")
+					.keyboardShortcut(.cancelAction)
 				}
 			}
 		}

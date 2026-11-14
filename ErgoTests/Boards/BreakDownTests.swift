@@ -74,7 +74,9 @@ struct BreakDownTests {
 		store.newBoard(from: ArgumentBreakdown(kind: .statements), source: .text("Original"))
 
 		#expect(store.current.sources.count == 1)
-		#expect(store.current.statements.allSatisfy(\.isEmpty))
+		// Not `allSatisfy(\.isEmpty)`: the beta compiler rejects a key path in `#expect`, and SwiftFormat's `preferKeyPath` turns
+		// a plain `{ $0.isEmpty }` back into one on commit
+		#expect(!store.current.statements.contains { !$0.isEmpty })
 	}
 
 	// MARK: - On an existing board

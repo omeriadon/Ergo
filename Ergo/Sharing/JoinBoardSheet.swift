@@ -41,6 +41,7 @@ struct JoinBoardSheet: View {
 							navigation.dismissSheet()
 						}
 						.accessibilityIdentifier("join.cancel")
+						.keyboardShortcut(.cancelAction)
 					}
 				}
 		}
