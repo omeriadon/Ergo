@@ -63,7 +63,15 @@ public struct SyncKind: RawRepresentable, Codable, Sendable, Hashable, Comparabl
 	/// id: the board's `UUID.uuidString`, uppercase. How the board's latest analysis went. Only the server writes it.
 	public static let analysis: SyncKind = "analysis"
 
-	public static let known: [SyncKind] = [.board, .bookmark, .setting, .statement, .link, .scratchpad, .source]
+	/// id: the belief's `UUID.uuidString`, uppercase. Something the person believes. How sure they are isn't a field: it's
+	/// the newest of its `beliefChange`s, so two devices rating it offline can't disagree.
+	public static let belief: SyncKind = "belief"
+
+	/// id: the change's `UUID.uuidString`, uppercase. One rating of a belief. Its own record, so ratings from two devices
+	/// are both kept.
+	public static let beliefChange: SyncKind = "beliefChange"
+
+	public static let known: [SyncKind] = [.board, .bookmark, .setting, .statement, .link, .scratchpad, .source, .belief, .beliefChange]
 }
 
 // MARK: - Checks
@@ -96,6 +104,10 @@ public extension SyncKind {
 				[SyncFieldName.role, SyncFieldName.member, SyncFieldName.members, SyncFieldName.deleted]
 			case .annotation, .analysis:
 				[SyncFieldName.board, SyncFieldName.content, SyncFieldName.deleted]
+			case .belief:
+				[SyncFieldName.created, SyncFieldName.content, SyncFieldName.question, SyncFieldName.archived, SyncFieldName.deleted]
+			case .beliefChange:
+				[SyncFieldName.belief, SyncFieldName.date, SyncFieldName.previous, SyncFieldName.confidence, SyncFieldName.content, SyncFieldName.deleted]
 			default:
 				[]
 		}
@@ -104,7 +116,7 @@ public extension SyncKind {
 	/// Whether `id` can name a record of this kind
 	func isValid(id: String) -> Bool {
 		switch self {
-			case .board, .statement, .link, .scratchpad, .source, .share, .annotation, .analysis:
+			case .board, .statement, .link, .scratchpad, .source, .share, .annotation, .analysis, .belief, .beliefChange:
 				UUID(uuidString: id)?.uuidString == id
 			case .bookmark:
 				!id.isEmpty && id.utf8.count <= 256

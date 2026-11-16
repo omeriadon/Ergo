@@ -15,6 +15,11 @@ Adon's working list:
 - More tests, and trying to break the UI by hand.
 - Bug fixes.
 
+Next features, each with its own plan:
+- Attacks: arrows that count against something. See [15-Attacks.md](15-Attacks.md).
+- A beliefs ledger. See [16-Beliefs.md](16-Beliefs.md).
+- Daily puzzles. See [17-Puzzles.md](17-Puzzles.md).
+
 Before strangers use it:
 - **Password reset and verified email.** Waits on a mail provider.
 - **Reports reach Adon by email.** They're saved on the server, and wait on the same mail provider.

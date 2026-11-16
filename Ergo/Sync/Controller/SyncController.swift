@@ -15,7 +15,7 @@ import SwiftUI
 	import UIKit
 #endif
 
-/// Keeps boards, scratchpads, bookmarks and synced settings the same on every device signed in to the same account,
+/// Keeps boards, scratchpads, bookmarks, beliefs and synced settings the same on every device signed in to the same account,
 /// with Apple or an email.
 ///
 /// It syncs on launch, on becoming active, 2 s after a local change, when another device pushes, and after signing
@@ -159,6 +159,7 @@ final class SyncController {
 		await withDiscardingTaskGroup { group in
 			group.addTask { await self.watchServer() }
 			group.addTask { await self.watchBookmarks() }
+			group.addTask { await self.watchBeliefs() }
 			group.addTask { await self.watchNetwork() }
 			for setting in SyncedSetting.allCases {
 				group.addTask { await self.watch(setting) }
@@ -179,6 +180,14 @@ final class SyncController {
 		for await _ in Defaults.updates([.bookmarks], initial: false) {
 			guard isSignedIn else { continue }
 			recordBookmarks()
+			saveReplica()
+		}
+	}
+
+	private func watchBeliefs() async {
+		for await _ in Defaults.updates([.beliefs], initial: false) {
+			guard isSignedIn else { continue }
+			recordBeliefs()
 			saveReplica()
 		}
 	}

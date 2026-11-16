@@ -65,6 +65,13 @@ struct LibraryGridView: View {
 				}
 				.gridCellColumns(2)
 			}
+
+			GridRow {
+				NavigationLink(value: LibraryRoute.beliefs) {
+					BeliefsLibraryCard()
+				}
+				.gridCellColumns(2)
+			}
 		}
 	}
 }

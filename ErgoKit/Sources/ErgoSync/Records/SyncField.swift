@@ -30,10 +30,10 @@ public struct SyncField: Codable, Sendable, Hashable {
 
 /// The field names records use, shared so the app and the server's checks can't drift
 public enum SyncFieldName {
-	/// board, statement, link, scratchpad: a tombstone. A record is deleted while this is `true` and newer than every other field.
+	/// board, statement, link, scratchpad, belief, beliefChange: a tombstone. A record is deleted while this is `true` and newer than every other field.
 	public static let deleted = "deleted"
 
-	/// board, scratchpad: when it was made
+	/// board, scratchpad, belief: when it was made
 	public static let created = "created"
 
 	/// board, scratchpad: the name its owner gave it, or an empty string to be titled from what's written
@@ -43,7 +43,7 @@ public enum SyncFieldName {
 	/// and it's on the statement so one device moving a card out never clashes with another adding one.
 	public static let source = "source"
 
-	/// annotation: a `BoardAnnotation`. analysis: a `BoardAnalysisStatus`. statement: the English. source: `{ type, text, url, title }`. scratchpad: `{ english, logic, source, translation }` together, since English and logic
+	/// annotation: a `BoardAnnotation`. analysis: a `BoardAnalysisStatus`. statement: the English. belief: its claim, a string. beliefChange: the person's note, a string or null. source: `{ type, text, url, title }`. scratchpad: `{ english, logic, source, translation }` together, since English and logic
 	/// follow each other. Opaque to the server. A board record refuses it.
 	public static let content = "content"
 
@@ -74,6 +74,24 @@ public enum SyncFieldName {
 
 	/// share: everyone on the board, owner included, as `[BoardMember]`
 	public static let members = "members"
+
+	/// belief: the id of the bank question it answers (`BeliefQuestion.id`), or null when the person wrote it
+	public static let question = "question"
+
+	/// belief: whether it's archived
+	public static let archived = "archived"
+
+	/// beliefChange: the id of the belief it rates (uppercase UUID string)
+	public static let belief = "belief"
+
+	/// beliefChange: when it was made, as milliseconds since 1970, so changes made in the same second keep their order
+	public static let date = "date"
+
+	/// beliefChange: the rating before it, 0 to 100, or null for none or "No view"
+	public static let previous = "previous"
+
+	/// beliefChange: the rating, 0 to 100, or null for "No view"
+	public static let confidence = "confidence"
 
 	/// scratchpad: one per letter slot, so naming different letters on two devices keeps both
 	public static func descriptor(_ slot: Int) -> String {

@@ -104,6 +104,10 @@ extension Defaults.Keys {
 	/// answers away, and it changes on every answer. Syncing it properly needs a record per card, a new sync kind.
 	static let practiceProgress = Key<PracticeProgress>("practiceProgress", default: PracticeProgress())
 
+	/// What the person believes, how sure, and every rating, including their answers to the belief questions. Synced as a
+	/// record per belief and per change (`BeliefRecord`), so two devices never lose each other's ratings.
+	static let beliefs = Key<BeliefLedger>("beliefs", default: BeliefLedger())
+
 	/// Set while this device is signed in, with Apple or an email, which sync needs. This device only.
 	static let signedInAccount = Key<SignedInAccount?>("signedInAccount", default: nil)
 

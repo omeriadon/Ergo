@@ -34,6 +34,7 @@ This file is only what every agent needs. How one area works, and what must not 
 |---|---|
 | `Notes/Logic.md` | The logic keyboard and editor, the parser and its limits, `LogicChecker`, `LogicEnglish`, scratchpads, the course |
 | `Notes/Practice.md` | Practice: its cards, the scheduler, `practiceProgress` |
+| `Notes/Beliefs.md` | Beliefs: the question bank, `BeliefLedger`, taking a set |
 | `Notes/Boards.md` | `Board`, `BoardStore`, sources and regions, the UIKit canvas and its hosted SwiftUI boxes, the statement editor |
 | `Notes/BreakDown.md` | Break Down, `PendingBreakDown`, the translation pipeline and its stages |
 | `Notes/Ask.md` | Ask, Quick AI, detached runs, `AskTools` and intents, modes, attachments, markdown and LaTeX |

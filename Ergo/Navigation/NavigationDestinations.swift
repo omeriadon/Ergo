@@ -72,6 +72,12 @@ private struct LibraryDestination: View {
 
 			case .practice:
 				PracticeView()
+
+			case .beliefs:
+				BeliefsView()
+
+			case let .belief(id):
+				BeliefDetailView(id: id)
 		}
 	}
 }

@@ -43,7 +43,9 @@ struct SyncCanvasTests {
 	// MARK: - Kinds
 
 	@Test func kindsKnowTheirFields() {
-		#expect(SyncKind.known == [.board, .bookmark, .setting, .statement, .link, .scratchpad, .source])
+		#expect(SyncKind.known == [.board, .bookmark, .setting, .statement, .link, .scratchpad, .source, .belief, .beliefChange])
+		#expect(SyncKind.belief.fieldNames == ["created", "content", "question", "archived", "deleted"])
+		#expect(SyncKind.beliefChange.fieldNames == ["belief", "date", "previous", "confidence", "content", "deleted"])
 		#expect(SyncKind.statement.fieldNames == ["board", "position", "content", "source", "deleted"])
 		#expect(SyncKind.source.fieldNames == ["board", "position", "content", "deleted"])
 		#expect(SyncKind.link.fieldNames == ["board", "premise", "conclusion", "deleted"])

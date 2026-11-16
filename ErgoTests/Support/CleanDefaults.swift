@@ -99,6 +99,7 @@ enum TestDefaults {
 		.presentedSheet, .boardSheet, .logicSheet, .librarySheet,
 		.syncState, .syncDeviceID,
 		.aiConsent,
+		.beliefs,
 	]
 
 	/// What was there before the test, as stored. A key that wasn't set isn't in here.

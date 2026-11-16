@@ -22,6 +22,7 @@ extension SyncController {
 	func write(_ applied: SyncApplied, pullComplete: Bool) {
 		var affected: Set<Board.ID> = []
 		var affectedScratchpads: Set<LogicScratchpad.ID> = []
+		var beliefsChanged = false
 		for record in applied.changed {
 			switch record.kind {
 				case .board, .share:
@@ -38,6 +39,8 @@ extension SyncController {
 					}
 				case .bookmark:
 					BookmarkRecord.write(record, catalog: catalog.index)
+				case .belief, .beliefChange:
+					beliefsChanged = true
 				case .setting:
 					if let setting = SyncedSetting(rawValue: record.id), let value = record.fields[SyncFieldName.value] {
 						setting.write(value.value)
@@ -69,6 +72,15 @@ extension SyncController {
 				continue
 			}
 			boardStore.insertStatementCopy(copy, into: board.id)
+		}
+
+		if beliefsChanged {
+			// An edit the watcher hasn't recorded yet would otherwise be rebuilt away
+			recordBeliefs()
+			let rebuilt = BeliefRecord.rebuild(from: replica, local: Defaults[.beliefs])
+			if rebuilt != Defaults[.beliefs] {
+				Defaults[.beliefs] = rebuilt
+			}
 		}
 
 		let rebuiltScratchpads = ScratchpadRecord.rebuild(affectedScratchpads, from: replica, local: scratchpadStore.scratchpads)

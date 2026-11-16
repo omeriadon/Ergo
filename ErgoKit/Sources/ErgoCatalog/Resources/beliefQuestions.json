@@ -1,0 +1,1308 @@
+{
+	"sets": [
+		{
+			"id": "meaning",
+			"title": "Meaning",
+			"summary": "Whether life has a point, and who gets to decide what it is.",
+			"color": "#8B5CF6",
+			"questions": [
+				{
+					"id": "meaning-cosmic-insignificance",
+					"statement": "If nothing you do will matter in a million years, nothing you do matters now.",
+					"entries": [
+						"concepts/absurdism",
+						"philosophers/albert-camus"
+					]
+				},
+				{
+					"id": "meaning-made-not-found",
+					"statement": "Life has no meaning except the meaning each person gives it.",
+					"entries": [
+						"concepts/existentialism",
+						"philosophers/sartre-jean-paul"
+					]
+				},
+				{
+					"id": "meaning-sisyphus",
+					"statement": "Someone rolling the same rock up the same hill forever could have a meaningful life, if they loved doing it.",
+					"entries": [
+						"concepts/absurdism",
+						"philosophers/albert-camus"
+					]
+				},
+				{
+					"id": "meaning-some-lives-more-meaningful",
+					"statement": "Some lives are more meaningful than others, whatever the people living them think.",
+					"entries": [
+						"concepts/meaning",
+						"concepts/objective-list-theory"
+					]
+				},
+				{
+					"id": "meaning-counting-grass",
+					"statement": "A contented life spent counting blades of grass is as good as a life spent curing diseases.",
+					"entries": [
+						"concepts/desire-theory-of-well-being",
+						"concepts/objective-list-theory"
+					]
+				},
+				{
+					"id": "meaning-drifting",
+					"statement": "Most people drift through life without ever really choosing how to live.",
+					"entries": [
+						"concepts/authenticity",
+						"philosophers/martin-heidegger"
+					]
+				},
+				{
+					"id": "meaning-no-choice",
+					"statement": "When people say they had no choice, they are almost always deceiving themselves.",
+					"entries": [
+						"concepts/bad-faith",
+						"philosophers/sartre-jean-paul"
+					]
+				},
+				{
+					"id": "meaning-without-god",
+					"statement": "Without God, life would have no ultimate meaning.",
+					"entries": [
+						"concepts/christian-existentialism",
+						"philosophers/soren-kierkegaard"
+					]
+				},
+				{
+					"id": "meaning-suffering-needed",
+					"statement": "A life without any suffering could never be deeply meaningful.",
+					"entries": [
+						"philosophers/friedrich-nietzsche"
+					]
+				},
+				{
+					"id": "meaning-you-know-what",
+					"statement": "You are avoiding what you already know would make your life more meaningful.",
+					"entries": [
+						"concepts/authenticity",
+						"concepts/akrasia"
+					]
+				},
+				{
+					"id": "meaning-one-great-work",
+					"statement": "A life given over to one great work is better than a balanced, ordinary one.",
+					"entries": [
+						"concepts/moral-perfectionism",
+						"philosophers/friedrich-nietzsche"
+					]
+				},
+				{
+					"id": "meaning-leap",
+					"statement": "The most important choices in life can only be made by a leap that reason cannot justify.",
+					"entries": [
+						"concepts/fideism",
+						"philosophers/soren-kierkegaard"
+					]
+				},
+				{
+					"id": "meaning-chosen-for-them",
+					"statement": "Most people would be happier if the shape of their lives had been chosen for them.",
+					"entries": [
+						"concepts/freedom",
+						"concepts/existentialism"
+					]
+				},
+				{
+					"id": "meaning-human-nature",
+					"statement": "There is a human nature that tells each of us how we ought to live.",
+					"entries": [
+						"concepts/eudaimonia",
+						"philosophers/aristotle"
+					]
+				},
+				{
+					"id": "meaning-what-you-do",
+					"statement": "You are nothing more than what you do.",
+					"entries": [
+						"concepts/existentialism",
+						"philosophers/sartre-jean-paul"
+					]
+				}
+			]
+		},
+		{
+			"id": "nihilism",
+			"title": "Nihilism and Value",
+			"summary": "Whether anything is really good or bad, and what makes it so.",
+			"color": "#78716C",
+			"questions": [
+				{
+					"id": "nihilism-value-from-caring",
+					"statement": "Things matter only because someone cares about them.",
+					"entries": [
+						"concepts/axiology",
+						"concepts/value"
+					]
+				},
+				{
+					"id": "nihilism-empty-universe",
+					"statement": "A universe with no conscious beings in it would contain nothing of value.",
+					"entries": [
+						"concepts/value",
+						"concepts/sentientism"
+					]
+				},
+				{
+					"id": "nihilism-no-suffering",
+					"statement": "A world with no suffering at all would be worse than ours.",
+					"entries": [
+						"philosophers/friedrich-nietzsche"
+					]
+				},
+				{
+					"id": "nihilism-pleasure-only",
+					"statement": "Pleasure is the only thing that is good for its own sake.",
+					"entries": [
+						"concepts/hedonism",
+						"philosophers/epicurus",
+						"philosophers/jeremy-bentham"
+					]
+				},
+				{
+					"id": "nihilism-experience-machine",
+					"statement": "If a machine could give you a lifetime of perfectly simulated happiness, plugging in for good would be the wise choice.",
+					"entries": [
+						"arguments/argument-experience-machine",
+						"philosophers/robert-nozick"
+					]
+				},
+				{
+					"id": "nihilism-error-theory",
+					"statement": "Every claim that something is good or bad is, strictly speaking, false.",
+					"entries": [
+						"concepts/error-theory-in-ethics",
+						"concepts/moral-anti-realism"
+					]
+				},
+				{
+					"id": "nihilism-god-dead",
+					"statement": "Once belief in God fades, people's values have nothing left to stand on.",
+					"entries": [
+						"philosophers/friedrich-nietzsche",
+						"concepts/divine-command-theory"
+					]
+				},
+				{
+					"id": "nihilism-nihilists-dangerous",
+					"statement": "People who believe nothing matters are more likely to do harm.",
+					"entries": [
+						"concepts/moral-anti-realism"
+					]
+				},
+				{
+					"id": "nihilism-set-free",
+					"statement": "Realising that nothing ultimately matters would set you free.",
+					"entries": [
+						"concepts/absurdism",
+						"philosophers/zhuangzi"
+					]
+				},
+				{
+					"id": "nihilism-more-suffering",
+					"statement": "For most people, life holds more suffering than happiness.",
+					"entries": [
+						"concepts/philosophical-pessimism",
+						"philosophers/arthur-schopenhauer"
+					]
+				},
+				{
+					"id": "nihilism-beauty-objective",
+					"statement": "Some things are beautiful whether or not anyone finds them so.",
+					"entries": [
+						"concepts/aesthetic-realism",
+						"concepts/beauty"
+					]
+				},
+				{
+					"id": "nihilism-understanding-over-pleasure",
+					"statement": "A short life of deep understanding is worth more than a long life of simple pleasures.",
+					"entries": [
+						"concepts/objective-list-theory",
+						"philosophers/john-stuart-mill"
+					]
+				},
+				{
+					"id": "nihilism-your-values",
+					"statement": "Your deepest values are no more correct than the opposite values someone else holds.",
+					"entries": [
+						"concepts/value-pluralism",
+						"concepts/perspectivism"
+					]
+				},
+				{
+					"id": "nihilism-evolution-debunks",
+					"statement": "Since evolution shaped what we value, our values tell us nothing about what is really good.",
+					"entries": [
+						"arguments/argument-from-evolutionary-debunking"
+					]
+				},
+				{
+					"id": "nihilism-virtues-of-the-weak",
+					"statement": "Humility is a virtue invented by the weak to hold back the strong.",
+					"entries": [
+						"philosophers/friedrich-nietzsche",
+						"concepts/genealogical-critique"
+					]
+				}
+			]
+		},
+		{
+			"id": "morality",
+			"title": "Morality",
+			"summary": "What makes actions right or wrong, and how much morality can ask of you.",
+			"color": "#2563EB",
+			"questions": [
+				{
+					"id": "morality-footbridge",
+					"statement": "Pushing one stranger in front of a runaway train is right if it saves five others.",
+					"entries": [
+						"concepts/trolley-problem",
+						"concepts/doing-and-allowing",
+						"concepts/consequentialism"
+					]
+				},
+				{
+					"id": "morality-lying-to-save",
+					"statement": "Lying is wrong even when it would save an innocent life.",
+					"entries": [
+						"concepts/kantian-ethics",
+						"arguments/argument-from-the-wrongness-of-lying-under-a-universal-law",
+						"philosophers/immanuel-kant"
+					]
+				},
+				{
+					"id": "morality-drowning-child",
+					"statement": "Not giving to effective charities is as wrong as letting a child drown in front of you.",
+					"entries": [
+						"concepts/drowning-child",
+						"arguments/argument-singer-pond",
+						"philosophers/peter-singer"
+					]
+				},
+				{
+					"id": "morality-own-life-plans",
+					"statement": "Morality never requires you to give up your own life plans for the sake of strangers.",
+					"entries": [
+						"arguments/argument-from-the-demandingness-objection",
+						"concepts/supererogation"
+					]
+				},
+				{
+					"id": "morality-moral-luck",
+					"statement": "A drunk driver who kills a child is no more to blame than an equally drunk driver who gets home safely.",
+					"entries": [
+						"arguments/argument-from-the-problem-of-moral-luck",
+						"paradoxes/paradox-moral-luck-paradox"
+					]
+				},
+				{
+					"id": "morality-culture-decides",
+					"statement": "Whether an action is wrong depends on the culture it happens in.",
+					"entries": [
+						"concepts/moral-relativism",
+						"concepts/cultural-relativism"
+					]
+				},
+				{
+					"id": "morality-as-true-as-maths",
+					"statement": "Some moral claims are as true as the claims of mathematics.",
+					"entries": [
+						"concepts/moral-realism",
+						"concepts/ethical-non-naturalism"
+					]
+				},
+				{
+					"id": "morality-own-child-first",
+					"statement": "You should save your own child over two strangers' children.",
+					"entries": [
+						"concepts/partiality",
+						"concepts/impartiality",
+						"concepts/care-ethics"
+					]
+				},
+				{
+					"id": "morality-only-results",
+					"statement": "Whether an act was right depends only on its results.",
+					"entries": [
+						"concepts/consequentialism",
+						"philosophers/jeremy-bentham"
+					]
+				},
+				{
+					"id": "morality-letting-die",
+					"statement": "Letting someone die is just as bad as killing them.",
+					"entries": [
+						"concepts/doing-and-allowing",
+						"biases/omission-bias"
+					]
+				},
+				{
+					"id": "morality-grew-up-around",
+					"statement": "Most people's moral views are just the views of the people they grew up around.",
+					"entries": [
+						"concepts/cultural-relativism",
+						"fallacies/genetic-fallacy"
+					]
+				},
+				{
+					"id": "morality-never-caught",
+					"statement": "Most people would behave badly if they knew they could never be caught.",
+					"entries": [
+						"concepts/ring-of-gyges",
+						"philosophers/plato"
+					]
+				},
+				{
+					"id": "morality-theory-over-gut",
+					"statement": "When a moral theory clashes with a strong gut feeling, you should trust the theory.",
+					"entries": [
+						"concepts/reflective-equilibrium",
+						"concepts/ethical-intuitionism"
+					]
+				},
+				{
+					"id": "morality-good-person",
+					"statement": "Being a good person matters more than doing the right thing.",
+					"entries": [
+						"concepts/virtue-ethics",
+						"philosophers/aristotle"
+					]
+				},
+				{
+					"id": "morality-deserve-to-suffer",
+					"statement": "Wrongdoers deserve to suffer, even when their suffering does no one any good.",
+					"entries": [
+						"concepts/retributive-justice",
+						"concepts/desert"
+					]
+				}
+			]
+		},
+		{
+			"id": "mind",
+			"title": "Mind and Self",
+			"summary": "Free will, consciousness, and what makes you the same person over time.",
+			"color": "#14B8A6",
+			"questions": [
+				{
+					"id": "mind-free-will",
+					"statement": "We have free will.",
+					"entries": [
+						"concepts/free-will",
+						"concepts/libertarian-free-will",
+						"concepts/compatibilism"
+					]
+				},
+				{
+					"id": "mind-no-one-deserves-blame",
+					"statement": "If every choice is caused by things outside your control, no one truly deserves blame.",
+					"entries": [
+						"concepts/incompatibilism",
+						"concepts/causal-determinism",
+						"concepts/moral-responsibility"
+					]
+				},
+				{
+					"id": "mind-free-if-wanted",
+					"statement": "You act freely whenever you do what you want, even if what you want was fixed before you were born.",
+					"entries": [
+						"concepts/compatibilism",
+						"philosophers/david-hume"
+					]
+				},
+				{
+					"id": "mind-brain-only",
+					"statement": "Consciousness is entirely a matter of physical processes in the brain.",
+					"entries": [
+						"concepts/physicalism",
+						"concepts/mindbody-problem"
+					]
+				},
+				{
+					"id": "mind-science-will-explain",
+					"statement": "Science will one day fully explain why it feels like something to be you.",
+					"entries": [
+						"concepts/consciousness-hard-problem",
+						"concepts/qualia",
+						"arguments/argument-marys-room"
+					]
+				},
+				{
+					"id": "mind-zombie",
+					"statement": "A being could act exactly like you in every way and still feel nothing at all.",
+					"entries": [
+						"concepts/philosophical-zombie",
+						"arguments/argument-zombie"
+					]
+				},
+				{
+					"id": "mind-program-pain",
+					"statement": "A computer program could one day genuinely feel pain.",
+					"entries": [
+						"concepts/functionalism-in-philosophy-of-mind",
+						"concepts/strong-artificial-intelligence"
+					]
+				},
+				{
+					"id": "mind-ai-feelings",
+					"statement": "An AI that talks about its feelings as convincingly as a person probably has some.",
+					"entries": [
+						"concepts/problem-of-other-minds",
+						"arguments/argument-chinese-room"
+					]
+				},
+				{
+					"id": "mind-memories-replaced",
+					"statement": "You would still be you if every one of your memories were replaced.",
+					"entries": [
+						"concepts/personal-identity",
+						"philosophers/derek-parfit"
+					]
+				},
+				{
+					"id": "mind-teleporter",
+					"statement": "A teleporter that destroys your body and builds an exact copy elsewhere would carry you, not kill you.",
+					"entries": [
+						"concepts/teletransportation-paradox",
+						"concepts/personal-identity",
+						"philosophers/derek-parfit"
+					]
+				},
+				{
+					"id": "mind-no-self",
+					"statement": "There is no self, only a stream of thoughts and feelings.",
+					"entries": [
+						"concepts/anatta",
+						"concepts/bundle-theory",
+						"philosophers/david-hume"
+					]
+				},
+				{
+					"id": "mind-dementia",
+					"statement": "Someone with advanced dementia is, in the ways that matter, no longer the person they were.",
+					"entries": [
+						"concepts/personal-identity",
+						"concepts/ship-of-theseus"
+					]
+				},
+				{
+					"id": "mind-panpsychism",
+					"statement": "Some form of experience is present in all matter, down to the smallest particles.",
+					"entries": [
+						"concepts/panpsychism"
+					]
+				},
+				{
+					"id": "mind-why-you-act",
+					"statement": "You often have no idea why you really do what you do.",
+					"entries": [
+						"concepts/introspection",
+						"concepts/unconscious"
+					]
+				},
+				{
+					"id": "mind-soul",
+					"statement": "Each person has a soul that is distinct from their body.",
+					"entries": [
+						"concepts/substance-dualism",
+						"philosophers/rene-descartes"
+					]
+				}
+			]
+		},
+		{
+			"id": "religion",
+			"title": "God and Religion",
+			"summary": "Whether God exists, and what faith, morality and religion have to do with each other.",
+			"color": "#EAB308",
+			"questions": [
+				{
+					"id": "religion-god-exists",
+					"statement": "God exists.",
+					"entries": [
+						"concepts/theism",
+						"concepts/atheism",
+						"concepts/agnosticism"
+					]
+				},
+				{
+					"id": "religion-suffering-disproves",
+					"statement": "The amount of suffering in the world shows there is no all-good, all-powerful God.",
+					"entries": [
+						"concepts/problem-of-evil",
+						"arguments/argument-problem-of-evil"
+					]
+				},
+				{
+					"id": "religion-free-to-do-evil",
+					"statement": "A world of free creatures who can do great evil is better than a world of creatures who always do good.",
+					"entries": [
+						"concepts/theodicy",
+						"philosophers/augustine-of-hippo"
+					]
+				},
+				{
+					"id": "religion-fine-tuning",
+					"statement": "The universe's fitness for life is best explained by a designer.",
+					"entries": [
+						"arguments/argument-fine-tuning",
+						"arguments/argument-teleological"
+					]
+				},
+				{
+					"id": "religion-miracle-reports",
+					"statement": "No report of a miracle could ever give you good reason to believe one happened.",
+					"entries": [
+						"philosophers/david-hume",
+						"concepts/natural-theology"
+					]
+				},
+				{
+					"id": "religion-morality-needs-god",
+					"statement": "Without God, there would be no objective morality.",
+					"entries": [
+						"concepts/divine-command-theory",
+						"arguments/argument-from-the-moral-law"
+					]
+				},
+				{
+					"id": "religion-commanded-cruelty",
+					"statement": "If God commanded cruelty, cruelty would be right.",
+					"entries": [
+						"concepts/euthyphro-dilemma",
+						"concepts/divine-command-theory"
+					]
+				},
+				{
+					"id": "religion-faith-without-evidence",
+					"statement": "Believing in God without evidence can be rational.",
+					"entries": [
+						"concepts/fideism",
+						"concepts/evidentialism",
+						"philosophers/soren-kierkegaard"
+					]
+				},
+				{
+					"id": "religion-safe-bet",
+					"statement": "If you are unsure whether God exists, the wise bet is to believe.",
+					"entries": [
+						"arguments/argument-pascal-s-wager",
+						"philosophers/blaise-pascal"
+					]
+				},
+				{
+					"id": "religion-born-elsewhere",
+					"statement": "Since most people's religion depends on where they were born, no religion can claim to be the true one.",
+					"entries": [
+						"concepts/problem-of-religious-diversity"
+					]
+				},
+				{
+					"id": "religion-same-truth",
+					"statement": "All the major religions are different paths to the same truth.",
+					"entries": [
+						"concepts/religious-pluralism",
+						"concepts/perennialism"
+					]
+				},
+				{
+					"id": "religion-hiddenness",
+					"statement": "A loving God would make sure no one could honestly doubt that God exists.",
+					"entries": [
+						"arguments/argument-from-divine-hiddenness",
+						"concepts/skeptical-theism"
+					]
+				},
+				{
+					"id": "religion-more-harm",
+					"statement": "Religion has done more harm than good in human history.",
+					"entries": [
+						"concepts/secularism",
+						"concepts/anti-clericalism"
+					]
+				},
+				{
+					"id": "religion-experience-of-god",
+					"statement": "A powerful experience of God's presence gives the person who has it good reason to believe.",
+					"entries": [
+						"concepts/mysticism",
+						"philosophers/william-james"
+					]
+				},
+				{
+					"id": "religion-atheism-faith",
+					"statement": "Atheism takes as much faith as religion does.",
+					"entries": [
+						"concepts/burden-of-proof",
+						"concepts/russell-s-teapot"
+					]
+				}
+			]
+		},
+		{
+			"id": "knowledge",
+			"title": "Knowledge and Truth",
+			"summary": "What you can know, how you can know it, and whom to trust.",
+			"color": "#F97316",
+			"questions": [
+				{
+					"id": "knowledge-world-is-real",
+					"statement": "You can be certain that the world around you is real.",
+					"entries": [
+						"concepts/brain-in-a-vat",
+						"concepts/skepticism",
+						"philosophers/rene-descartes"
+					]
+				},
+				{
+					"id": "knowledge-simulation",
+					"statement": "It is more likely than not that we live in a computer simulation.",
+					"entries": [
+						"concepts/simulation-hypothesis"
+					]
+				},
+				{
+					"id": "knowledge-science-only",
+					"statement": "Science is the only reliable way to find out what is true.",
+					"entries": [
+						"concepts/scientism",
+						"concepts/methodological-naturalism"
+					]
+				},
+				{
+					"id": "knowledge-true-for-you",
+					"statement": "Something can be true for one person and false for another.",
+					"entries": [
+						"concepts/epistemic-relativism",
+						"concepts/perspectivism"
+					]
+				},
+				{
+					"id": "knowledge-evidence-duty",
+					"statement": "It is wrong to believe anything without enough evidence.",
+					"entries": [
+						"concepts/evidentialism",
+						"concepts/fideism"
+					]
+				},
+				{
+					"id": "knowledge-smart-disagreement",
+					"statement": "When someone as smart and informed as you disagrees, you should become less sure.",
+					"entries": [
+						"concepts/peer-disagreement",
+						"concepts/epistemic-humility"
+					]
+				},
+				{
+					"id": "knowledge-sun-rising",
+					"statement": "We have no rational basis for expecting the sun to rise tomorrow.",
+					"entries": [
+						"concepts/induction-problem",
+						"arguments/argument-induction",
+						"philosophers/david-hume"
+					]
+				},
+				{
+					"id": "knowledge-theories-true",
+					"statement": "Our best scientific theories are close to the literal truth about the world.",
+					"entries": [
+						"concepts/scientific-realism",
+						"arguments/argument-from-the-pessimistic-induction",
+						"arguments/argument-from-no-miracles"
+					]
+				},
+				{
+					"id": "knowledge-experts-say-so",
+					"statement": "Believing something because experts say so is not really knowing it.",
+					"entries": [
+						"concepts/testimony",
+						"concepts/social-epistemology"
+					]
+				},
+				{
+					"id": "knowledge-no-certainty",
+					"statement": "Nothing can be known with complete certainty.",
+					"entries": [
+						"concepts/fallibilism",
+						"concepts/academic-skepticism"
+					]
+				},
+				{
+					"id": "knowledge-reason-alone",
+					"statement": "Some truths about the world can be known by reason alone, without any experience.",
+					"entries": [
+						"concepts/a-priori-knowledge",
+						"concepts/rationalism",
+						"concepts/empiricism"
+					]
+				},
+				{
+					"id": "knowledge-useful-falsehood",
+					"statement": "Believing something false can be the right choice when it makes your life better.",
+					"entries": [
+						"concepts/pragmatism",
+						"philosophers/william-james",
+						"fallacies/wishful-thinking"
+					]
+				},
+				{
+					"id": "knowledge-lottery",
+					"statement": "You know your lottery ticket will lose before the draw.",
+					"entries": [
+						"paradoxes/epistemic-lottery-paradox"
+					]
+				},
+				{
+					"id": "knowledge-philosophy-settles",
+					"statement": "Philosophy has never settled any of its big questions.",
+					"entries": []
+				},
+				{
+					"id": "knowledge-lived-experience",
+					"statement": "People who suffer an injustice understand it better than anyone studying it from outside.",
+					"entries": [
+						"concepts/standpoint-epistemology",
+						"concepts/feminist-epistemology"
+					]
+				},
+				{
+					"id": "knowledge-experts-wrong",
+					"statement": "Experts are wrong far more often than they admit.",
+					"entries": [
+						"biases/overconfidence-effect",
+						"biases/authority-bias"
+					]
+				}
+			]
+		},
+		{
+			"id": "liberalism",
+			"title": "Liberty",
+			"summary": "How free people should be, and when society may step in.",
+			"color": "#16A34A",
+			"questions": [
+				{
+					"id": "liberalism-harm-principle",
+					"statement": "The state may stop you from doing something only if it harms other people.",
+					"entries": [
+						"concepts/harm-principle",
+						"philosophers/john-stuart-mill"
+					]
+				},
+				{
+					"id": "liberalism-any-drug",
+					"statement": "Adults should be free to take any drug, however dangerous, as long as they only risk themselves.",
+					"entries": [
+						"concepts/paternalism",
+						"arguments/argument-from-the-harm-principle"
+					]
+				},
+				{
+					"id": "liberalism-nudges",
+					"statement": "Governments should quietly steer people toward better choices, as long as they can still choose otherwise.",
+					"entries": [
+						"concepts/paternalism",
+						"biases/default-effect"
+					]
+				},
+				{
+					"id": "liberalism-hateful-speech",
+					"statement": "Speech that is hateful but not threatening should be legal.",
+					"entries": [
+						"concepts/freedom-of-expression",
+						"arguments/argument-from-the-value-of-free-expression"
+					]
+				},
+				{
+					"id": "liberalism-mocking-sacred",
+					"statement": "Mocking what others hold sacred is wrong, even when it is legal.",
+					"entries": [
+						"concepts/respect",
+						"concepts/freedom-of-religion"
+					]
+				},
+				{
+					"id": "liberalism-tolerating-intolerance",
+					"statement": "A tolerant society has the right to suppress intolerant views.",
+					"entries": [
+						"paradoxes/paradox-of-tolerance",
+						"concepts/tolerance",
+						"philosophers/karl-popper"
+					]
+				},
+				{
+					"id": "liberalism-neutral-state",
+					"statement": "The state should stay neutral about what makes a good life.",
+					"entries": [
+						"concepts/public-reason",
+						"philosophers/john-rawls"
+					]
+				},
+				{
+					"id": "liberalism-immoral-illegal",
+					"statement": "Some things should be illegal simply because they are immoral, even if they harm no one.",
+					"entries": [
+						"concepts/natural-law-theory",
+						"concepts/harm-principle"
+					]
+				},
+				{
+					"id": "liberalism-too-poor-free",
+					"statement": "Someone too poor to act on their choices is not really free.",
+					"entries": [
+						"concepts/positive-liberty",
+						"concepts/negative-liberty",
+						"concepts/capabilities-approach"
+					]
+				},
+				{
+					"id": "liberalism-kind-master",
+					"statement": "A slave with a kind master who never interferes is still unfree.",
+					"entries": [
+						"concepts/republican-liberty",
+						"concepts/domination",
+						"philosophers/philip-pettit"
+					]
+				},
+				{
+					"id": "liberalism-sell-yourself",
+					"statement": "You should be allowed to sell yourself into lifelong servitude if you freely choose to.",
+					"entries": [
+						"concepts/autonomy",
+						"concepts/consent",
+						"philosophers/robert-nozick"
+					]
+				},
+				{
+					"id": "liberalism-privacy-safety",
+					"statement": "Giving up some privacy for greater safety is usually a good trade.",
+					"entries": [
+						"concepts/civil-liberty"
+					]
+				},
+				{
+					"id": "liberalism-group-rights",
+					"statement": "Cultural groups can have rights that their individual members do not.",
+					"entries": [
+						"concepts/minority-rights",
+						"concepts/collectivism",
+						"concepts/individualism"
+					]
+				},
+				{
+					"id": "liberalism-fewer-choices",
+					"statement": "Most people would be better off living under firmer rules.",
+					"entries": [
+						"concepts/communitarianism",
+						"concepts/traditionalism"
+					]
+				},
+				{
+					"id": "liberalism-conscience-exemption",
+					"statement": "People should be exempt from laws that go against their religious conscience.",
+					"entries": [
+						"concepts/freedom-of-religion"
+					]
+				}
+			]
+		},
+		{
+			"id": "politics",
+			"title": "Politics and Power",
+			"summary": "Who has the right to rule, and how wealth and power should be shared.",
+			"color": "#DC2626",
+			"questions": [
+				{
+					"id": "politics-obey-law",
+					"statement": "You have a moral duty to obey the law even when you think it is wrong.",
+					"entries": [
+						"concepts/political-obligation",
+						"concepts/civil-disobedience",
+						"philosophers/socrates"
+					]
+				},
+				{
+					"id": "politics-no-right-to-rule",
+					"statement": "No state has ever had the right to rule anyone.",
+					"entries": [
+						"concepts/anarchism",
+						"concepts/legitimacy"
+					]
+				},
+				{
+					"id": "politics-tacit-consent",
+					"statement": "Living in a country and using its services counts as agreeing to its laws.",
+					"entries": [
+						"concepts/social-contract",
+						"concepts/consent",
+						"philosophers/john-locke"
+					]
+				},
+				{
+					"id": "politics-informed-votes",
+					"statement": "Votes should count for more when the voter knows more.",
+					"entries": [
+						"concepts/democracy",
+						"concepts/technocracy",
+						"arguments/argument-from-the-epistemic-case-for-democracy"
+					]
+				},
+				{
+					"id": "politics-good-dictator",
+					"statement": "A wise ruler who governed well would be better than a democracy that governed badly.",
+					"entries": [
+						"concepts/democratic-legitimacy",
+						"philosophers/plato"
+					]
+				},
+				{
+					"id": "politics-inequality-unjust",
+					"statement": "Large inequalities of wealth are unjust, however they came about.",
+					"entries": [
+						"concepts/egalitarianism",
+						"concepts/distributive-justice",
+						"arguments/argument-from-the-wilt-chamberlain-case"
+					]
+				},
+				{
+					"id": "politics-tax-forced-labour",
+					"statement": "Taxing people's earnings is a kind of forced labour.",
+					"entries": [
+						"concepts/libertarianism-in-politics",
+						"philosophers/robert-nozick"
+					]
+				},
+				{
+					"id": "politics-veil",
+					"statement": "A fair society is one you would choose to live in without knowing where in it you would end up.",
+					"entries": [
+						"concepts/veil-of-ignorance",
+						"arguments/argument-veil-of-ignorance",
+						"philosophers/john-rawls"
+					]
+				},
+				{
+					"id": "politics-markets-fairer",
+					"statement": "Markets decide who gets what more fairly than any government could.",
+					"entries": [
+						"concepts/capitalism",
+						"arguments/argument-from-the-knowledge-problem-in-central-planning"
+					]
+				},
+				{
+					"id": "politics-land-ownership",
+					"statement": "Private ownership of land is fundamentally unjust.",
+					"entries": [
+						"concepts/private-property",
+						"concepts/georgism",
+						"philosophers/jean-jacques-rousseau"
+					]
+				},
+				{
+					"id": "politics-revolt-elected",
+					"statement": "Violent revolution can be justified against a government that was fairly elected.",
+					"entries": [
+						"concepts/resistance",
+						"concepts/violence",
+						"philosophers/john-locke"
+					]
+				},
+				{
+					"id": "politics-bid-for-power",
+					"statement": "Behind every claim to serve the common good is someone's bid for power.",
+					"entries": [
+						"concepts/power",
+						"philosophers/michel-foucault"
+					]
+				},
+				{
+					"id": "politics-ruler-deceive",
+					"statement": "A good ruler must be willing to deceive the public.",
+					"entries": [
+						"philosophers/machiavelli"
+					]
+				},
+				{
+					"id": "politics-borders",
+					"statement": "A nation has the right to decide who may live within its borders.",
+					"entries": [
+						"concepts/political-sovereignty",
+						"concepts/cosmopolitanism"
+					]
+				},
+				{
+					"id": "politics-fellow-citizens",
+					"statement": "You owe more to your fellow citizens than to people in other countries.",
+					"entries": [
+						"concepts/patriotism",
+						"concepts/global-justice"
+					]
+				}
+			]
+		},
+		{
+			"id": "society",
+			"title": "Society and Culture",
+			"summary": "Tradition and progress, family and identity, and what technology is doing to us.",
+			"color": "#DB2777",
+			"questions": [
+				{
+					"id": "society-hidden-wisdom",
+					"statement": "Long-standing traditions usually contain wisdom, even when no one can say what it is.",
+					"entries": [
+						"concepts/chesterton-s-fence",
+						"concepts/traditionalism",
+						"concepts/conservatism"
+					]
+				},
+				{
+					"id": "society-morally-better-now",
+					"statement": "Humanity is morally better now than it has ever been.",
+					"entries": [
+						"concepts/progressivism"
+					]
+				},
+				{
+					"id": "society-talent-desert",
+					"statement": "Talented people do not deserve the rewards their talents bring.",
+					"entries": [
+						"concepts/meritocracy",
+						"concepts/desert",
+						"philosophers/john-rawls"
+					]
+				},
+				{
+					"id": "society-parents-values",
+					"statement": "Parents have the right to raise their children in their own values, even ones the rest of society rejects.",
+					"entries": [
+						"concepts/rights",
+						"concepts/communitarianism"
+					]
+				},
+				{
+					"id": "society-care-for-parents",
+					"statement": "You owe your parents care in their old age, whatever kind of parents they were.",
+					"entries": [
+						"concepts/filial-piety",
+						"philosophers/confucius"
+					]
+				},
+				{
+					"id": "society-groups-shape-you",
+					"statement": "Who you are is mostly shaped by the groups you belong to.",
+					"entries": [
+						"concepts/communitarianism",
+						"concepts/individualism"
+					]
+				},
+				{
+					"id": "society-learned-differences",
+					"statement": "Most differences between how men and women behave are learned rather than innate.",
+					"entries": [
+						"concepts/social-constructivism",
+						"philosophers/simone-de-beauvoir"
+					]
+				},
+				{
+					"id": "society-technology-worse",
+					"statement": "Modern technology has made human life worse in the ways that matter most.",
+					"entries": [
+						"philosophers/martin-heidegger"
+					]
+				},
+				{
+					"id": "society-smarter-children",
+					"statement": "Parents should be allowed to choose genes that make their children smarter.",
+					"entries": [
+						"concepts/transhumanism",
+						"concepts/bioethics"
+					]
+				},
+				{
+					"id": "society-appropriation",
+					"statement": "Borrowing from another culture's traditions without permission can be wrong.",
+					"entries": [
+						"concepts/cultural-appropriation"
+					]
+				},
+				{
+					"id": "society-some-cultures-better",
+					"statement": "Some cultures are better than others.",
+					"entries": [
+						"concepts/cultural-relativism",
+						"concepts/moral-universalism"
+					]
+				},
+				{
+					"id": "society-simpler-societies",
+					"statement": "People were happier in simpler, pre-industrial societies.",
+					"entries": [
+						"concepts/romanticism",
+						"philosophers/jean-jacques-rousseau",
+						"biases/rosy-retrospection"
+					]
+				},
+				{
+					"id": "society-shame",
+					"statement": "Societies need shame to keep people behaving well.",
+					"entries": [
+						"concepts/confucian-li"
+					]
+				},
+				{
+					"id": "society-too-much-freedom",
+					"statement": "Modern societies value individual freedom more than is good for them.",
+					"entries": [
+						"concepts/communitarianism",
+						"concepts/individualism"
+					]
+				},
+				{
+					"id": "society-passive-culture",
+					"statement": "Popular culture mostly works to keep people passive.",
+					"entries": [
+						"concepts/culture-industry",
+						"philosophers/theodor-adorno"
+					]
+				}
+			]
+		},
+		{
+			"id": "death",
+			"title": "Life and Death",
+			"summary": "Death, who should exist, which lives count, and how much the future matters.",
+			"color": "#B45309",
+			"questions": [
+				{
+					"id": "death-nothing-to-fear",
+					"statement": "Death is nothing to fear, since once you are dead there is no you left to suffer.",
+					"entries": [
+						"concepts/epicureanism",
+						"philosophers/epicurus"
+					]
+				},
+				{
+					"id": "death-dying-young",
+					"statement": "Dying young is a misfortune even for someone who never knew what they were missing.",
+					"entries": [
+						"concepts/well-being"
+					]
+				},
+				{
+					"id": "death-forever-unbearable",
+					"statement": "Living forever would eventually make life unbearable.",
+					"entries": [
+						"concepts/transhumanism",
+						"concepts/meaning"
+					]
+				},
+				{
+					"id": "death-assisted-dying",
+					"statement": "Doctors should be allowed to help terminally ill patients end their lives when they ask.",
+					"entries": [
+						"concepts/bioethics",
+						"concepts/autonomy",
+						"concepts/informed-consent"
+					]
+				},
+				{
+					"id": "death-every-life-valuable",
+					"statement": "Every human life is equally valuable, whatever its quality.",
+					"entries": [
+						"concepts/human-dignity",
+						"concepts/natural-law-theory"
+					]
+				},
+				{
+					"id": "death-existence-harms",
+					"statement": "Bringing a new person into existence always harms them.",
+					"entries": [
+						"concepts/anti-natalism",
+						"concepts/philosophical-pessimism",
+						"philosophers/arthur-schopenhauer"
+					]
+				},
+				{
+					"id": "death-eating-animals",
+					"statement": "Eating animals is wrong when there are good alternatives.",
+					"entries": [
+						"concepts/animal-ethics",
+						"philosophers/peter-singer"
+					]
+				},
+				{
+					"id": "death-pig-suffering",
+					"statement": "A pig's suffering matters as much as the same suffering in a human.",
+					"entries": [
+						"concepts/speciesism",
+						"arguments/argument-from-the-principle-of-marginal-cases",
+						"concepts/sentientism"
+					]
+				},
+				{
+					"id": "death-future-people",
+					"statement": "People who will live a thousand years from now matter as much as people alive today.",
+					"entries": [
+						"concepts/longtermism",
+						"concepts/discounting"
+					]
+				},
+				{
+					"id": "death-painless-extinction",
+					"statement": "Human extinction would be bad even if it happened painlessly.",
+					"entries": [
+						"concepts/longtermism",
+						"philosophers/derek-parfit"
+					]
+				},
+				{
+					"id": "death-repugnant",
+					"statement": "A vast population of people whose lives are barely worth living could be better than a small, flourishing one.",
+					"entries": [
+						"paradoxes/paradox-repugnant-conclusion",
+						"philosophers/derek-parfit"
+					]
+				},
+				{
+					"id": "death-fetus-status",
+					"statement": "A fetus has the same moral status as a newborn baby.",
+					"entries": [
+						"concepts/moral-status",
+						"concepts/personhood"
+					]
+				},
+				{
+					"id": "death-deserve-to-die",
+					"statement": "Some crimes are so terrible that the people who commit them deserve to die.",
+					"entries": [
+						"concepts/retributive-justice",
+						"concepts/desert"
+					]
+				},
+				{
+					"id": "death-cease-to-exist",
+					"statement": "When you die, you cease to exist forever.",
+					"entries": [
+						"concepts/materialism",
+						"concepts/samsara"
+					]
+				},
+				{
+					"id": "death-wild-suffering",
+					"statement": "We should reduce the suffering of wild animals, even if it means interfering with nature.",
+					"entries": [
+						"concepts/animal-ethics",
+						"fallacies/appeal-to-nature"
+					]
+				}
+			]
+		}
+	]
+}

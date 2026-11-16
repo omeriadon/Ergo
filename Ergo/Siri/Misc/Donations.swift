@@ -55,7 +55,7 @@ enum IntentDonations {
 			case .bookmarks:
 				donate(OpenBookmarksIntent())
 
-			case .practice:
+			case .practice, .beliefs, .belief:
 				break
 		}
 	}

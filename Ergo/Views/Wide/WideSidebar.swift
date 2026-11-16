@@ -95,7 +95,7 @@ struct WideSidebar: View {
 				scratchpadStore.rename(id, to: name)
 			case let .chat(id):
 				askStore.rename(id, to: name)
-			case .course, .ask, .libraryHome, .library, .bookmarks, .practice, .settings:
+			case .course, .ask, .libraryHome, .library, .bookmarks, .practice, .beliefs, .settings:
 				break
 		}
 	}

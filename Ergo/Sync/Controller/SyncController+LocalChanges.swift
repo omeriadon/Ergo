@@ -131,6 +131,48 @@ extension SyncController {
 		}
 	}
 
+	/// Every belief and change as the ledger has them. A belief the replica has alive that the ledger doesn't was deleted
+	/// here, so it's tombstoned with its changes, but only one this version can read, so it never deletes what it
+	/// hasn't shown. One deleted elsewhere and answered again here afterwards comes back with `deleted` false.
+	func recordBeliefs() {
+		let ledger = Defaults[.beliefs]
+		var changed = false
+		for belief in ledger.beliefs {
+			guard var fields = try? BeliefRecord.fields(of: belief) else { continue }
+			let id = BeliefRecord.id(belief.id)
+			// Only when rated after it was deleted: a delete from elsewhere that hasn't been rebuilt yet must stand
+			if let record = replica[.belief, id], record.isDeleted, let tombstone = record.fields[SyncFieldName.deleted]?.stamp.time,
+			   Int64(belief.lastRated.timeIntervalSince1970 * 1000) > tombstone
+			{
+				fields[SyncFieldName.deleted] = false
+			}
+			changed = replica.recordLocal(kind: .belief, id: id, fields: fields) || changed
+			for change in belief.changes {
+				changed = replica.recordLocal(kind: .beliefChange, id: BeliefRecord.id(change.id), fields: BeliefRecord.fields(of: change, in: belief.id)) || changed
+			}
+		}
+
+		let local = Set(ledger.beliefs.map { BeliefRecord.id($0.id) })
+		let removed = Set(replica.records.values
+			.filter { $0.kind == .belief && !$0.isDeleted && !local.contains($0.id) && BeliefRecord.canRead($0) }
+			.map(\.id))
+		if !removed.isEmpty {
+			let changes = replica.records.values.filter { record in
+				guard record.kind == .beliefChange, !record.isDeleted, case let .string(belief)? = record.fields[SyncFieldName.belief]?.value else { return false }
+				return removed.contains(belief)
+			}
+			for record in changes {
+				changed = replica.recordLocal(kind: .beliefChange, id: record.id, fields: [SyncFieldName.deleted: true]) || changed
+			}
+			for id in removed {
+				changed = replica.recordLocal(kind: .belief, id: id, fields: [SyncFieldName.deleted: true]) || changed
+			}
+		}
+		if changed {
+			scheduleSync()
+		}
+	}
+
 	/// Everything as it is now, after signing in or anything missed while signed out.
 	/// The replica only stamps what differs, so this costs a comparison per record.
 	func recordAll() {
@@ -142,6 +184,7 @@ extension SyncController {
 			record(setting)
 		}
 		recordBookmarks()
+		recordBeliefs()
 
 		// Deleted here while signed out. Only boards this version could show, so it never deletes one it skipped.
 		// Never a shared one: a board that failed to decode must not become a delete for everyone.

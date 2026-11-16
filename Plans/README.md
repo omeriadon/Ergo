@@ -12,6 +12,9 @@ Ergo's design docs. Most of them are plans that have since been built, kept for 
 | [12-Identity.md](12-Identity.md) | What Ergo is, who it's for first, and how the board's AI should work | Current, built |
 | [13-Versions.md](13-Versions.md) | How the app and the server change without cutting anyone off | Current |
 | [14-Platforms.md](14-Platforms.md) | iPad, Mac and the Watch: two layouts chosen by width over one navigation model | Current |
+| [15-Attacks.md](15-Attacks.md) | Arrows that count against a card or an arrow, and which objections are still open | Proposed |
+| [16-Beliefs.md](16-Beliefs.md) | A ledger of what you believe, how sure, the boards for and against, and when you changed your mind, started by question sets answered on a scale | Question sets, the ledger and sync built. Boards and Ask not yet |
+| [17-Puzzles.md](17-Puzzles.md) | A daily puzzle from a hand-written bank, taken in order | Proposed |
 | [00-Translation.md](00-Translation.md) | The original plan: the server, ErgoKit and translation | Built, historical |
 | [01-ErgoKit.md](01-ErgoKit.md) · [02-Server.md](02-Server.md) · [03-App.md](03-App.md) · [04-Evals.md](04-Evals.md) | The phases of that plan | Built, historical |
 | [05-Sync.md](05-Sync.md) | Sync | Built, historical |

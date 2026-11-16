@@ -188,7 +188,7 @@ struct SyncTests {
 	@Test(arguments: [
 		(
 			SyncChange(kind: "note", id: "1", fields: [:]),
-			"Unknown record kind 'note', expected 'board', 'bookmark', 'setting', 'statement', 'link' or 'scratchpad'"
+			"Unknown record kind 'note', expected 'board', 'bookmark', 'setting', 'statement', 'link', 'scratchpad', 'source', 'belief' or 'beliefChange'"
 		),
 		(
 			SyncChange(kind: .board, id: "not-a-uuid", fields: [:]),

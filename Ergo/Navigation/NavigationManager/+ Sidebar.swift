@@ -23,6 +23,7 @@ enum SidebarItem: Hashable {
 	case library(LibraryContent)
 	case bookmarks
 	case practice
+	case beliefs
 
 	/// Settings, which the wide layout shows as the open item rather than a sheet
 	case settings
@@ -72,6 +73,8 @@ extension NavigationManager {
 				return .bookmarks
 			case .practice:
 				return .practice
+			case .beliefs, .belief:
+				return .beliefs
 			case let .detail(category, _):
 				return .library(category)
 			default:
@@ -122,6 +125,9 @@ extension NavigationManager {
 			case .practice:
 				selectedTab = .library
 				libraryPath = [.practice]
+			case .beliefs:
+				selectedTab = .library
+				libraryPath = [.beliefs]
 			case .settings:
 				presentSheet(.settings(id: "3refd"))
 		}

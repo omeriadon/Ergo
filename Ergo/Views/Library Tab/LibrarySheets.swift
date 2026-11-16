@@ -12,6 +12,9 @@ import SwiftUI
 nonisolated enum LibrarySheet: Hashable, Identifiable, Codable, Defaults.Serializable {
 	case addEntryToChat(AskAttachment.Content)
 
+	/// Writing a belief of the person's own
+	case newBelief
+
 	var id: Self {
 		self
 	}
@@ -24,6 +27,8 @@ struct LibrarySheetContent: View {
 		switch sheet {
 			case let .addEntryToChat(content):
 				AddToChatSheet(content: content)
+			case .newBelief:
+				NewBeliefSheet()
 		}
 	}
 }

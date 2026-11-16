@@ -35,6 +35,8 @@ struct CardView: View {
 						"bookmark"
 					case "Practice":
 						PracticeView.symbol
+					case "Beliefs":
+						BeliefsView.symbol
 					default:
 						""
 				}

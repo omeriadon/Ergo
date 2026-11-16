@@ -280,6 +280,9 @@ struct WideSidebarLibrary: View {
 
 			PracticeSidebarRow()
 				.tag(SidebarItem.practice)
+
+			BeliefsSidebarRow()
+				.tag(SidebarItem.beliefs)
 		}
 	}
 }
